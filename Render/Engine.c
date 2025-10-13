@@ -11,15 +11,11 @@
 void updateState();
 
 void startEngine() {
-    Renderer renderer;
-        printf("Creating Window!\n");
-    renderer.window = initWindow(640, 180, "Huhu");
-        printf("Loading Shaders!\n");
+    Renderer renderer;                                                          printf("Creating Window!\n");
+    renderer.window = initWindow(640, 180, "Huhu");             printf("Loading Shaders!\n");
     renderer.shader = createShaderProgram();
-    renderer.meshes = Mesh_newList(16);
-        printf("Loading Mesh!\n");
-    Mesh_ListAdd(&renderer.meshes, loadSimpleMesh());
-        printf("Starting main Loop!\n");
+    renderer.meshes = Mesh_newList(16);                                     printf("Loading Mesh!\n");
+    Mesh_ListAdd(&renderer.meshes, loadSimpleMesh());                      printf("Starting main Loop!\n");
     while (!glfwWindowShouldClose(renderer.window)) {
         Sleep(20);
         glfwPollEvents();
