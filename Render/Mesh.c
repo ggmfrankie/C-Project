@@ -1,0 +1,113 @@
+//
+// Created by Stefan on 10.10.2025.
+//
+#include "Mesh.h"
+
+#include <string.h>
+
+#include "glad/gl.h"
+
+void deleteMeshData(MeshData *meshData);
+
+Mesh initMesh(const MeshData *meshData) {
+    unsigned int VAO;
+    unsigned int* VBOs = malloc(3 * sizeof(unsigned int));
+    unsigned int EBO;
+
+    Mesh mesh;
+
+    mesh.indexCount = meshData->indexCount;
+    mesh.vboCount = 3;
+
+    glGenVertexArrays(1, &VAO);
+    glBindVertexArray(VAO);
+
+    glGenBuffers(3, VBOs);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBOs[0]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * meshData->vertexCount * 3, meshData->vertices, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBOs[1]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * meshData->vertexCount * 3, meshData->normals, GL_STATIC_DRAW);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBOs[2]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * meshData->vertexCount * 2, meshData->texCoords, GL_STATIC_DRAW);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+    glGenBuffers(1, &EBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * meshData->indexCount, meshData->indices, GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
+
+    mesh.vaoId = VAO;
+    mesh.vboId = VBOs;
+    mesh.eboId = EBO;
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+    deleteMeshData((MeshData*)meshData);
+
+    return mesh;
+}
+
+void renderMesh(const Mesh *mesh) {
+    glBindVertexArray(mesh->vaoId);
+    glDrawElements(GL_TRIANGLES, mesh->indexCount, GL_UNSIGNED_INT, (void*)0);
+    glBindVertexArray(0);
+}
+
+Mesh loadSimpleMesh() {
+    MeshData *meshData = malloc(sizeof(MeshData));
+    if (!meshData) return (Mesh){0};
+
+    meshData->vertexCount = 4;
+
+    meshData->vertices = malloc(sizeof(float) * meshData->vertexCount * 3);
+    float tmpVertices[] = {
+        +0.5f, +0.5f, 0.0f,
+        +0.5f, -0.5f, 0.0f,
+        -0.5f, +0.5f, 0.0f,
+        -0.5f, -0.5f, 0.0f
+    };
+    memcpy(meshData->vertices, tmpVertices, sizeof(tmpVertices));
+
+    meshData->normals = malloc(sizeof(float) * meshData->vertexCount * 3);
+    float tmpNormals[] = {
+        0.0f, 0.0f, 1.0f,
+        0.0f, 0.0f, 1.0f,
+        0.0f, 0.0f, 1.0f,
+        0.0f, 0.0f, 1.0f
+    };
+    memcpy(meshData->normals, tmpNormals, sizeof(tmpNormals));
+
+    meshData->texCoords = malloc(sizeof(float) * meshData->vertexCount * 2);
+    float tmpTex[] = {
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        0.0f, 1.0f,
+        1.0f, 1.0f
+    };
+    memcpy(meshData->texCoords, tmpTex, sizeof(tmpTex));
+
+    meshData->indexCount = 6;
+    meshData->indices = malloc(sizeof(unsigned int) * meshData->indexCount);
+    unsigned int tmpIndices[] = {0, 1, 2, 2, 1, 3};
+    memcpy(meshData->indices, tmpIndices, sizeof(tmpIndices));
+
+    return initMesh(meshData);
+}
+
+void deleteMeshData(MeshData *meshData) {
+    if (!meshData) return;
+    if (meshData->vertices) free(meshData->vertices);
+    if (meshData->normals) free(meshData->normals);
+    if (meshData->texCoords) free(meshData->texCoords);
+    if (meshData->indices) free(meshData->indices);
+    free(meshData);
+}
