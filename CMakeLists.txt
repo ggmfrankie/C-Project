@@ -36,8 +36,8 @@ set_target_properties(glfw PROPERTIES
 
 target_link_libraries(C
         glfw
-        opengl32     # OpenGL (needed by GLFW)
-        gdi32        # Windows GDI
-        user32       # Window and input handling
-        kernel32     # Core Windows functions
+        opengl32
+        gdi32
+        user32
+        kernel32
 )
