@@ -72,17 +72,6 @@ String str_combine(const String *string1, const String *string2) {
     return result;
 }
 
-/*
-String newString_c(const int capacity){
-    String result;
-    result.content = malloc((capacity + 1)*sizeof(char));
-    result.content[0] = '\0';
-    result.length = 0;
-    result.capacity = capacity;
-    return result;
-}
-*/
-
 void str_delete(const String* string){
     free(string->content);
 }
@@ -92,13 +81,10 @@ void str_println(const String* string){
 }
 
 bool str_equals(const String* string,const String* key){
-    char* str1 = string->content;
-    char* str2 = key->content;
-
     if(string->length != key->length) return false;
 
     for(int i = 0; i < string->length; i++){
-        if(str1[i] != str2[i]) return false;
+        if(string->content[i] != key->content[i]) return false;
     }
     return true;
 }

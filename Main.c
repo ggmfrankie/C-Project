@@ -2,13 +2,33 @@
 #include <stdio.h>
 
 #include "Render/Engine.h"
+#include "Utils/String.h"
 
 
 void linkedListStuff();
+void readInputs();
 
 int main(){
     printf("Starting Engine!\n");
-    startEngine();
+    readInputs();
+    //startEngine();
+}
+
+void readInputs() {
+    int a;
+    int b;
+
+    printf("Enter your choice : ");
+    scanf("%i",&a);
+    printf("Enter another choice : ");
+    scanf("%i",&b);
+    printf("Result: %i + %i = %i\n", a, b, a+b );
+
+    char input[1024];
+    printf("Enter your Name: ");
+    scanf("%s",input);
+    printf("Hello %s!\n",input);
+
 }
 
 
