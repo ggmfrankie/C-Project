@@ -13,20 +13,15 @@ typedef struct List_##name { \
     type *content; \
     int size; \
     int capacity; \
+    void (*add)(struct List_##name *list, type value);\
+    type (*getVal)(struct List_##name *list, int index);\
+    type* (*get)(struct List_##name *list, int index);\
+    void (*free)(struct List_##name *list);\
 } List_##name; \
 \
 static inline void name##_error() { \
     printf("Error in ArrayList %s processing\n", #name); \
     exit(1); \
-} \
-\
-static inline List_##name name##_newList(int size) { \
-    List_##name list; \
-    list.content = malloc(size * sizeof(type)); \
-    if (!list.content) name##_error(); \
-        list.size = 0; \
-    list.capacity = size; \
-    return list; \
 } \
 \
 static inline void name##_ListAdd(List_##name *list, type value) { \
@@ -54,6 +49,19 @@ static inline void name##_ListFree(List_##name *list) { \
     list->content = NULL; \
     list->size = 0; \
     list->capacity = 0; \
+}\
+static inline List_##name name##_newList(int capacity) { \
+    type* content = malloc(capacity * sizeof(type)); \
+    if (!content) name##_error(); \
+    return (List_##name){\
+        .content = content,\
+        .size = 0,\
+        .capacity = capacity,\
+        .add = name##_ListAdd,\
+        .getVal = name##_ListGet,\
+        .get = name##_ListGet_ptr,\
+        .free = name##_ListFree\
+    }; \
 }
 
 #endif // C_ARRAYLIST_H

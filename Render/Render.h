@@ -15,10 +15,11 @@ typedef struct Renderer {
     GLFWwindow *window;
     Shader shader;
     List_Mesh meshes;
-} Renderer;
+    void (*render)(struct Renderer *renderer);
 
-GLFWwindow* initWindow(const int width, const int height, const char* name);
-void render(Renderer *renderer);
-void destroyGL(const Renderer *renderer);
+} Renderer;
+Renderer newRenderer(int width, int height, const char* name);
+void Renderer_render(Renderer *renderer);
+void Renderer_destroy(const Renderer *renderer);
 
 #endif //C_RENDER_H

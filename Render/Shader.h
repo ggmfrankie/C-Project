@@ -4,11 +4,20 @@
 
 #ifndef C_SHADER_H
 #define C_SHADER_H
+#include "../Utils/Map.h"
+#include "../Utils/String.h"
+
+MAP(Uniforms, String, int)
     typedef struct Shader {
         int programId;
         int vertexId;
         int fragmentId;
+        Map_Uniforms uniforms;
+        void (*bind)(const struct Shader*);
+        void (*unbind)();
     } Shader;
-Shader createShaderProgram();
-void bindShaderProgram(int programId);
+
+Shader newShader();
+void Shader_bindProgram(const Shader *shader);
+void Shader_unbindProgram();
 #endif //C_SHADER_H

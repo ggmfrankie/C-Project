@@ -34,23 +34,27 @@ GLFWwindow* initWindow(const int width, const int height, const char* name) {
     return window;
 }
 
-void initRenderer(Renderer *renderer) {
-
+Renderer newRenderer(const int width, const int height, const char* name) {
+    return (Renderer){
+        .meshes = Mesh_newList(1),
+        .shader = newShader(),
+        .window = initWindow(width, height, name),
+        .render = Renderer_render
+    };
 }
 
-void destroyGL(const Renderer *renderer) {
+void Renderer_destroy(const Renderer *renderer) {
     glfwDestroyWindow(renderer->window);
 }
 
-void render(Renderer *renderer) {
+void Renderer_render(Renderer *renderer) {
     glClear(GL_COLOR_BUFFER_BIT);
-    bindShaderProgram(renderer->shader.programId);
+    renderer->shader.bind(&renderer->shader);
 
     for (int i = 0; i < renderer->meshes.size; i++) {
-        const Mesh *mesh = Mesh_ListGet_ptr(&renderer->meshes, i);
-        renderMesh(mesh);
+        const Mesh *mesh = renderer->meshes.get(&renderer->meshes, i);
+        mesh->render(mesh);
     }
-
     glfwSwapBuffers(renderer->window);
-    bindShaderProgram(0);
+    renderer->shader.unbind();
 }

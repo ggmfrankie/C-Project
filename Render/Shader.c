@@ -5,10 +5,10 @@
 
 #include "Shader.h"
 
-#include <string.h>
 
-#include "../Utils/String.h"
+
 #include "glad/gl.h"
+
 
 
 String readFile(const String *fileName);
@@ -16,43 +16,54 @@ int createShader(const GLchar** shaderSource, int shaderType, int programId);
 int createVertexShader(const String *fileName, int programId);
 int createFragmentShader(const String *fileName, int programId);
 
-Shader createShaderProgram() {
-    Shader shader;
-    shader.programId = glCreateProgram();
+Shader newShader() {
+
+    int programId = glCreateProgram();
     int success;
     char infoLog[512];
-    const String vertexShader = str_newString("GuiVertexShader.vert");
-    const String fragmentShader = str_newString("GuiFragmentShader.frag");
+    const String vertexShader = newString("GuiVertexShader.vert");
+    const String fragmentShader = newString("GuiFragmentShader.frag");
 
-    shader.vertexId = createVertexShader(&vertexShader, shader.programId);
-    shader.fragmentId = createFragmentShader(&fragmentShader, shader.programId);
+    int vertexId = createVertexShader(&vertexShader, programId);
+    int fragmentId = createFragmentShader(&fragmentShader, programId);
 
 
-    glGetShaderiv(shader.vertexId, GL_COMPILE_STATUS, &success);
+    glGetShaderiv(vertexId, GL_COMPILE_STATUS, &success);
     if (!success) {
-        glGetShaderInfoLog(shader.vertexId, 512, NULL, infoLog);
+        glGetShaderInfoLog(vertexId, 512, NULL, infoLog);
         printf("Vertex Shader Compile Error:\n%s\n", infoLog);
     }
 
     // --- DEBUG: Check fragment shader compile status ---
-    glGetShaderiv(shader.fragmentId, GL_COMPILE_STATUS, &success);
+    glGetShaderiv(fragmentId, GL_COMPILE_STATUS, &success);
     if (!success) {
-        glGetShaderInfoLog(shader.fragmentId, 512, NULL, infoLog);
+        glGetShaderInfoLog(fragmentId, 512, NULL, infoLog);
         printf("Fragment Shader Compile Error:\n%s\n", infoLog);
     }
 
-    glLinkProgram(shader.programId);
+    glLinkProgram(programId);
 
     // --- DEBUG: Check program link status ---
-    glGetProgramiv(shader.programId, GL_LINK_STATUS, &success);
+    glGetProgramiv(programId, GL_LINK_STATUS, &success);
     if (!success) {
-        glGetProgramInfoLog(shader.programId, 512, NULL, infoLog);
+        glGetProgramInfoLog(programId, 512, NULL, infoLog);
         printf("Shader Program Link Error:\n%s\n", infoLog);
     } else {
-        printf("Shader Program linked successfully! ID: %d\n", shader.programId);
+        printf("Shader Program linked successfully! ID: %d\n", programId);
     }
 
-    return shader;
+    return (Shader){
+        .programId = programId,
+        .vertexId = vertexId,
+        .fragmentId = fragmentId,
+        .bind = Shader_bindProgram,
+        .unbind = Shader_unbindProgram,
+        .uniforms = newMap_Uniforms(16, str_equals)
+    };
+}
+
+void Shader_createAllUniforms() {
+
 }
 
 int createVertexShader(const String *fileName, const int programId) {
@@ -90,13 +101,16 @@ int createShader(const GLchar** shaderSource, const int shaderType, const int pr
     return shaderId;
 }
 
-void bindShaderProgram(const int programId) {
-    glUseProgram(programId);
-    //glValidateProgram(programId);
+void Shader_bindProgram(const Shader *shader) {
+    glUseProgram(shader->programId);
+}
+
+void Shader_unbindProgram() {
+    glUseProgram(0);
 }
 
 String readFile(const String *fileName) {
-    const String defaultShaderPath = str_newString("../Shader/");
+    const String defaultShaderPath = newString("../Shader/");
     const String completePath = str_combine(&defaultShaderPath, fileName);
 
     FILE *file = fopen(completePath.content, "rb"); // binary mode to detect BOM
@@ -124,10 +138,10 @@ String readFile(const String *fileName) {
     if ((unsigned char)buffer[0] == 0xEF &&
         (unsigned char)buffer[1] == 0xBB &&
         (unsigned char)buffer[2] == 0xBF) {
-        memmove(buffer, buffer + 3, size - 2);
+        //memmove(buffer, buffer + 3, size - 2);
         }
 
-    String result = str_newString(buffer);
+    String result = newString(buffer);
     free(buffer);
     return result;
 }

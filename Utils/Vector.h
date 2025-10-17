@@ -7,12 +7,15 @@
 #include "../Utils/ArrayList.h"
     typedef struct vec3 {
         float x, y, z;
-    } vec3;
+    } Vec3f;
 
     typedef struct vec2 {
         float x, y;
-    } vec2;
+    } Vec2f;
 
-ARRAY_LIST(vec3, vec3)
-ARRAY_LIST(vec2, vec2)
+ARRAY_LIST(vec3, Vec3f)
+ARRAY_LIST(vec2, Vec2f)
+
+Vec2f Vec2f_Cross(const Vec2f* v1, const Vec2f* v2);
+
 #endif //C_VECTOR_H

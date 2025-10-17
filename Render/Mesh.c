@@ -9,15 +9,10 @@
 
 void deleteMeshData(MeshData *meshData);
 
-Mesh initMesh(const MeshData *meshData) {
+Mesh newMesh(const MeshData *meshData) {
     unsigned int VAO;
     unsigned int* VBOs = malloc(3 * sizeof(unsigned int));
     unsigned int EBO;
-
-    Mesh mesh;
-
-    mesh.indexCount = meshData->indexCount;
-    mesh.vboCount = 3;
 
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
@@ -44,32 +39,35 @@ Mesh initMesh(const MeshData *meshData) {
     glEnableVertexAttribArray(1);
     glEnableVertexAttribArray(2);
 
-    mesh.vaoId = VAO;
-    mesh.vboId = VBOs;
-    mesh.eboId = EBO;
-
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
     deleteMeshData((MeshData*)meshData);
 
-    return mesh;
+    return (Mesh){
+        .indexCount = meshData->indexCount,
+        .vaoId = VAO,
+        .vboId = VBOs,
+        .eboId = EBO,
+        .vboCount = 3,
+        .render = Mesh_render
+    };
 }
 
-void renderMesh(const Mesh *mesh) {
+void Mesh_render(const Mesh *mesh) {
     glBindVertexArray(mesh->vaoId);
     glDrawElements(GL_TRIANGLES, mesh->indexCount, GL_UNSIGNED_INT, (void*)0);
     glBindVertexArray(0);
 }
 
-Mesh loadSimpleMesh() {
+Mesh Mesh_loadSimpleQuad() {
     MeshData *meshData = malloc(sizeof(MeshData));
     if (!meshData) return (Mesh){0};
 
     meshData->vertexCount = 4;
 
     meshData->vertices = malloc(sizeof(float) * meshData->vertexCount * 3);
-    float tmpVertices[] = {
+    const float tmpVertices[] = {
         +0.5f, +0.5f, 0.0f,
         +0.5f, -0.5f, 0.0f,
         -0.5f, +0.5f, 0.0f,
@@ -78,7 +76,7 @@ Mesh loadSimpleMesh() {
     memcpy(meshData->vertices, tmpVertices, sizeof(tmpVertices));
 
     meshData->normals = malloc(sizeof(float) * meshData->vertexCount * 3);
-    float tmpNormals[] = {
+    const float tmpNormals[] = {
         0.0f, 0.0f, 1.0f,
         0.0f, 0.0f, 1.0f,
         0.0f, 0.0f, 1.0f,
@@ -87,7 +85,7 @@ Mesh loadSimpleMesh() {
     memcpy(meshData->normals, tmpNormals, sizeof(tmpNormals));
 
     meshData->texCoords = malloc(sizeof(float) * meshData->vertexCount * 2);
-    float tmpTex[] = {
+    const float tmpTex[] = {
         0.0f, 0.0f,
         1.0f, 0.0f,
         0.0f, 1.0f,
@@ -97,10 +95,10 @@ Mesh loadSimpleMesh() {
 
     meshData->indexCount = 6;
     meshData->indices = malloc(sizeof(unsigned int) * meshData->indexCount);
-    unsigned int tmpIndices[] = {0, 1, 2, 2, 1, 3};
+    const unsigned int tmpIndices[] = {0, 1, 2, 2, 1, 3};
     memcpy(meshData->indices, tmpIndices, sizeof(tmpIndices));
 
-    return initMesh(meshData);
+    return newMesh(meshData);
 }
 
 void deleteMeshData(MeshData *meshData) {

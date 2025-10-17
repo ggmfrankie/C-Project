@@ -6,7 +6,6 @@ set(CMAKE_C_STANDARD 11)
 include_directories("${CMAKE_SOURCE_DIR}/Dependencies/include")
 
 add_executable(C
-        Utils/GenericLinkedList.c
         Utils/GenericLinkedList.h
         Main.c
         Utils/String.c
@@ -24,6 +23,8 @@ add_executable(C
         DataStructures.c
         Render/Shader.c
         Render/Shader.h
+        Utils/HashMap.h
+        Utils/Map.h
 )
 #add_subdirectory("${CMAKE_SOURCE_DIR}/Render")
 
