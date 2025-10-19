@@ -58,12 +58,17 @@ Shader newShader() {
         .fragmentId = fragmentId,
         .bind = Shader_bindProgram,
         .unbind = Shader_unbindProgram,
+        .createUniform = Shader_createUniform,
         .uniforms = newMap_Uniforms(16, str_equals)
     };
 }
 
-void Shader_createAllUniforms(Shader *shader) {
-
+void Shader_createUniform(Shader *shader, const String name) {
+    const int uniformLocation = glGetUniformLocation(shader->programId, name.content);
+    if(uniformLocation < 0){
+        printf("Error creating Uniform");
+    }
+    shader->uniforms.put(&shader->uniforms, name, uniformLocation);
 }
 
 int createVertexShader(const String *fileName, const int programId) {

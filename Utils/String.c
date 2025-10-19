@@ -13,6 +13,7 @@ String newString(char* content){
         .charAt = str_getCharAt,
         .combine = str_combine,
         .delete = str_delete,
+        .clear = str_clear,
         .equals = str_equals,
         .println = str_println,
         .split = str_split,
@@ -47,6 +48,7 @@ String str_substring(const String* string, int start_index, int end_index){
         .charAt = str_getCharAt,
         .combine = str_combine,
         .delete = str_delete,
+        .clear = str_clear,
         .equals = str_equals,
         .println = str_println,
         .split = str_split,
@@ -73,6 +75,7 @@ String str_newString_c(const char* content){
         .charAt = str_getCharAt,
         .combine = str_combine,
         .delete = str_delete,
+        .clear = str_clear,
         .equals = str_equals,
         .println = str_println,
         .split = str_split,
@@ -98,6 +101,7 @@ String str_combine(const String *string1, const String *string2) {
         .charAt = str_getCharAt,
         .combine = str_combine,
         .delete = str_delete,
+        .clear = str_clear,
         .equals = str_equals,
         .println = str_println,
         .split = str_split,
@@ -109,6 +113,11 @@ String str_combine(const String *string1, const String *string2) {
 void str_delete(const String* string){
     if (!string->content) return;
     free(string->content);
+}
+
+void str_clear(String* string) {
+    string->content = NULL;
+    string->length = 0;
 }
 
 void str_println(const String* string){
