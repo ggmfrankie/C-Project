@@ -19,16 +19,10 @@ typedef struct Map_##name {\
     bool (*equals)(const Key*, const Key*);\
     size_t capacity;\
     size_t size;\
+    void (*put)(struct Map_##name *map, const Key key, const Value value);\
+    Value (*get)(const struct  Map_##name *map, const Key key);\
+    void (*delete)(struct Map_##name *map);\
 } Map_##name;\
-\
-static inline Map_##name newMap_##name(const size_t capacity, bool (*equals)(const Key*, const Key*)) {\
-    return (Map_##name){\
-        .content = malloc(sizeof(MapEntry_##name) * capacity),\
-        .capacity = capacity,\
-        .size = 0,\
-        .equals = equals\
-    };\
-}\
 \
 static inline void name##_Map_put(Map_##name *map, const Key key, const Value value) {\
     if (map->size == map->capacity){\
@@ -54,6 +48,17 @@ static inline void name##_Map_delete(Map_##name *map) {\
     map->content = NULL;\
     map->size = 0;\
     map->capacity = 0;\
-}
+}\
+static inline Map_##name newMap_##name(const size_t capacity, bool (*equals)(const Key*, const Key*)) {\
+    return (Map_##name){\
+        .content = malloc(sizeof(MapEntry_##name) * capacity),\
+        .capacity = capacity,\
+        .size = 0,\
+        .equals = equals,\
+        .put = name##_Map_put,\
+        .get = name##_Map_get,\
+        .delete = name##_Map_delete\
+    };\
+}\
 
 #endif //C_MAP_H

@@ -18,14 +18,14 @@ int createFragmentShader(const String *fileName, int programId);
 
 Shader newShader() {
 
-    int programId = glCreateProgram();
+    const int programId = glCreateProgram();
     int success;
     char infoLog[512];
     const String vertexShader = newString("GuiVertexShader.vert");
     const String fragmentShader = newString("GuiFragmentShader.frag");
 
-    int vertexId = createVertexShader(&vertexShader, programId);
-    int fragmentId = createFragmentShader(&fragmentShader, programId);
+    const int vertexId = createVertexShader(&vertexShader, programId);
+    const int fragmentId = createFragmentShader(&fragmentShader, programId);
 
 
     glGetShaderiv(vertexId, GL_COMPILE_STATUS, &success);
@@ -62,7 +62,7 @@ Shader newShader() {
     };
 }
 
-void Shader_createAllUniforms() {
+void Shader_createAllUniforms(Shader *shader) {
 
 }
 
