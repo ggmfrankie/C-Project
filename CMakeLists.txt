@@ -25,6 +25,10 @@ add_executable(C
         Render/Shader.h
         Utils/HashMap.h
         Utils/Map.h
+        Utils/FileIO.c
+        Utils/FileIO.h
+        Utils/StringBuilder.c
+        Utils/StringBuilder.h
 )
 #add_subdirectory("${CMAKE_SOURCE_DIR}/Render")
 

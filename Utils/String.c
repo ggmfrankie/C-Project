@@ -1,5 +1,6 @@
 
 #include "String.h"
+#include "StringBuilder.h"
 
 
 String newString(char* content){
@@ -57,7 +58,7 @@ String str_substring(const String* string, int start_index, int end_index){
     };
 }
 
-String str_newString_c(const char* content){
+String newString_c(const char* content){
     int len = 0;
     while (content[len] != '\0') {
         len++;
@@ -141,9 +142,32 @@ bool str_startsWith(const String* string, const String* key){
     return true;
 }
 
-List_String str_split(const String* string, const String* key) {
-    List_String result = {};
+List_String str_split(const String* string, const char *key) {
+    int keyLength = 0;
 
+    while (key[keyLength] != '\0') {
+        keyLength++;
+    }
+
+    List_String strList = String_newList(16);
+    int j = 0;
+    StringBuilder sb = newStringBuilder();
+
+    for (int i = 0; i < string->length; i++) {
+        const char current = string->charAt(string, i);
+        if (current == key[j]) {
+            j++;
+            if (j == keyLength) {
+                strList.add(&strList, sb.toString(&sb));
+                j = 0;
+            }
+        } else {
+            j = 0;
+            sb.add(&sb, current);
+        }
+    }
+    strList.add(&strList, sb.toString(&sb));
+    return strList;
 }
 
 

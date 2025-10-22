@@ -7,12 +7,10 @@
 
 #include <string.h>
 
-
 #include "glad/gl.h"
+#include "../Utils/FileIO.h"
 
 
-
-String readFile(const String *fileName);
 int createShader(const GLchar** shaderSource, int shaderType, int programId);
 int createVertexShader(const String *fileName, int programId);
 int createFragmentShader(const String *fileName, int programId);
@@ -28,6 +26,8 @@ Shader newShader() {
     const int vertexId = createVertexShader(&vertexShader, programId);
     const int fragmentId = createFragmentShader(&fragmentShader, programId);
 
+    vertexShader.delete(&vertexShader);
+    fragmentShader.delete(&fragmentShader);
 
     glGetShaderiv(vertexId, GL_COMPILE_STATUS, &success);
     if (!success) {
@@ -109,47 +109,17 @@ int createShader(const GLchar** shaderSource, const int shaderType, const int pr
     return shaderId;
 }
 
+GLchar** readShaderSource(const String *fileName) {
+    String file = readFile(fileName);
+    List_String lines = file.split(&file, "\n");
+}
+
 void Shader_bindProgram(const Shader *shader) {
     glUseProgram(shader->programId);
 }
 
 void Shader_unbindProgram() {
     glUseProgram(0);
-}
-
-String readFile(const String *fileName) {
-    const String defaultShaderPath = newString("../Shader/");
-    const String completePath = str_combine(&defaultShaderPath, fileName);
-
-    FILE *file = fopen(completePath.content, "rb"); // binary mode to detect BOM
-    if (!file) {
-        printf("Failed to open file: %s\n", completePath.content);
-        exit(1);
-    }
-
-    fseek(file, 0, SEEK_END);
-    long size = ftell(file);
-    rewind(file);
-
-    char *buffer = malloc(size + 1);
-    if (!buffer) {
-        fclose(file);
-        exit(1);
-    }
-
-    fread(buffer, 1, size, file);
-    fclose(file);
-
-    buffer[size] = '\0'; // null-terminate
-
-    // Strip UTF-8 BOM if present
-    if ((unsigned char)buffer[0] == 0xEF &&
-        (unsigned char)buffer[1] == 0xBB &&
-        (unsigned char)buffer[2] == 0xBF) {
-        memmove(buffer, buffer + 3, size - 2);
-        }
-
-    return newString(buffer);
 }
 
 

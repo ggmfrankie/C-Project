@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 #include "Render/Engine.h"
+#include "Utils/String.h"
 
 
 void linkedListStuff();
@@ -9,6 +10,12 @@ void linkedListStuff();
 int main(){
     printf("Starting Engine!\n");
     startEngine();
+    String string = newString("Hello my Firend");
+    str_println(&string);
+    List_String words = string.split(&string, " ");
+    for (int i = 0; i < words.size; i++) {
+        str_println(words.get(&words, i));
+    }
 }
 
 

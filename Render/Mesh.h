@@ -10,9 +10,9 @@ typedef struct MeshData {
     float* vertices;
     float* normals;
     float* texCoords;
-    int vertexCount;
+    size_t vertexCount;
     int* indices;
-    int indexCount;
+    size_t indexCount;
 } MeshData;
 
 typedef struct Mesh {
