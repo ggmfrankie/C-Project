@@ -5,6 +5,7 @@
 
 #include "Shader.h"
 
+#include <string.h>
 
 
 #include "glad/gl.h"
@@ -87,7 +88,7 @@ int createVertexShader(const String *fileName, const int programId) {
 }
 
 int createFragmentShader(const String *fileName, const int programId) {
-    //const String shaderCode = readFile(fileName);
+
     const GLchar* shaderSrc[] ={
         "#version 460\n"
         "in vec3 outPosition;\n"
@@ -95,6 +96,8 @@ int createFragmentShader(const String *fileName, const int programId) {
         "void main() {\n"
         "    fragColor = vec4(1.0, 0.5, 1.0, 1.0);\n"
         "}\n"};
+    String shaderCode = readFile(fileName);
+    shaderCode.println(&shaderCode);
     return createShader(shaderSrc, GL_FRAGMENT_SHADER, programId);
 }
 
@@ -143,12 +146,10 @@ String readFile(const String *fileName) {
     if ((unsigned char)buffer[0] == 0xEF &&
         (unsigned char)buffer[1] == 0xBB &&
         (unsigned char)buffer[2] == 0xBF) {
-        //memmove(buffer, buffer + 3, size - 2);
+        memmove(buffer, buffer + 3, size - 2);
         }
 
-    String result = newString(buffer);
-    free(buffer);
-    return result;
+    return newString(buffer);
 }
 
 

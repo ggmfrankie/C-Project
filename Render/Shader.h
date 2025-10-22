@@ -15,7 +15,7 @@ MAP(Uniforms, String, int)
         Map_Uniforms uniforms;
         void (*bind)(const struct Shader*);
         void (*unbind)();
-        void (*createUniform)(const struct Shader *shader, String name);
+        void (*createUniform)(struct Shader *shader, String name);
     } Shader;
 
 Shader newShader();

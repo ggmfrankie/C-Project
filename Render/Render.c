@@ -34,13 +34,13 @@ GLFWwindow* initWindow(const int width, const int height, const char* name) {
     return window;
 }
 
-void Renderer_init(const Renderer *renderer) {
-    renderer->shader.createUniform(&renderer->shader ,newString("hasTexture"));
-    renderer->shader.createUniform(&renderer->shader, newString("isActive"));
-    renderer->shader.createUniform(&renderer->shader, newString("width"));
-    renderer->shader.createUniform(&renderer->shader, newString("height"));
-    renderer->shader.createUniform(&renderer->shader, newString("screenWidth"));
-    renderer->shader.createUniform(&renderer->shader, newString("screenHeight"));
+void Renderer_init(Renderer *renderer) {
+    Shader_createUniform(&renderer->shader ,newString("hasTexture"));
+    Shader_createUniform(&renderer->shader, newString("isActive"));
+    Shader_createUniform(&renderer->shader, newString("width"));
+    Shader_createUniform(&renderer->shader, newString("height"));
+    Shader_createUniform(&renderer->shader, newString("screenWidth"));
+    Shader_createUniform(&renderer->shader, newString("screenHeight"));
 }
 
 Renderer newRenderer(const int width, const int height, const char* name) {
