@@ -26,9 +26,6 @@ Shader newShader() {
     const int vertexId = createVertexShader(&vertexShader, programId);
     const int fragmentId = createFragmentShader(&fragmentShader, programId);
 
-    vertexShader.delete(&vertexShader);
-    fragmentShader.delete(&fragmentShader);
-
     glGetShaderiv(vertexId, GL_COMPILE_STATUS, &success);
     if (!success) {
         glGetShaderInfoLog(vertexId, 512, NULL, infoLog);
@@ -84,7 +81,13 @@ int createVertexShader(const String *fileName, const int programId) {
         "    gl_Position = vec4(position, 1.0);\n"
         "    outPosition = position;\n"
         "}\n"};
-    return createShader(shaderSrc, GL_VERTEX_SHADER, programId);
+    const String shaderSource = readFile(fileName);
+    const GLchar* source = (GLchar*)shaderSource.content;
+
+    const int shaderId = createShader(&source, GL_VERTEX_SHADER, programId);
+    shaderSource.delete(&shaderSource);
+
+    return shaderId;
 }
 
 int createFragmentShader(const String *fileName, const int programId) {
@@ -96,9 +99,12 @@ int createFragmentShader(const String *fileName, const int programId) {
         "void main() {\n"
         "    fragColor = vec4(1.0, 0.5, 1.0, 1.0);\n"
         "}\n"};
-    String shaderCode = readFile(fileName);
-    shaderCode.println(&shaderCode);
-    return createShader(shaderSrc, GL_FRAGMENT_SHADER, programId);
+    const String shaderSource = readFile(fileName);
+    const GLchar* source = (GLchar*)shaderSource.content;
+
+    const int shaderId = createShader(&source, GL_FRAGMENT_SHADER, programId);
+    shaderSource.delete(&shaderSource);
+    return shaderId;
 }
 
 int createShader(const GLchar** shaderSource, const int shaderType, const int programId) {
@@ -107,11 +113,6 @@ int createShader(const GLchar** shaderSource, const int shaderType, const int pr
     glCompileShader(shaderId);
     glAttachShader(programId, shaderId);
     return shaderId;
-}
-
-GLchar** readShaderSource(const String *fileName) {
-    String file = readFile(fileName);
-    List_String lines = file.split(&file, "\n");
 }
 
 void Shader_bindProgram(const Shader *shader) {

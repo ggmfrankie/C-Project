@@ -1,20 +1,25 @@
+
 #version 460
 
-layout (location = 0) in vec3 position;
-layout (location = 1) in vec3 vertexNormal;
-layout (location = 2) in vec2 texCoord;
+in vec2 outTexCoord;
+in vec3 mvVertexNormal;
+in vec3 mvVertexPos;
 
-out vec3 outPosition;
+out vec4 fragColor;
 
-uniform float width;
-uniform float height;
-
-uniform float screenWidth;
-uniform float screenHeight;
+uniform sampler2D texture_sampler;
+uniform int hasTexture;
+uniform int isActive;
 
 void main() {
-    vec2 pixelPos = vec2(position.x * width, position.y * height);
-    vec2 normPos = vec2((pixelPos.x / screenWidth) * 2.0 - 1.0, 1.0 - (pixelPos.y / screenHeight) * 2.0);
-    gl_Position = vec4(normPos, 0.0, 1.0);
-    outPosition = position;
+    if(hasTexture == 1){
+        vec4 outFrag = texture(texture_sampler, outTexCoord);
+        if (isActive == 0) {
+            fragColor = texture(texture_sampler, outTexCoord);
+        } else {
+            fragColor = vec4(outFrag.r * 0.2, outFrag.g * 0.2, outFrag.b * 0.2, outFrag.w);
+        }
+    } else {
+        fragColor = vec4(1.0, 0.5, 1.0, 1.0);
+    }
 }

@@ -14,8 +14,9 @@ typedef struct List_##name { \
     size_t size; \
     size_t capacity; \
     void (*add)(struct List_##name *list, type value);\
-    type (*getVal)(struct List_##name *list, int index);\
-    type* (*get)(struct List_##name *list, int index);\
+    type (*getVal)(struct List_##name *list, size_t index);\
+    type* (*get)(struct List_##name *list, size_t index);\
+    type* (*getContent)(struct List_##name *list);\
     void (*free)(struct List_##name *list);\
     void (*iterator)(struct List_##name *list, void (*foo)(type *content));\
 } List_##name; \
@@ -35,12 +36,12 @@ static inline void name##_ListAdd(List_##name *list, type value) { \
         list->content[list->size++] = value; \
     } \
 \
-static inline type name##_ListGet(List_##name *list, int index) { \
+static inline type name##_ListGet(List_##name *list, size_t index) { \
     if (index < 0 || index >= list->size) name##_error(); \
     return list->content[index]; \
 } \
 \
-static inline type* name##_ListGet_ptr(List_##name *list, int index) { \
+static inline type* name##_ListGet_ptr(List_##name *list, size_t index) { \
     if (index < 0 || index >= list->size) name##_error(); \
     return &list->content[index]; \
 } \
@@ -58,8 +59,16 @@ static inline void name##_iterator(List_##name *list, void (*foo)(type *content)
     }\
 }\
 \
-static inline List_##name name##_newList(int capacity) { \
-    type* content = malloc(capacity * sizeof(type)); \
+static inline type* name##_getContent(List_##name *list){\
+    type* newContent = malloc(list->size * sizeof(type));\
+    for (int i = 0; i < list->size; i++){\
+        newContent[i] = list->content[i];\
+    }\
+    return newContent;\
+}\
+\
+static inline List_##name name##_newList(int capacity) {\
+    type* content = malloc(capacity * sizeof(type));\
     if (!content) name##_error(); \
     return (List_##name){\
         .content = content,\
@@ -69,7 +78,8 @@ static inline List_##name name##_newList(int capacity) { \
         .getVal = name##_ListGet,\
         .get = name##_ListGet_ptr,\
         .free = name##_ListFree,\
-        .iterator = name##_iterator\
+        .iterator = name##_iterator,\
+        .getContent = name##_getContent\
     }; \
 }
 

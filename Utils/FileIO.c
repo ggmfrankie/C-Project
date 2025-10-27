@@ -12,7 +12,7 @@ String readFile(const String *fileName) {
     const String defaultShaderPath = newString("../Shader/");
     const String completePath = str_combine(&defaultShaderPath, fileName);
 
-    FILE *file = fopen(completePath.content, "rb"); // binary mode to detect BOM
+    FILE *file = fopen(completePath.content, "rb");
     if (!file) {
         printf("Failed to open file: %s\n", completePath.content);
         exit(1);
@@ -32,13 +32,6 @@ String readFile(const String *fileName) {
     fclose(file);
 
     buffer[size] = '\0';
-
-    // Strip UTF-8 BOM if present
-    if ((unsigned char)buffer[0] == 0xEF &&
-        (unsigned char)buffer[1] == 0xBB &&
-        (unsigned char)buffer[2] == 0xBF) {
-        memmove(buffer, buffer + 3, size - 2);
-        }
 
     return newString(buffer);
 }
