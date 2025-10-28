@@ -10,12 +10,6 @@ void linkedListStuff();
 int main(){
     printf("Starting Engine!\n");
     startEngine();
-    String string = newString("Hello my Firend");
-    str_println(&string);
-    List_String words = string.split(&string, " ");
-    for (int i = 0; i < words.size; i++) {
-        str_println(words.get(&words, i));
-    }
 }
 
 
@@ -44,5 +38,11 @@ void linkedListStuff(){
     printf("Hello is this working?\n");
     //String *substr = substring(getDataAt_String(&stringList, 0), 1,3);
     //println(substr);
+    String string = newString("Hello my Firend");
+    str_println(&string);
+    List_String words = string.split(&string, " ");
+    for (int i = 0; i < words.size; i++) {
+        str_println(words.get(&words, i));
+    }
 }
 */

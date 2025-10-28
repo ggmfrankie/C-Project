@@ -1,5 +1,5 @@
-#include "Utils/ArrayList.h"
-#include "Utils/GenericLinkedList.h"
+#include "ArrayList.h"
+#include "GenericLinkedList.h"
 
 
 #ifndef DATASTRUCTURES_C

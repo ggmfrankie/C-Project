@@ -43,9 +43,13 @@ void Renderer_init(Renderer *renderer) {
     Shader_createUniform(&renderer->shader, newString("screenHeight"));
 }
 
-Renderer newRenderer(const int width, const int height, const char* name) {
+void setUniform_f(const Shader *shader, const String name, const float value) {
+    glUniform1f(Uniforms_Map_get(&shader->uniforms, name), value);
+}
+
+Renderer newRenderer(const int width, const int height, const char* name, const Element_Array elements) {
     return (Renderer){
-        .meshes = Mesh_newList(1),
+        .elements = elements,
         .shader = newShader(),
         .window = initWindow(width, height, name),
         .render = Renderer_render
@@ -60,9 +64,10 @@ void Renderer_render(Renderer *renderer) {
     glClear(GL_COLOR_BUFFER_BIT);
     renderer->shader.bind(&renderer->shader);
 
-    for (int i = 0; i < renderer->meshes.size; i++) {
-        const Mesh *mesh = renderer->meshes.get(&renderer->meshes, i);
-        mesh->render(mesh);
+    for (int i = 0; i < renderer->elements.size; i++) {
+        const Element *element = Element_Array_get(&renderer->elements, i);
+
+        Mesh_render(element->Mesh);
     }
     glfwSwapBuffers(renderer->window);
     renderer->shader.unbind();

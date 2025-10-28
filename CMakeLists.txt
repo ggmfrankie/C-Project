@@ -20,7 +20,7 @@ add_executable(C
         Render/Engine.h
         Utils/Vector.c
         Utils/Vector.h
-        DataStructures.c
+        Utils/DataStructures.c
         Render/Shader.c
         Render/Shader.h
         Utils/HashMap.h
@@ -29,6 +29,11 @@ add_executable(C
         Utils/FileIO.h
         Utils/StringBuilder.c
         Utils/StringBuilder.h
+        Render/GuiElement.c
+        Render/GuiElement.h
+        Utils/SimpleArray.h
+        Physic/Spannungsteiler.c
+        Physic/Spannungsteiler.h
 )
 #add_subdirectory("${CMAKE_SOURCE_DIR}/Render")
 
