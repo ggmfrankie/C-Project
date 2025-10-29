@@ -17,5 +17,6 @@ ARRAY_LIST(vec3, Vec3f)
 ARRAY_LIST(vec2, Vec2f)
 
 Vec2f Vec2f_Cross(const Vec2f* v1, const Vec2f* v2);
+Vec2f newVec2f(float x, float y);
 
 #endif //C_VECTOR_H

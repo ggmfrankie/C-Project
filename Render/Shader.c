@@ -7,11 +7,8 @@
 
 #include <string.h>
 
-#include "glad/gl.h"
 #include "../Utils/FileIO.h"
 
-
-int createShader(const GLchar** shaderSource, int shaderType, int programId);
 int createVertexShader(const String *fileName, int programId);
 int createFragmentShader(const String *fileName, int programId);
 
@@ -63,10 +60,11 @@ Shader newShader() {
 
 void Shader_createUniform(Shader *shader, const String name) {
     const int uniformLocation = glGetUniformLocation(shader->programId, name.content);
+    printf("Creating uniform '%s' -> location %d\n", name.content, uniformLocation);
     if(uniformLocation < 0){
         printf("Error creating Uniform");
     }
-    shader->uniforms.put(&shader->uniforms, name, uniformLocation);
+    shader->uniforms.put(&shader->uniforms, newString_c(name.content), uniformLocation);
 }
 
 int createVertexShader(const String *fileName, const int programId) {

@@ -6,9 +6,11 @@
 #define C_SHADER_H
 #include "../Utils/Map.h"
 #include "../Utils/String.h"
+#include "glad/gl.h"
 
 MAP(Uniforms, String, int)
-    typedef struct Shader {
+
+typedef struct Shader {
         int programId;
         int vertexId;
         int fragmentId;
@@ -22,4 +24,5 @@ Shader newShader();
 void Shader_bindProgram(const Shader *shader);
 void Shader_createUniform(Shader *shader, String name);
 void Shader_unbindProgram();
+int createShader(const GLchar** shaderSource, int shaderType, int programId);
 #endif //C_SHADER_H

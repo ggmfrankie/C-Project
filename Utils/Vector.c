@@ -16,3 +16,10 @@ Vec3f Vec3f_Cross(const Vec3f* v1, const Vec3f* v2) {
         .x = (v1->y)
     };
 }
+
+Vec2f newVec2f(const float x, const float y) {
+    return (Vec2f){
+        .x = x,
+        .y = y
+    };
+}

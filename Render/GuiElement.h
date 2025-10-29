@@ -8,12 +8,14 @@
 
 #include "Mesh.h"
 #include "../Utils/SimpleArray.h"
+#include "../Utils/Vector.h"
 
 
 
 typedef struct Element {
-    float x;
-    float y;
+    Vec2f pos;
+    float width;
+    float height;
     short meshCount;
     bool isVisible;
     Mesh* Mesh;
@@ -22,5 +24,5 @@ typedef struct Element {
 } Element;
 
 SIMPLEARRAY(Element, Element)
-
+Element newElement(Mesh *mesh, const short meshCount, const Vec2f pos, const int width, const int height);
 #endif //C_GUIELEMENT_H

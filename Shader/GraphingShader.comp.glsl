@@ -1,0 +1,34 @@
+#version 430 core
+layout(local_size_x = 16, local_size_y = 16) in;
+
+// Our output image (the canvas)
+layout(rgba32f, binding = 0) uniform writeonly image2D outImage;
+
+// Graph data: an array of normalized y-values (0..1)
+layout(std430, binding = 1) buffer GraphData {
+    float data[];
+};
+
+uniform int dataSize;
+uniform float thickness;  // how thick the line is
+
+void main() {
+    ivec2 pix = ivec2(gl_GlobalInvocationID.xy);
+    ivec2 size = imageSize(outImage);
+
+    if (pix.x >= size.x || pix.y >= size.y) return;
+
+    // Map pixel x to data index
+    float fx = float(pix.x) / float(size.x);
+    int i = int(fx * float(dataSize - 1));
+
+    float yNorm = data[i];              // graph value [0..1]
+    int lineY = int((1.0 - yNorm) * float(size.y)); // invert Y for image coords
+
+    float dist = abs(float(pix.y - lineY));
+
+    vec4 color = vec4(1.0); // background white
+    if (dist < thickness) color = vec4(0.0, 0.0, 0.0, 1.0); // black line
+
+    imageStore(outImage, pix, color);
+}

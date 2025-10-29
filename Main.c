@@ -2,13 +2,18 @@
 #include <stdio.h>
 
 #include "Render/Engine.h"
+#include "Utils/Map.h"
 #include "Utils/String.h"
 
 
 void linkedListStuff();
+MAP(Test, String, int);
 
 int main(){
     printf("Starting Engine!\n");
+    Map_Test map = newMap_Test(16, str_equals);
+    map.put(&map, newString("Hellow"), 20);
+    printf("%i\n", map.get(&map, newString("Hellow")));
     startEngine();
 }
 

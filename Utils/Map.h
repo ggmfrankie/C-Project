@@ -34,6 +34,7 @@ static inline void name##_Map_put(Map_##name *map, const Key key, const Value va
         .value = value\
     };\
     map->size++;\
+    map->capacity *= 2;\
 }\
 \
 static inline Value name##_Map_get(const Map_##name *map, const Key key) {\

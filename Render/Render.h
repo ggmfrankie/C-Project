@@ -12,12 +12,14 @@
 
 
 typedef struct Renderer {
+    int screenWidth;
+    int screenHeight;
     GLFWwindow *window;
     Shader shader;
     Element_Array elements;
     void (*render)(struct Renderer *renderer);
-
 } Renderer;
+
 Renderer newRenderer(int width, int height, const char* name, Element_Array elements);
 void Renderer_init(Renderer *renderer);
 void Renderer_render(Renderer *renderer);

@@ -4,19 +4,16 @@
 
 #include "GuiElement.h"
 
-Element newElement(Mesh *mesh, const short meshCount, const float x, const float y) {
+Element newElement(Mesh *mesh, const short meshCount, const Vec2f pos, const int width, const int height) {
     return (Element){
         .Mesh = mesh,
         .meshCount = meshCount,
         .isVisible = true,
         .onClick = NULL,
         .onHover = NULL,
-        .x = x,
-        .y = y
+        .pos = pos,
+        .width = (float) width,
+        .height = (float) height
     };
-}
-
-void setUniforms(Element* element) {
-
 }
 
