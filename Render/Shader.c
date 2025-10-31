@@ -68,17 +68,6 @@ void Shader_createUniform(Shader *shader, const String name) {
 }
 
 int createVertexShader(const String *fileName, const int programId) {
-    //const String shaderCode = readFile(fileName);
-    const GLchar* shaderSrc[] ={
-        "#version 460\n"
-        "layout(location = 0) in vec3 position;\n"
-        "layout(location = 1) in vec3 vertexNormal;\n"
-        "layout(location = 2) in vec2 texCoord;\n"
-        "out vec3 outPosition;\n"
-        "void main() {\n"
-        "    gl_Position = vec4(position, 1.0);\n"
-        "    outPosition = position;\n"
-        "}\n"};
     const String shaderSource = readFile(fileName);
     const GLchar* source = (GLchar*)shaderSource.content;
 
@@ -89,19 +78,12 @@ int createVertexShader(const String *fileName, const int programId) {
 }
 
 int createFragmentShader(const String *fileName, const int programId) {
-
-    const GLchar* shaderSrc[] ={
-        "#version 460\n"
-        "in vec3 outPosition;\n"
-        "out vec4 fragColor;\n"
-        "void main() {\n"
-        "    fragColor = vec4(1.0, 0.5, 1.0, 1.0);\n"
-        "}\n"};
     const String shaderSource = readFile(fileName);
     const GLchar* source = (GLchar*)shaderSource.content;
 
     const int shaderId = createShader(&source, GL_FRAGMENT_SHADER, programId);
     shaderSource.delete(&shaderSource);
+
     return shaderId;
 }
 

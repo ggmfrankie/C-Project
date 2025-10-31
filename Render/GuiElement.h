@@ -7,6 +7,7 @@
 #include <stdbool.h>
 
 #include "Mesh.h"
+#include "Texture.h"
 #include "../Utils/SimpleArray.h"
 #include "../Utils/Vector.h"
 
@@ -19,10 +20,11 @@ typedef struct Element {
     short meshCount;
     bool isVisible;
     Mesh* Mesh;
+    Texture* texture;
     void (*onClick)(struct Element* element);
     void (*onHover)(struct Element* element);
 } Element;
 
 SIMPLEARRAY(Element, Element)
-Element newElement(Mesh *mesh, const short meshCount, const Vec2f pos, const int width, const int height);
+Element newElement(Mesh *mesh, short meshCount, Vec2f pos, int width, int height, Texture* texture);
 #endif //C_GUIELEMENT_H

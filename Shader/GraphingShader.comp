@@ -28,7 +28,7 @@ void main() {
     float dist = abs(float(pix.y - lineY));
 
     vec4 color = vec4(1.0); // background white
-    if (dist < thickness) color = vec4(0.0, 0.0, 0.0, 1.0); // black line
+    if (dist < thickness) color = vec4(0.0, 0.0, 0.0, 0.0); // black line
 
     imageStore(outImage, pix, color);
 }

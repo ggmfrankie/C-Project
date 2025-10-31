@@ -6,6 +6,7 @@
 #ifndef C_RENDER_H
 #define C_RENDER_H
 
+#include "ComputeShader.h"
 #include "GuiElement.h"
 #include "Shader.h"
 #include "GLFW/glfw3.h"
@@ -16,6 +17,7 @@ typedef struct Renderer {
     int screenHeight;
     GLFWwindow *window;
     Shader shader;
+    ComputeShader computeShader;
     Element_Array elements;
     void (*render)(struct Renderer *renderer);
 } Renderer;

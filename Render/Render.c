@@ -3,8 +3,13 @@
 //
 #include "glad/gl.h"
 #include "Render.h"
-#include "../Utils/Vector.h"
 
+#include <math.h>
+
+#include "../Utils/Vector.h"
+double graphingFunction(const double x) {
+    return sin(x)*x*x;
+}
 
 GLFWwindow* initWindow(const int width, const int height, const char* name) {
 
@@ -12,7 +17,7 @@ GLFWwindow* initWindow(const int width, const int height, const char* name) {
         return NULL;
     }
 
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
@@ -25,7 +30,6 @@ GLFWwindow* initWindow(const int width, const int height, const char* name) {
     }
 
     glfwMakeContextCurrent(window);
-
 
     if (!gladLoadGL(glfwGetProcAddress)) {
         glfwDestroyWindow(window);
@@ -48,6 +52,11 @@ void Renderer_init(Renderer *renderer) {
 
     const GLFWframebuffersizefun callbackFun = resizeCallback;
     glfwSetFramebufferSizeCallback(renderer->window, callbackFun);
+
+    ComputeShader_createUniform(&renderer->computeShader, newString("dataSize"));
+    ComputeShader_createUniform(&renderer->computeShader, newString("thickness"));
+    ComputeShader_update(&renderer->computeShader, graphingFunction);
+
     Shader_createUniform(&renderer->shader ,newString("hasTexture"));
     Shader_createUniform(&renderer->shader, newString("isActive"));
     Shader_createUniform(&renderer->shader, newString("width"));
@@ -55,11 +64,10 @@ void Renderer_init(Renderer *renderer) {
     Shader_createUniform(&renderer->shader, newString("screenWidth"));
     Shader_createUniform(&renderer->shader, newString("screenHeight"));
     Shader_createUniform(&renderer->shader, newString("positionObject"));
+    Shader_createUniform(&renderer->shader, newString("texture_sampler"));
 }
 
 void setUniform_f(const Shader *shader, const String name, const float value) {
-    //name.println(&name);
-    //printf("Int value inside map is: %i\n", Uniforms_Map_get(&shader->uniforms, name));
     glUniform1f(Uniforms_Map_get(&shader->uniforms, name), value);
 }
 
@@ -75,6 +83,7 @@ Renderer newRenderer(const int width, const int height, const char* name, const 
     return (Renderer){
         .elements = elements,
         .shader = newShader(),
+        .computeShader = newComputeShader(NULL, 10000),
         .window = initWindow(width, height, name),
         .render = Renderer_render,
         .screenWidth = width,
@@ -87,6 +96,8 @@ void Renderer_destroy(const Renderer *renderer) {
 }
 
 void Renderer_render(Renderer *renderer) {
+    ComputeShader_run(&renderer->computeShader);
+
     glClear(GL_COLOR_BUFFER_BIT);
     renderer->shader.bind(&renderer->shader);
     setUniform_f(&renderer->shader, newString("screenWidth"), (float) renderer->screenWidth);
@@ -99,12 +110,18 @@ void Renderer_render(Renderer *renderer) {
         setUniform_f(shader, newString("width"), element->width);
         setUniform_f(shader, newString("height"), element->height);
 
-        setUniform_i(shader, newString("hasTexture"), 0);
+        setUniform_i(shader, newString("hasTexture"), 1);
         setUniform_i(shader, newString("isActive"), 1);
 
         setUniform_Vec2(shader, newString("positionObject"), element->pos);
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, element->texture->textureId);
+
+        setUniform_i(shader, newString("texture_sampler"), 0);
         Mesh_render(element->Mesh);
     }
+
     glfwSwapBuffers(renderer->window);
     renderer->shader.unbind();
 }

@@ -45,7 +45,7 @@ Mesh newMesh(const MeshData *meshData) {
     deleteMeshData((MeshData*)meshData);
 
     return (Mesh){
-        .indexCount = meshData->indexCount,
+        .indexCount = (int) meshData->indexCount,
         .vaoId = VAO,
         .vboId = VBOs,
         .eboId = EBO,
@@ -86,10 +86,10 @@ Mesh Mesh_loadSimpleQuad() {
 
     meshData->texCoords = malloc(sizeof(float) * meshData->vertexCount * 2);
     const float tmpTex[] = {
-        0.0f, 0.0f,
+        1.0f, 1.0f,
         1.0f, 0.0f,
         0.0f, 1.0f,
-        1.0f, 1.0f
+        0.0f, 0.0f
     };
     memcpy(meshData->texCoords, tmpTex, sizeof(tmpTex));
 

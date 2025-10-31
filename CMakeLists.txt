@@ -32,10 +32,10 @@ add_executable(C
         Render/GuiElement.c
         Render/GuiElement.h
         Utils/SimpleArray.h
-        Render/Graphing.c
-        Render/Graphing.h
         Render/ComputeShader.c
         Render/ComputeShader.h
+        Render/Texture.c
+        Render/Texture.h
 )
 #add_subdirectory("${CMAKE_SOURCE_DIR}/Render")
 
