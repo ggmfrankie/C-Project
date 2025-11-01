@@ -36,6 +36,8 @@ add_executable(C
         Render/ComputeShader.h
         Render/Texture.c
         Render/Texture.h
+        Utils/Mathematics.c
+        Utils/Mathematics.h
 )
 #add_subdirectory("${CMAKE_SOURCE_DIR}/Render")
 

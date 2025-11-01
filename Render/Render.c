@@ -83,7 +83,7 @@ Renderer newRenderer(const int width, const int height, const char* name, const 
     return (Renderer){
         .elements = elements,
         .shader = newShader(),
-        .computeShader = newComputeShader(NULL, 10000),
+        .computeShader = newComputeShader(NULL, 1000),
         .window = initWindow(width, height, name),
         .render = Renderer_render,
         .screenWidth = width,
