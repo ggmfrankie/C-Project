@@ -44,7 +44,7 @@ Shader newShader() {
         glGetProgramInfoLog(programId, 512, NULL, infoLog);
         printf("Shader Program Link Error:\n%s\n", infoLog);
     } else {
-        printf("Shader Program linked successfully! ID: %d\n", programId);
+        //printf("Shader Program linked successfully! ID: %d\n", programId);
     }
 
     return (Shader){
@@ -60,7 +60,7 @@ Shader newShader() {
 
 void Shader_createUniform(Shader *shader, const String name) {
     const int uniformLocation = glGetUniformLocation(shader->programId, name.content);
-    printf("Creating uniform '%s' -> location %d\n", name.content, uniformLocation);
+
     if(uniformLocation < 0){
         printf("Error creating Uniform");
     }

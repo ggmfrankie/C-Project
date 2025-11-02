@@ -38,6 +38,8 @@ add_executable(C
         Render/Texture.h
         Utils/Mathematics.c
         Utils/Mathematics.h
+        Extern/Informatik/Spannungsteiler_A3.c
+        Extern/Informatik/Spannungsteiler_A3.h
 )
 #add_subdirectory("${CMAKE_SOURCE_DIR}/Render")
 

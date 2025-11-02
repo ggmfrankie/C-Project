@@ -6,24 +6,47 @@ layout(rgba32f, binding = 0) uniform writeonly image2D outImage;
 
 // Graph data: an array of normalized y-values (0..1)
 layout(std430, binding = 1) buffer GraphData {
-    float data[];
+    vec2 points[];
 };
 
 uniform int dataSize;
 uniform float thickness;  // how thick the line is
 
 void main() {
+
     ivec2 pix = ivec2(gl_GlobalInvocationID.xy);
     ivec2 size = imageSize(outImage);
 
-    float relativePixelPosX = float(pix.x)/float(size.x);
+    vec2 uv = vec2(pix) / vec2(size);
+    //uv.y = 1.0-uv.y;
+    int index = int(uv.x * (dataSize-1));
 
-    float x = float(pix.x);
-    float y = data[int(relativePixelPosX * (dataSize-1))];
+    int left = 0;
+    int right = dataSize -1;
 
     vec4 color = vec4(0.7);
-    if(1 == 1){
-        color = vec4(0.0, 1.0, 0.0, 1.0);
+
+    while (right - left > 1){
+        int mid = (left+right) / 2;
+        if(uv.x < points[mid].x){
+            right = mid;
+        } else {
+            left = mid;
+        }
     }
+
+    vec2 p0 = vec2(points[left].x * size.x, (1.0 - points[left].y) * size.y);
+    vec2 p1 = vec2(points[right].x * size.x, (1.0 - points[right].y) * size.y);
+
+
+    vec2 A_B = (p1 - p0);
+    vec2 A_X = (vec2(pix) - p0);
+
+    float length = sqrt(dot(A_X, A_X) - (pow(dot(A_B, A_X), 2) / dot(A_B, A_B)));
+
+    if (length <= float(thickness)){
+        color = vec4(0.0, 0.0, 0.0, 1.0);
+    }
+
     imageStore(outImage, pix, color);
 }

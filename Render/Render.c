@@ -6,10 +6,9 @@
 
 #include <math.h>
 
+#include "Engine.h"
 #include "../Utils/Vector.h"
-double graphingFunction(const double x) {
-    return sin(x)*x*x;
-}
+
 
 GLFWwindow* initWindow(const int width, const int height, const char* name) {
 
@@ -83,7 +82,7 @@ Renderer newRenderer(const int width, const int height, const char* name, const 
     return (Renderer){
         .elements = elements,
         .shader = newShader(),
-        .computeShader = newComputeShader(NULL, 1000),
+        .computeShader = 0,
         .window = initWindow(width, height, name),
         .render = Renderer_render,
         .screenWidth = width,

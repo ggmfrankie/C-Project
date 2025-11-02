@@ -10,10 +10,13 @@
 
 typedef struct ComputeShader {
     GLuint SSBO;
-    int ssboSize;
+    GLuint ssboSize;
     GLuint programId;
     Texture* texture;
     Map_Uniforms uniforms;
+    float thickness;
+    float startX;
+    float endX;
 } ComputeShader;
 
 ComputeShader newComputeShader(Texture *texture, int size);

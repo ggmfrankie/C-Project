@@ -12,7 +12,7 @@
 typedef struct name##_Array {\
     type *content;\
     size_t size;\
-    const size_t capacity;\
+    size_t capacity;\
 } name##_Array;\
 \
 static inline void name##_Array_set(const name##_Array* array, const size_t index, const type content) {\
@@ -37,6 +37,13 @@ static inline void name##_Array_add(name##_Array* array, const type content) {\
     }\
     array->content[array->size] = content;\
     array->size++;\
+}\
+\
+static inline void name##_Array_delete(name##_Array* array) {\
+    free(array->content);\
+    array->size = 0;\
+    array->capacity = 0;\
+    array->content = NULL;\
 }\
 \
 static inline name##_Array name##_newArray(type* content, size_t capacity, size_t size){\
