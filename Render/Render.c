@@ -52,18 +52,18 @@ void Renderer_init(Renderer *renderer) {
     const GLFWframebuffersizefun callbackFun = resizeCallback;
     glfwSetFramebufferSizeCallback(renderer->window, callbackFun);
 
-    ComputeShader_createUniform(&renderer->computeShader, newString("dataSize"));
-    ComputeShader_createUniform(&renderer->computeShader, newString("thickness"));
+    ComputeShader_createUniform(&renderer->computeShader, wrapWithString("dataSize"));
+    ComputeShader_createUniform(&renderer->computeShader, wrapWithString("thickness"));
     ComputeShader_update(&renderer->computeShader, graphingFunction);
 
-    Shader_createUniform(&renderer->shader ,newString("hasTexture"));
-    Shader_createUniform(&renderer->shader, newString("isActive"));
-    Shader_createUniform(&renderer->shader, newString("width"));
-    Shader_createUniform(&renderer->shader, newString("height"));
-    Shader_createUniform(&renderer->shader, newString("screenWidth"));
-    Shader_createUniform(&renderer->shader, newString("screenHeight"));
-    Shader_createUniform(&renderer->shader, newString("positionObject"));
-    Shader_createUniform(&renderer->shader, newString("texture_sampler"));
+    Shader_createUniform(&renderer->shader ,wrapWithString("hasTexture"));
+    Shader_createUniform(&renderer->shader, wrapWithString("isActive"));
+    Shader_createUniform(&renderer->shader, wrapWithString("width"));
+    Shader_createUniform(&renderer->shader, wrapWithString("height"));
+    Shader_createUniform(&renderer->shader, wrapWithString("screenWidth"));
+    Shader_createUniform(&renderer->shader, wrapWithString("screenHeight"));
+    Shader_createUniform(&renderer->shader, wrapWithString("positionObject"));
+    Shader_createUniform(&renderer->shader, wrapWithString("texture_sampler"));
 }
 
 void setUniform_f(const Shader *shader, const String name, const float value) {
@@ -99,25 +99,25 @@ void Renderer_render(Renderer *renderer) {
 
     glClear(GL_COLOR_BUFFER_BIT);
     renderer->shader.bind(&renderer->shader);
-    setUniform_f(&renderer->shader, newString("screenWidth"), (float) renderer->screenWidth);
-    setUniform_f(&renderer->shader, newString("screenHeight"), (float) renderer->screenHeight);
+    setUniform_f(&renderer->shader, wrapWithString("screenWidth"), (float) renderer->screenWidth);
+    setUniform_f(&renderer->shader, wrapWithString("screenHeight"), (float) renderer->screenHeight);
 
     for (int i = 0; i < renderer->elements.size; i++) {
         const Element *element = Element_Array_get(&renderer->elements, i);
         const Shader *shader = &renderer->shader;
 
-        setUniform_f(shader, newString("width"), element->width);
-        setUniform_f(shader, newString("height"), element->height);
+        setUniform_f(shader, wrapWithString("width"), element->width);
+        setUniform_f(shader, wrapWithString("height"), element->height);
 
-        setUniform_i(shader, newString("hasTexture"), 1);
-        setUniform_i(shader, newString("isActive"), 1);
+        setUniform_i(shader, wrapWithString("hasTexture"), 1);
+        setUniform_i(shader, wrapWithString("isActive"), 1);
 
-        setUniform_Vec2(shader, newString("positionObject"), element->pos);
+        setUniform_Vec2(shader, wrapWithString("positionObject"), element->pos);
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, element->texture->textureId);
 
-        setUniform_i(shader, newString("texture_sampler"), 0);
+        setUniform_i(shader, wrapWithString("texture_sampler"), 0);
         Mesh_render(element->Mesh);
     }
 

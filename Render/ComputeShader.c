@@ -9,7 +9,7 @@
 #include "Shader.h"
 #include "../Utils/String.h"
 #include "../Utils/FileIO.h"
-#include "../Utils/DataStructures.c"
+#include "../Utils/DataStructures.h"
 #include "../Utils/Vector.h"
 
 GLuint generateGraphSSBO(const size_t size) {
@@ -52,7 +52,7 @@ void ComputeShader_createUniform(ComputeShader *shader, const String name) {
 ComputeShader newComputeShader(Texture *texture, const int size) {
     const int programId = glCreateProgram();
 
-    const String graphingShader = newString("GraphingShader.comp");
+    const String graphingShader = wrapWithString("GraphingShader.comp");
 
     const GLuint graphingId = createGraphingShader(&graphingShader, programId);
     glAttachShader(programId, graphingId);
@@ -88,7 +88,7 @@ void setBufferData_Vec2f(const ComputeShader *computeShader, const vec2_Array *d
 
 void ComputeShader_update(const ComputeShader *computeShader, double (*func)(double x)) {
     const int size = computeShader->ssboSize;
-    vec2_Array data = vec2_newArray(malloc(sizeof(Vec2f)* size), size, size);
+    vec2_Array data = vec2_newArray(malloc(sizeof(Vec2f)* size), size);
 
     const float xStart = computeShader->startX;
     const float xEnd = computeShader->endX;

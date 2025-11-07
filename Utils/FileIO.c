@@ -9,7 +9,7 @@
 #include "String.h"
 
 String readFile(const String *fileName) {
-    const String defaultShaderPath = newString("../Shader/");
+    const String defaultShaderPath = wrapWithString("../Shader/");
     const String completePath = str_combine(&defaultShaderPath, fileName);
 
     FILE *file = fopen(completePath.content, "rb");
@@ -33,5 +33,5 @@ String readFile(const String *fileName) {
 
     buffer[size] = '\0';
 
-    return newString(buffer);
+    return wrapWithString(buffer);
 }

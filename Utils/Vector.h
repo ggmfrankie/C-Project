@@ -6,13 +6,18 @@
 #define C_VECTOR_H
 #include "../Utils/ArrayList.h"
 #include "../Utils/SimpleArray.h"
-    typedef struct vec3 {
+    typedef struct vec3f {
         float x, y, z;
     } Vec3f;
 
-    typedef struct vec2 {
+    typedef struct vec2f {
         float x, y;
     } Vec2f;
+
+    typedef struct vec2i {
+        int x, y;
+    } Vec2i;
+
 
 ARRAY_LIST(vec3, Vec3f)
 ARRAY_LIST(vec2, Vec2f)

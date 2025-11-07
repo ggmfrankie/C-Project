@@ -17,8 +17,8 @@ Shader newShader() {
     const int programId = glCreateProgram();
     int success;
     char infoLog[512];
-    const String vertexShader = newString("GuiVertexShader.vert");
-    const String fragmentShader = newString("GuiFragmentShader.frag");
+    const String vertexShader = wrapWithString("GuiVertexShader.vert");
+    const String fragmentShader = wrapWithString("GuiFragmentShader.frag");
 
     const int vertexId = createVertexShader(&vertexShader, programId);
     const int fragmentId = createFragmentShader(&fragmentShader, programId);

@@ -1,16 +1,10 @@
 
 #include "String.h"
 #include "StringBuilder.h"
-
-
-String newString(char* content){
-    int len = 0;
-    while (content[len] != '\0') {
-        len++;
-    }
+String stringFunctionInitializer(char* content, const size_t length) {
     return (String){
         .content = content,
-        .length = len,
+        .length = length,
         .charAt = str_getCharAt,
         .combine = str_combine,
         .delete = str_delete,
@@ -19,8 +13,25 @@ String newString(char* content){
         .println = str_println,
         .split = str_split,
         .startsWith = str_startsWith,
-        .substring = str_substring
+        .substring = str_substring,
+        .setAll = str_setAll,
+        .setCharAt = str_setCharAt
     };
+}
+
+String wrapWithString(char* content){
+    int len = 0;
+    while (content[len] != '\0') {
+        len++;
+    }
+    return stringFunctionInitializer(content, len);
+}
+
+String newEmptyString(const size_t size) {
+    char* content = malloc(sizeof(char) * size + 1);
+    content[size] = '\0';
+
+    return stringFunctionInitializer(content, size);
 }
 
 char str_getCharAt(const String* string, const int index){
@@ -28,9 +39,14 @@ char str_getCharAt(const String* string, const int index){
     return string->content[index];
 }
 
+void str_setCharAt(const String* string, const int index, const char value){
+    if(index >= string->length || index < 0) return;
+    string->content[index] = value;
+}
+
 String str_substring(const String* string, int start_index, int end_index){
     if (start_index < 0) start_index = 0;
-    if (end_index >= string->length) end_index = string->length - 1;
+    if (end_index >= string->length) end_index = (int) string->length - 1;
     if (start_index > end_index) return (String){};
 
     const int length = (end_index - start_index) + 1;
@@ -42,20 +58,7 @@ String str_substring(const String* string, int start_index, int end_index){
         j++;
     }
     content[j] = '\0';
-    // ReSharper disable once CppDFAMemoryLeak
-    return (String){
-        .content = content,
-        .length = j,
-        .charAt = str_getCharAt,
-        .combine = str_combine,
-        .delete = str_delete,
-        .clear = str_clear,
-        .equals = str_equals,
-        .println = str_println,
-        .split = str_split,
-        .startsWith = str_startsWith,
-        .substring = str_substring
-    };
+    return stringFunctionInitializer(content, length);
 }
 
 String newString_c(const char* content){
@@ -70,23 +73,11 @@ String newString_c(const char* content){
     }
 
     con[len] = '\0';
-    return (String){
-        .content = con,
-        .length = len,
-        .charAt = str_getCharAt,
-        .combine = str_combine,
-        .delete = str_delete,
-        .clear = str_clear,
-        .equals = str_equals,
-        .println = str_println,
-        .split = str_split,
-        .startsWith = str_startsWith,
-        .substring = str_substring
-    };
+    return stringFunctionInitializer(con, len);
 }
 
 String str_combine(const String *string1, const String *string2) {
-    const int length = string1->length + string2->length;
+    const size_t length =  string1->length + string2->length;
     char* con = malloc(length + 1);
     int i;
     for (i = 0; i < string1->length; i++) {
@@ -96,19 +87,7 @@ String str_combine(const String *string1, const String *string2) {
         con[i+j] = string2->content[j];
     }
     con[length] = '\0';
-    return (String){
-        .content = con,
-        .length = length,
-        .charAt = str_getCharAt,
-        .combine = str_combine,
-        .delete = str_delete,
-        .clear = str_clear,
-        .equals = str_equals,
-        .println = str_println,
-        .split = str_split,
-        .startsWith = str_startsWith,
-        .substring = str_substring
-    };
+    return stringFunctionInitializer(con, length);
 }
 
 void str_delete(const String* string){
@@ -168,6 +147,12 @@ List_String str_split(const String* string, const char *key) {
     }
     strList.add(&strList, sb.toString(&sb));
     return strList;
+}
+
+void str_setAll(const String* string, const char key) {
+    for (int i = 0; i < string->length; i++) {
+        string->content[i] = key;
+    }
 }
 
 

@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 4.0)
 project(C C)
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -march=native")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -march=native")
 
 set(CMAKE_C_STANDARD 11)
 
@@ -20,7 +22,7 @@ add_executable(C
         Render/Engine.h
         Utils/Vector.c
         Utils/Vector.h
-        Utils/DataStructures.c
+        Utils/DataStructures.h
         Render/Shader.c
         Render/Shader.h
         Utils/HashMap.h
@@ -40,6 +42,14 @@ add_executable(C
         Utils/Mathematics.h
         Extern/Informatik/Spannungsteiler_A3.c
         Extern/Informatik/Spannungsteiler_A3.h
+        Extern/Informatik/DrunkenBishop.c
+        Extern/Informatik/DrunkenBishop.h
+        Utils/Matrix.h
+        Extern/Informatik/GameBoard.c
+        Extern/Informatik/GameBoard.h
+        Utils/Makros.h
+        Utils/TimeMeasurenments.c
+        Utils/TimeMeasurenments.h
 )
 #add_subdirectory("${CMAKE_SOURCE_DIR}/Render")
 

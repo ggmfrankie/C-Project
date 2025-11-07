@@ -37,7 +37,7 @@ String StrBuilder_toString(StringBuilder *sb) {
     char *newContent = realloc(sb->content, sb->length+1);
     newContent[sb->length] = '\0';
     sb->clear(sb);
-    return newString(newContent);
+    return wrapWithString(newContent);
 }
 
 void StrBuilder_clear(StringBuilder *sb) {

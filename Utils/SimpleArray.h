@@ -12,7 +12,6 @@
 typedef struct name##_Array {\
     type *content;\
     size_t size;\
-    size_t capacity;\
 } name##_Array;\
 \
 static inline void name##_Array_set(const name##_Array* array, const size_t index, const type content) {\
@@ -21,35 +20,30 @@ static inline void name##_Array_set(const name##_Array* array, const size_t inde
 }\
 \
 static inline type* name##_Array_get(const name##_Array* array, const size_t index) {\
-    if (index >= array->capacity) return NULL;\
+    if (index >= array->size) return NULL;\
     return &array->content[index];\
 }\
 \
 static inline type name##_Array_getValue(const name##_Array* array, const size_t index) {\
-    if (index >= array->capacity) exit(0);\
+    if (index >= array->size) exit(0);\
     return array->content[index];\
 }\
 \
-static inline void name##_Array_add(name##_Array* array, const type content) {\
-    if (array->size >= array->capacity) {\
-        printf("Array is full");\
-        return;\
+static inline void name##_Array_setAll(name##_Array* array, const type value){\
+    for (int i = 0; i < array->size; i++) {\
+        array->content[i] = value;\
     }\
-    array->content[array->size] = content;\
-    array->size++;\
 }\
 \
 static inline void name##_Array_delete(name##_Array* array) {\
     free(array->content);\
     array->size = 0;\
-    array->capacity = 0;\
     array->content = NULL;\
 }\
 \
-static inline name##_Array name##_newArray(type* content, size_t capacity, size_t size){\
+static inline name##_Array name##_newArray(type* content, size_t size){\
     return (name##_Array){\
         .content = content,\
-        .capacity = capacity,\
         .size = size\
     };\
 }

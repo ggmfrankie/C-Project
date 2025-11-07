@@ -5,12 +5,25 @@
 #include "Utils/Map.h"
 #include "Utils/String.h"
 #include "Extern/Informatik/Spannungsteiler_A3.h"
+#include "Extern/Informatik/DrunkenBishop.h"
 
+
+#if 0
 int main(){
     char c = '?';
     Berechnung();
     scanf("%c", &c);
     startEngine();
 }
+#endif
 
 
+#if 1
+int main() {
+
+    drawWithBishop(0x0e2f8bac75342a72cULL);
+    drawWithBishop(0x0e2f8bca75842af2cULL);
+
+    return 0;
+}
+#endif
