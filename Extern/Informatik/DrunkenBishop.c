@@ -30,11 +30,13 @@ void drawWithBishop(unsigned long long input) {
     const int steps = sizeof input * 4;
     GameBoard board = createBoard();
     initBoard(&board);
+
     for (int i = 0; i < steps; i++) {
         const Direction dir = input % 4;
-        input = input >> 2;
+        input >>= 2;
         moveBishop(&board, dir);
     }
+
     const time_t elapsedTime = now_ns()-startingTime;
     printf("Time to calculate was: %lli\n", elapsedTime);
     printBoard(&board);
