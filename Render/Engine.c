@@ -21,8 +21,7 @@ double graphingFunction(const double x) {
 }
 
 void startEngine() {
-    Element elementsHolder[16];
-    Renderer renderer = newRenderer(width+20, height+20, "Huhu", Element_newArray(elementsHolder, 16));
+    Renderer renderer = newRenderer(2048, 1024, "Huhu", Element_newList(4));
     List_Mesh meshes = Mesh_newList(16);
 
     Texture graphTexture = newEmptyTexture(width, height);
@@ -37,7 +36,8 @@ void startEngine() {
     Renderer_init(&renderer);
     Mesh_ListAdd(&meshes, Mesh_loadSimpleQuad());
 
-    Element_Array_set(&renderer.elements, 0,  newElement(Mesh_ListGet_ptr(&meshes ,0), 1, newVec2f(10, 10), width, height, &graphTexture));
+    Element_ListAdd(&renderer.elements, newElement(Mesh_ListGet_ptr(&meshes ,0), 1, newVec2f(100, 100), 200, 200, &graphTexture));
+    Element_ListAdd(&renderer.elements, newElement(Mesh_ListGet_ptr(&meshes ,0), 1, newVec2f(200, 100), 500, 700, &graphTexture));
 
     while (!glfwWindowShouldClose(renderer.window)) {
         Sleep(20);

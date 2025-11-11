@@ -78,7 +78,7 @@ void setUniform_Vec2(const Shader *shader, const String name, const Vec2f value)
     glUniform2f(Uniforms_Map_get(&shader->uniforms, name), value.x, value.y);
 }
 
-Renderer newRenderer(const int width, const int height, const char* name, const Element_Array elements) {
+Renderer newRenderer(const int width, const int height, const char* name, const List_Element elements) {
     return (Renderer){
         .elements = elements,
         .shader = newShader(),
@@ -103,7 +103,8 @@ void Renderer_render(Renderer *renderer) {
     setUniform_f(&renderer->shader, wrapWithString("screenHeight"), (float) renderer->screenHeight);
 
     for (int i = 0; i < renderer->elements.size; i++) {
-        const Element *element = Element_Array_get(&renderer->elements, i);
+        const Element *element = Element_ListGet_ptr(&renderer->elements, i);
+        if (element == NULL) break;
         const Shader *shader = &renderer->shader;
 
         setUniform_f(shader, wrapWithString("width"), element->width);
@@ -115,7 +116,9 @@ void Renderer_render(Renderer *renderer) {
         setUniform_Vec2(shader, wrapWithString("positionObject"), element->pos);
 
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, element->texture->textureId);
+        if (element->texture != NULL) {
+            glBindTexture(GL_TEXTURE_2D, element->texture->textureId);
+        }
 
         setUniform_i(shader, wrapWithString("texture_sampler"), 0);
         Mesh_render(element->Mesh);

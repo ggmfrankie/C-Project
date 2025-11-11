@@ -8,17 +8,14 @@
 #include "Extern/Informatik/DrunkenBishop.h"
 
 
-#if 0
+#if 1
 int main(){
-    char c = '?';
-    Berechnung();
-    scanf("%c", &c);
     startEngine();
 }
 #endif
 
 
-#if 1
+#if 0
 int main() {
 
     drawWithBishop(0x0e2f8bac75342a72cULL);

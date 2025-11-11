@@ -12,9 +12,10 @@ uniform int hasTexture;
 uniform int isActive;
 
 void main() {
+    vec4 texColor = texture(texture_sampler, outTexCoord);
 
     if(hasTexture == 1){
-        vec4 outFrag = texture(texture_sampler, outTexCoord);
+        vec4 outFrag = texColor;
         if (isActive == 1) {
             fragColor = texture(texture_sampler, outTexCoord);
         } else {

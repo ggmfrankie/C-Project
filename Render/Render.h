@@ -18,11 +18,11 @@ typedef struct Renderer {
     GLFWwindow *window;
     Shader shader;
     ComputeShader computeShader;
-    Element_Array elements;
+    List_Element elements;
     void (*render)(struct Renderer *renderer);
 } Renderer;
 
-Renderer newRenderer(int width, int height, const char* name, Element_Array elements);
+Renderer newRenderer(int width, int height, const char* name, List_Element elements);
 void Renderer_init(Renderer *renderer);
 void Renderer_render(Renderer *renderer);
 void Renderer_destroy(const Renderer *renderer);
