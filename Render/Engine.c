@@ -8,10 +8,11 @@
 
 #include "GuiElement.h"
 #include "Render.h"
+#include "CallbackFunctions.h"
 #include "../Extern/Informatik/Spannungsteiler_A3.h"
     #define width 4096
     #define height 600
-void updateState();
+void updateState(Renderer *renderer);
 
 double graphingFunction(const double x) {
     const Spannung value = berechneSpannungsteiler(10, 40, berechneErsatzwiderstand(30, 10 * x));
@@ -37,12 +38,15 @@ void startEngine() {
     Mesh_ListAdd(&meshes, Mesh_loadSimpleQuad());
 
     Element_ListAdd(&renderer.elements, newElement(Mesh_ListGet_ptr(&meshes ,0), 1, newVec2f(100, 100), 200, 200, &graphTexture));
+    setBoundingBox(Element_ListGetLast(&renderer.elements), isSelected_Quad);
+    setOnHoverCallback(Element_ListGetLast(&renderer.elements), callback1);
+
     Element_ListAdd(&renderer.elements, newElement(Mesh_ListGet_ptr(&meshes ,0), 1, newVec2f(200, 100), 500, 700, &graphTexture));
 
     while (!glfwWindowShouldClose(renderer.window)) {
         Sleep(20);
         glfwPollEvents();
-        updateState();
+        updateState(&renderer);
         renderer.render(&renderer);
     }
     //renderer.shader.delete(&renderer.shader); TODO
@@ -50,6 +54,20 @@ void startEngine() {
     glfwTerminate();
 }
 
-void updateState() {
+void updateState(Renderer *renderer) {
+    for (int i = 0; i < renderer->elements.size; i++) {
+        renderer->elements.get(&renderer->elements, i)->state = 0;
+    }
 
+    for (int i = 0; i < renderer->elements.size; i++) {
+        Element *element = renderer->elements.get(&renderer->elements, i);
+
+        if (element->isMouseOver == NULL) continue;
+        if (element->isMouseOver(element, renderer->mousePos)) {
+            if (element->onHover != NULL) element->onHover(element);
+            if (element->onClick != NULL) {
+                if (isMousePressed(renderer->window, GLFW_MOUSE_BUTTON_LEFT)) element->onClick(element);
+            }
+        }
+    }
 }

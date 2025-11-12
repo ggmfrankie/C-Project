@@ -9,18 +9,23 @@ out vec4 fragColor;
 
 uniform sampler2D texture_sampler;
 uniform int hasTexture;
-uniform int isActive;
+uniform int state;
 
 void main() {
     vec4 texColor = texture(texture_sampler, outTexCoord);
 
     if(hasTexture == 1){
-        vec4 outFrag = texColor;
-        if (isActive == 1) {
-            fragColor = texture(texture_sampler, outTexCoord);
-        } else {
-            discard;
+
+        if (state == 0) {
+            fragColor = texColor;
+        } else
+        if (state == 1){
+            fragColor = 0 * texColor;
+        } else
+        if (state == 2){
+            fragColor = 0.5 * texColor;
         }
+
     } else {
         fragColor = vec4(0.0, 0.6, 1.0, 1.0);
     }

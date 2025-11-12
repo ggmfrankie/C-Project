@@ -46,18 +46,29 @@ void resizeCallback(GLFWwindow *window, const int width, const int height) {
     renderer->screenHeight = height;
 }
 
+void cursorPositionCallback(GLFWwindow* window, const double xPos, const double yPos) {
+    Renderer *renderer = (Renderer *)glfwGetWindowUserPointer(window);
+    renderer->mousePos.x = (float)xPos;
+    renderer->mousePos.y = (float)yPos;
+}
+
+inline bool isMousePressed(GLFWwindow* window, const int mouseButton) {
+    return glfwGetMouseButton(window, mouseButton) == GLFW_PRESS;
+}
+
 void Renderer_init(Renderer *renderer) {
     glfwSetWindowUserPointer(renderer->window, renderer);
 
     const GLFWframebuffersizefun callbackFun = resizeCallback;
     glfwSetFramebufferSizeCallback(renderer->window, callbackFun);
+    glfwSetCursorPosCallback(renderer->window, cursorPositionCallback);
 
     ComputeShader_createUniform(&renderer->computeShader, wrapWithString("dataSize"));
     ComputeShader_createUniform(&renderer->computeShader, wrapWithString("thickness"));
     ComputeShader_update(&renderer->computeShader, graphingFunction);
 
     Shader_createUniform(&renderer->shader ,wrapWithString("hasTexture"));
-    Shader_createUniform(&renderer->shader, wrapWithString("isActive"));
+    Shader_createUniform(&renderer->shader, wrapWithString("state"));
     Shader_createUniform(&renderer->shader, wrapWithString("width"));
     Shader_createUniform(&renderer->shader, wrapWithString("height"));
     Shader_createUniform(&renderer->shader, wrapWithString("screenWidth"));
@@ -111,7 +122,7 @@ void Renderer_render(Renderer *renderer) {
         setUniform_f(shader, wrapWithString("height"), element->height);
 
         setUniform_i(shader, wrapWithString("hasTexture"), 1);
-        setUniform_i(shader, wrapWithString("isActive"), 1);
+        setUniform_i(shader, wrapWithString("state"), element->state);
 
         setUniform_Vec2(shader, wrapWithString("positionObject"), element->pos);
 

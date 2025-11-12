@@ -50,6 +50,8 @@ add_executable(C
         Utils/Makros.h
         Utils/TimeMeasurenments.c
         Utils/TimeMeasurenments.h
+        Render/CallbackFunctions.h
+        Render/CallbackFunctions.c
 )
 #add_subdirectory("${CMAKE_SOURCE_DIR}/Render")
 

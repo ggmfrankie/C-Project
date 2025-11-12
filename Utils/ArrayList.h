@@ -16,6 +16,7 @@ typedef struct List_##name { \
     void (*add)(struct List_##name *list, type value);\
     type (*getVal)(struct List_##name *list, size_t index);\
     type* (*get)(struct List_##name *list, size_t index);\
+    type* (*getLast)(struct List_##name *list);\
     type* (*getContent)(struct List_##name *list);\
     void (*free)(struct List_##name *list);\
     void (*iterator)(struct List_##name *list, void (*foo)(type *content));\
@@ -36,7 +37,7 @@ static inline void name##_ListAdd(List_##name *list, type value) { \
         list->content[list->size++] = value; \
     } \
 \
-static inline type name##_ListGet(List_##name *list, size_t index) { \
+static inline type name##_ListGet_val(List_##name *list, size_t index) { \
     if (index < 0 || index >= list->size) name##_error(); \
     return list->content[index]; \
 } \
@@ -44,7 +45,11 @@ static inline type name##_ListGet(List_##name *list, size_t index) { \
 static inline type* name##_ListGet_ptr(List_##name *list, size_t index) { \
     if (index < 0 || index >= list->size) name##_error(); \
     return &list->content[index]; \
-} \
+}\
+\
+static inline type* name##_ListGetLast(List_##name *list) { \
+    return &list->content[list->size-1]; \
+}\
 \
 static inline void name##_ListFree(List_##name *list) { \
     free(list->content); \
@@ -75,8 +80,9 @@ static inline List_##name name##_newList(int capacity) {\
         .size = 0,\
         .capacity = capacity,\
         .add = name##_ListAdd,\
-        .getVal = name##_ListGet,\
+        .getVal = name##_ListGet_val,\
         .get = name##_ListGet_ptr,\
+        .getLast = name##_ListGetLast,\
         .free = name##_ListFree,\
         .iterator = name##_iterator,\
         .getContent = name##_getContent\
