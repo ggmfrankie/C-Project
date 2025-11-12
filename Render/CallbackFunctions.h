@@ -6,7 +6,7 @@
 #define C_CALLBACKFUNCTIONS_H
 #include "GuiElement.h"
 
-inline void callback1(Element *element);
+void callback1(Element *element);
 
 
 
