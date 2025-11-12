@@ -7,6 +7,7 @@
 #include "GuiElement.h"
 
 void callback1(Element *element);
+void callback2(Element *element);
 
 
 

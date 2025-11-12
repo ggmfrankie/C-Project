@@ -38,10 +38,12 @@ void startEngine() {
     Mesh_ListAdd(&meshes, Mesh_loadSimpleQuad());
 
     Element_ListAdd(&renderer.elements, newElement(Mesh_ListGet_ptr(&meshes ,0), 1, newVec2f(100, 100), 200, 200, &graphTexture));
-    setBoundingBox(Element_ListGetLast(&renderer.elements), isSelected_Quad);
-    setOnHoverCallback(Element_ListGetLast(&renderer.elements), callback1);
 
     Element_ListAdd(&renderer.elements, newElement(Mesh_ListGet_ptr(&meshes ,0), 1, newVec2f(200, 100), 500, 700, &graphTexture));
+
+    setBoundingBox(Element_ListGetLast(&renderer.elements), isSelected_Quad);
+    setOnHoverCallback(Element_ListGetLast(&renderer.elements), callback1);
+    setOnClickCallback(Element_ListGetLast(&renderer.elements), callback2);
 
     while (!glfwWindowShouldClose(renderer.window)) {
         Sleep(20);
@@ -64,7 +66,9 @@ void updateState(Renderer *renderer) {
 
         if (element->isMouseOver == NULL) continue;
         if (element->isMouseOver(element, renderer->mousePos)) {
+
             if (element->onHover != NULL) element->onHover(element);
+
             if (element->onClick != NULL) {
                 if (isMousePressed(renderer->window, GLFW_MOUSE_BUTTON_LEFT)) element->onClick(element);
             }

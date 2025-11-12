@@ -39,6 +39,6 @@ void setOnHoverCallback(Element* element, void (*onHover)(Element* element)) {
 }
 
 void setOnClickCallback(Element* element, void (*onClick)(Element* element)) {
-    element->onHover = onClick;
+    element->onClick = onClick;
 }
 

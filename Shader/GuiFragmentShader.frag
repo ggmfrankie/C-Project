@@ -20,10 +20,10 @@ void main() {
             fragColor = texColor;
         } else
         if (state == 1){
-            fragColor = 0 * texColor;
+            fragColor = 0.5 * texColor;
         } else
         if (state == 2){
-            fragColor = 0.5 * texColor;
+            fragColor = 0 * texColor;
         }
 
     } else {

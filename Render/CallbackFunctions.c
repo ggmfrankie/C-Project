@@ -6,6 +6,9 @@
 inline void callback1(Element *element) {
     element->state = 1;
 }
+inline void callback2(Element *element) {
+    element->state = 2;
+}
 
 void dragFunction(Element *element) {
     static Vec2f initialMousePos;
