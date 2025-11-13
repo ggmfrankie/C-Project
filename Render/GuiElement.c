@@ -22,7 +22,7 @@ Element newElement(Mesh *mesh, const short meshCount, const Vec2f pos, const int
     };
 }
 
-bool isSelected_Quad(Element *element, const Vec2f mousePos) {
+bool isSelected_Quad(const Element *element, const Vec2f mousePos) {
     if (mousePos.x <= element->pos.x+element->width && mousePos.x >= element->pos.x &&
         mousePos.y <= element->pos.y+element->height && mousePos.y >= element->pos.y) {
         return true;
@@ -30,15 +30,15 @@ bool isSelected_Quad(Element *element, const Vec2f mousePos) {
     return false;
 }
 
-void setBoundingBox(Element* element, bool (*isMouseOver)(Element* element, Vec2f mousePos)) {
+void setBoundingBox(Element* element, bool (*isMouseOver)(const Element* element, Vec2f mousePos)) {
     element->isMouseOver = isMouseOver;
 }
 
-void setOnHoverCallback(Element* element, void (*onHover)(Element* element)) {
+void setOnHoverCallback(Element* element, void (*onHover)(Element* element, Renderer* renderer)) {
     element->onHover = onHover;
 }
 
-void setOnClickCallback(Element* element, void (*onClick)(Element* element)) {
+void setOnClickCallback(Element* element, void (*onClick)(Element* element, Renderer* renderer)) {
     element->onClick = onClick;
 }
 

@@ -9,14 +9,15 @@
 #include "String.h"
 
 String readFile(const String *fileName) {
-    const String defaultShaderPath = wrapWithString("../Shader/");
-    const String completePath = str_combine(&defaultShaderPath, fileName);
+    const String defaultShaderPath = stringOf("../Shader/");
+    const String completePath = Strings.combine(&defaultShaderPath, fileName);
 
     FILE *file = fopen(completePath.content, "rb");
     if (!file) {
         printf("Failed to open file: %s\n", completePath.content);
         exit(1);
     }
+    Strings.delete(&completePath);
 
     fseek(file, 0, SEEK_END);
     const long size = ftell(file);
@@ -33,5 +34,5 @@ String readFile(const String *fileName) {
 
     buffer[size] = '\0';
 
-    return wrapWithString(buffer);
+    return stringOf(buffer);
 }

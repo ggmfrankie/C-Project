@@ -1,37 +1,27 @@
 
 #include "String.h"
 #include "StringBuilder.h"
-String stringFunctionInitializer(char* content, const size_t length) {
+
+
+String stringOf(char* content){
+    int length = 0;
+    while (content[length] != '\0') {
+        length++;
+    }
     return (String){
         .content = content,
-        .length = length,
-        .charAt = str_getCharAt,
-        .combine = str_combine,
-        .delete = str_delete,
-        .clear = str_clear,
-        .equals = str_equals,
-        .println = str_println,
-        .split = str_split,
-        .startsWith = str_startsWith,
-        .substring = str_substring,
-        .setAll = str_setAll,
-        .setCharAt = str_setCharAt
+        .length = length
     };
 }
 
-String wrapWithString(char* content){
-    int len = 0;
-    while (content[len] != '\0') {
-        len++;
-    }
-    return stringFunctionInitializer(content, len);
-}
+String newEmptyString(const size_t length) {
+    char* content = malloc(sizeof(char) * length + 1);
+    content[length] = '\0';
 
-String newEmptyString(const size_t size) {
-    char* content = malloc(sizeof(char) * size + 1);
-    content[size] = '\0';
-
-    return stringFunctionInitializer(content, size);
+    return (String){
+        .content = content,
+        .length = length
+    };
 }
 
 char str_getCharAt(const String* string, const int index){
@@ -58,36 +48,45 @@ String str_substring(const String* string, int start_index, int end_index){
         j++;
     }
     content[j] = '\0';
-    return stringFunctionInitializer(content, length);
+    return (String){
+        .content = content,
+        .length = length
+    };
 }
 
 String newString_c(const char* content){
-    int len = 0;
-    while (content[len] != '\0') {
-        len++;
+    int length = 0;
+    while (content[length] != '\0') {
+        length++;
     }
 
-    char* con = malloc(sizeof(char) * (len + 1));
-    for (int i = 0; i < len; i++) {
+    char* con = malloc(sizeof(char) * (length + 1));
+    for (int i = 0; i < length; i++) {
         con[i] = content[i];
     }
 
-    con[len] = '\0';
-    return stringFunctionInitializer(con, len);
+    con[length] = '\0';
+    return (String){
+        .content = con,
+        .length = length
+    };
 }
 
 String str_combine(const String *string1, const String *string2) {
     const size_t length =  string1->length + string2->length;
-    char* con = malloc(length + 1);
+    char* content = malloc(length + 1);
     int i;
     for (i = 0; i < string1->length; i++) {
-        con[i] = string1->content[i];
+        content[i] = string1->content[i];
     }
     for (int j = 0; j < string2->length; j++) {
-        con[i+j] = string2->content[j];
+        content[i+j] = string2->content[j];
     }
-    con[length] = '\0';
-    return stringFunctionInitializer(con, length);
+    content[length] = '\0';
+    return (String){
+        .content = content,
+        .length = length
+    };
 }
 
 void str_delete(const String* string){
@@ -133,7 +132,7 @@ List_String str_split(const String* string, const char *key) {
     StringBuilder sb = newStringBuilder();
 
     for (int i = 0; i < string->length; i++) {
-        const char current = string->charAt(string, i);
+        const char current = str_getCharAt(string, i);
         if (current == key[j]) {
             j++;
             if (j == keyLength) {

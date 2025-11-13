@@ -17,8 +17,8 @@ Shader newShader() {
     const int programId = glCreateProgram();
     int success;
     char infoLog[512];
-    const String vertexShader = wrapWithString("GuiVertexShader.vert");
-    const String fragmentShader = wrapWithString("GuiFragmentShader.frag");
+    const String vertexShader = stringOf("GuiVertexShader.vert");
+    const String fragmentShader = stringOf("GuiFragmentShader.frag");
 
     const int vertexId = createVertexShader(&vertexShader, programId);
     const int fragmentId = createFragmentShader(&fragmentShader, programId);
@@ -72,7 +72,7 @@ int createVertexShader(const String *fileName, const int programId) {
     const GLchar* source = (GLchar*)shaderSource.content;
 
     const int shaderId = createShader(&source, GL_VERTEX_SHADER, programId);
-    shaderSource.delete(&shaderSource);
+    Strings.delete(&shaderSource);
 
     return shaderId;
 }
@@ -82,7 +82,7 @@ int createFragmentShader(const String *fileName, const int programId) {
     const GLchar* source = (GLchar*)shaderSource.content;
 
     const int shaderId = createShader(&source, GL_FRAGMENT_SHADER, programId);
-    shaderSource.delete(&shaderSource);
+    Strings.delete(&shaderSource);
 
     return shaderId;
 }

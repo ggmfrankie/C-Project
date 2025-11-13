@@ -36,7 +36,7 @@ GLuint createGraphingShader(const String *fileName, const int programId) {
         printf("Graphing Shader Compile Error:\n%s\n", infoLog);
     }
 
-    shaderSource.delete(&shaderSource);
+    Strings.delete(&shaderSource);
     return shaderId;
 }
 
@@ -52,7 +52,7 @@ void ComputeShader_createUniform(ComputeShader *shader, const String name) {
 ComputeShader newComputeShader(Texture *texture, const int size) {
     const int programId = glCreateProgram();
 
-    const String graphingShader = wrapWithString("GraphingShader.comp");
+    const String graphingShader = stringOf("GraphingShader.comp");
 
     const GLuint graphingId = createGraphingShader(&graphingShader, programId);
     glAttachShader(programId, graphingId);

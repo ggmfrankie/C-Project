@@ -35,12 +35,15 @@ GLFWwindow* initWindow(const int width, const int height, const char* name) {
         glfwTerminate();
         return NULL;
     }
+    glViewport(0, 0, width, height);
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     return window;
 }
 
 void resizeCallback(GLFWwindow *window, const int width, const int height) {
+
     glViewport(0, 0, width, height);
+
     Renderer *renderer = (Renderer *)glfwGetWindowUserPointer(window);
     renderer->screenWidth = width;
     renderer->screenHeight = height;
@@ -63,18 +66,18 @@ void Renderer_init(Renderer *renderer) {
     glfwSetFramebufferSizeCallback(renderer->window, callbackFun);
     glfwSetCursorPosCallback(renderer->window, cursorPositionCallback);
 
-    ComputeShader_createUniform(&renderer->computeShader, wrapWithString("dataSize"));
-    ComputeShader_createUniform(&renderer->computeShader, wrapWithString("thickness"));
+    ComputeShader_createUniform(&renderer->computeShader, stringOf("dataSize"));
+    ComputeShader_createUniform(&renderer->computeShader, stringOf("thickness"));
     ComputeShader_update(&renderer->computeShader, graphingFunction);
 
-    Shader_createUniform(&renderer->shader ,wrapWithString("hasTexture"));
-    Shader_createUniform(&renderer->shader, wrapWithString("state"));
-    Shader_createUniform(&renderer->shader, wrapWithString("width"));
-    Shader_createUniform(&renderer->shader, wrapWithString("height"));
-    Shader_createUniform(&renderer->shader, wrapWithString("screenWidth"));
-    Shader_createUniform(&renderer->shader, wrapWithString("screenHeight"));
-    Shader_createUniform(&renderer->shader, wrapWithString("positionObject"));
-    Shader_createUniform(&renderer->shader, wrapWithString("texture_sampler"));
+    Shader_createUniform(&renderer->shader ,stringOf("hasTexture"));
+    Shader_createUniform(&renderer->shader, stringOf("state"));
+    Shader_createUniform(&renderer->shader, stringOf("width"));
+    Shader_createUniform(&renderer->shader, stringOf("height"));
+    Shader_createUniform(&renderer->shader, stringOf("screenWidth"));
+    Shader_createUniform(&renderer->shader, stringOf("screenHeight"));
+    Shader_createUniform(&renderer->shader, stringOf("positionObject"));
+    Shader_createUniform(&renderer->shader, stringOf("texture_sampler"));
 }
 
 void setUniform_f(const Shader *shader, const String name, const float value) {
@@ -109,29 +112,34 @@ void Renderer_render(Renderer *renderer) {
     ComputeShader_run(&renderer->computeShader);
 
     glClear(GL_COLOR_BUFFER_BIT);
+
+    #ifdef DEBUG
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    #endif
+
     renderer->shader.bind(&renderer->shader);
-    setUniform_f(&renderer->shader, wrapWithString("screenWidth"), (float) renderer->screenWidth);
-    setUniform_f(&renderer->shader, wrapWithString("screenHeight"), (float) renderer->screenHeight);
+    setUniform_f(&renderer->shader, stringOf("screenWidth"), (float) renderer->screenWidth);
+    setUniform_f(&renderer->shader, stringOf("screenHeight"), (float) renderer->screenHeight);
 
     for (int i = 0; i < renderer->elements.size; i++) {
         const Element *element = Element_ListGet_ptr(&renderer->elements, i);
         if (element == NULL) break;
         const Shader *shader = &renderer->shader;
 
-        setUniform_f(shader, wrapWithString("width"), element->width);
-        setUniform_f(shader, wrapWithString("height"), element->height);
+        setUniform_f(shader, stringOf("width"), element->width);
+        setUniform_f(shader, stringOf("height"), element->height);
 
-        setUniform_i(shader, wrapWithString("hasTexture"), 1);
-        setUniform_i(shader, wrapWithString("state"), element->state);
+        setUniform_i(shader, stringOf("hasTexture"), 1);
+        setUniform_i(shader, stringOf("state"), element->state);
 
-        setUniform_Vec2(shader, wrapWithString("positionObject"), element->pos);
+        setUniform_Vec2(shader, stringOf("positionObject"), element->pos);
 
         glActiveTexture(GL_TEXTURE0);
         if (element->texture != NULL) {
             glBindTexture(GL_TEXTURE_2D, element->texture->textureId);
         }
 
-        setUniform_i(shader, wrapWithString("texture_sampler"), 0);
+        setUniform_i(shader, stringOf("texture_sampler"), 0);
         Mesh_render(element->Mesh);
     }
 

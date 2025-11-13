@@ -52,6 +52,7 @@ add_executable(C
         Utils/TimeMeasurenments.h
         Render/CallbackFunctions.h
         Render/CallbackFunctions.c
+        Dependencies/include/stb/stb_image.h
 )
 #add_subdirectory("${CMAKE_SOURCE_DIR}/Render")
 

@@ -6,8 +6,9 @@
 #define C_CALLBACKFUNCTIONS_H
 #include "GuiElement.h"
 
-void callback1(Element *element);
-void callback2(Element *element);
+void callback1(Element *element, Renderer *renderer);
+void callback2(Element *element, Renderer *renderer);
+void dragFunction(Element *element, Renderer *renderer);
 
 
 
