@@ -4,5 +4,6 @@
 
 #ifndef C_TIMEMEASURENMENTS_H
 #define C_TIMEMEASURENMENTS_H
-long long now_ns();
+typedef long long TimeNs;
+TimeNs now_ns();
 #endif //C_TIMEMEASURENMENTS_H

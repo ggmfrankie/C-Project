@@ -11,11 +11,6 @@
 #include "../Utils/SimpleArray.h"
 #include "../Utils/Vector.h"
 
-#define BUTTON_CALLBACK_PRESET1 \
-    setBoundingBox(Element_ListGetLast(&renderer.elements), isSelected_Quad);\
-    setOnHoverCallback(Element_ListGetLast(&renderer.elements), callback1);\
-    setOnClickCallback(Element_ListGetLast(&renderer.elements), dragFunction);
-
 struct Renderer;
 typedef struct Renderer Renderer;
 
@@ -34,7 +29,7 @@ typedef struct Element {
     Mesh* Mesh;
     Texture* texture;
     bool (*isMouseOver)(const struct Element* element, Vec2f mousePos);
-    void (*onClick)(struct Element* element, Renderer *renderer);
+    bool (*onClick)(struct Element* element, Renderer *renderer);
     void (*onHover)(struct Element* element, Renderer *renderer);
 } Element;
 

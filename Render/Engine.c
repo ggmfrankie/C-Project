@@ -22,6 +22,10 @@ double graphingFunction(const double x) {
 
     return value;
 }
+#define BUTTON_CALLBACK_PRESET1 \
+setBoundingBox(Element_ListGetLast(&renderer.elements), isSelected_Quad);\
+setOnHoverCallback(Element_ListGetLast(&renderer.elements), dragFunction);\
+setOnClickCallback(Element_ListGetLast(&renderer.elements), clickCallbackFunction);
 
 void startEngine() {
     Renderer renderer = newRenderer(2048, 1024, "Huhu", Element_newList(4));
@@ -41,18 +45,25 @@ void startEngine() {
     Renderer_init(&renderer);
 
     Element_ListAdd(&renderer.elements, newElement(&quadMesh, 1, newVec2f(0, 0), 200, 200, &graphTexture));
-    BUTTON_CALLBACK_PRESET1
+    Element_ListGetLast(&renderer.elements)->isMouseOver = isSelected_Quad;
+    Element_ListGetLast(&renderer.elements)->onHover = hoverCallbackFunction;
+    Element_ListGetLast(&renderer.elements)->onClick = clickCallbackFunction;
+
     Element_ListAdd(&renderer.elements, newElement(&quadMesh, 1, newVec2f(200, 100), 500, 700, &blackButton));
-    BUTTON_CALLBACK_PRESET1
+    Element_ListGetLast(&renderer.elements)->isMouseOver = isSelected_Quad;
+    Element_ListGetLast(&renderer.elements)->onHover = hoverCallbackFunction;
+    Element_ListGetLast(&renderer.elements)->onClick = clickCallbackFunction;
 
 
     while (!glfwWindowShouldClose(renderer.window)) {
+        const unsigned long long timeStart = now_ns();
 
-        Sleep(2);
         glfwPollEvents();
         updateState(&renderer);
         renderer.render(&renderer);
+        const unsigned long long elapsedTime = now_ns()-timeStart;
 
+        Sleep(1);
     }
 
     //renderer.shader.delete(&renderer.shader); TODO
@@ -71,9 +82,9 @@ void updateState(Renderer *renderer) {
         if (element->isMouseOver == NULL) continue;
 
         if (element->isMouseOver(element, renderer->mousePos)) {
-            if (element->onHover != NULL) element->onHover(element, renderer);
 
-            if (element->onClick != NULL) element->onClick(element, renderer);
+            if (element->onClick != NULL && click(renderer->window ,GLFW_MOUSE_BUTTON_LEFT)) element->onClick(element, renderer);
+            if (element->onHover != NULL) element->onHover(element, renderer);
         }
     }
 }

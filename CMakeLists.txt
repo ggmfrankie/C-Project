@@ -53,6 +53,7 @@ add_executable(C
         Render/CallbackFunctions.h
         Render/CallbackFunctions.c
         Dependencies/include/stb/stb_image.h
+        Extern/Informatik/Geldautomat.c
 )
 #add_subdirectory("${CMAKE_SOURCE_DIR}/Render")
 

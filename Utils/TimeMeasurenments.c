@@ -6,7 +6,7 @@
 
 #include <windows.h>
 
-long long now_ns() {
+TimeNs now_ns() {
     static LARGE_INTEGER freq;
     static int initialized = 0;
     if (!initialized) {
