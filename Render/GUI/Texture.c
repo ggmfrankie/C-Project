@@ -2,8 +2,8 @@
 // Created by Stefan on 31.10.2025.
 //
 
-#include "Texture.h"
-#include "../Utils/String.h"
+#include "../GUI/Texture.h"
+#include "../../Utils/String.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
 

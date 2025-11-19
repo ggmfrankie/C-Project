@@ -2,9 +2,9 @@
 // Created by Stefan on 28.10.2025.
 //
 
-#include "GuiElement.h"
+#include "../GUI/GuiElement.h"
 
-#include "Render.h"
+#include "../Render.h"
 
 Element newElement(Mesh *mesh, const short meshCount, const Vec2f pos, const int width, const int height, Texture* texture) {
     return (Element){
@@ -18,7 +18,10 @@ Element newElement(Mesh *mesh, const short meshCount, const Vec2f pos, const int
         .pos = pos,
         .width = (float) width,
         .height = (float) height,
-        .texture = texture
+        .texture = texture,
+        .textElement = NULL,
+        .childElements = NULL,
+        .numChildElements = 0
     };
 }
 

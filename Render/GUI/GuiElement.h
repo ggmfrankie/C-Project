@@ -7,12 +7,14 @@
 #include <stdbool.h>
 
 #include "Mesh.h"
-#include "Texture.h"
-#include "../Utils/SimpleArray.h"
-#include "../Utils/Vector.h"
+#include "../GUI/Texture.h"
+#include "../../Utils/SimpleArray.h"
+#include "../../Utils/Vector.h"
 
 struct Renderer;
 typedef struct Renderer Renderer;
+struct TextElement;
+typedef struct TextElement TextElement;
 
 typedef enum {
     S_default = 0,
@@ -24,14 +26,29 @@ typedef struct Element {
     float width;
     float height;
     short meshCount;
-    ElementState state;
-    bool isVisible;
     Mesh* Mesh;
     Texture* texture;
+    //Text display
+
+    TextElement* textElement;
+
+    //Interaction
+    ElementState state;
+    bool isVisible;
     bool (*isMouseOver)(const struct Element* element, Vec2f mousePos);
-    bool (*onClick)(struct Element* element, Renderer *renderer);
+    void (*onClick)(struct Element* element, Renderer *renderer);
     void (*onHover)(struct Element* element, Renderer *renderer);
+
+    int numChildElements;
+    struct Element* childElements;
 } Element;
+
+typedef struct TextElement {
+    String text;
+    Vec3f textColor;
+    float textScale;
+    Vec2f offset;
+} TextElement;
 
 SIMPLEARRAY(Element, Element)
 ARRAY_LIST(Element, Element)

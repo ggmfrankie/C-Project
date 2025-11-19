@@ -6,9 +6,9 @@
 #include <math.h>
 #include <windows.h>
 
-#include "GuiElement.h"
+#include "GUI/GuiElement.h"
 #include "Render.h"
-#include "CallbackFunctions.h"
+#include "GUI/CallbackFunctions.h"
 #include "../Extern/Informatik/Spannungsteiler_A3.h"
 #include "../Utils/TimeMeasurenments.h"
 
@@ -45,14 +45,22 @@ void startEngine() {
     Renderer_init(&renderer);
 
     Element_ListAdd(&renderer.elements, newElement(&quadMesh, 1, newVec2f(0, 0), 200, 200, &graphTexture));
-    Element_ListGetLast(&renderer.elements)->isMouseOver = isSelected_Quad;
-    Element_ListGetLast(&renderer.elements)->onHover = hoverCallbackFunction;
-    Element_ListGetLast(&renderer.elements)->onClick = clickCallbackFunction;
+    TextElement textForButton1 = (TextElement){
+        .offset = (Vec2f){0.2f, 0.2f},
+        .text = stringOf("This Works for ascii?"),
+        .textScale = 1.0f,
+        .textColor = (Vec3f){1.0f, 1.0f, 1.0f}
+    };
 
-    Element_ListAdd(&renderer.elements, newElement(&quadMesh, 1, newVec2f(200, 100), 500, 700, &blackButton));
     Element_ListGetLast(&renderer.elements)->isMouseOver = isSelected_Quad;
     Element_ListGetLast(&renderer.elements)->onHover = hoverCallbackFunction;
     Element_ListGetLast(&renderer.elements)->onClick = clickCallbackFunction;
+    Element_ListGetLast(&renderer.elements)->textElement = &textForButton1;
+
+    // Element_ListAdd(&renderer.elements, newElement(&quadMesh, 1, newVec2f(200, 100), 500, 700, &blackButton));
+    // Element_ListGetLast(&renderer.elements)->isMouseOver = isSelected_Quad;
+    // Element_ListGetLast(&renderer.elements)->onHover = hoverCallbackFunction;
+    // Element_ListGetLast(&renderer.elements)->onClick = clickCallbackFunction;
 
 
     while (!glfwWindowShouldClose(renderer.window)) {

@@ -14,8 +14,8 @@ add_executable(C
         Utils/String.h
         Render/Render.c
         Render/Render.h
-        Render/Mesh.c
-        Render/Mesh.h
+        Render/GUI/Mesh.c
+        Render/GUI/Mesh.h
         Utils/ArrayList.h
         Render/gl.c
         Render/Engine.c
@@ -31,13 +31,13 @@ add_executable(C
         Utils/FileIO.h
         Utils/StringBuilder.c
         Utils/StringBuilder.h
-        Render/GuiElement.c
-        Render/GuiElement.h
+        Render/GUI/GuiElement.c
+        Render/GUI/GuiElement.h
         Utils/SimpleArray.h
         Render/ComputeShader.c
         Render/ComputeShader.h
-        Render/Texture.c
-        Render/Texture.h
+        Render/GUI/Texture.c
+        Render/GUI/Texture.h
         Utils/Mathematics.c
         Utils/Mathematics.h
         Extern/Informatik/Spannungsteiler_A3.c
@@ -50,16 +50,22 @@ add_executable(C
         Utils/Makros.h
         Utils/TimeMeasurenments.c
         Utils/TimeMeasurenments.h
-        Render/CallbackFunctions.h
-        Render/CallbackFunctions.c
+        Render/GUI/CallbackFunctions.h
+        Render/GUI/CallbackFunctions.c
         Dependencies/include/stb/stb_image.h
         Extern/Informatik/Geldautomat.c
+        Render/GUI/Font.c
+        Render/GUI/Font.h
+        Dependencies/include/stb/stb_truetype.h
+        Dependencies/include/stb/stb_truetype.h
+        Dependencies/include/stb/stb_rect_pack.h
 )
 #add_subdirectory("${CMAKE_SOURCE_DIR}/Render")
 
 set(GLFW_LIB "${CMAKE_SOURCE_DIR}/Dependencies/lib-mingw-w64/libglfw3.a")
 
 add_library(glfw STATIC IMPORTED)
+
 set_target_properties(glfw PROPERTIES
         IMPORTED_LOCATION "${GLFW_LIB}"
 )

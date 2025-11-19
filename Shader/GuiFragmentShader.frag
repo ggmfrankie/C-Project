@@ -13,7 +13,7 @@ uniform int state;
 
 void main() {
     vec4 texColor = texture(texture_sampler, outTexCoord);
-
+    if(texColor.a == 0.0) discard;
     if(hasTexture == 1){
 
         if (state == 0) {
@@ -30,6 +30,4 @@ void main() {
         fragColor = vec4(0.0, 0.6, 1.0, 1.0);
     }
 
-
-    //fragColor = vec4(0.0, 0.6, 1.0, 1.0);
 }

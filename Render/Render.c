@@ -78,19 +78,13 @@ void Renderer_init(Renderer *renderer) {
     Shader_createUniform(&renderer->shader, stringOf("screenHeight"));
     Shader_createUniform(&renderer->shader, stringOf("positionObject"));
     Shader_createUniform(&renderer->shader, stringOf("texture_sampler"));
+
+    Shader_createUniform(&renderer->shader, stringOf("transformTexCoords"));
+    Shader_createUniform(&renderer->shader, stringOf("texPosStart"));
+    Shader_createUniform(&renderer->shader, stringOf("texPosEnd"));
 }
 
-void setUniform_f(const Shader *shader, const String name, const float value) {
-    glUniform1f(Uniforms_Map_get(&shader->uniforms, name), value);
-}
 
-void setUniform_i(const Shader *shader, const String name, const int value) {
-    glUniform1i(Uniforms_Map_get(&shader->uniforms, name), value);
-}
-
-void setUniform_Vec2(const Shader *shader, const String name, const Vec2f value) {
-    glUniform2f(Uniforms_Map_get(&shader->uniforms, name), value.x, value.y);
-}
 
 Renderer newRenderer(const int width, const int height, const char* name, const List_Element elements) {
     return (Renderer){
@@ -100,7 +94,9 @@ Renderer newRenderer(const int width, const int height, const char* name, const 
         .window = initWindow(width, height, name),
         .render = Renderer_render,
         .screenWidth = width,
-        .screenHeight = height
+        .screenHeight = height,
+        .font = loadFontAtlas(stringOf("SwanseaBold-D0ox.ttf")),
+        .basicQuadMesh = Mesh_loadSimpleQuad()
     };
 }
 
@@ -112,8 +108,9 @@ void Renderer_render(Renderer *renderer) {
     ComputeShader_run(&renderer->computeShader);
 
     glClear(GL_COLOR_BUFFER_BIT);
-
+//#define DEBUG
     #ifdef DEBUG
+    glDisable(GL_CULL_FACE);
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     #endif
 
@@ -133,6 +130,7 @@ void Renderer_render(Renderer *renderer) {
         setUniform_i(shader, stringOf("state"), element->state);
 
         setUniform_Vec2(shader, stringOf("positionObject"), element->pos);
+        setUniform_i(shader, stringOf("transformTexCoords"), 0);
 
         glActiveTexture(GL_TEXTURE0);
         if (element->texture != NULL) {
@@ -141,6 +139,10 @@ void Renderer_render(Renderer *renderer) {
 
         setUniform_i(shader, stringOf("texture_sampler"), 0);
         Mesh_render(element->Mesh);
+
+        if (element->textElement) {
+            renderText(renderer, element);
+        }
     }
 
     glfwSwapBuffers(renderer->window);

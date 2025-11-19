@@ -1,7 +1,7 @@
 //
 // Created by Stefan on 10.10.2025.
 //
-#include "Mesh.h"
+#include "../GUI/Mesh.h"
 
 #include <string.h>
 

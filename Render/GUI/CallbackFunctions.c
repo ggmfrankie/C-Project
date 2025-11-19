@@ -2,9 +2,9 @@
 // Created by Stefan on 12.11.2025.
 //
 
-#include "CallbackFunctions.h"
+#include "../GUI/CallbackFunctions.h"
 
-#include "Render.h"
+#include "../Render.h"
 
 void dragFunction(Element *element, Renderer *renderer) {
     element->state = 1;
@@ -33,10 +33,9 @@ void hoverCallbackFunction(Element *element, Renderer *renderer) {
     dragFunction(element, renderer);
 }
 
-bool clickCallbackFunction(Element *element, Renderer *renderer) {
-    if (glfwGetKey(renderer->window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) return false;
+void clickCallbackFunction(Element *element, Renderer *renderer) {
+    if (glfwGetKey(renderer->window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) return;
     printf("Hello\n");
-    return true;
 }
 
 bool click(GLFWwindow *window, const int mouseButton) {

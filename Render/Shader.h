@@ -6,6 +6,7 @@
 #define C_SHADER_H
 #include "../Utils/Map.h"
 #include "../Utils/String.h"
+#include "../Utils/Vector.h"
 #include "glad/gl.h"
 
 MAP(Uniforms, String, int)
@@ -24,5 +25,9 @@ Shader newShader();
 void Shader_bindProgram(const Shader *shader);
 void Shader_createUniform(Shader *shader, String name);
 void Shader_unbindProgram();
+void setUniform_f(const Shader *shader, String name, float value);
+void setUniform_Vec2(const Shader *shader, String name, Vec2f value);
+void setUniform_i(const Shader *shader, String name, int value);
+
 int createShader(const GLchar** shaderSource, int shaderType, int programId);
 #endif //C_SHADER_H

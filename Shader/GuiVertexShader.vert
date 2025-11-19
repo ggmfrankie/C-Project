@@ -16,11 +16,21 @@ uniform float screenHeight;
 
 uniform vec2 positionObject;
 
+uniform int transformTexCoords;
+
+uniform vec2 texPosStart;
+uniform vec2 texPosEnd;
+
 void main() {
     vec2 pixelPos = vec2(position.x * width, position.y * height);
     pixelPos += positionObject;
 
     vec2 normPos = vec2((pixelPos.x / screenWidth) * 2.0 - 1.0, 1.0 - (pixelPos.y / screenHeight) * 2.0);
     gl_Position = vec4(normPos, 0.0, 1.0);
-    outTexCoord = texCoord;
+
+    if(transformTexCoords == 1){
+        outTexCoord = mix(texPosStart, texPosEnd, texCoord);
+    } else {
+        outTexCoord = texCoord;
+    }
 }

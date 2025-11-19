@@ -95,6 +95,18 @@ int createShader(const GLchar** shaderSource, const int shaderType, const int pr
     return shaderId;
 }
 
+void setUniform_f(const Shader *shader, const String name, const float value) {
+    glUniform1f(Uniforms_Map_get(&shader->uniforms, name), value);
+}
+
+void setUniform_i(const Shader *shader, const String name, const int value) {
+    glUniform1i(Uniforms_Map_get(&shader->uniforms, name), value);
+}
+
+void setUniform_Vec2(const Shader *shader, const String name, const Vec2f value) {
+    glUniform2f(Uniforms_Map_get(&shader->uniforms, name), value.x, value.y);
+}
+
 void Shader_bindProgram(const Shader *shader) {
     glUseProgram(shader->programId);
 }

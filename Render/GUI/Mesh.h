@@ -4,7 +4,7 @@
 
 #ifndef C_MESH_H
 #define C_MESH_H
-#include "../Utils/ArrayList.h"
+#include "../../Utils/ArrayList.h"
 
 typedef struct MeshData {
     float* vertices;

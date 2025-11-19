@@ -5,7 +5,7 @@
 #ifndef C_GRAPHINGSHADER_H
 #define C_GRAPHINGSHADER_H
 #include "Shader.h"
-#include "Texture.h"
+#include "GUI/Texture.h"
 #include "glad/gl.h"
 
 typedef struct ComputeShader {

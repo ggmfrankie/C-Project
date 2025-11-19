@@ -7,9 +7,10 @@
 #define C_RENDER_H
 
 #include "ComputeShader.h"
-#include "GuiElement.h"
+#include "GUI/GuiElement.h"
 #include "Shader.h"
 #include "GLFW/glfw3.h"
+#include "GUI/Font.h"
 
 
 typedef struct Renderer {
@@ -20,6 +21,8 @@ typedef struct Renderer {
     Shader shader;
     ComputeShader computeShader;
     List_Element elements;
+    Font font;
+    Mesh basicQuadMesh;
     void (*render)(struct Renderer *renderer);
 } Renderer;
 

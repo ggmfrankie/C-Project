@@ -5,7 +5,7 @@
 #ifndef C_TEXTURE_H
 #define C_TEXTURE_H
 #include "glad/gl.h"
-#include "../Utils/String.h"
+#include "../../Utils/String.h"
 
 typedef struct {
     int width;

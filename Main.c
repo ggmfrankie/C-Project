@@ -16,10 +16,9 @@ int main(){
     SetConsoleOutputCP(CP_UTF8);
     geldautomatTest();
 
-    //startEngine();
+    startEngine();
 }
 #endif
-
 
 #if 0
 int main() {
