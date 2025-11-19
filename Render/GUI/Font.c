@@ -13,8 +13,8 @@
 #include "../Render.h"
 #include "../../Utils/DataStructures.h"
 #include "../../Utils/String.h"
-#define FONT_ATLAS_SIZE 4096
-#define FONT_SIZE 200.0f
+#define FONT_ATLAS_SIZE 2048
+#define FONT_SIZE 16.0f
 
 
 Font loadFontAtlas(const String file) {
@@ -108,7 +108,7 @@ void renderText(Renderer *renderer, const Element *element) {
         setUniform_i(shader, stringOf("hasTexture"), 1);
         setUniform_f(shader, stringOf("width"), glyphWidth);
         setUniform_f(shader, stringOf("height"), glyphHeight);
-        setUniform_Vec2(shader, stringOf("positionObject"), (Vec2f){ q.x0, q.y0 });
+        setUniform_Vec2(shader, stringOf("positionObject"), (Vec2f){ (q.x0-startPos.x)*textScale + startPos.x, (q.y0-startPos.y)*textScale + startPos.y });
 
         setUniform_i(shader, stringOf("transformTexCoords"), 1);
         setUniform_Vec2(shader, stringOf("texPosStart"), (Vec2f){ q.s0, q.t0 });

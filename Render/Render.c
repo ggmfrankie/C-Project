@@ -95,7 +95,7 @@ Renderer newRenderer(const int width, const int height, const char* name, const 
         .render = Renderer_render,
         .screenWidth = width,
         .screenHeight = height,
-        .font = loadFontAtlas(stringOf("From Cartoon Blocks.ttf")),
+        .font = loadFontAtlas(stringOf("SwanseaBold-D0ox.ttf")),
         .basicQuadMesh = Mesh_loadSimpleQuad()
     };
 }
