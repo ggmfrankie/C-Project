@@ -47,8 +47,8 @@ void startEngine() {
     Element_ListAdd(&renderer.elements, newElement(&quadMesh, 1, newVec2f(0, 0), 200, 200, &graphTexture));
     TextElement textForButton1 = (TextElement){
         .offset = (Vec2f){0.2f, 0.2f},
-        .text = stringOf("This Works for ascii?"),
-        .textScale = 1.0f,
+        .text = stringOf("This Works for ascii? LIGMA"),
+        .textScale = 0.2f,
         .textColor = (Vec3f){1.0f, 1.0f, 1.0f}
     };
 

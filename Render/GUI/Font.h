@@ -13,7 +13,7 @@ typedef struct Renderer Renderer;
 
 typedef struct Font{
     Texture fontAtlas;
-    stbtt_bakedchar glyphs[96];
+    stbtt_packedchar glyphs[96];
     float fontSize;
 } Font;
 
