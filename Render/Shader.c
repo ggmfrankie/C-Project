@@ -12,6 +12,7 @@
 int createVertexShader(const String *fileName, int programId);
 int createFragmentShader(const String *fileName, int programId);
 
+
 Shader newShader() {
 
     const int programId = glCreateProgram();
@@ -68,7 +69,7 @@ void Shader_createUniform(Shader *shader, const String name) {
 }
 
 int createVertexShader(const String *fileName, const int programId) {
-    const String shaderSource = readFile(fileName);
+    String shaderSource = readShaderFile(fileName);
     const GLchar* source = (GLchar*)shaderSource.content;
 
     const int shaderId = createShader(&source, GL_VERTEX_SHADER, programId);
@@ -78,13 +79,21 @@ int createVertexShader(const String *fileName, const int programId) {
 }
 
 int createFragmentShader(const String *fileName, const int programId) {
-    const String shaderSource = readFile(fileName);
+    String shaderSource = readShaderFile(fileName);
     const GLchar* source = (GLchar*)shaderSource.content;
 
     const int shaderId = createShader(&source, GL_FRAGMENT_SHADER, programId);
     Strings.delete(&shaderSource);
 
     return shaderId;
+}
+
+String readShaderFile(const String *fileName) {
+    const String defaultShaderPath = stringOf("../Shader/");
+    String completePath = Strings.combine(&defaultShaderPath, fileName);
+    const String shaderSource = readFile(&completePath);
+    Strings.delete(&completePath);
+    return shaderSource;
 }
 
 int createShader(const GLchar** shaderSource, const int shaderType, const int programId) {

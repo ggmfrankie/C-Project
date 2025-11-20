@@ -21,7 +21,8 @@ Element newElement(Mesh *mesh, const short meshCount, const Vec2f pos, const int
         .texture = texture,
         .textElement = NULL,
         .childElements = NULL,
-        .numChildElements = 0
+        .numChildElements = 0,
+        .userdata = NULL
     };
 }
 

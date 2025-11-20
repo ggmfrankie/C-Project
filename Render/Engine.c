@@ -28,10 +28,10 @@ setOnHoverCallback(Element_ListGetLast(&renderer.elements), dragFunction);\
 setOnClickCallback(Element_ListGetLast(&renderer.elements), clickCallbackFunction);
 
 void startEngine() {
-    Renderer renderer = newRenderer(2048, 1024, "Huhu", Element_newList(4));
+    Renderer renderer = newRenderer(512, 512, "Huhu", Element_newList(4));
 
     Texture graphTexture = newEmptyTexture(width, height);
-    Texture blackButton = loadTextureFromPng(stringOf("Black.png"));
+    Texture blackButton = loadTextureFromPng(stringOf("GrayBox.png"));
 
     Mesh quadMesh = Mesh_loadSimpleQuad();
 
@@ -45,9 +45,10 @@ void startEngine() {
     Renderer_init(&renderer);
 
     Element_ListAdd(&renderer.elements, newElement(&quadMesh, 1, newVec2f(0, 0), 200, 200, &graphTexture));
+    String text = stringOf("../Resources/Fonts/ARIAL.TTF");
     TextElement textForButton1 = (TextElement){
         .offset = (Vec2f){0.2f, 0.2f},
-        .text = stringOf("This Works for ascii? LIGMA"),
+        .text = &text,
         .textScale = 1.0f,
         .textColor = (Vec3f){1.0f, 1.0f, 1.0f}
     };
@@ -55,13 +56,13 @@ void startEngine() {
     Element_ListGetLast(&renderer.elements)->isMouseOver = isSelected_Quad;
     Element_ListGetLast(&renderer.elements)->onHover = hoverCallbackFunction;
     Element_ListGetLast(&renderer.elements)->onClick = clickCallbackFunction;
+
+
+    Element_ListAdd(&renderer.elements, newElement(&quadMesh, 1, newVec2f(200, 100), 500, 40, &blackButton));
+    Element_ListGetLast(&renderer.elements)->isMouseOver = isSelected_Quad;
+    Element_ListGetLast(&renderer.elements)->onHover = hoverCallbackFunction;
+    Element_ListGetLast(&renderer.elements)->onClick = clickCallbackFunction;
     Element_ListGetLast(&renderer.elements)->textElement = &textForButton1;
-
-    // Element_ListAdd(&renderer.elements, newElement(&quadMesh, 1, newVec2f(200, 100), 500, 700, &blackButton));
-    // Element_ListGetLast(&renderer.elements)->isMouseOver = isSelected_Quad;
-    // Element_ListGetLast(&renderer.elements)->onHover = hoverCallbackFunction;
-    // Element_ListGetLast(&renderer.elements)->onClick = clickCallbackFunction;
-
 
     while (!glfwWindowShouldClose(renderer.window)) {
         const unsigned long long timeStart = now_ns();

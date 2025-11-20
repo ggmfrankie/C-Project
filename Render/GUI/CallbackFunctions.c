@@ -35,6 +35,14 @@ void hoverCallbackFunction(Element *element, Renderer *renderer) {
 
 void clickCallbackFunction(Element *element, Renderer *renderer) {
     if (glfwGetKey(renderer->window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) return;
+    if (element->textElement) {
+        char* newText = malloc(512);
+        puts("Enter the new Name:\n");
+        scanf("%511s", newText);
+        Strings.delete(element->textElement->text);
+        *element->textElement->text = newString_c(newText);
+        free(newText);
+    }
     printf("Hello\n");
 }
 

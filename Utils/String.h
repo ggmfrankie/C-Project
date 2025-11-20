@@ -11,6 +11,7 @@ typedef struct StringFunctions StringFunctions;
 typedef struct String {
     char* content;
     size_t length;
+    bool isHeap;
 
 } String;
 
@@ -18,7 +19,7 @@ typedef struct StringFunctions {
     char (*charAt)(const struct String* string,int);
     struct String (*substring)(const struct String* string, int start_index, int end_index);
     struct String (*combine)(const struct String *string1, const struct String *string2);
-    void (*delete)(const struct String* string);
+    void (*delete)(struct String* string);
     void (*clear)(struct String* string);
     void (*println)(const struct String* string);
     bool (*equals)(const struct String* string, const struct String* key);
@@ -38,7 +39,7 @@ String newEmptyString(size_t length);
 String str_combine(const String *string1, const String *string2);
 String str_substring(const String* string, int start_index, int end_index);
 
-void str_delete(const String* string);
+void str_delete(String* string);
 void str_clear(String* string);
 void str_println(const String* string);
 bool str_equals(const String* string, const String* key);

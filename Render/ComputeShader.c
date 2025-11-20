@@ -8,7 +8,6 @@
 
 #include "Shader.h"
 #include "../Utils/String.h"
-#include "../Utils/FileIO.h"
 #include "../Utils/DataStructures.h"
 #include "../Utils/Vector.h"
 
@@ -16,13 +15,13 @@ GLuint generateGraphSSBO(const size_t size) {
     GLuint graphSSBO;
     glGenBuffers(1, &graphSSBO);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, graphSSBO);
-    glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(Vec2f) * size, NULL, GL_DYNAMIC_DRAW);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, (GLsizeiptr) (sizeof(Vec2f) * size), NULL, GL_DYNAMIC_DRAW);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, graphSSBO);
     return graphSSBO;
 }
 
 GLuint createGraphingShader(const String *fileName, const int programId) {
-    const String shaderSource = readFile(fileName);
+    String shaderSource = readShaderFile(fileName);
     const GLchar* source = (GLchar*)shaderSource.content;
 
     const int shaderId = createShader(&source, GL_COMPUTE_SHADER, programId);
@@ -64,8 +63,6 @@ ComputeShader newComputeShader(Texture *texture, const int size) {
     if (!success) {
         glGetProgramInfoLog(programId, 512, NULL, infoLog);
         printf("Shader Program Link Error:\n%s\n", infoLog);
-    } else {
-        //printf("Shader Program linked successfully! ID: %d\n", programId);
     }
     glDeleteShader(graphingId);
 
@@ -87,7 +84,7 @@ void setBufferData_Vec2f(const ComputeShader *computeShader, const vec2_Array *d
 }
 
 void ComputeShader_update(const ComputeShader *computeShader, double (*func)(double x)) {
-    const int size = computeShader->ssboSize;
+    const int size = (int) computeShader->ssboSize;
     vec2_Array data = vec2_newArray(malloc(sizeof(Vec2f)* size), size);
 
     const float xStart = computeShader->startX;
@@ -131,7 +128,7 @@ void ComputeShader_run(const ComputeShader *computeShader) {
         GL_RGBA32F                  // texture format (must match shader's layout)
     );
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, computeShader->SSBO);
-    glUniform1i(glGetUniformLocation(computeShader->programId, "dataSize"), computeShader->ssboSize);
+    glUniform1i(glGetUniformLocation(computeShader->programId, "dataSize"), (GLint)computeShader->ssboSize);
     glUniform1f(glGetUniformLocation(computeShader->programId, "thickness"), computeShader->thickness);
     glDispatchCompute((texture->width + 15)/16, (texture->height + 15)/16, 1);
     glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);

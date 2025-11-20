@@ -29,5 +29,6 @@ void setUniform_f(const Shader *shader, String name, float value);
 void setUniform_Vec2(const Shader *shader, String name, Vec2f value);
 void setUniform_i(const Shader *shader, String name, int value);
 
+String readShaderFile(const String *fileName);
 int createShader(const GLchar** shaderSource, int shaderType, int programId);
 #endif //C_SHADER_H

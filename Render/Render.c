@@ -66,6 +66,9 @@ void Renderer_init(Renderer *renderer) {
     glfwSetFramebufferSizeCallback(renderer->window, callbackFun);
     glfwSetCursorPosCallback(renderer->window, cursorPositionCallback);
 
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     ComputeShader_createUniform(&renderer->computeShader, stringOf("dataSize"));
     ComputeShader_createUniform(&renderer->computeShader, stringOf("thickness"));
     ComputeShader_update(&renderer->computeShader, graphingFunction);
@@ -95,7 +98,7 @@ Renderer newRenderer(const int width, const int height, const char* name, const 
         .render = Renderer_render,
         .screenWidth = width,
         .screenHeight = height,
-        .font = loadFontAtlas(stringOf("SwanseaBold-D0ox.ttf")),
+        .font = loadFontAtlas(stringOf("From Cartoon Blocks.ttf")),
         .basicQuadMesh = Mesh_loadSimpleQuad()
     };
 }

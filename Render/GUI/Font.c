@@ -14,7 +14,7 @@
 #include "../../Utils/DataStructures.h"
 #include "../../Utils/String.h"
 #define FONT_ATLAS_SIZE 2048
-#define FONT_SIZE 16.0f
+#define FONT_SIZE 32.0f
 
 
 Font loadFontAtlas(const String file) {
@@ -41,7 +41,7 @@ Font loadFontAtlas(const String file) {
 
     stbtt_pack_context pc;
     stbtt_PackBegin(&pc, temp_bitmap, FONT_ATLAS_SIZE, FONT_ATLAS_SIZE, 0, 1, NULL);
-    stbtt_PackSetOversampling(&pc, 2, 2);   // 2×2 or even 3×3 gives very smooth edges
+    stbtt_PackSetOversampling(&pc, 3, 3);   // 2×2 or even 3×3 gives very smooth edges
 
     stbtt_PackFontRange(&pc, ttf_buffer, 0, FONT_SIZE,
                         32, 96, font.glyphs);
@@ -71,14 +71,14 @@ Font loadFontAtlas(const String file) {
 
 void renderText(Renderer *renderer, const Element *element) {
     const TextElement *textElement = element->textElement;
-    if (textElement->text.length == 0) return;
+    if (textElement->text->length == 0) return;
     Font* font = &renderer->font;
     float textScale = textElement->textScale;
 
     //TODO relative Position
     Vec2f startPos = (Vec2f){
         .x = element->pos.x + textElement->offset.x,
-        .y = element->pos.y + element->height/2 + textElement->offset.y
+        .y = element->pos.y + element->height + textElement->offset.y
     };
     Vec2f cursor = (Vec2f){
         .x = startPos.x,
@@ -87,8 +87,8 @@ void renderText(Renderer *renderer, const Element *element) {
 
     glBindTexture(GL_TEXTURE_2D, font->fontAtlas.textureId);
 
-    for (int i = 0; i < textElement->text.length; i++) {
-        char c = textElement->text.content[i];
+    for (int i = 0; i < textElement->text->length; i++) {
+        char c = textElement->text->content[i];
         if (c < 32 || c > 126) continue;
 
         stbtt_aligned_quad q;

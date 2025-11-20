@@ -9,15 +9,12 @@
 #include "String.h"
 
 String readFile(const String *fileName) {
-    const String defaultShaderPath = stringOf("../Shader/");
-    const String completePath = Strings.combine(&defaultShaderPath, fileName);
 
-    FILE *file = fopen(completePath.content, "rb");
+    FILE *file = fopen(fileName->content, "rb");
     if (!file) {
-        printf("Failed to open file: %s\n", completePath.content);
+        printf("Failed to open file: %s\n", fileName->content);
         exit(1);
     }
-    Strings.delete(&completePath);
 
     fseek(file, 0, SEEK_END);
     const long size = ftell(file);

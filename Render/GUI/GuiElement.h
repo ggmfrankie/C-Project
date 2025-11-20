@@ -28,12 +28,13 @@ typedef struct Element {
     short meshCount;
     Mesh* Mesh;
     Texture* texture;
-    //Text display
 
+    //Text display
     TextElement* textElement;
 
     //Interaction
     ElementState state;
+    void *userdata;
     bool isVisible;
     bool (*isMouseOver)(const struct Element* element, Vec2f mousePos);
     void (*onClick)(struct Element* element, Renderer *renderer);
@@ -44,7 +45,7 @@ typedef struct Element {
 } Element;
 
 typedef struct TextElement {
-    String text;
+    String *text;
     Vec3f textColor;
     float textScale;
     Vec2f offset;

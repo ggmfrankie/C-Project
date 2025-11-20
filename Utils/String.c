@@ -10,7 +10,8 @@ String stringOf(char* content){
     }
     return (String){
         .content = content,
-        .length = length
+        .length = length,
+        .isHeap = false
     };
 }
 
@@ -20,7 +21,8 @@ String newEmptyString(const size_t length) {
 
     return (String){
         .content = content,
-        .length = length
+        .length = length,
+        .isHeap = true
     };
 }
 
@@ -50,7 +52,8 @@ String str_substring(const String* string, int start_index, int end_index){
     content[j] = '\0';
     return (String){
         .content = content,
-        .length = length
+        .length = length,
+        .isHeap = true
     };
 }
 
@@ -68,7 +71,8 @@ String newString_c(const char* content){
     con[length] = '\0';
     return (String){
         .content = con,
-        .length = length
+        .length = length,
+        .isHeap = true
     };
 }
 
@@ -85,18 +89,23 @@ String str_combine(const String *string1, const String *string2) {
     content[length] = '\0';
     return (String){
         .content = content,
-        .length = length
+        .length = length,
+        .isHeap = true
     };
 }
 
-void str_delete(const String* string){
+void str_delete(String* string){
     if (!string->content) return;
-    free(string->content);
+    if (string->isHeap)free(string->content);
+    string->content = NULL;
+    string->length = 0;
+    string->isHeap = false;
 }
 
 void str_clear(String* string) {
     string->content = NULL;
     string->length = 0;
+    string->isHeap = false;
 }
 
 void str_println(const String* string){
