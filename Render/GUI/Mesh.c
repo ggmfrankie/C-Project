@@ -6,7 +6,7 @@
 #include <string.h>
 
 #include "glad/gl.h"
-
+Mesh quadMesh;
 void deleteMeshData(MeshData *meshData);
 
 Mesh newMesh(const MeshData *meshData) {

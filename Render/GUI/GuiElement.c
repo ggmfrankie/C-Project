@@ -6,7 +6,7 @@
 
 #include "../Render.h"
 
-Element newElement(Mesh *mesh, const short meshCount, const Vec2f pos, const int width, const int height, Texture* texture) {
+Element newElement(Mesh mesh, const short meshCount, const Vec2f pos, const int width, const int height, Texture* texture) {
     return (Element){
         .Mesh = mesh,
         .meshCount = meshCount,
@@ -22,7 +22,8 @@ Element newElement(Mesh *mesh, const short meshCount, const Vec2f pos, const int
         .textElement = NULL,
         .childElements = NULL,
         .numChildElements = 0,
-        .userdata = NULL
+        .userdata = NULL,
+        .hasText = false
     };
 }
 
@@ -44,5 +45,10 @@ void setOnHoverCallback(Element* element, void (*onHover)(Element* element, Rend
 
 void setOnClickCallback(Element* element, void (*onClick)(Element* element, Renderer* renderer)) {
     element->onClick = onClick;
+}
+
+void setText(Element* element, const char* text) {
+    Strings.setContent_c(&element->textElement.text, text);
+    element->hasText = true;
 }
 

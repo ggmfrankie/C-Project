@@ -5,6 +5,7 @@
 
 #include <math.h>
 #include <windows.h>
+#include <pthread.h>
 
 #include "GUI/GuiElement.h"
 #include "Render.h"
@@ -14,6 +15,8 @@
 
     #define width 4096
     #define height 600
+
+List_Element* g_Elements;
 
 void updateState(Renderer *renderer);
 
@@ -29,12 +32,15 @@ setOnHoverCallback(Element_ListGetLast(&renderer.elements), dragFunction);\
 setOnClickCallback(Element_ListGetLast(&renderer.elements), clickCallbackFunction);
 
 void startEngine() {
-    Renderer renderer = newRenderer(512, 512, "Huhu", Element_newList(4));
+    static Renderer renderer;
+    static List_Element elementList;
+    elementList = Element_newList(4);
+
+    g_Elements = &elementList;
+    renderer = newRenderer(512, 512, "Huhu", g_Elements);
 
     Texture graphTexture = newEmptyTexture(width, height);
     Texture blackButton = loadTextureFromPng(stringOf("GrayBox.png"));
-
-    Mesh quadMesh = Mesh_loadSimpleQuad();
 
     renderer.computeShader = newComputeShader(NULL, 1024);
     renderer.computeShader.texture = &graphTexture;
@@ -45,43 +51,23 @@ void startEngine() {
 
     Renderer_init(&renderer);
 
-    Element_ListAdd(&renderer.elements, newElement(&quadMesh, 1, newVec2f(0, 0), 200, 200, &graphTexture));
-    String text = stringOf("../Resources/Fonts/ARIAL.TTF");
-    TextElement textForButton1 = (TextElement){
-        .offset = (Vec2f){0.2f, 0.2f},
-        .text = &text,
-        .textScale = 1.0f,
-        .textColor = (Vec3f){1.0f, 1.0f, 1.0f}
-    };
+    stringOf("../Resources/Fonts/ARIAL.TTF");
 
-    Element_ListGetLast(&renderer.elements)->isMouseOver = isSelected_Quad;
-    Element_ListGetLast(&renderer.elements)->onHover = hoverCallbackFunction;
-    Element_ListGetLast(&renderer.elements)->onClick = clickCallbackFunction;
+    guiAddSimpleRectangle(g_Elements, newVec2f(0, 0), 200, 200, &graphTexture);
+    guiAddSimpleButton(g_Elements, (Vec2f){100.0f, 100.0f}, 100, 100, &blackButton, hoverCallbackFunction, clickCallbackFunction,  "Hello World");
 
-
-    Element_ListAdd(&renderer.elements, newElement(&quadMesh, 1, newVec2f(200, 100), 500, 40, &blackButton));
-    Element_ListGetLast(&renderer.elements)->isMouseOver = isSelected_Quad;
-    Element_ListGetLast(&renderer.elements)->onHover = hoverCallbackFunction;
-    Element_ListGetLast(&renderer.elements)->onClick = clickCallbackFunction;
-    Element_ListGetLast(&renderer.elements)->textElement = &textForButton1;
     int i = 0;
-
-
     while (!glfwWindowShouldClose(renderer.window)) {
         const unsigned long long timeStart = now_ns();
-        char newContent[512];
 
         glfwPollEvents();
         updateState(&renderer);
         renderer.render(&renderer);
         const unsigned long long elapsedTime = now_ns()-timeStart;
         i++;
-
-        Strings.delete(&text);
-        Strings.fromInt(newContent, 512, elapsedTime);
-        text = stringOf(newContent);
         Sleep(1);
     }
+
 
     //renderer.shader.delete(&renderer.shader); TODO
     //renderer.elements.delete(&renderer.elements); TODO
@@ -89,12 +75,12 @@ void startEngine() {
 }
 
 void updateState(Renderer *renderer) {
-    for (int i = 0; i < renderer->elements.size; i++) {
-        renderer->elements.get(&renderer->elements, i)->state = 0;
+    for (int i = 0; i < renderer->elements->size; i++) {
+        renderer->elements->get(renderer->elements, i)->state = 0;
     }
 
-    for (int i = 0; i < renderer->elements.size; i++) {
-        Element *element = renderer->elements.get(&renderer->elements, i);
+    for (int i = 0; i < renderer->elements->size; i++) {
+        Element *element = renderer->elements->get(renderer->elements, i);
 
         if (element->isMouseOver == NULL) continue;
 

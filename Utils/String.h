@@ -26,6 +26,7 @@ typedef struct StringFunctions {
     void (*delete)(String* string);
     void (*clear)(String* string);
     void (*recalculateLength)(String* string);
+    void (*setContent_c)(String* string, const char* content);
     void (*println)(const String* string);
     bool (*equals)(const String* string, const String* key);
     bool (*startsWith)(const String* string, const String* key);
@@ -46,11 +47,13 @@ String str_combine(const String *string1, const String *string2);
 String str_substring(const String* string, int start_index, int end_index);
 String str_fromInt_c(int value);
 String newString_array(char* content, size_t capacity);
+String newReservedString(size_t capacity);
 void str_fromInt(char* content, size_t size, long long value);
 
 void str_delete(String* string);
 void str_clear(String* string);
 void str_recalculateLength(String* string);
+void str_setContent_c(String* string, const char* content);
 void str_println(const String* string);
 bool str_equals(const String* string, const String* key);
 bool str_startsWith(const String* string, const String* key);
@@ -74,7 +77,8 @@ static StringFunctions Strings = {
     .setCharAt = str_setCharAt,
     .fromInt_c = str_fromInt_c,
     .fromInt = str_fromInt,
-    .recalculateLength = str_recalculateLength
+    .recalculateLength = str_recalculateLength,
+    .setContent_c = str_setContent_c
 };
 
 

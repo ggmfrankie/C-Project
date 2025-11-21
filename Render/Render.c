@@ -10,6 +10,9 @@
 #include "../Utils/Vector.h"
 
 
+
+void loadDefaultQuadMesh();
+
 GLFWwindow* initWindow(const int width, const int height, const char* name) {
 
     if (!glfwInit()) {
@@ -69,6 +72,8 @@ void Renderer_init(Renderer *renderer) {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+    loadDefaultQuadMesh();
+
     ComputeShader_createUniform(&renderer->computeShader, stringOf("dataSize"));
     ComputeShader_createUniform(&renderer->computeShader, stringOf("thickness"));
     ComputeShader_update(&renderer->computeShader, graphingFunction);
@@ -89,7 +94,7 @@ void Renderer_init(Renderer *renderer) {
 
 
 
-Renderer newRenderer(const int width, const int height, const char* name, const List_Element elements) {
+Renderer newRenderer(const int width, const int height, const char* name, List_Element* elements) {
     return (Renderer){
         .elements = elements,
         .shader = newShader(),
@@ -102,6 +107,83 @@ Renderer newRenderer(const int width, const int height, const char* name, const 
         .basicQuadMesh = Mesh_loadSimpleQuad()
     };
 }
+
+Renderer* newRenderer_h(const int width, const int height, const char* name, List_Element* elements) {
+    Renderer* renderer = malloc(sizeof(Renderer));
+    renderer->elements = elements;
+    renderer->shader = newShader();
+    renderer->window = initWindow(width, height, name);
+    renderer->render = Renderer_render;
+    renderer->screenWidth = width;
+    renderer->screenHeight = height;
+    renderer->font = loadFontAtlas(stringOf("ARIAL.TTF"));
+    renderer->basicQuadMesh = Mesh_loadSimpleQuad();
+    return renderer;
+}
+
+void guiAddElement(
+    List_Element* list,
+    const Mesh mesh,
+    const short meshCount,
+    const Vec2f pos,
+    const int width,
+    const int height,
+    Texture* tex,
+    bool (*mouseOver)(const Element*, Vec2f),
+    void (*hover)(Element*, Renderer*),
+    void (*click)(Element*, Renderer*),
+    const char* text
+    )
+{
+    Element_ListAdd(list, newElement(mesh, meshCount, pos, width, height, tex));
+    Element* lastElement = Element_ListGetLast(list);
+    if (mouseOver) {
+        lastElement->isMouseOver = mouseOver;
+        if (hover) lastElement->onHover = hover;
+        if (click) lastElement->onClick = click;
+    }
+    if (text) {
+
+        lastElement->textElement = (TextElement) {
+            .offset = (Vec2f){0.2f, 0.2f},
+            .text = newReservedString(512),
+            .textScale = 1.0f,
+            .textColor = (Vec3f){1.0f, 1.0f, 1.0f}
+        };
+        setText(lastElement, text);
+        lastElement->hasText = true;
+    }
+}
+
+void guiAddSimpleRectangle(
+    List_Element* list,
+    const Vec2f pos,
+    const int width,
+    const int height,
+    Texture* tex
+    )
+{
+    guiAddElement(list, quadMesh, 1, pos, width, height, tex, NULL, NULL, NULL, NULL);
+}
+
+void guiAddSimpleButton(
+    List_Element* list,
+    const Vec2f pos,
+    const int width,
+    const int height,
+    Texture* tex,
+    void (*hover)(Element*, Renderer*),
+    void (*click)(Element*, Renderer*),
+    const char* text
+    )
+{
+    guiAddElement(list, quadMesh, 1, pos, width, height, tex, isSelected_Quad, hover, click, text);
+}
+
+void loadDefaultQuadMesh() {
+    quadMesh = Mesh_loadSimpleQuad();
+}
+
 
 void Renderer_destroy(const Renderer *renderer) {
     glfwDestroyWindow(renderer->window);
@@ -121,8 +203,8 @@ void Renderer_render(Renderer *renderer) {
     setUniform_f(&renderer->shader, stringOf("screenWidth"), (float) renderer->screenWidth);
     setUniform_f(&renderer->shader, stringOf("screenHeight"), (float) renderer->screenHeight);
 
-    for (int i = 0; i < renderer->elements.size; i++) {
-        const Element *element = Element_ListGet_ptr(&renderer->elements, i);
+    for (int i = 0; i < renderer->elements->size; i++) {
+        const Element *element = Element_ListGet_ptr(renderer->elements, i);
         if (element == NULL) break;
         const Shader *shader = &renderer->shader;
 
@@ -141,9 +223,9 @@ void Renderer_render(Renderer *renderer) {
         }
 
         setUniform_i(shader, stringOf("texture_sampler"), 0);
-        Mesh_render(element->Mesh);
+        Mesh_render(&element->Mesh);
 
-        if (element->textElement) {
+        if (element->hasText) {
             renderText(renderer, element);
         }
     }

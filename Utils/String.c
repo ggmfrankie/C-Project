@@ -28,6 +28,34 @@ String newEmptyString(const size_t length) {
     };
 }
 
+String newReservedString(const size_t capacity) {
+    char* content = malloc(sizeof(char) * capacity);
+
+    return (String){
+        .content = content,
+        .length = 0,
+        .capacity = capacity,
+        .isHeap = true
+    };
+}
+
+void str_setContent_c(String* string, const char* content) {
+    int length = 0;
+    while (content[length] != '\0') {
+        length++;
+    }
+    if (length+1 >= string->capacity) {
+        puts("String capacity to small for str_setContent");
+        return;
+    }
+
+    for (int i = 0; i < length; ++i) {
+        string->content[i] = content[i];
+    }
+    string->content[length] = '\0';
+    string->length = length;
+}
+
 char str_getCharAt(const String* string, const int index){
     if(index >= string->length || index < 0) return '\0';
     return string->content[index];

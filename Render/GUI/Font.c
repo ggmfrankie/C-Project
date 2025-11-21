@@ -19,7 +19,7 @@
 
 Font loadFontAtlas(const String file) {
     const String defaultPath = stringOf("../Resources/Fonts/");
-    const String completePath = Strings.combine(&defaultPath, &file);
+    String completePath = Strings.combine(&defaultPath, &file);
 
     Strings.println(&completePath);
 
@@ -70,8 +70,8 @@ Font loadFontAtlas(const String file) {
 }
 
 void renderText(Renderer *renderer, const Element *element) {
-    const TextElement *textElement = element->textElement;
-    if (textElement->text->length == 0) return;
+    const TextElement *textElement = &element->textElement;
+    if (textElement->text.length == 0) return;
     Font* font = &renderer->font;
     float textScale = textElement->textScale;
 
@@ -87,8 +87,8 @@ void renderText(Renderer *renderer, const Element *element) {
 
     glBindTexture(GL_TEXTURE_2D, font->fontAtlas.textureId);
 
-    for (int i = 0; i < textElement->text->length; i++) {
-        char c = textElement->text->content[i];
+    for (int i = 0; i < textElement->text.length; i++) {
+        const char c = textElement->text.content[i];
         if (c < 32 || c > 126) continue;
 
         stbtt_aligned_quad q;
