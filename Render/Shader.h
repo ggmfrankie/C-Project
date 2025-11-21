@@ -16,10 +16,20 @@ typedef struct Shader {
         int vertexId;
         int fragmentId;
         Map_Uniforms uniforms;
-        void (*bind)(const struct Shader*);
-        void (*unbind)();
-        void (*createUniform)(struct Shader *shader, String name);
+
     } Shader;
+
+typedef struct ShaderFunction {
+    void (*bind)(const struct Shader*);
+    void (*unbind)();
+    void (*createUniform)(struct Shader *shader, String name);
+    void (*setUniform_f)(const Shader *shader, String name, float value);
+    void (*setUniform_Vec2)(const Shader *shader, String name, Vec2f value);
+    void (*setUniform_i)(const Shader *shader, String name, int value);
+
+    String (*readShaderFile)(const String *fileName);
+    int (*createShader)(const GLchar** shaderSource, int shaderType, int programId);
+} ShaderFunction;
 
 Shader newShader();
 void Shader_bindProgram(const Shader *shader);
@@ -31,4 +41,15 @@ void setUniform_i(const Shader *shader, String name, int value);
 
 String readShaderFile(const String *fileName);
 int createShader(const GLchar** shaderSource, int shaderType, int programId);
+
+static ShaderFunction Shaders = {
+    .bind = Shader_bindProgram,
+    .unbind = Shader_unbindProgram,
+    .createUniform = Shader_createUniform,
+    .createShader = createShader,
+    .readShaderFile = readShaderFile,
+    .setUniform_f = setUniform_f,
+    .setUniform_i = setUniform_i,
+    .setUniform_Vec2 = setUniform_Vec2
+};
 #endif //C_SHADER_H

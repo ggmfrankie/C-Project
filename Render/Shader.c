@@ -52,9 +52,6 @@ Shader newShader() {
         .programId = programId,
         .vertexId = vertexId,
         .fragmentId = fragmentId,
-        .bind = Shader_bindProgram,
-        .unbind = Shader_unbindProgram,
-        .createUniform = Shader_createUniform,
         .uniforms = newMap_Uniforms(16, str_equals)
     };
 }

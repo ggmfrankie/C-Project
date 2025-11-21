@@ -11,6 +11,7 @@ String stringOf(char* content){
     return (String){
         .content = content,
         .length = length,
+        .capacity = length,
         .isHeap = false
     };
 }
@@ -22,6 +23,7 @@ String newEmptyString(const size_t length) {
     return (String){
         .content = content,
         .length = length,
+        .capacity = length,
         .isHeap = true
     };
 }
@@ -53,6 +55,7 @@ String str_substring(const String* string, int start_index, int end_index){
     return (String){
         .content = content,
         .length = length,
+        .capacity = length,
         .isHeap = true
     };
 }
@@ -72,7 +75,17 @@ String newString_c(const char* content){
     return (String){
         .content = con,
         .length = length,
+        .capacity = length,
         .isHeap = true
+    };
+}
+
+String newString_array(char* content, const size_t capacity) {
+    return (String){
+        .content = content,
+        .length = 0,
+        .capacity = capacity,
+        .isHeap = false
     };
 }
 
@@ -90,8 +103,66 @@ String str_combine(const String *string1, const String *string2) {
     return (String){
         .content = content,
         .length = length,
+        .capacity = length,
         .isHeap = true
     };
+}
+
+String str_fromInt_c(int value) {
+    int i = 0;
+    char* content = malloc(32);
+    const int sign = value;
+
+    if (value < 0) value = -value;
+    while (value > 0) {
+        content[i++] = (char)(value % 10 + '0');
+        value /= 10;
+    }
+
+    if (sign < 0) content[i++] = '-';
+
+    for (int j = 0, k = i - 1; j < k; j++, k--) {
+        const char temp = content[j];
+        content[j] = content[k];
+        content[k] = temp;
+    }
+    content[i] = '\0';
+    const String string = newString_c(content);
+    free(content);
+    return string;
+}
+
+void str_fromInt(char* content, const size_t size, long long value) {
+    int i = 0;
+
+    const long long sign = value;
+
+    if (value < 0) value = -value;
+    while (value > 0) {
+        if (i >= size) {
+            puts("Char Array is to small for str_fromInt");
+            return;
+        }
+        content[i++] = (char)(value % 10 + '0');
+        value /= 10;
+    }
+
+    if (sign < 0) content[i++] = '-';
+
+    for (int j = 0, k = i - 1; j < k; j++, k--) {
+        const char temp = content[j];
+        content[j] = content[k];
+        content[k] = temp;
+    }
+    content[i] = '\0';
+}
+
+void str_recalculateLength(String* string) {
+    int length = 0;
+    while (string->length != '\0') {
+        length++;
+    }
+    string->length = length;
 }
 
 void str_delete(String* string){
@@ -99,12 +170,14 @@ void str_delete(String* string){
     if (string->isHeap)free(string->content);
     string->content = NULL;
     string->length = 0;
+    string->capacity = 0;
     string->isHeap = false;
 }
 
 void str_clear(String* string) {
     string->content = NULL;
     string->length = 0;
+    string->capacity = 0;
     string->isHeap = false;
 }
 

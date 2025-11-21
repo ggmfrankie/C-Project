@@ -98,7 +98,7 @@ Renderer newRenderer(const int width, const int height, const char* name, const 
         .render = Renderer_render,
         .screenWidth = width,
         .screenHeight = height,
-        .font = loadFontAtlas(stringOf("From Cartoon Blocks.ttf")),
+        .font = loadFontAtlas(stringOf("ARIAL.TTF")),
         .basicQuadMesh = Mesh_loadSimpleQuad()
     };
 }
@@ -117,7 +117,7 @@ void Renderer_render(Renderer *renderer) {
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     #endif
 
-    renderer->shader.bind(&renderer->shader);
+    Shaders.bind(&renderer->shader);
     setUniform_f(&renderer->shader, stringOf("screenWidth"), (float) renderer->screenWidth);
     setUniform_f(&renderer->shader, stringOf("screenHeight"), (float) renderer->screenHeight);
 
@@ -149,5 +149,5 @@ void Renderer_render(Renderer *renderer) {
     }
 
     glfwSwapBuffers(renderer->window);
-    renderer->shader.unbind();
+    Shaders.unbind();
 }

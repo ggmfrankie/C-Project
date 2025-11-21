@@ -14,6 +14,7 @@
 
     #define width 4096
     #define height 600
+
 void updateState(Renderer *renderer);
 
 double graphingFunction(const double x) {
@@ -63,15 +64,22 @@ void startEngine() {
     Element_ListGetLast(&renderer.elements)->onHover = hoverCallbackFunction;
     Element_ListGetLast(&renderer.elements)->onClick = clickCallbackFunction;
     Element_ListGetLast(&renderer.elements)->textElement = &textForButton1;
+    int i = 0;
+
 
     while (!glfwWindowShouldClose(renderer.window)) {
         const unsigned long long timeStart = now_ns();
+        char newContent[512];
 
         glfwPollEvents();
         updateState(&renderer);
         renderer.render(&renderer);
         const unsigned long long elapsedTime = now_ns()-timeStart;
+        i++;
 
+        Strings.delete(&text);
+        Strings.fromInt(newContent, 512, elapsedTime);
+        text = stringOf(newContent);
         Sleep(1);
     }
 
