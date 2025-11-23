@@ -103,7 +103,7 @@ Renderer newRenderer(const int width, const int height, const char* name, List_E
         .render = Renderer_render,
         .screenWidth = width,
         .screenHeight = height,
-        .font = loadFontAtlas(stringOf("ARIAL.TTF")),
+        .font = loadFontAtlas(stringOf("From Cartoon Blocks.ttf")),
         .basicQuadMesh = Mesh_loadSimpleQuad()
     };
 }
@@ -132,7 +132,8 @@ void guiAddElement(
     bool (*mouseOver)(const Element*, Vec2f),
     void (*hover)(Element*, Renderer*),
     void (*click)(Element*, Renderer*),
-    const char* text
+    const char* text,
+    const bool forceResize
     )
 {
     Element_ListAdd(list, newElement(mesh, meshCount, pos, width, height, tex));
@@ -148,7 +149,8 @@ void guiAddElement(
             .offset = (Vec2f){0.2f, 0.2f},
             .text = newReservedString(512),
             .textScale = 1.0f,
-            .textColor = (Vec3f){1.0f, 1.0f, 1.0f}
+            .textColor = (Vec3f){1.0f, 1.0f, 1.0f},
+            .forceResize = forceResize
         };
         setText(lastElement, text);
         lastElement->hasText = true;
@@ -163,7 +165,7 @@ void guiAddSimpleRectangle(
     Texture* tex
     )
 {
-    guiAddElement(list, quadMesh, 1, pos, width, height, tex, NULL, NULL, NULL, NULL);
+    guiAddElement(list, quadMesh, 1, pos, width, height, tex, NULL, NULL, NULL, NULL, false);
 }
 
 void guiAddSimpleButton(
@@ -177,7 +179,7 @@ void guiAddSimpleButton(
     const char* text
     )
 {
-    guiAddElement(list, quadMesh, 1, pos, width, height, tex, isSelected_Quad, hover, click, text);
+    guiAddElement(list, quadMesh, 1, pos, width, height, tex, isSelected_Quad, hover, click, text, true);
 }
 
 void loadDefaultQuadMesh() {

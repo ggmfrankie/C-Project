@@ -15,6 +15,7 @@ struct Renderer;
 typedef struct Renderer Renderer;
 
 typedef struct TextElement {
+    bool forceResize;
     String text;
     Vec3f textColor;
     float textScale;
@@ -60,5 +61,6 @@ void setOnClickCallback(Element* element, void (*onClick)(Element* element, Rend
 void setOnHoverCallback(Element* element, void (*onHover)(Element* element, Renderer* renderer));
 void setBoundingBox(Element* element, bool (*isMouseOver)(const Element* element, Vec2f mousePos));
 void setText(Element* element, const char* text);
+void setText_int(Element* element, int i);
 bool isSelected_Quad(const Element *element, Vec2f mousePos);
 #endif //C_GUIELEMENT_H

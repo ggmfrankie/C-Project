@@ -18,6 +18,6 @@ typedef struct Font{
 } Font;
 
 Font loadFontAtlas(String file);
-void renderText(Renderer *renderer, const Element *element);
+void renderText(Renderer *renderer, Element *element);
 
 #endif //C_TEXTELEMENT_H

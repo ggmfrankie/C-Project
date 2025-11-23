@@ -52,3 +52,9 @@ void setText(Element* element, const char* text) {
     element->hasText = true;
 }
 
+void setText_int(Element* element, const int i) {
+    char tempText[512];
+    str_fromInt(tempText, 512, i);
+    setText(element, tempText);
+}
+

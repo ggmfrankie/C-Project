@@ -69,14 +69,14 @@ Font loadFontAtlas(const String file) {
     return font;
 }
 
-void renderText(Renderer *renderer, const Element *element) {
-    const TextElement *textElement = &element->textElement;
+void renderText(Renderer *renderer, Element *element) {
+    TextElement *textElement = &element->textElement;
     if (textElement->text.length == 0) return;
     Font* font = &renderer->font;
     float textScale = textElement->textScale;
 
     //TODO relative Position
-    Vec2f startPos = (Vec2f){
+    const Vec2f startPos = (Vec2f){
         .x = element->pos.x + textElement->offset.x,
         .y = element->pos.y + element->height + textElement->offset.y
     };
@@ -87,6 +87,8 @@ void renderText(Renderer *renderer, const Element *element) {
 
     glBindTexture(GL_TEXTURE_2D, font->fontAtlas.textureId);
 
+    float maxGlyphHeight = 0;
+    float totalGlyphLength = 0;
     for (int i = 0; i < textElement->text.length; i++) {
         const char c = textElement->text.content[i];
         if (c < 32 || c > 126) continue;
@@ -101,10 +103,13 @@ void renderText(Renderer *renderer, const Element *element) {
                             &q,
                             1);
 
-        float glyphWidth  = (q.x1 - q.x0) * textScale;
-        float glyphHeight = (q.y1 - q.y0) * textScale;
+        const float glyphWidth  = (q.x1 - q.x0) * textScale;
+        const float glyphHeight = (q.y1 - q.y0) * textScale;
 
-        Shader* shader = &renderer->shader;
+        totalGlyphLength += glyphWidth;
+        if (maxGlyphHeight < glyphHeight) maxGlyphHeight = glyphHeight;
+
+        const Shader* shader = &renderer->shader;
         setUniform_i(shader, stringOf("hasTexture"), 1);
         setUniform_f(shader, stringOf("width"), glyphWidth);
         setUniform_f(shader, stringOf("height"), glyphHeight);
@@ -115,6 +120,10 @@ void renderText(Renderer *renderer, const Element *element) {
         setUniform_Vec2(shader, stringOf("texPosEnd"), (Vec2f){ q.s1, q.t1 });
 
         Mesh_render(&renderer->basicQuadMesh);
+    }
+    if (textElement->forceResize) {
+        element->width = (cursor.x - startPos.x) * textScale;
+        element->height = maxGlyphHeight;
     }
     setUniform_i(&renderer->shader, stringOf("transformTexCoords"), 0);
 }

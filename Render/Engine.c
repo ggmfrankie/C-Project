@@ -54,7 +54,7 @@ void startEngine() {
     stringOf("../Resources/Fonts/ARIAL.TTF");
 
     guiAddSimpleRectangle(g_Elements, newVec2f(0, 0), 200, 200, &graphTexture);
-    guiAddSimpleButton(g_Elements, (Vec2f){100.0f, 100.0f}, 100, 100, &blackButton, hoverCallbackFunction, clickCallbackFunction,  "Hello World");
+    guiAddSimpleButton(g_Elements, (Vec2f){100.0f, 100.0f}, 100, 100, &blackButton, hoverCallbackFunction, clickCallbackFunction,  "Hello World and all others too");
 
     int i = 0;
     while (!glfwWindowShouldClose(renderer.window)) {
@@ -65,6 +65,8 @@ void startEngine() {
         renderer.render(&renderer);
         const unsigned long long elapsedTime = now_ns()-timeStart;
         i++;
+
+        setText_int(g_Elements->get(g_Elements, 1), i);
         Sleep(1);
     }
 

@@ -43,7 +43,8 @@ void guiAddElement(
     bool (*mouseOver)(const Element*, Vec2f),
     void (*hover)(Element*, Renderer*),
     void (*click)(Element*, Renderer*),
-    const char* text
+    const char* text,
+    bool forceResize
     );
 void guiAddSimpleRectangle(
     List_Element* list,
