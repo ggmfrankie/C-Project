@@ -41,8 +41,8 @@ void guiAddElement(
     int height,
     Texture* tex,
     bool (*mouseOver)(const Element*, Vec2f),
-    void (*hover)(Element*, Renderer*),
-    void (*click)(Element*, Renderer*),
+    bool (*hover)(Element*, Renderer*),
+    bool (*click)(Element*, Renderer*),
     const char* text,
     bool forceResize
     );
@@ -59,8 +59,8 @@ void guiAddSimpleButton(
     int width,
     int height,
     Texture* tex,
-    void (*hover)(Element*, Renderer*),
-    void (*click)(Element*, Renderer*),
+    bool (*hover)(Element*, Renderer*),
+    bool (*click)(Element*, Renderer*),
     const char* text
     );
 bool isMousePressed(GLFWwindow* window, int mouseButton);

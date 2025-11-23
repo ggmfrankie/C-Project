@@ -44,8 +44,8 @@ typedef struct Element {
     void *userdata;
     bool isVisible;
     bool (*isMouseOver)(const struct Element* element, Vec2f mousePos);
-    void (*onClick)(struct Element* element, Renderer *renderer);
-    void (*onHover)(struct Element* element, Renderer *renderer);
+    bool (*onClick)(struct Element* element, Renderer *renderer);
+    bool (*onHover)(struct Element* element, Renderer *renderer);
 
     int numChildElements;
     struct Element* childElements;
@@ -57,8 +57,8 @@ SIMPLEARRAY(Element, Element)
 ARRAY_LIST(Element, Element)
 
 Element newElement(Mesh mesh, short meshCount, Vec2f pos, int width, int height, Texture* texture);
-void setOnClickCallback(Element* element, void (*onClick)(Element* element, Renderer* renderer));
-void setOnHoverCallback(Element* element, void (*onHover)(Element* element, Renderer* renderer));
+void setOnClickCallback(Element* element, bool (*onClick)(Element* element, Renderer* renderer));
+void setOnHoverCallback(Element* element, bool (*onHover)(Element* element, Renderer* renderer));
 void setBoundingBox(Element* element, bool (*isMouseOver)(const Element* element, Vec2f mousePos));
 void setText(Element* element, const char* text);
 void setText_int(Element* element, int i);

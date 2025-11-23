@@ -39,11 +39,11 @@ void setBoundingBox(Element* element, bool (*isMouseOver)(const Element* element
     element->isMouseOver = isMouseOver;
 }
 
-void setOnHoverCallback(Element* element, void (*onHover)(Element* element, Renderer* renderer)) {
+void setOnHoverCallback(Element* element, bool (*onHover)(Element* element, Renderer* renderer)) {
     element->onHover = onHover;
 }
 
-void setOnClickCallback(Element* element, void (*onClick)(Element* element, Renderer* renderer)) {
+void setOnClickCallback(Element* element, bool (*onClick)(Element* element, Renderer* renderer)) {
     element->onClick = onClick;
 }
 

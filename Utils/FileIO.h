@@ -7,4 +7,5 @@
 #include "String.h"
 
 String readFile(const String *fileName);
+void writeFile(const String *fileName, const String *content);
 #endif //C_FILEIO_H

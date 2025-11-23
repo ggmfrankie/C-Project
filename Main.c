@@ -7,6 +7,7 @@
 #include "Extern/Informatik/Spannungsteiler_A3.h"
 #include "Extern/Informatik/DrunkenBishop.h"
 #include "Extern/Informatik/Geldautomat.h"
+#include "Extern/Informatik/PointerFun.h"
 
 
 #if 1
@@ -14,9 +15,9 @@
 
 int main(){
     SetConsoleOutputCP(CP_UTF8);
-    geldautomatTest();
-
-    startEngine();
+    pointerFun();
+    //startEngine();
+    return 0;
 }
 #endif
 

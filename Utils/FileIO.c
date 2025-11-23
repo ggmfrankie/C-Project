@@ -33,3 +33,15 @@ String readFile(const String *fileName) {
 
     return stringOf(buffer);
 }
+
+void writeFile(const String *fileName, const String *content) {
+    FILE *file = fopen(fileName->content, "wb");
+    const size_t writtenChars = fwrite(content->content, 1, content->length, file);
+    if (writtenChars != content->length) {
+        perror("Failed to write complete data");
+        fclose(file);
+        exit(1);
+    }
+
+    fclose(file);
+}

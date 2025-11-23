@@ -130,8 +130,8 @@ void guiAddElement(
     const int height,
     Texture* tex,
     bool (*mouseOver)(const Element*, Vec2f),
-    void (*hover)(Element*, Renderer*),
-    void (*click)(Element*, Renderer*),
+    bool (*hover)(Element*, Renderer*),
+    bool (*click)(Element*, Renderer*),
     const char* text,
     const bool forceResize
     )
@@ -174,8 +174,8 @@ void guiAddSimpleButton(
     const int width,
     const int height,
     Texture* tex,
-    void (*hover)(Element*, Renderer*),
-    void (*click)(Element*, Renderer*),
+    bool (*hover)(Element*, Renderer*),
+    bool (*click)(Element*, Renderer*),
     const char* text
     )
 {

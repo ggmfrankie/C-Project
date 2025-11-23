@@ -6,7 +6,7 @@
 
 #include "../Render.h"
 
-void dragFunction(Element *element, Renderer *renderer) {
+bool dragFunction(Element *element, Renderer *renderer) {
     element->state = 1;
     static Vec2f offset;
     static bool dragging = false;
@@ -14,7 +14,7 @@ void dragFunction(Element *element, Renderer *renderer) {
 
     if (!isMouseDown) {
         dragging = false;
-        return;
+        return false;
     }
 
     if (glfwGetKey(renderer->window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
@@ -27,23 +27,23 @@ void dragFunction(Element *element, Renderer *renderer) {
             element->pos.y = renderer->mousePos.y - offset.y;
         }
     }
+    return true;
 }
 
-void hoverCallbackFunction(Element *element, Renderer *renderer) {
-    dragFunction(element, renderer);
+bool hoverCallbackFunction(Element *element, Renderer *renderer) {
+    return dragFunction(element, renderer);
 }
 
-void clickCallbackFunction(Element *element, Renderer *renderer) {
-    if (glfwGetKey(renderer->window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) return;
+bool clickCallbackFunction(Element *element, Renderer *renderer) {
+    if (glfwGetKey(renderer->window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) return false;
     if (element->hasText) {
-        char* newText = malloc(512);
+        char newText[512];
         puts("Enter the new Name:\n");
         scanf("%511s", newText);
-        Strings.delete(&element->textElement.text);
-        element->textElement.text = newString_c(newText);
-        free(newText);
+        Strings.setContent_c(&element->textElement.text, newText);
     }
     printf("Hello\n");
+    return true;
 }
 
 bool click(GLFWwindow *window, const int mouseButton) {

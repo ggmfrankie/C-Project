@@ -59,6 +59,7 @@ add_executable(C
         Dependencies/include/stb/stb_truetype.h
         Dependencies/include/stb/stb_truetype.h
         Dependencies/include/stb/stb_rect_pack.h
+        Extern/Informatik/PointerFun.c
 )
 #add_subdirectory("${CMAKE_SOURCE_DIR}/Render")
 

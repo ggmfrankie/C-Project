@@ -13,8 +13,8 @@
 #include "../Extern/Informatik/Spannungsteiler_A3.h"
 #include "../Utils/TimeMeasurenments.h"
 
-    #define width 4096
-    #define height 600
+    #define WIDTH 4096
+    #define HEIGHT 600
 
 List_Element* g_Elements;
 
@@ -39,8 +39,9 @@ void startEngine() {
     g_Elements = &elementList;
     renderer = newRenderer(512, 512, "Huhu", g_Elements);
 
-    Texture graphTexture = newEmptyTexture(width, height);
+    Texture graphTexture = newEmptyTexture(WIDTH, HEIGHT);
     Texture blackButton = loadTextureFromPng(stringOf("GrayBox.png"));
+    Texture pointerSchematic = loadTextureFromPng(stringOf("Pointer Schematic.png"));
 
     renderer.computeShader = newComputeShader(NULL, 1024);
     renderer.computeShader.texture = &graphTexture;
@@ -53,7 +54,7 @@ void startEngine() {
 
     stringOf("../Resources/Fonts/ARIAL.TTF");
 
-    guiAddSimpleRectangle(g_Elements, newVec2f(0, 0), 200, 200, &graphTexture);
+    guiAddSimpleRectangle(g_Elements, newVec2f(0, 0), pointerSchematic.width, pointerSchematic.height, &pointerSchematic);
     guiAddSimpleButton(g_Elements, (Vec2f){100.0f, 100.0f}, 100, 100, &blackButton, hoverCallbackFunction, clickCallbackFunction,  "Hello World and all others too");
 
     int i = 0;
@@ -88,7 +89,7 @@ void updateState(Renderer *renderer) {
 
         if (element->isMouseOver(element, renderer->mousePos)) {
 
-            if (element->onClick != NULL && click(renderer->window ,GLFW_MOUSE_BUTTON_LEFT)) element->onClick(element, renderer);
+            if (element->onClick != NULL && click(renderer->window ,GLFW_MOUSE_BUTTON_LEFT)) if (element->onClick(element, renderer)) continue;
             if (element->onHover != NULL) element->onHover(element, renderer);
         }
     }
