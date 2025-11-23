@@ -79,7 +79,7 @@ void pointerFun() {
     char charArray[512];
 
     puts("Geben sie ein Wort ein:");
-    //scanf("%511s", charArray);
+    scanf("%511s", charArray);
     const int length = (int)strlen(charArray);
     char reversedCharArray[length + 1] = {};
 
