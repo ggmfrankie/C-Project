@@ -54,8 +54,8 @@ add_executable(C
         Render/GUI/CallbackFunctions.c
         Dependencies/include/stb/stb_image.h
         Extern/Informatik/Geldautomat.c
-        Render/GUI/Font.c
-        Render/GUI/Font.h
+        Render/GUI/TextDisplaying.c
+        Render/GUI/TextDisplaying.h
         Dependencies/include/stb/stb_truetype.h
         Dependencies/include/stb/stb_truetype.h
         Dependencies/include/stb/stb_rect_pack.h

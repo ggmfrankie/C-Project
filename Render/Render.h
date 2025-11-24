@@ -10,7 +10,7 @@
 #include "GUI/GuiElement.h"
 #include "Shader.h"
 #include "GLFW/glfw3.h"
-#include "GUI/Font.h"
+#include "GUI/TextDisplaying.h"
 
 static Mesh quadMesh;
 

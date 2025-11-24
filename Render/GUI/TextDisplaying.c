@@ -2,7 +2,7 @@
 // Created by Stefan on 18.11.2025.
 //
 
-#include "Font.h"
+#include "TextDisplaying.h"
 
 #define STB_RECT_PACK_IMPLEMENTATION
 #include <stb/stb_rect_pack.h>
@@ -15,6 +15,11 @@
 #include "../../Utils/String.h"
 #define FONT_ATLAS_SIZE 2048
 #define FONT_SIZE 32.0f
+
+typedef struct {
+    float x, y;     // position
+    float u, v;     // UVs
+} Vertex;
 
 
 Font loadFontAtlas(const String file) {
@@ -70,10 +75,11 @@ Font loadFontAtlas(const String file) {
 }
 
 void renderText(Renderer *renderer, Element *element) {
-    TextElement *textElement = &element->textElement;
+    const TextElement *textElement = &element->textElement;
     if (textElement->text.length == 0) return;
-    Font* font = &renderer->font;
-    float textScale = textElement->textScale;
+
+    const Font* font = &renderer->font;
+    const float textScale = textElement->textScale;
 
     //TODO relative Position
     const Vec2f startPos = (Vec2f){
@@ -126,4 +132,51 @@ void renderText(Renderer *renderer, Element *element) {
         element->height = maxGlyphHeight;
     }
     setUniform_i(&renderer->shader, stringOf("transformTexCoords"), 0);
+}
+
+void renderTextOptimized(Renderer *renderer, Element *element) {
+    const TextElement *textElement = &element->textElement;
+    if (textElement->text.length == 0) return;
+
+    Vertex vertices[textElement->text.length * 6];
+    int vertCount = 0;
+
+    const Font* font = &renderer->font;
+    const float textScale = textElement->textScale;
+
+    //TODO relative Position
+    const Vec2f startPos = (Vec2f){
+        .x = element->pos.x + textElement->offset.x,
+        .y = element->pos.y + element->height + textElement->offset.y
+    };
+    Vec2f cursor = (Vec2f){
+        .x = startPos.x,
+        .y = startPos.y
+    };
+
+    glBindTexture(GL_TEXTURE_2D, font->fontAtlas.textureId);
+
+    float maxGlyphHeight = 0;
+    float totalGlyphLength = 0;
+    for (int i = 0; i < textElement->text.length; i++) {
+        const char c = textElement->text.content[i];
+        if (c < 32 || c > 126) continue;
+
+        stbtt_aligned_quad q;
+        stbtt_GetPackedQuad(font->glyphs,
+                            font->fontAtlas.width,
+                            font->fontAtlas.height,
+                            c - 32,
+                            &cursor.x,
+                            &cursor.y,
+                            &q,
+                            1);
+
+        const float glyphWidth  = (q.x1 - q.x0) * textScale;
+        const float glyphHeight = (q.y1 - q.y0) * textScale;
+
+        totalGlyphLength += glyphWidth;
+        if (maxGlyphHeight < glyphHeight) maxGlyphHeight = glyphHeight;
+
+    }
 }

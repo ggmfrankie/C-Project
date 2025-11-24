@@ -15,8 +15,7 @@
 
 int main(){
     SetConsoleOutputCP(CP_UTF8);
-    pointerFun();
-    //startEngine();
+    startEngine();
     return 0;
 }
 #endif

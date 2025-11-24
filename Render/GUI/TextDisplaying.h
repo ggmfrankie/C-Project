@@ -11,7 +11,7 @@ typedef struct Element Element;
 struct Renderer;
 typedef struct Renderer Renderer;
 
-typedef struct Font{
+typedef struct TextDisplaying{
     Texture fontAtlas;
     stbtt_packedchar glyphs[96];
     float fontSize;
