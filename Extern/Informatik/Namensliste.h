@@ -4,5 +4,8 @@
 
 #ifndef C_NAMENSLISTE_H
 #define C_NAMENSLISTE_H
+#include <stddef.h>
 
+
+void namensliste_Aufgabe();
 #endif //C_NAMENSLISTE_H

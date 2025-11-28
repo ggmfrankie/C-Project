@@ -17,3 +17,5 @@ TimeNs now_ns() {
     QueryPerformanceCounter(&counter);
     return (counter.QuadPart * 1000000000LL) / freq.QuadPart;
 }
+
+

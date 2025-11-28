@@ -89,5 +89,12 @@ static inline List_##name name##_newList(int capacity) {\
     }; \
 }
 
+#define forEach(List, type, variable, x)\
+{\
+for (int i = 0; i < List.size; ++i) {\
+type variable = List.content[i];\
+x;\
+}}
+
 
 #endif // C_ARRAYLIST_H

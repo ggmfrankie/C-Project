@@ -11,102 +11,105 @@
 
 #include "String.h"
 
-typedef int Name;
-typedef char* Key;
-typedef int Value;
 
-typedef struct MapEntry_Name {
-    Key key;
-    Value value;
-    bool isOccupied;
-} MapEntry_Name;
-
-typedef struct Hashmap_Name {
-    MapEntry_Name *content;
-    size_t size;
-    size_t capacity;
-
-} Hashmap_Name;
-static inline uint32_t FNV(const void* key, uint32_t h);
-
-
-static inline Hashmap_Name createHashmap_Name(const size_t capacity) {
-    MapEntry_Name* content = calloc(capacity, sizeof(MapEntry_Name));
-    if (content) {
-        puts("Memory allocation failed in createHashmap_Name");
-        exit(-2);
-    }
-    return (Hashmap_Name){
-        .content = content,
-        .size = 0,
-        .capacity = capacity,
-    };
-}
-
-static inline void _resize(Hashmap_Name* map) {
-    MapEntry_Name* oldContent = map->content;
-    MapEntry_Name* newContent = calloc(map->capacity*2, sizeof(MapEntry_Name));
-    const size_t oldCapacity = map->capacity;
-    map->capacity *= 2;
-    if (!newContent) {
-        puts("Memory allocation failed in _resize");
-        map->content = oldContent;
-        return;
-    }
-    for (size_t s = 0; s < oldCapacity; s++) {
-        const MapEntry_Name* entry = &oldContent[s];
-        if (!entry->isOccupied) continue;
-        size_t newIndex = FNV(entry->key, HASH_KEY) % map->capacity;
-
-        bool isOccupied = newContent[newIndex].isOccupied;
-
-        while (isOccupied) {
-            newIndex = (newIndex + 1) % map->capacity;
-            isOccupied = newContent[newIndex].isOccupied;
-        }
-
-        newContent[newIndex] = (MapEntry_Name){
-            .key = entry->key,
-            .value = entry->value,
-            .isOccupied = entry->isOccupied,
-        };
-    }
-    map->content = newContent;
-    free(oldContent);
-}
-
-static inline void Hashmap_Name_add(Hashmap_Name* map, const Key key, const Value value) {
-    if ((float)map->size / (float)map->capacity > 0.75f) _resize(map);
-
-    const uint32_t hash = FNV(&key, HASH_KEY);
-    size_t index = hash % map->size;
-    bool isOccupied = map->content[index].isOccupied;
-
-    while (isOccupied) {
-        index = (index + 1) % map->capacity;
-        isOccupied = map->content[index].isOccupied;
-    }
-    map->content[index] = (MapEntry_Name){
-        .key = key,
-        .value = value,
-        .isOccupied = true,
-    };
-}
-
-static inline Type* Hashmap_Name_get() {
-
-}
-
-
-static inline uint32_t FNV(const void* key, uint32_t h){
-    h ^= 2166136261UL;
-    const uint8_t* data = (const uint8_t*)key;
-    for(int i = 0; data[i] != '\0'; i++)
-    {
-        h ^= data[i];
-        h *= 16777619;
-    }
-    return h;
+#define HASH_MAP(Name, Key, Value)\
+typedef struct MapEntry_##Name {\
+    const Key key;\
+    Value value;\
+    bool isOccupied;\
+} MapEntry_##Name;\
+\
+typedef struct Hashmap_##Name {\
+    MapEntry_##Name *content;\
+    size_t size;\
+    size_t capacity;\
+\
+} Hashmap_##Name;\
+\
+static inline Hashmap_##Name newHashmap_##Name(const size_t capacity) {\
+    MapEntry_##Name* content = calloc(capacity, sizeof(MapEntry_##Name));\
+    if (!content) {\
+        puts("Memory allocation failed in newHashmap_Name");\
+        exit(-2);\
+    }\
+    return (Hashmap_##Name){\
+        .content = content,\
+        .size = 0,\
+        .capacity = capacity,\
+    };\
+}\
+\
+static inline uint32_t FNV(const void* key, uint32_t h){\
+    h ^= 2166136261UL;\
+    const uint8_t* data = (const uint8_t*)key;\
+    for(int i = 0; data[i] != '\0'; i++)\
+    {\
+        h ^= data[i];\
+        h *= 16777619;\
+    }\
+    return h;\
+}\
+\
+static inline void _resize(Hashmap_##Name* map) {\
+    MapEntry_##Name* oldContent = map->content;\
+    MapEntry_##Name* newContent = calloc(map->capacity*2, sizeof(MapEntry_##Name));\
+    const size_t oldCapacity = map->capacity;\
+    map->capacity *= 2;\
+    if (!newContent) {\
+        puts("Memory allocation failed in _resize");\
+        map->content = oldContent;\
+        return;\
+    }\
+    for (size_t s = 0; s < oldCapacity; s++) {\
+        const MapEntry_##Name* entry = &oldContent[s];\
+        if (!entry->isOccupied) continue;\
+        size_t newIndex = FNV(entry->key, 0) % map->capacity;\
+\
+        bool isOccupied = newContent[newIndex].isOccupied;\
+\
+        while (isOccupied) {\
+            newIndex = (newIndex + 1) % map->capacity;\
+            isOccupied = newContent[newIndex].isOccupied;\
+        }\
+\
+        newContent[newIndex] = (MapEntry_##Name){\
+            .key = entry->key,\
+            .value = entry->value,\
+            .isOccupied = entry->isOccupied,\
+        };\
+    }\
+    map->content = newContent;\
+    free(oldContent);\
+}\
+\
+static inline void Hashmap_##Name_add(Hashmap_##Name* map, const Key key, const Value value) {\
+    if ((float)map->size / (float)map->capacity > 0.75f) _resize(map);\
+\
+    const uint32_t hash = FNV(key, 0);\
+    size_t index = hash % map->capacity;\
+    bool isOccupied = map->content[index].isOccupied;\
+\
+    while (isOccupied) {\
+        index = (index + 1) % map->capacity;\
+        isOccupied = map->content[index].isOccupied;\
+    }\
+    map->content[index] = (MapEntry_##Name){\
+        .key = key,\
+        .value = value,\
+        .isOccupied = true,\
+    };\
+}\
+\
+static inline Value* Hashmap_##Name_get(const Hashmap_##Name* map, const Key key) {\
+    size_t index = FNV(key, 0) % map->capacity;\
+    if (!map->content[index].isOccupied) return NULL;\
+    size_t iterations = 0;\
+    while (strcmp(map->content[index].key, key)!= 0){\
+        index = (index + 1) % map->capacity;\
+        iterations++;\
+        if (iterations >= map->capacity || !map->content[index].isOccupied) return NULL;\
+    }\
+    return &map->content[index].value;\
 }
 
 

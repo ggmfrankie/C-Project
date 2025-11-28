@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 4.0)
 project(C C)
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -march=native -lpthread")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -march=native -lpthread")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -march=native -lpthread")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -march=native -lpthread")
 
 set(CMAKE_C_STANDARD 11)
 
@@ -38,8 +38,6 @@ add_executable(C
         Render/ComputeShader.h
         Render/GUI/Texture.c
         Render/GUI/Texture.h
-        Utils/Mathematics.c
-        Utils/Mathematics.h
         Extern/Informatik/Spannungsteiler_A3.c
         Extern/Informatik/Spannungsteiler_A3.h
         Extern/Informatik/DrunkenBishop.c
@@ -60,6 +58,8 @@ add_executable(C
         Dependencies/include/stb/stb_truetype.h
         Dependencies/include/stb/stb_rect_pack.h
         Extern/Informatik/PointerFun.c
+        Extern/Informatik/Namensliste.c
+        Extern/Informatik/Personalverwaltung.c
 )
 #add_subdirectory("${CMAKE_SOURCE_DIR}/Render")
 
