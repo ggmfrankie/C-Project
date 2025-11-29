@@ -130,6 +130,7 @@ void bubbleSort(const NameCounterMap* ncm) {
 void enterName(const NameCounterMap *ncm) {
     char name[512];
     ssize_t index = -1;
+
     AGAIN:
     puts("Geben Sie ihren Namen ein: ");
     scanf("%511s", name);

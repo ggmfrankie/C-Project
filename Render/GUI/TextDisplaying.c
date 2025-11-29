@@ -22,9 +22,10 @@ typedef struct {
 } Vertex;
 
 
-Font loadFontAtlas(const String file) {
+Font loadFontAtlas(char* file) {
+    const String fileName = stringOf(file);
     const String defaultPath = stringOf("../Resources/Fonts/");
-    String completePath = Strings.combine(&defaultPath, &file);
+    String completePath = Strings.combine(&defaultPath, &fileName);
 
     Strings.println(&completePath);
 
@@ -74,7 +75,7 @@ Font loadFontAtlas(const String file) {
     return font;
 }
 
-void renderText(Renderer *renderer, Element *element) {
+void renderText(const Renderer *renderer, const Element *element) {
     const TextElement *textElement = &element->textElement;
     if (textElement->text.length == 0) return;
 
@@ -116,25 +117,21 @@ void renderText(Renderer *renderer, Element *element) {
         if (maxGlyphHeight < glyphHeight) maxGlyphHeight = glyphHeight;
 
         const Shader* shader = &renderer->shader;
-        setUniform_i(shader, stringOf("hasTexture"), 1);
-        setUniform_f(shader, stringOf("width"), glyphWidth);
-        setUniform_f(shader, stringOf("height"), glyphHeight);
-        setUniform_Vec2(shader, stringOf("positionObject"), (Vec2f){ (q.x0-startPos.x)*textScale + startPos.x, (q.y0-startPos.y)*textScale + startPos.y });
+        setUniform_i(shader, ("hasTexture"), 1);
+        setUniform_f(shader, ("width"), glyphWidth);
+        setUniform_f(shader, ("height"), glyphHeight);
+        setUniform_Vec2(shader, ("positionObject"), (Vec2f){ (q.x0-startPos.x)*textScale + startPos.x, (q.y0-startPos.y)*textScale + startPos.y });
 
-        setUniform_i(shader, stringOf("transformTexCoords"), 1);
-        setUniform_Vec2(shader, stringOf("texPosStart"), (Vec2f){ q.s0, q.t0 });
-        setUniform_Vec2(shader, stringOf("texPosEnd"), (Vec2f){ q.s1, q.t1 });
+        setUniform_i(shader, ("transformTexCoords"), 1);
+        setUniform_Vec2(shader, ("texPosStart"), (Vec2f){ q.s0, q.t0 });
+        setUniform_Vec2(shader, ("texPosEnd"), (Vec2f){ q.s1, q.t1 });
 
         Mesh_render(&renderer->basicQuadMesh);
     }
-    if (textElement->forceResize) {
-        element->width = (cursor.x - startPos.x) * textScale;
-        element->height = maxGlyphHeight;
-    }
-    setUniform_i(&renderer->shader, stringOf("transformTexCoords"), 0);
+    setUniform_i(&renderer->shader, ("transformTexCoords"), 0);
 }
 
-void renderTextOptimized(Renderer *renderer, Element *element) {
+void renderTextOptimized(const Renderer *renderer, const Element *element) {
     const TextElement *textElement = &element->textElement;
     if (textElement->text.length == 0) return;
 

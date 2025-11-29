@@ -5,9 +5,7 @@
 
 #include <math.h>
 #include <windows.h>
-#include <pthread.h>
 
-#include "GUI/GuiElement.h"
 #include "Render.h"
 #include "GUI/CallbackFunctions.h"
 #include "../Extern/Informatik/Spannungsteiler_A3.h"
@@ -17,21 +15,14 @@
     #define HEIGHT 600
 
 List_Element* g_Elements;
+pthread_mutex_t guiMutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t  guiInitCond = PTHREAD_COND_INITIALIZER;
+int guiInitialized = false;
 
 void updateState(Renderer *renderer);
 
-double graphingFunction(const double x) {
-    const Spannung value = berechneSpannungsteiler(10, 40, berechneErsatzwiderstand(30, 10 * x));
-    //printf("%6.4f %6.4f\n", x*10, value);
-
-    return value;
-}
-#define BUTTON_CALLBACK_PRESET1 \
-setBoundingBox(Element_ListGetLast(&renderer.elements), isSelected_Quad);\
-setOnHoverCallback(Element_ListGetLast(&renderer.elements), dragFunction);\
-setOnClickCallback(Element_ListGetLast(&renderer.elements), clickCallbackFunction);
-
 void startEngine() {
+
     static Renderer renderer;
     static List_Element elementList;
     elementList = Element_newList(4);
@@ -40,8 +31,8 @@ void startEngine() {
     renderer = newRenderer(512, 512, "Huhu", g_Elements);
 
     Texture graphTexture = newEmptyTexture(WIDTH, HEIGHT);
-    Texture blackButton = loadTextureFromPng(stringOf("GrayBox.png"));
-    Texture pointerSchematic = loadTextureFromPng(stringOf("Pointer Schematic.png"));
+    Texture blackButton = loadTextureFromPng("GrayBox.png");
+    Texture pointerSchematic = loadTextureFromPng("Pointer Schematic.png");
 
     renderer.computeShader = newComputeShader(NULL, 1024);
     renderer.computeShader.texture = &graphTexture;
@@ -52,22 +43,23 @@ void startEngine() {
 
     Renderer_init(&renderer);
 
-    stringOf("../Resources/Fonts/ARIAL.TTF");
-
     guiAddSimpleRectangle(g_Elements, newVec2f(0, 0), pointerSchematic.width, pointerSchematic.height, &pointerSchematic);
     guiAddSimpleButton(g_Elements, (Vec2f){100.0f, 100.0f}, 100, 100, &blackButton, hoverCallbackFunction, clickCallbackFunction,  "Hello World and all others too");
 
+    guiInitialized = true;
+    pthread_cond_broadcast(&guiInitCond);
+    pthread_mutex_unlock(&guiMutex);
     int i = 0;
     while (!glfwWindowShouldClose(renderer.window)) {
         const unsigned long long timeStart = now_ns();
-
         glfwPollEvents();
         updateState(&renderer);
-        renderer.render(&renderer);
-        const unsigned long long elapsedTime = now_ns()-timeStart;
-        i++;
 
-        setText_int(g_Elements->get(g_Elements, 1), i);
+        pthread_mutex_lock(&guiMutex);
+        renderer.render(&renderer);
+        pthread_mutex_unlock(&guiMutex);
+
+        const unsigned long long elapsedTime = now_ns()-timeStart;
         Sleep(1);
     }
 
@@ -81,6 +73,7 @@ void updateState(Renderer *renderer) {
     for (int i = 0; i < renderer->elements->size; i++) {
         renderer->elements->get(renderer->elements, i)->state = 0;
     }
+    bool isVoidLayer = true;
 
     for (int i = 0; i < renderer->elements->size; i++) {
         Element *element = renderer->elements->get(renderer->elements, i);
@@ -88,10 +81,19 @@ void updateState(Renderer *renderer) {
         if (element->isMouseOver == NULL) continue;
 
         if (element->isMouseOver(element, renderer->mousePos)) {
-
-            if (element->onClick != NULL && click(renderer->window ,GLFW_MOUSE_BUTTON_LEFT)) if (element->onClick(element, renderer)) continue;
-            if (element->onHover != NULL) element->onHover(element, renderer);
+            isVoidLayer = false;
+            if (element->onClick != NULL && click(renderer->window ,GLFW_MOUSE_BUTTON_LEFT)) if (element->onClick(element, renderer)) return;
+            if (element->onHover != NULL) if (element->onHover(element, renderer)) return;
         }
+    }
+    if (isVoidLayer) {
+        if (renderer->defaultClick != NULL) renderer->defaultClick(renderer);
     }
 }
 
+double graphingFunction(const double x) {
+    const Spannung value = berechneSpannungsteiler(10, 40, berechneErsatzwiderstand(30, 10 * x));
+    //printf("%6.4f %6.4f\n", x*10, value);
+
+    return value;
+}

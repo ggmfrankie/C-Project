@@ -4,7 +4,10 @@
 
 #include "../GUI/GuiElement.h"
 
+#include <pthread.h>
+
 #include "../Render.h"
+#include "../Engine.h"
 
 Element newElement(Mesh mesh, const short meshCount, const Vec2f pos, const int width, const int height, Texture* texture) {
     return (Element){
@@ -48,13 +51,16 @@ void setOnClickCallback(Element* element, bool (*onClick)(Element* element, Rend
 }
 
 void setText(Element* element, const char* text) {
+    pthread_mutex_lock(&guiMutex);
     Strings.setContent_c(&element->textElement.text, text);
     element->hasText = true;
+    pthread_mutex_unlock(&guiMutex);
 }
 
 void setText_int(Element* element, const int i) {
     char tempText[512];
     str_fromInt(tempText, 512, i);
+
     setText(element, tempText);
 }
 

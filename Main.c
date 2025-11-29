@@ -10,24 +10,38 @@
 #include "Extern/Informatik/PointerFun.h"
 #include "Extern/Informatik/Namensliste.h"
 
+void* workerThread(void* args);
 
-#if 1
 #include <windows.h>
+
+void mainFun() {
+    int i = 1;
+    do {
+        char name[512];
+        puts("Enter Name:");
+        scanf("%511s", name);
+
+        setText(g_Elements->get(g_Elements, 1), name);
+        namensliste_Aufgabe();
+        Sleep(1);
+    } while (1);
+}
 
 int main(){
     SetConsoleOutputCP(CP_UTF8);
-    namensliste_Aufgabe();
-    //startEngine();
+    pthread_t workerThreadID;
+    pthread_create(&workerThreadID, NULL, workerThread, NULL);
+    startEngine();
     return 0;
 }
-#endif
 
-#if 0
-int main() {
-
-    drawWithBishop(0x0e2f8bac75342a72cULL);
-    drawWithBishop(0x0e2f8bca75842af2cULL);
-
-    return 0;
+void* workerThread(void* args) {
+    pthread_mutex_lock(&guiMutex);
+    while (!guiInitialized) {
+        pthread_cond_wait(&guiInitCond, &guiMutex);
+    }
+    pthread_mutex_unlock(&guiMutex);
+    mainFun();
+    return NULL;
 }
-#endif
+

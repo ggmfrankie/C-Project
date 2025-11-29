@@ -20,7 +20,7 @@ void main() {
             fragColor = texColor;
         } else
         if (state == 1){
-            fragColor = 0.5 * texColor;
+            fragColor = vec4(0.5 * texColor.rgb, texColor.a);
         } else
         if (state == 2){
             fragColor = 0 * texColor;

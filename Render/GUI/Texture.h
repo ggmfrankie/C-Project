@@ -15,6 +15,6 @@ typedef struct {
 
 Texture newTexture(int width, int height, GLuint textureId);
 Texture newEmptyTexture(int width, int height);
-Texture loadTextureFromPng(String fileName);
+Texture loadTextureFromPng(char* fileName);
 
 #endif //C_TEXTURE_H

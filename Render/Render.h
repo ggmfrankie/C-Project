@@ -24,13 +24,14 @@ typedef struct Renderer {
     List_Element* elements;
     Font font;
     Mesh basicQuadMesh;
-    void (*render)(Renderer *renderer);
+    bool (*defaultClick)(Renderer *renderer);
+    void (*render)(const Renderer *renderer);
 } Renderer;
 
 Renderer newRenderer(int width, int height, const char* name, List_Element* elements);
 Renderer* newRenderer_h(int width, int height, const char* name, List_Element* elements);
 void Renderer_init(Renderer *renderer);
-void Renderer_render(Renderer *renderer);
+void Renderer_render(const Renderer *renderer);
 void Renderer_destroy(const Renderer *renderer);
 void guiAddElement(
     List_Element* list,

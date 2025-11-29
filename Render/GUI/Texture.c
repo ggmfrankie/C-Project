@@ -21,17 +21,17 @@ Texture newEmptyTexture(const int width, const int height) {
     glGenTextures(1, &tex);
     glBindTexture(GL_TEXTURE_2D, tex);
 
-    // Allocate empty floating-point texture (RGBA32F is flexible)
+
     glTexImage2D(
         GL_TEXTURE_2D,
         0,
-        GL_RGBA32F,        // internal format (high precision)
+        GL_RGBA32F,
         width,
         height,
         0,
-        GL_RGBA,           // format
-        GL_FLOAT,          // data type
-        NULL               // no data = empty texture
+        GL_RGBA,
+        GL_FLOAT,
+        NULL
     );
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -46,9 +46,10 @@ Texture newEmptyTexture(const int width, const int height) {
     };
 }
 
-Texture loadTextureFromPng(const String fileName) {
+Texture loadTextureFromPng(char* fileName) {
+    const String fileNameString = stringOf(fileName);
     const String defaultPath = stringOf("../Resources/Textures/");
-    const String fullPath = Strings.combine(&defaultPath, &fileName);
+    String fullPath = Strings.combine(&defaultPath, &fileNameString);
 
     int width, height, channels;
 

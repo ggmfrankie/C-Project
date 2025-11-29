@@ -17,7 +17,7 @@ typedef struct TextDisplaying{
     float fontSize;
 } Font;
 
-Font loadFontAtlas(String file);
-void renderText(Renderer *renderer, Element *element);
+Font loadFontAtlas(char* file);
+void renderText(const Renderer *renderer, const Element *element);
 
 #endif //C_TEXTELEMENT_H

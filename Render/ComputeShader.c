@@ -39,13 +39,13 @@ GLuint createGraphingShader(const String *fileName, const int programId) {
     return shaderId;
 }
 
-void ComputeShader_createUniform(ComputeShader *shader, const String name) {
-    const int uniformLocation = glGetUniformLocation(shader->programId, name.content);
+void ComputeShader_createUniform(ComputeShader *shader, const char* name) {
+    const int uniformLocation = glGetUniformLocation(shader->programId, name);
 
     if(uniformLocation < 0){
         printf("Error creating Uniform");
     }
-    shader->uniforms.put(&shader->uniforms, newString_c(name.content), uniformLocation);
+    Hashmap_Name_add(&shader->uniforms, name, uniformLocation);
 }
 
 ComputeShader newComputeShader(Texture *texture, const int size) {
@@ -70,7 +70,7 @@ ComputeShader newComputeShader(Texture *texture, const int size) {
         .SSBO = generateGraphSSBO(size),
         .programId = programId,
         .texture = texture,
-        .uniforms = newMap_Uniforms(16, str_equals),
+        .uniforms = newHashmap_Uniforms(16),
         .ssboSize = size,
         .thickness = 0.0f,
         .startX = 0.0f,

@@ -9,8 +9,6 @@
 #include "Engine.h"
 #include "../Utils/Vector.h"
 
-
-
 void loadDefaultQuadMesh();
 
 GLFWwindow* initWindow(const int width, const int height, const char* name) {
@@ -74,22 +72,22 @@ void Renderer_init(Renderer *renderer) {
 
     loadDefaultQuadMesh();
 
-    ComputeShader_createUniform(&renderer->computeShader, stringOf("dataSize"));
-    ComputeShader_createUniform(&renderer->computeShader, stringOf("thickness"));
+    ComputeShader_createUniform(&renderer->computeShader, ("dataSize"));
+    ComputeShader_createUniform(&renderer->computeShader, ("thickness"));
     ComputeShader_update(&renderer->computeShader, graphingFunction);
 
-    Shader_createUniform(&renderer->shader ,stringOf("hasTexture"));
-    Shader_createUniform(&renderer->shader, stringOf("state"));
-    Shader_createUniform(&renderer->shader, stringOf("width"));
-    Shader_createUniform(&renderer->shader, stringOf("height"));
-    Shader_createUniform(&renderer->shader, stringOf("screenWidth"));
-    Shader_createUniform(&renderer->shader, stringOf("screenHeight"));
-    Shader_createUniform(&renderer->shader, stringOf("positionObject"));
-    Shader_createUniform(&renderer->shader, stringOf("texture_sampler"));
+    Shader_createUniform(&renderer->shader, "hasTexture");
+    Shader_createUniform(&renderer->shader, "state");
+    Shader_createUniform(&renderer->shader, "width");
+    Shader_createUniform(&renderer->shader, "height");
+    Shader_createUniform(&renderer->shader, "screenWidth");
+    Shader_createUniform(&renderer->shader, "screenHeight");
+    Shader_createUniform(&renderer->shader, "positionObject");
+    Shader_createUniform(&renderer->shader, "texture_sampler");
 
-    Shader_createUniform(&renderer->shader, stringOf("transformTexCoords"));
-    Shader_createUniform(&renderer->shader, stringOf("texPosStart"));
-    Shader_createUniform(&renderer->shader, stringOf("texPosEnd"));
+    Shader_createUniform(&renderer->shader, "transformTexCoords");
+    Shader_createUniform(&renderer->shader, "texPosStart");
+    Shader_createUniform(&renderer->shader, "texPosEnd");
 }
 
 
@@ -103,8 +101,9 @@ Renderer newRenderer(const int width, const int height, const char* name, List_E
         .render = Renderer_render,
         .screenWidth = width,
         .screenHeight = height,
-        .font = loadFontAtlas(stringOf("From Cartoon Blocks.ttf")),
-        .basicQuadMesh = Mesh_loadSimpleQuad()
+        .font = loadFontAtlas("From Cartoon Blocks.ttf"),
+        .basicQuadMesh = Mesh_loadSimpleQuad(),
+        .defaultClick = NULL
     };
 }
 
@@ -116,8 +115,9 @@ Renderer* newRenderer_h(const int width, const int height, const char* name, Lis
     renderer->render = Renderer_render;
     renderer->screenWidth = width;
     renderer->screenHeight = height;
-    renderer->font = loadFontAtlas(stringOf("ARIAL.TTF"));
+    renderer->font = loadFontAtlas("ARIAL.TTF");
     renderer->basicQuadMesh = Mesh_loadSimpleQuad();
+    renderer->defaultClick = NULL;
     return renderer;
 }
 
@@ -191,7 +191,7 @@ void Renderer_destroy(const Renderer *renderer) {
     glfwDestroyWindow(renderer->window);
 }
 
-void Renderer_render(Renderer *renderer) {
+void Renderer_render(const Renderer *renderer) {
     ComputeShader_run(&renderer->computeShader);
 
     glClear(GL_COLOR_BUFFER_BIT);
@@ -202,29 +202,29 @@ void Renderer_render(Renderer *renderer) {
     #endif
 
     Shaders.bind(&renderer->shader);
-    setUniform_f(&renderer->shader, stringOf("screenWidth"), (float) renderer->screenWidth);
-    setUniform_f(&renderer->shader, stringOf("screenHeight"), (float) renderer->screenHeight);
+    setUniform_f(&renderer->shader, ("screenWidth"), (float) renderer->screenWidth);
+    setUniform_f(&renderer->shader, ("screenHeight"), (float) renderer->screenHeight);
 
     for (int i = 0; i < renderer->elements->size; i++) {
         const Element *element = Element_ListGet_ptr(renderer->elements, i);
         if (element == NULL) break;
         const Shader *shader = &renderer->shader;
 
-        setUniform_f(shader, stringOf("width"), element->width);
-        setUniform_f(shader, stringOf("height"), element->height);
+        setUniform_f(shader, ("width"), element->width);
+        setUniform_f(shader, ("height"), element->height);
 
-        setUniform_i(shader, stringOf("hasTexture"), 1);
-        setUniform_i(shader, stringOf("state"), element->state);
+        setUniform_i(shader, ("hasTexture"), 1);
+        setUniform_i(shader, ("state"), element->state);
 
-        setUniform_Vec2(shader, stringOf("positionObject"), element->pos);
-        setUniform_i(shader, stringOf("transformTexCoords"), 0);
+        setUniform_Vec2(shader, ("positionObject"), element->pos);
+        setUniform_i(shader, ("transformTexCoords"), 0);
 
         glActiveTexture(GL_TEXTURE0);
         if (element->texture != NULL) {
             glBindTexture(GL_TEXTURE_2D, element->texture->textureId);
         }
 
-        setUniform_i(shader, stringOf("texture_sampler"), 0);
+        setUniform_i(shader, ("texture_sampler"), 0);
         Mesh_render(&element->Mesh);
 
         if (element->hasText) {
