@@ -63,23 +63,7 @@ void str_setAll(const String* string, char key);
 char str_getCharAt(const String* string, int index);
 
 
-static StringFunctions Strings = {
-    .charAt = str_getCharAt,
-    .combine = str_combine,
-    .delete = str_delete,
-    .clear = str_clear,
-    .equals = str_equals,
-    .println = str_println,
-    .split = str_split,
-    .startsWith = str_startsWith,
-    .substring = str_substring,
-    .setAll = str_setAll,
-    .setCharAt = str_setCharAt,
-    .fromInt_c = str_fromInt_c,
-    .fromInt = str_fromInt,
-    .recalculateLength = str_recalculateLength,
-    .setContent_c = str_setContent_c
-};
+extern StringFunctions Strings;
 
 
 

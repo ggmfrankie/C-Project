@@ -73,7 +73,7 @@ static inline type* name##_getContent(List_##name *list){\
 }\
 \
 static inline List_##name name##_newList(int capacity) {\
-    type* content = malloc(capacity * sizeof(type));\
+    type* content = calloc(capacity, sizeof(type));\
     if (!content) name##_error(); \
     return (List_##name){\
         .content = content,\

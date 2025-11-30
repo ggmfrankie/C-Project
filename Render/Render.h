@@ -25,7 +25,9 @@ typedef struct Renderer {
     Font font;
     Mesh basicQuadMesh;
     bool (*defaultClick)(Renderer *renderer);
-    void (*render)(const Renderer *renderer);
+    void (*render)(Renderer *renderer);
+
+    Element guiRoot;
 
     OtherShaders otherShaders;
 } Renderer;
@@ -33,39 +35,42 @@ typedef struct Renderer {
 Renderer newRenderer(int width, int height, const char* name, List_Element* elements);
 Renderer* newRenderer_h(int width, int height, const char* name, List_Element* elements);
 void Renderer_init(Renderer *renderer);
-void Renderer_render(const Renderer *renderer);
+void Renderer_render(Renderer *renderer);
 void Renderer_destroy(const Renderer *renderer);
-void guiAddElement(
-    List_Element* list,
+
+Element *guiAddElement(
+    List_Element *list,
     Mesh mesh,
     short meshCount,
     Vec2f pos,
     int width,
     int height,
-    Texture* tex,
-    bool (*mouseOver)(const Element*, Vec2f),
-    bool (*hover)(Element*, Renderer*),
-    bool (*click)(Element*, Renderer*),
+    Texture *tex,
+    bool (*mouseOver)(const Element *, Vec2f),
+    bool (*hover)(Element *, Renderer *),
+    bool (*click)(Element *, Renderer *),
     Task task,
-    const char* text,
+    const char *text,
     bool forceResize
-    );
-void guiAddSimpleRectangle(
-    List_Element* list,
+);
+
+Element *guiAddSimpleRectangle(
+    List_Element *list,
     Vec2f pos,
     int width,
     int height,
-    Texture* tex
-    );
-void guiAddSimpleButton(
-    List_Element* list,
+    Texture *tex
+);
+
+Element *guiAddSimpleButton(
+    List_Element *list,
     Vec2f pos,
     int width,
     int height,
-    Texture* tex,
+    Texture *tex,
     Task task,
-    const char* text
-    );
+    const char *text
+);
 bool isMousePressed(GLFWwindow* window, int mouseButton);
 
 #endif //C_RENDER_H

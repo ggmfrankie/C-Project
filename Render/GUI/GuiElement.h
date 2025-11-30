@@ -14,6 +14,8 @@
 
 struct Renderer;
 typedef struct Renderer Renderer;
+struct Element;
+typedef struct Element Element;
 
 typedef struct TextElement {
     bool forceResize;
@@ -28,8 +30,12 @@ typedef enum {
     S_active = 1,
 } ElementState;
 
+
+ARRAY_LIST(ChildElements, Element*)
+
 typedef struct Element {
     Vec2f pos;
+    Vec2f worldPos;
     float width;
     float height;
     short meshCount;
@@ -48,21 +54,27 @@ typedef struct Element {
     bool (*onHover)(struct Element* element, Renderer *renderer);
 
     Task task;
-
-    int numChildElements;
-    struct Element* childElements;
+    Element* parentElement;
+    List_ChildElements childElements;
 } Element;
 
-
-
-SIMPLEARRAY(Element, Element)
 ARRAY_LIST(Element, Element)
 
+
 Element newElement(Mesh mesh, short meshCount, Vec2f pos, int width, int height, Texture* texture);
+Element* f_addChildElements(Element* parent, ...);
 void setOnClickCallback(Element* element, bool (*onClick)(Element* element, Renderer* renderer));
 void setOnHoverCallback(Element* element, bool (*onHover)(Element* element, Renderer* renderer));
 void setBoundingBox(Element* element, bool (*isMouseOver)(const Element* element, Vec2f mousePos));
 void setText(Element* element, const char* text);
 void setText_int(Element* element, int i);
 bool isSelected_Quad(const Element *element, Vec2f mousePos);
+
+#define addChildElements(parent, ...) \
+f_addChildElements(parent, __VA_ARGS__, NULL)
+
+
+typedef struct Element_Functions {
+
+}Element_Functions;
 #endif //C_GUIELEMENT_H

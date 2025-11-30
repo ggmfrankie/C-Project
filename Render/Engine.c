@@ -48,9 +48,13 @@ void startEngine() {
     const Task changeButtonTextTask = {.func = changeElementText, .userdata = THIS_ELEMENT};
     const Task nameShenanigans = {.func = namensliste_Aufgabe, .userdata = NULL};
 
-    guiAddSimpleRectangle(g_Elements, newVec2f(0, 0), pointerSchematic.width, pointerSchematic.height, &pointerSchematic);
-    guiAddSimpleButton(g_Elements, (Vec2f){100.0f, 100.0f}, 100, 100, &blackButton, changeButtonTextTask,  "Hello World and all others too");
-    guiAddSimpleButton(g_Elements, (Vec2f){200.0f, 100.0f}, 100, 100, &blackButton, nameShenanigans,  "Run the namensliste Test");
+    addChildElements(&renderer.guiRoot,
+        addChildElements(guiAddSimpleButton(g_Elements, (Vec2f){100.0f, 100.0f}, 100, 100, &blackButton, changeButtonTextTask,  "Hello World and all others too"),
+            guiAddSimpleRectangle(g_Elements, newVec2f(0, 0), 230, pointerSchematic.height, &pointerSchematic),
+            guiAddSimpleRectangle(g_Elements, newVec2f(20, 20), pointerSchematic.width, pointerSchematic.height, &pointerSchematic)
+        ),
+        guiAddSimpleButton(g_Elements, (Vec2f){200.0f, 100.0f}, 100, 100, &blackButton, nameShenanigans,  "Run the namensliste Test")
+    );
 
     guiInitialized = true;
     pthread_cond_broadcast(&guiInitCond);

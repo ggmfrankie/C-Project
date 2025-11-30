@@ -9,6 +9,17 @@
 
 #include "../Utils/FileIO.h"
 
+ShaderFunction Shaders = {
+    .bind = Shader_bindProgram,
+    .unbind = Shader_unbindProgram,
+    .createUniform = Shader_createUniform,
+    .createShader = createShader,
+    .readShaderFile = readShaderFile,
+    .setUniform_f = setUniform_f,
+    .setUniform_i = setUniform_i,
+    .setUniform_Vec2 = setUniform_Vec2
+};
+
 int createVertexShader(const String *fileName, int programId);
 int createFragmentShader(const String *fileName, int programId);
 

@@ -11,9 +11,12 @@
 #include "GUI/CallbackFunctions.h"
 
 void loadDefaultQuadMesh();
+void resizeCallback(GLFWwindow *window, int width, int height);
+void cursorPositionCallback(GLFWwindow* window, double xPos, double yPos);
+void updateLayout(Element* element, Vec2f parentPos);
+Element createRootElement();
 
 GLFWwindow* initWindow(const int width, const int height, const char* name) {
-
     if (!glfwInit()) {
         return NULL;
     }
@@ -40,25 +43,6 @@ GLFWwindow* initWindow(const int width, const int height, const char* name) {
     glViewport(0, 0, width, height);
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     return window;
-}
-
-void resizeCallback(GLFWwindow *window, const int width, const int height) {
-
-    glViewport(0, 0, width, height);
-
-    Renderer *renderer = (Renderer *)glfwGetWindowUserPointer(window);
-    renderer->screenWidth = width;
-    renderer->screenHeight = height;
-}
-
-void cursorPositionCallback(GLFWwindow* window, const double xPos, const double yPos) {
-    Renderer *renderer = (Renderer *)glfwGetWindowUserPointer(window);
-    renderer->mousePos.x = (float)xPos;
-    renderer->mousePos.y = (float)yPos;
-}
-
-inline bool isMousePressed(GLFWwindow* window, const int mouseButton) {
-    return glfwGetMouseButton(window, mouseButton) == GLFW_PRESS;
 }
 
 void Renderer_init(Renderer *renderer) {
@@ -91,7 +75,84 @@ void Renderer_init(Renderer *renderer) {
     Shader_createUniform(&renderer->guiShader, "texPosEnd");
 }
 
+void Renderer_render(Renderer *renderer) {
+    ComputeShader_run(&renderer->computeShader);
 
+    glClear(GL_COLOR_BUFFER_BIT);
+    //#define DEBUG
+#ifdef DEBUG
+    glDisable(GL_CULL_FACE);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+#endif
+
+    Shaders.bind(&renderer->guiShader);
+    setUniform(&renderer->guiShader, ("screenWidth"), (float) renderer->screenWidth);
+    setUniform(&renderer->guiShader, ("screenHeight"), (float) renderer->screenHeight);
+
+    updateLayout(&renderer->guiRoot, (Vec2f){0.0f, 0.0f});
+    for (int i = 0; i < renderer->elements->size; i++) {
+        Element *element = Element_ListGet_ptr(renderer->elements, i);
+        if (element == NULL) break;
+
+        const Shader *shader = &renderer->guiShader;
+
+        setUniform(shader, ("width"), element->width);
+        setUniform(shader, ("height"), element->height);
+
+        setUniform(shader, ("hasTexture"), 1);
+        setUniform(shader, ("state"), (int)element->state);
+
+        setUniform(shader, ("positionObject"), element->worldPos);
+        setUniform(shader, ("transformTexCoords"), 0);
+
+        glActiveTexture(GL_TEXTURE0);
+        if (element->texture != NULL) {
+            glBindTexture(GL_TEXTURE_2D, element->texture->textureId);
+        }
+
+        setUniform(shader, ("texture_sampler"), 0);
+        Mesh_render(&element->Mesh);
+
+        if (element->hasText) {
+            renderText(renderer, element);
+        }
+    }
+
+    glfwSwapBuffers(renderer->window);
+    Shaders.unbind();
+}
+
+void updateLayout(Element* element, const Vec2f parentPos) {
+    if (!element) return;
+
+    element->worldPos.x = parentPos.x + element->pos.x;
+    element->worldPos.y = parentPos.y + element->pos.y;
+
+    for (int i = 0; i < element->childElements.size; i++) {
+        // printf("This element has %x children\n", (int)element->childElements.size);
+        // printf("childElement pointer (heap) is %p", element->childElements.content);
+        // puts("Recursion");
+        updateLayout(element->childElements.content[i], element->worldPos);
+    }
+}
+
+void resizeCallback(GLFWwindow *window, const int width, const int height) {
+    glViewport(0, 0, width, height);
+
+    Renderer *renderer = (Renderer *)glfwGetWindowUserPointer(window);
+    renderer->screenWidth = width;
+    renderer->screenHeight = height;
+}
+
+void cursorPositionCallback(GLFWwindow* window, const double xPos, const double yPos) {
+    Renderer *renderer = (Renderer *)glfwGetWindowUserPointer(window);
+    renderer->mousePos.x = (float)xPos;
+    renderer->mousePos.y = (float)yPos;
+}
+
+inline bool isMousePressed(GLFWwindow* window, const int mouseButton) {
+    return glfwGetMouseButton(window, mouseButton) == GLFW_PRESS;
+}
 
 Renderer newRenderer(const int width, const int height, const char* name, List_Element* elements) {
     return (Renderer){
@@ -105,7 +166,8 @@ Renderer newRenderer(const int width, const int height, const char* name, List_E
         .screenHeight = height,
         .font = loadFontAtlas("From Cartoon Blocks.ttf"),
         .basicQuadMesh = Mesh_loadSimpleQuad(),
-        .defaultClick = NULL
+        .defaultClick = NULL,
+        .guiRoot = createRootElement()
     };
 }
 
@@ -123,21 +185,21 @@ Renderer* newRenderer_h(const int width, const int height, const char* name, Lis
     return renderer;
 }
 
-void guiAddElement(
-    List_Element* list,
+Element *guiAddElement(
+    List_Element *list,
     const Mesh mesh,
     const short meshCount,
     const Vec2f pos,
     const int width,
     const int height,
-    Texture* tex,
-    bool (*mouseOver)(const Element*, Vec2f),
-    bool (*hover)(Element*, Renderer*),
-    bool (*click)(Element*, Renderer*),
+    Texture *tex,
+    bool (*mouseOver)(const Element *, Vec2f),
+    bool (*hover)(Element *, Renderer *),
+    bool (*click)(Element *, Renderer *),
     const Task task,
-    const char* text,
+    const char *text,
     const bool forceResize
-    )
+)
 {
     Element_ListAdd(list, newElement(mesh, meshCount, pos, width, height, tex));
     Element* lastElement = Element_ListGetLast(list);
@@ -164,30 +226,35 @@ void guiAddElement(
         setText(lastElement, text);
         lastElement->hasText = true;
     }
+    return lastElement;
 }
 
-void guiAddSimpleRectangle(
-    List_Element* list,
+Element *guiAddSimpleRectangle(
+    List_Element *list,
     const Vec2f pos,
     const int width,
     const int height,
-    Texture* tex
-    )
+    Texture *tex
+)
 {
-    guiAddElement(list, quadMesh, 1, pos, width, height, tex, NULL, NULL, NULL, (Task){NULL, NULL}, NULL, false);
+    return guiAddElement(list, quadMesh, 1, pos, width, height, tex, NULL, NULL, NULL, (Task){NULL, NULL}, NULL, false);
 }
 
-void guiAddSimpleButton(
-    List_Element* list,
+Element *guiAddSimpleButton(
+    List_Element *list,
     const Vec2f pos,
     const int width,
     const int height,
-    Texture* tex,
+    Texture *tex,
     const Task task,
-    const char* text
-    )
+    const char *text
+)
 {
-    guiAddElement(list, quadMesh, 1, pos, width, height, tex, isSelected_Quad, hoverCallbackFunction, clickCallbackFunction, task, text, true);
+    return guiAddElement(list, quadMesh, 1, pos, width, height, tex, isSelected_Quad, hoverCallbackFunction, clickCallbackFunction, task, text, true);
+}
+
+Element createRootElement() {
+    return newElement((Mesh){}, 0, (Vec2f){}, 0, 0, NULL);
 }
 
 void loadDefaultQuadMesh() {
@@ -199,47 +266,3 @@ void Renderer_destroy(const Renderer *renderer) {
     glfwDestroyWindow(renderer->window);
 }
 
-void Renderer_render(const Renderer *renderer) {
-    ComputeShader_run(&renderer->computeShader);
-
-    glClear(GL_COLOR_BUFFER_BIT);
-//#define DEBUG
-    #ifdef DEBUG
-    glDisable(GL_CULL_FACE);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    #endif
-
-    Shaders.bind(&renderer->guiShader);
-    setUniform(&renderer->guiShader, ("screenWidth"), (float) renderer->screenWidth);
-    setUniform(&renderer->guiShader, ("screenHeight"), (float) renderer->screenHeight);
-
-    for (int i = 0; i < renderer->elements->size; i++) {
-        const Element *element = Element_ListGet_ptr(renderer->elements, i);
-        if (element == NULL) break;
-        const Shader *shader = &renderer->guiShader;
-
-        setUniform(shader, ("width"), element->width);
-        setUniform(shader, ("height"), element->height);
-
-        setUniform(shader, ("hasTexture"), 1);
-        setUniform(shader, ("state"), (int)element->state);
-
-        setUniform(shader, ("positionObject"), element->pos);
-        setUniform(shader, ("transformTexCoords"), 0);
-
-        glActiveTexture(GL_TEXTURE0);
-        if (element->texture != NULL) {
-            glBindTexture(GL_TEXTURE_2D, element->texture->textureId);
-        }
-
-        setUniform(shader, ("texture_sampler"), 0);
-        Mesh_render(&element->Mesh);
-
-        if (element->hasText) {
-            renderText(renderer, element);
-        }
-    }
-
-    glfwSwapBuffers(renderer->window);
-    Shaders.unbind();
-}

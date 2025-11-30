@@ -54,14 +54,5 @@ Vec2f: setUniform_Vec2\
 String readShaderFile(const String *fileName);
 int createShader(const GLchar** shaderSource, int shaderType, int programId);
 
-static ShaderFunction Shaders = {
-    .bind = Shader_bindProgram,
-    .unbind = Shader_unbindProgram,
-    .createUniform = Shader_createUniform,
-    .createShader = createShader,
-    .readShaderFile = readShaderFile,
-    .setUniform_f = setUniform_f,
-    .setUniform_i = setUniform_i,
-    .setUniform_Vec2 = setUniform_Vec2
-};
+extern ShaderFunction Shaders;
 #endif //C_SHADER_H

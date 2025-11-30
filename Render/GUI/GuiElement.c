@@ -5,11 +5,13 @@
 #include "../GUI/GuiElement.h"
 
 #include <pthread.h>
+#include <stdarg.h>
 
 #include "../Render.h"
 #include "../Engine.h"
 
-Element newElement(Mesh mesh, const short meshCount, const Vec2f pos, const int width, const int height, Texture* texture) {
+Element newElement(const Mesh mesh, const short meshCount, const Vec2f pos, const int width, const int height, Texture* texture) {
+    puts("new Element created");
     return (Element){
         .Mesh = mesh,
         .meshCount = meshCount,
@@ -19,12 +21,13 @@ Element newElement(Mesh mesh, const short meshCount, const Vec2f pos, const int 
         .onHover = NULL,
         .isMouseOver = NULL,
         .pos = pos,
+        .worldPos = pos,
         .width = (float) width,
         .height = (float) height,
         .texture = texture,
         .textElement = NULL,
-        .childElements = NULL,
-        .numChildElements = 0,
+        .parentElement = NULL,
+        .childElements = ChildElements_newList(8),
         .hasText = false,
         .task = (Task){NULL, NULL}
     };
@@ -48,6 +51,23 @@ void setOnHoverCallback(Element* element, bool (*onHover)(Element* element, Rend
 
 void setOnClickCallback(Element* element, bool (*onClick)(Element* element, Renderer* renderer)) {
     element->onClick = onClick;
+}
+
+Element* f_addChildElements(Element* parent, ...)
+{
+    va_list args;
+    va_start(args, parent);
+
+    while (1) {
+        Element* child = va_arg(args, Element*);
+        if (child == NULL) break;
+
+        child->parentElement = parent;
+        ChildElements_ListAdd(&parent->childElements, child);
+    }
+
+    va_end(args);
+    return parent;
 }
 
 void setText(Element* element, const char* text) {
