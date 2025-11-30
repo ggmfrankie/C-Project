@@ -7,5 +7,5 @@
 #include <stddef.h>
 
 
-void namensliste_Aufgabe();
+void namensliste_Aufgabe(void* userdata);
 #endif //C_NAMENSLISTE_H

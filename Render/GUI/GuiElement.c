@@ -25,8 +25,8 @@ Element newElement(Mesh mesh, const short meshCount, const Vec2f pos, const int 
         .textElement = NULL,
         .childElements = NULL,
         .numChildElements = 0,
-        .userdata = NULL,
-        .hasText = false
+        .hasText = false,
+        .task = (Task){NULL, NULL}
     };
 }
 

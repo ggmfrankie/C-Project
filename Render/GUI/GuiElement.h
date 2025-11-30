@@ -7,6 +7,7 @@
 #include <stdbool.h>
 
 #include "Mesh.h"
+#include "Tasks.h"
 #include "../GUI/Texture.h"
 #include "../../Utils/SimpleArray.h"
 #include "../../Utils/Vector.h"
@@ -41,11 +42,12 @@ typedef struct Element {
 
     //Interaction
     ElementState state;
-    void *userdata;
     bool isVisible;
     bool (*isMouseOver)(const struct Element* element, Vec2f mousePos);
     bool (*onClick)(struct Element* element, Renderer *renderer);
     bool (*onHover)(struct Element* element, Renderer *renderer);
+
+    Task task;
 
     int numChildElements;
     struct Element* childElements;

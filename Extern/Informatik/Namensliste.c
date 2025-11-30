@@ -43,7 +43,7 @@ void enterName(const NameCounterMap *ncm);
 void namensliste_schnell();
 
 
-void namensliste_Aufgabe() {
+void namensliste_Aufgabe(void* userdata) {
     namensliste_langsam();
     namensliste_schnell();
 }

@@ -13,13 +13,13 @@ int createVertexShader(const String *fileName, int programId);
 int createFragmentShader(const String *fileName, int programId);
 
 
-Shader newShader() {
+Shader newShader(char* vertexShaderFile, char* fragmentShaderFile) {
 
     const int programId = glCreateProgram();
     int success;
     char infoLog[512];
-    const String vertexShader = stringOf("GuiVertexShader.vert");
-    const String fragmentShader = stringOf("GuiFragmentShader.frag");
+    const String vertexShader = stringOf(vertexShaderFile);
+    const String fragmentShader = stringOf(fragmentShaderFile);
 
     const int vertexId = createVertexShader(&vertexShader, programId);
     const int fragmentId = createFragmentShader(&fragmentShader, programId);

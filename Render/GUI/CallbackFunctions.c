@@ -7,7 +7,6 @@
 #include "../Render.h"
 
 bool dragFunction(Element *element, Renderer *renderer) {
-    element->state = 1;
     static Vec2f offset;
     static bool dragging = false;
     const bool isMouseDown = isMousePressed(renderer->window, GLFW_MOUSE_BUTTON_LEFT);
@@ -26,23 +25,19 @@ bool dragFunction(Element *element, Renderer *renderer) {
             element->pos.x = renderer->mousePos.x - offset.x;
             element->pos.y = renderer->mousePos.y - offset.y;
         }
+        return true;
     }
-    return true;
+    return false;
 }
 
 bool hoverCallbackFunction(Element *element, Renderer *renderer) {
+    element->state = 1;
     return dragFunction(element, renderer);
+    //return false;
 }
 
 bool clickCallbackFunction(Element *element, Renderer *renderer) {
-    if (glfwGetKey(renderer->window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) return false;
-    if (element->hasText) {
-        char newText[512];
-        puts("Enter the new Name:\n");
-        scanf("%511s", newText);
-        Strings.setContent_c(&element->textElement.text, newText);
-    }
-    printf("Hello\n");
+    if (element->task.func) pushTask(element->task.func, element->task.userdata);
     return true;
 }
 

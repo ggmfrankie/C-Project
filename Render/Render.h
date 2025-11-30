@@ -19,13 +19,15 @@ typedef struct Renderer {
     int screenHeight;
     GLFWwindow *window;
     Vec2f mousePos;
-    Shader shader;
+    Shader guiShader;
     ComputeShader computeShader;
     List_Element* elements;
     Font font;
     Mesh basicQuadMesh;
     bool (*defaultClick)(Renderer *renderer);
     void (*render)(const Renderer *renderer);
+
+    OtherShaders otherShaders;
 } Renderer;
 
 Renderer newRenderer(int width, int height, const char* name, List_Element* elements);
@@ -44,6 +46,7 @@ void guiAddElement(
     bool (*mouseOver)(const Element*, Vec2f),
     bool (*hover)(Element*, Renderer*),
     bool (*click)(Element*, Renderer*),
+    Task task,
     const char* text,
     bool forceResize
     );
@@ -60,8 +63,7 @@ void guiAddSimpleButton(
     int width,
     int height,
     Texture* tex,
-    bool (*hover)(Element*, Renderer*),
-    bool (*click)(Element*, Renderer*),
+    Task task,
     const char* text
     );
 bool isMousePressed(GLFWwindow* window, int mouseButton);

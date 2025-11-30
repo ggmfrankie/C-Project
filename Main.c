@@ -15,15 +15,10 @@ void* workerThread(void* args);
 #include <windows.h>
 
 void mainFun() {
-    int i = 1;
-    do {
-        char name[512];
-        puts("Enter Name:");
-        scanf("%511s", name);
 
-        setText(g_Elements->get(g_Elements, 1), name);
-        namensliste_Aufgabe();
-        Sleep(1);
+    do {
+        const Task t = popTask();
+        t.func(t.userdata);
     } while (1);
 }
 

@@ -60,6 +60,8 @@ add_executable(C
         Extern/Informatik/PointerFun.c
         Extern/Informatik/Namensliste.c
         Extern/Informatik/Personalverwaltung.c
+        Render/GUI/Tasks.c
+        Render/GUI/Tasks.h
 )
 #add_subdirectory("${CMAKE_SOURCE_DIR}/Render")
 

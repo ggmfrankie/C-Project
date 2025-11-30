@@ -8,6 +8,7 @@
 
 #include "Engine.h"
 #include "../Utils/Vector.h"
+#include "GUI/CallbackFunctions.h"
 
 void loadDefaultQuadMesh();
 
@@ -76,18 +77,18 @@ void Renderer_init(Renderer *renderer) {
     ComputeShader_createUniform(&renderer->computeShader, ("thickness"));
     ComputeShader_update(&renderer->computeShader, graphingFunction);
 
-    Shader_createUniform(&renderer->shader, "hasTexture");
-    Shader_createUniform(&renderer->shader, "state");
-    Shader_createUniform(&renderer->shader, "width");
-    Shader_createUniform(&renderer->shader, "height");
-    Shader_createUniform(&renderer->shader, "screenWidth");
-    Shader_createUniform(&renderer->shader, "screenHeight");
-    Shader_createUniform(&renderer->shader, "positionObject");
-    Shader_createUniform(&renderer->shader, "texture_sampler");
+    Shader_createUniform(&renderer->guiShader, "hasTexture");
+    Shader_createUniform(&renderer->guiShader, "state");
+    Shader_createUniform(&renderer->guiShader, "width");
+    Shader_createUniform(&renderer->guiShader, "height");
+    Shader_createUniform(&renderer->guiShader, "screenWidth");
+    Shader_createUniform(&renderer->guiShader, "screenHeight");
+    Shader_createUniform(&renderer->guiShader, "positionObject");
+    Shader_createUniform(&renderer->guiShader, "texture_sampler");
 
-    Shader_createUniform(&renderer->shader, "transformTexCoords");
-    Shader_createUniform(&renderer->shader, "texPosStart");
-    Shader_createUniform(&renderer->shader, "texPosEnd");
+    Shader_createUniform(&renderer->guiShader, "transformTexCoords");
+    Shader_createUniform(&renderer->guiShader, "texPosStart");
+    Shader_createUniform(&renderer->guiShader, "texPosEnd");
 }
 
 
@@ -95,7 +96,8 @@ void Renderer_init(Renderer *renderer) {
 Renderer newRenderer(const int width, const int height, const char* name, List_Element* elements) {
     return (Renderer){
         .elements = elements,
-        .shader = newShader(),
+        .guiShader = newShader("GuiVertexShader.vert", "GuiFragmentShader.frag"),
+        .otherShaders = (OtherShaders){0, {}},
         .computeShader = 0,
         .window = initWindow(width, height, name),
         .render = Renderer_render,
@@ -110,7 +112,7 @@ Renderer newRenderer(const int width, const int height, const char* name, List_E
 Renderer* newRenderer_h(const int width, const int height, const char* name, List_Element* elements) {
     Renderer* renderer = malloc(sizeof(Renderer));
     renderer->elements = elements;
-    renderer->shader = newShader();
+    renderer->guiShader = newShader("GuiVertexShader.vert", "GuiFragmentShader.frag");
     renderer->window = initWindow(width, height, name);
     renderer->render = Renderer_render;
     renderer->screenWidth = width;
@@ -132,6 +134,7 @@ void guiAddElement(
     bool (*mouseOver)(const Element*, Vec2f),
     bool (*hover)(Element*, Renderer*),
     bool (*click)(Element*, Renderer*),
+    const Task task,
     const char* text,
     const bool forceResize
     )
@@ -141,7 +144,13 @@ void guiAddElement(
     if (mouseOver) {
         lastElement->isMouseOver = mouseOver;
         if (hover) lastElement->onHover = hover;
-        if (click) lastElement->onClick = click;
+        if (click) {
+            lastElement->onClick = click;
+            if (task.func) {
+                lastElement->task = task;
+                if (task.userdata == NULL) lastElement->task.userdata = lastElement;
+            }
+        }
     }
     if (text) {
 
@@ -165,7 +174,7 @@ void guiAddSimpleRectangle(
     Texture* tex
     )
 {
-    guiAddElement(list, quadMesh, 1, pos, width, height, tex, NULL, NULL, NULL, NULL, false);
+    guiAddElement(list, quadMesh, 1, pos, width, height, tex, NULL, NULL, NULL, (Task){NULL, NULL}, NULL, false);
 }
 
 void guiAddSimpleButton(
@@ -174,12 +183,11 @@ void guiAddSimpleButton(
     const int width,
     const int height,
     Texture* tex,
-    bool (*hover)(Element*, Renderer*),
-    bool (*click)(Element*, Renderer*),
+    const Task task,
     const char* text
     )
 {
-    guiAddElement(list, quadMesh, 1, pos, width, height, tex, isSelected_Quad, hover, click, text, true);
+    guiAddElement(list, quadMesh, 1, pos, width, height, tex, isSelected_Quad, hoverCallbackFunction, clickCallbackFunction, task, text, true);
 }
 
 void loadDefaultQuadMesh() {
@@ -201,30 +209,30 @@ void Renderer_render(const Renderer *renderer) {
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     #endif
 
-    Shaders.bind(&renderer->shader);
-    setUniform_f(&renderer->shader, ("screenWidth"), (float) renderer->screenWidth);
-    setUniform_f(&renderer->shader, ("screenHeight"), (float) renderer->screenHeight);
+    Shaders.bind(&renderer->guiShader);
+    setUniform(&renderer->guiShader, ("screenWidth"), (float) renderer->screenWidth);
+    setUniform(&renderer->guiShader, ("screenHeight"), (float) renderer->screenHeight);
 
     for (int i = 0; i < renderer->elements->size; i++) {
         const Element *element = Element_ListGet_ptr(renderer->elements, i);
         if (element == NULL) break;
-        const Shader *shader = &renderer->shader;
+        const Shader *shader = &renderer->guiShader;
 
-        setUniform_f(shader, ("width"), element->width);
-        setUniform_f(shader, ("height"), element->height);
+        setUniform(shader, ("width"), element->width);
+        setUniform(shader, ("height"), element->height);
 
-        setUniform_i(shader, ("hasTexture"), 1);
-        setUniform_i(shader, ("state"), element->state);
+        setUniform(shader, ("hasTexture"), 1);
+        setUniform(shader, ("state"), (int)element->state);
 
-        setUniform_Vec2(shader, ("positionObject"), element->pos);
-        setUniform_i(shader, ("transformTexCoords"), 0);
+        setUniform(shader, ("positionObject"), element->pos);
+        setUniform(shader, ("transformTexCoords"), 0);
 
         glActiveTexture(GL_TEXTURE0);
         if (element->texture != NULL) {
             glBindTexture(GL_TEXTURE_2D, element->texture->textureId);
         }
 
-        setUniform_i(shader, ("texture_sampler"), 0);
+        setUniform(shader, ("texture_sampler"), 0);
         Mesh_render(&element->Mesh);
 
         if (element->hasText) {

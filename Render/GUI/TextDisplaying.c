@@ -116,7 +116,7 @@ void renderText(const Renderer *renderer, const Element *element) {
         totalGlyphLength += glyphWidth;
         if (maxGlyphHeight < glyphHeight) maxGlyphHeight = glyphHeight;
 
-        const Shader* shader = &renderer->shader;
+        const Shader* shader = &renderer->guiShader;
         setUniform_i(shader, ("hasTexture"), 1);
         setUniform_f(shader, ("width"), glyphWidth);
         setUniform_f(shader, ("height"), glyphHeight);
@@ -128,7 +128,7 @@ void renderText(const Renderer *renderer, const Element *element) {
 
         Mesh_render(&renderer->basicQuadMesh);
     }
-    setUniform_i(&renderer->shader, ("transformTexCoords"), 0);
+    setUniform_i(&renderer->guiShader, ("transformTexCoords"), 0);
 }
 
 void renderTextOptimized(const Renderer *renderer, const Element *element) {
