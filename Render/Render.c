@@ -4,6 +4,7 @@
 #include "glad/gl.h"
 #include "Render.h"
 
+#include <bemapiset.h>
 #include <math.h>
 
 #include "Engine.h"
@@ -13,7 +14,10 @@
 void loadDefaultQuadMesh();
 void resizeCallback(GLFWwindow *window, int width, int height);
 void cursorPositionCallback(GLFWwindow* window, double xPos, double yPos);
-void updateLayout(Element* element, Vec2f parentPos);
+void renderElementsRecursively(Element* element, const Renderer* renderer);
+Vec2f measureText(const Renderer* renderer, const TextElement* textElement);
+
+Vec2f updateLayout(Element *element, Vec2f parentPos, const Renderer* renderer);
 Element createRootElement();
 
 GLFWwindow* initWindow(const int width, const int height, const char* name) {
@@ -89,15 +93,22 @@ void Renderer_render(Renderer *renderer) {
     setUniform(&renderer->guiShader, ("screenWidth"), (float) renderer->screenWidth);
     setUniform(&renderer->guiShader, ("screenHeight"), (float) renderer->screenHeight);
 
-    updateLayout(&renderer->guiRoot, (Vec2f){0.0f, 0.0f});
-    for (int i = 0; i < renderer->elements->size; i++) {
+    Element* guiRoot = &renderer->guiRoot;
+
+    updateLayout(guiRoot, (Vec2f){0.0f, 0.0f}, renderer);
+
+    for (int i = 0; i < guiRoot->childElements.size; i++) {
+        renderElementsRecursively(guiRoot->childElements.content[i], renderer);
+    }
+    /*
+    for (size_t i = 0; i < renderer->elements->size; i++) {
         Element *element = Element_ListGet_ptr(renderer->elements, i);
         if (element == NULL) break;
 
         const Shader *shader = &renderer->guiShader;
 
-        setUniform(shader, ("width"), element->width);
-        setUniform(shader, ("height"), element->height);
+        setUniform(shader, ("width"), element->actualWidth);
+        setUniform(shader, ("height"), element->actualHeight);
 
         setUniform(shader, ("hasTexture"), 1);
         setUniform(shader, ("state"), (int)element->state);
@@ -117,24 +128,107 @@ void Renderer_render(Renderer *renderer) {
             renderText(renderer, element);
         }
     }
+    */
 
     glfwSwapBuffers(renderer->window);
     Shaders.unbind();
 }
 
-void updateLayout(Element* element, const Vec2f parentPos) {
-    if (!element) return;
+void renderElementsRecursively(Element* element, const Renderer* renderer) {
+    if (element == NULL) return;
+
+    const Shader* shader = &renderer->guiShader;
+
+    setUniform(shader, ("width"), element->actualWidth);
+    setUniform(shader, ("height"), element->actualHeight);
+
+    setUniform(shader, ("hasTexture"), 1);
+    setUniform(shader, ("state"), (int)element->state);
+
+    setUniform(shader, ("positionObject"), element->worldPos);
+    setUniform(shader, ("transformTexCoords"), 0);
+
+    glActiveTexture(GL_TEXTURE0);
+    if (element->texture != NULL) {
+        glBindTexture(GL_TEXTURE_2D, element->texture->textureId);
+    }
+
+    setUniform(shader, ("texture_sampler"), 0);
+    Mesh_render(&element->Mesh);
+
+    if (element->hasText) {
+        renderText(renderer, element);
+    }
+
+    for (int i = 0; i < element->childElements.size; i++) {
+        Element* childElement = element->childElements.content[i];
+        renderElementsRecursively(childElement, renderer);
+    }
+}
+
+Vec2f updateLayout(Element *element, const Vec2f parentPos, const Renderer* renderer) {
+    if (!element) return (Vec2f){0,0};
 
     element->worldPos.x = parentPos.x + element->pos.x;
     element->worldPos.y = parentPos.y + element->pos.y;
 
-    for (int i = 0; i < element->childElements.size; i++) {
-        // printf("This element has %x children\n", (int)element->childElements.size);
-        // printf("childElement pointer (heap) is %p", element->childElements.content);
-        // puts("Recursion");
-        updateLayout(element->childElements.content[i], element->worldPos);
+    float realWidth = element->width;
+    float realHeight = element->height;
+
+    if (element->hasText) {
+        Vec2f textSize = measureText(renderer, &element->textElement);
+
+        realWidth  = max(realWidth,  textSize.x + element->textElement.offset.x);
+        realHeight = max(realHeight, textSize.y + element->textElement.offset.y);
     }
+
+    for (int i = 0; i < element->childElements.size; i++) {
+        const Vec2f childDimensions = updateLayout(element->childElements.content[i], element->worldPos, renderer);
+        realWidth = max(childDimensions.x, realWidth);
+        realHeight += childDimensions.y;
+    }
+    if (element->autoFit) {
+        element->actualWidth = realWidth;
+        element->actualHeight = realHeight;
+    }
+    return (Vec2f){realWidth, realHeight};
 }
+
+Vec2f measureText(const Renderer* renderer, const TextElement* textElement) {
+    const Font* font = &renderer->font;
+    const float scale = textElement->textScale;
+
+    float width = 0.0f;
+    float maxHeight = 0.0f;
+
+    float x = 0.0f;
+    float y = 0.0f;
+
+    for (int i = 0; i < textElement->text.length; i++) {
+        const char c = textElement->text.content[i];
+        if (c < 32 || c > 126) continue;
+
+        stbtt_aligned_quad q;
+        stbtt_GetPackedQuad(font->glyphs,
+                            font->fontAtlas.width,
+                            font->fontAtlas.height,
+                            c - 32,
+                            &x,
+                            &y,
+                            &q,
+                            1);
+
+        float gw = (q.x1 - q.x0) * scale;
+        float gh = (q.y1 - q.y0) * scale;
+
+        width += gw;
+        if (gh > maxHeight)
+            maxHeight = gh;
+    }
+
+    return (Vec2f){ width, maxHeight };
+}
+
 
 void resizeCallback(GLFWwindow *window, const int width, const int height) {
     glViewport(0, 0, width, height);

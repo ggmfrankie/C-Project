@@ -36,8 +36,13 @@ ARRAY_LIST(ChildElements, Element*)
 typedef struct Element {
     Vec2f pos;
     Vec2f worldPos;
+
     float width;
     float height;
+
+    float actualWidth;
+    float actualHeight;
+
     short meshCount;
     Mesh Mesh;
     Texture* texture;
@@ -56,6 +61,7 @@ typedef struct Element {
     Task task;
     Element* parentElement;
     List_ChildElements childElements;
+    bool autoFit;
 } Element;
 
 ARRAY_LIST(Element, Element)

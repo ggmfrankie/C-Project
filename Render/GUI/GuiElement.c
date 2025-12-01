@@ -24,18 +24,21 @@ Element newElement(const Mesh mesh, const short meshCount, const Vec2f pos, cons
         .worldPos = pos,
         .width = (float) width,
         .height = (float) height,
+        .actualWidth = (float) width,
+        .actualHeight = (float) height,
         .texture = texture,
         .textElement = NULL,
         .parentElement = NULL,
         .childElements = ChildElements_newList(8),
         .hasText = false,
-        .task = (Task){NULL, NULL}
+        .task = (Task){NULL, NULL},
+        .autoFit = true
     };
 }
 
 bool isSelected_Quad(const Element *element, const Vec2f mousePos) {
-    if (mousePos.x <= element->pos.x+element->width && mousePos.x >= element->pos.x &&
-        mousePos.y <= element->pos.y+element->height && mousePos.y >= element->pos.y) {
+    if (mousePos.x <= element->pos.x+element->actualWidth && mousePos.x >= element->pos.x &&
+        mousePos.y <= element->pos.y+element->actualHeight && mousePos.y >= element->pos.y) {
         return true;
     }
     return false;
