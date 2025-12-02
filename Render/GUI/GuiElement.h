@@ -25,6 +25,13 @@ typedef struct TextElement {
     Vec2f offset;
 } TextElement;
 
+typedef struct Padding {
+    float left;
+    float up;
+    float right;
+    float down;
+} Padding;
+
 typedef enum {
     S_default = 0,
     S_active = 1,
@@ -46,6 +53,7 @@ typedef struct Element {
     short meshCount;
     Mesh Mesh;
     Texture* texture;
+    Vec3f color;
 
     //Text display
     bool hasText;
@@ -61,7 +69,9 @@ typedef struct Element {
     Task task;
     Element* parentElement;
     List_ChildElements childElements;
+    Padding padding;
     bool autoFit;
+
 } Element;
 
 ARRAY_LIST(Element, Element)
@@ -69,6 +79,7 @@ ARRAY_LIST(Element, Element)
 
 Element newElement(Mesh mesh, short meshCount, Vec2f pos, int width, int height, Texture* texture);
 Element* f_addChildElements(Element* parent, ...);
+Element* f_addChildElementsN(Element* parent, int count, ...);
 void setOnClickCallback(Element* element, bool (*onClick)(Element* element, Renderer* renderer));
 void setOnHoverCallback(Element* element, bool (*onHover)(Element* element, Renderer* renderer));
 void setBoundingBox(Element* element, bool (*isMouseOver)(const Element* element, Vec2f mousePos));
@@ -78,6 +89,8 @@ bool isSelected_Quad(const Element *element, Vec2f mousePos);
 
 #define addChildElements(parent, ...) \
 f_addChildElements(parent, __VA_ARGS__, NULL)
+
+#define addChildElementsN(parent, count, ...) f_addChildElementsN(parent, count, __VA_ARGS__)
 
 
 typedef struct Element_Functions {

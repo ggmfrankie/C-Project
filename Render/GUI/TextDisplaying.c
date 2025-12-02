@@ -84,8 +84,8 @@ void renderText(const Renderer *renderer, const Element *element) {
 
     //TODO relative Position
     const Vec2f startPos = (Vec2f){
-        .x = element->pos.x + textElement->offset.x,
-        .y = element->pos.y + element->height + textElement->offset.y
+        .x = element->worldPos.x + textElement->offset.x,
+        .y = element->worldPos.y + element->height + textElement->offset.y
     };
     Vec2f cursor = (Vec2f){
         .x = startPos.x,

@@ -27,9 +27,11 @@ Element newElement(const Mesh mesh, const short meshCount, const Vec2f pos, cons
         .actualWidth = (float) width,
         .actualHeight = (float) height,
         .texture = texture,
+        .color = (Vec3f){0.0f, 0.0f, 0.0f},
         .textElement = NULL,
         .parentElement = NULL,
         .childElements = ChildElements_newList(8),
+        .padding = (Padding){0,0,0,0},
         .hasText = false,
         .task = (Task){NULL, NULL},
         .autoFit = true
@@ -37,8 +39,8 @@ Element newElement(const Mesh mesh, const short meshCount, const Vec2f pos, cons
 }
 
 bool isSelected_Quad(const Element *element, const Vec2f mousePos) {
-    if (mousePos.x <= element->pos.x+element->actualWidth && mousePos.x >= element->pos.x &&
-        mousePos.y <= element->pos.y+element->actualHeight && mousePos.y >= element->pos.y) {
+    if (mousePos.x <= element->worldPos.x+element->actualWidth && mousePos.x >= element->worldPos.x &&
+        mousePos.y <= element->worldPos.y+element->actualHeight && mousePos.y >= element->worldPos.y) {
         return true;
     }
     return false;
@@ -57,18 +59,42 @@ void setOnClickCallback(Element* element, bool (*onClick)(Element* element, Rend
 }
 
 Element* f_addChildElements(Element* parent, ...)
-{
-    va_list args;
+{va_list args;
     va_start(args, parent);
 
     while (1) {
         Element* child = va_arg(args, Element*);
-        if (child == NULL) break;
+        if (child == NULL) {
+            // Encountered the terminating NULL (or a NULL child). Log and stop.
+            printf("f_addChildElements: encountered NULL child for parent=%p\n", (void*)parent);
+            break;
+        }
+
+        // Defensive: sanity-check child pointer range (heuristic)
+        uintptr_t p = (uintptr_t)child;
+        if (p < 0x1000) {
+            printf("f_addChildElements: suspicious child pointer %p for parent=%p\n", (void*)child, (void*)parent);
+            break;
+        }
 
         child->parentElement = parent;
         ChildElements_ListAdd(&parent->childElements, child);
     }
 
+    va_end(args);
+    return parent;
+}
+
+Element* f_addChildElementsN(Element* parent, const int count, ...)
+{
+    va_list args;
+    va_start(args, count);
+    for (int i = 0; i < count; i++) {
+        Element* child = va_arg(args, Element*);
+        if (!child) continue; // skip NULLs
+        child->parentElement = parent;
+        ChildElements_ListAdd(&parent->childElements, child);
+    }
     va_end(args);
     return parent;
 }

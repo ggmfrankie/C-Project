@@ -18,8 +18,8 @@ bool dragFunction(Element *element, Renderer *renderer) {
 
     if (glfwGetKey(renderer->window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
         if (!dragging) {
-            offset.x = renderer->mousePos.x - element->pos.x;
-            offset.y = renderer->mousePos.y - element->pos.y;
+            offset.x = renderer->mousePos.x - element->worldPos.x;
+            offset.y = renderer->mousePos.y - element->worldPos.y;
             dragging = true;
         } else {
             element->pos.x = renderer->mousePos.x - offset.x;

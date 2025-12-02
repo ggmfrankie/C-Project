@@ -27,7 +27,7 @@ void startEngine() {
 
     static Renderer renderer;
     static List_Element elementList;
-    elementList = Element_newList(4);
+    elementList = Element_newList(32);
 
     g_Elements = &elementList;
     renderer = newRenderer(512, 512, "Huhu", g_Elements);
@@ -49,11 +49,16 @@ void startEngine() {
     const Task nameShenanigans = {.func = namensliste_Aufgabe, .userdata = NULL};
 
     addChildElements(&renderer.guiRoot,
-        addChildElements(guiAddSimpleButton(g_Elements, (Vec2f){100.0f, 100.0f}, 100, 100, &blackButton, changeButtonTextTask,  "Hello World and all others too"),
-            guiAddSimpleRectangle(g_Elements, newVec2f(0, 0), 230, pointerSchematic.height, &pointerSchematic),
-            guiAddSimpleRectangle(g_Elements, newVec2f(20, 20), pointerSchematic.width, pointerSchematic.height, &pointerSchematic)
-        ),
-        guiAddSimpleButton(g_Elements, (Vec2f){200.0f, 100.0f}, 100, 100, &blackButton, nameShenanigans,  "Run the namensliste Test")
+        addChildElements(guiAddSimpleButton_Texture(g_Elements, (Vec2f){100.0f, 100.0f}, 0, 0, NULL, changeButtonTextTask,  NULL),
+            guiAddSimpleRectangle(g_Elements, newVec2f(0, 0), 230, pointerSchematic.height, &blackButton),
+            guiAddSimpleButton_Color(g_Elements, (Vec2f){0.0f, 0.0f}, 100, 100, (Vec3f){0.2f, 0.2f, 0.3f}, changeButtonTextTask,  "Hello World and all others too")
+            ,guiAddSimpleButton_Texture(g_Elements, (Vec2f){200.0f, 100.0f}, 100, 100, &pointerSchematic, nameShenanigans,  "Run the namensliste Test")
+            ,guiAddSimpleButton_Color(g_Elements, (Vec2f){0.0f, 0.0f}, 100, 100, (Vec3f){0.9f, 0.2f, 0.3f}, changeButtonTextTask,  "Hello World and all others too")
+
+        )
+        ,guiAddSimpleButton_Texture(g_Elements, (Vec2f){200.0f, 100.0f}, 100, 100, &blackButton, nameShenanigans,  "Run the namensliste Test")
+        ,guiAddSimpleButton_Color(g_Elements, (Vec2f){0.0f, 0.0f}, 100, 100, (Vec3f){0.2f, 0.2f, 0.3f}, changeButtonTextTask,  "Hello World and all others too")
+        ,guiAddSimpleButton_Color(g_Elements, (Vec2f){0.0f, 0.0f}, 100, 100, (Vec3f){0.2f, 0.2f, 0.3f}, changeButtonTextTask,  "Hello World and all others too")
     );
 
     guiInitialized = true;
@@ -77,6 +82,10 @@ void startEngine() {
     //renderer.guiShader.delete(&renderer.guiShader); TODO
     //renderer.elements.delete(&renderer.elements); TODO
     glfwTerminate();
+}
+
+void updateStateRecursively(Element *element, Renderer *renderer) {
+
 }
 
 void updateState2(Renderer *renderer) {

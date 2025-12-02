@@ -46,6 +46,8 @@ Element *guiAddElement(
     int width,
     int height,
     Texture *tex,
+    Vec3f color,
+    Padding padding,
     bool (*mouseOver)(const Element *, Vec2f),
     bool (*hover)(Element *, Renderer *),
     bool (*click)(Element *, Renderer *),
@@ -62,12 +64,22 @@ Element *guiAddSimpleRectangle(
     Texture *tex
 );
 
-Element *guiAddSimpleButton(
+Element *guiAddSimpleButton_Texture(
     List_Element *list,
     Vec2f pos,
     int width,
     int height,
     Texture *tex,
+    Task task,
+    const char *text
+);
+
+Element *guiAddSimpleButton_Color(
+    List_Element *list,
+    Vec2f pos,
+    int width,
+    int height,
+    Vec3f color,
     Task task,
     const char *text
 );

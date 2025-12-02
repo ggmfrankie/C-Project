@@ -43,12 +43,14 @@ void Shader_createUniform(Shader *shader, const char* name);
 void Shader_unbindProgram();
 void setUniform_f(const Shader *shader, const char* name, float value);
 void setUniform_Vec2(const Shader *shader, const char* name, Vec2f value);
+void setUniform_Vec3(const Shader *shader, const char* name, Vec3f value);
 void setUniform_i(const Shader *shader, const char* name, int value);
 
 #define setUniform(shader, name, value) _Generic((value),\
 int: setUniform_i,\
 float: setUniform_f,\
-Vec2f: setUniform_Vec2\
+Vec2f: setUniform_Vec2,\
+Vec3f: setUniform_Vec3\
 )(shader, name, value)
 
 String readShaderFile(const String *fileName);
