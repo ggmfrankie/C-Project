@@ -62,6 +62,9 @@ add_executable(C
         Extern/Informatik/Personalverwaltung.c
         Render/GUI/Tasks.c
         Render/GUI/Tasks.h
+        Extern/Informatik/MonteCarlo.c
+        Extern/Informatik/MonteCarlo.h
+        Extern/Informatik/libminibmp.c
 )
 #add_subdirectory("${CMAKE_SOURCE_DIR}/Render")
 

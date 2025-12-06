@@ -7,6 +7,7 @@
 #include "Extern/Informatik/Spannungsteiler_A3.h"
 #include "Extern/Informatik/DrunkenBishop.h"
 #include "Extern/Informatik/Geldautomat.h"
+#include "Extern/Informatik/MonteCarlo.h"
 #include "Extern/Informatik/PointerFun.h"
 #include "Extern/Informatik/Namensliste.h"
 
@@ -26,7 +27,8 @@ int main(){
     SetConsoleOutputCP(CP_UTF8);
     pthread_t workerThreadID;
     pthread_create(&workerThreadID, NULL, workerThread, NULL);
-    startEngine();
+    monteCarlo();
+    //startEngine();
     return 0;
 }
 

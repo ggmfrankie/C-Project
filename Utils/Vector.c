@@ -23,3 +23,23 @@ Vec2f newVec2f(const float x, const float y) {
         .y = y
     };
 }
+
+int Vec2i_Cross(const Vec2i v1, const Vec2i v2) {
+    return v1.x * v2.y - v1.y * v2.x;
+}
+
+inline Vec2i Vec2i_Sub(const Vec2i v1, const Vec2i v2) {
+    const Vec2i result = {
+        v1.x - v2.x,
+        v1.y - v2.y
+    };
+    return result;
+}
+
+inline Vec2f Vec2f_Sub(const Vec2f v1, const Vec2f v2) {
+    const Vec2f result = {
+        v1.x - v2.x,
+        v1.y - v2.y
+    };
+    return result;
+}
