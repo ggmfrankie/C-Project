@@ -17,7 +17,7 @@ void cursorPositionCallback(GLFWwindow* window, double xPos, double yPos);
 void renderElementsRecursively(Element* element, const Renderer* renderer);
 Vec2f measureText(const Renderer* renderer, const TextElement* textElement);
 
-Vec2f updateLayout(Element *element, Vec2f parentPos, const Renderer* renderer);
+Vec2f updateLayout(Element *element, Vec2f parentPos, const Renderer* renderer, float verticalOffset);
 Element createRootElement();
 
 GLFWwindow* initWindow(const int width, const int height, const char* name) {
@@ -96,40 +96,11 @@ void Renderer_render(Renderer *renderer) {
 
     Element* guiRoot = &renderer->guiRoot;
 
-    updateLayout(guiRoot, (Vec2f){0.0f, 0.0f}, renderer);
+    updateLayout(guiRoot, (Vec2f){0.0f, 0.0f}, renderer, 0.0f);
 
     for (int i = 0; i < guiRoot->childElements.size; i++) {
         renderElementsRecursively(guiRoot->childElements.content[i], renderer);
     }
-    /*
-    for (size_t i = 0; i < renderer->elements->size; i++) {
-        Element *element = Element_ListGet_ptr(renderer->elements, i);
-        if (element == NULL) break;
-
-        const Shader *shader = &renderer->guiShader;
-
-        setUniform(shader, ("width"), element->actualWidth);
-        setUniform(shader, ("height"), element->actualHeight);
-
-        setUniform(shader, ("hasTexture"), 1);
-        setUniform(shader, ("state"), (int)element->state);
-
-        setUniform(shader, ("positionObject"), element->worldPos);
-        setUniform(shader, ("transformTexCoords"), 0);
-
-        glActiveTexture(GL_TEXTURE0);
-        if (element->texture != NULL) {
-            glBindTexture(GL_TEXTURE_2D, element->texture->textureId);
-        }
-
-        setUniform(shader, ("texture_sampler"), 0);
-        Mesh_render(&element->Mesh);
-
-        if (element->hasText) {
-            renderText(renderer, element);
-        }
-    }
-    */
 
     glfwSwapBuffers(renderer->window);
     Shaders.unbind();
@@ -143,21 +114,25 @@ void renderElementsRecursively(Element* element, const Renderer* renderer) {
     setUniform(shader, ("width"), element->actualWidth);
     setUniform(shader, ("height"), element->actualHeight);
 
-    setUniform(shader, ("hasTexture"), 1);
+    setUniform(shader, ("hasTexture"), element->texture != NULL);
     setUniform(shader, ("state"), (int)element->state);
 
     setUniform(shader, ("positionObject"), element->worldPos);
     setUniform(shader, ("transformTexCoords"), 0);
 
+    setUniform(shader, ("texture_sampler"), 0);
+
+    setUniform(shader, "color", element->color);
+
     glActiveTexture(GL_TEXTURE0);
+
     if (element->texture != NULL) {
         glBindTexture(GL_TEXTURE_2D, element->texture->textureId);
     } else {
-        setUniform(shader, ("hasTexture"), 0);
-        setUniform(shader, "color", element->color);
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
 
-    setUniform(shader, ("texture_sampler"), 0);
+
     Mesh_render(&element->Mesh);
 
     if (element->hasText) {
@@ -170,11 +145,30 @@ void renderElementsRecursively(Element* element, const Renderer* renderer) {
     }
 }
 
-Vec2f updateLayout(Element *element, const Vec2f parentPos, const Renderer* renderer) {
+Vec2f updateLayout(Element *element, const Vec2f parentPos, const Renderer* renderer, float verticalOffset) {
     if (!element) return (Vec2f){0,0};
 
-    element->worldPos.x = parentPos.x + max(element->pos.x, element->parentElement ? element->parentElement->padding.left : 0);
-    element->worldPos.y = parentPos.y + max(element->pos.y, element->parentElement ? element->parentElement->padding.up : 0);
+    const Element* parent = element->parentElement;
+
+    float paddingHorizontal = 0;
+    float paddingVertical = 0;
+
+    if (parent) {
+        paddingHorizontal = parent->padding.left;
+        paddingVertical = parent->padding.up;
+    }
+
+    if (element->pos.x == -1) {
+        element->worldPos.x = parentPos.x + paddingHorizontal;
+    } else {
+        element->worldPos.x = parentPos.x + max(element->pos.x, paddingHorizontal);
+    }
+
+    if (element->pos.y == -1) {
+        element->worldPos.y = parentPos.y + paddingVertical + verticalOffset;
+    } else {
+        element->worldPos.y = parentPos.y + max(element->pos.y, paddingVertical);
+    }
 
     float realWidth = element->width;
     float realHeight = element->height;
@@ -190,16 +184,19 @@ Vec2f updateLayout(Element *element, const Vec2f parentPos, const Renderer* rend
         realHeight = max(realHeight, textH);
     }
 
+    float accumulatedHeight = 0;
+
     for (int i = 0; i < element->childElements.size; i++) {
         Element *child = element->childElements.content[i];
-        const Vec2f childDimensions = updateLayout(child, element->worldPos, renderer);
+        const Vec2f childDimensions = updateLayout(child, element->worldPos, renderer, accumulatedHeight);
 
-        const float childWidth = padding->left + child->pos.x + childDimensions.x + padding->right;
-        const float childHeight = padding->up + child->pos.y + childDimensions.y + padding->down;
+        const float childWidth = padding->left + ((child->pos.x == -1)? 0 : child->pos.x) + childDimensions.x + padding->right;
+        const float childHeight = padding->up + ((child->pos.y == -1)? accumulatedHeight : child->pos.y) + childDimensions.y + padding->down;
 
         realWidth = max(realWidth, childWidth);
         realHeight = max(realHeight, childHeight);
-        //realHeight += childDimensions.y;
+
+        accumulatedHeight += childDimensions.y + element->childGap;
     }
 
     if (element->autoFit) {
@@ -343,7 +340,7 @@ Element *guiAddElement(
     return lastElement;
 }
 
-Element *guiAddSimpleRectangle(
+Element *guiAddSimpleRectangle_Texture(
     List_Element *list,
     const Vec2f pos,
     const int width,
@@ -352,6 +349,18 @@ Element *guiAddSimpleRectangle(
 )
 {
     Element* element = guiAddElement(list, quadMesh, 1, pos, width, height, tex, (Vec3f){0.6f, 0.6f, 0.6f}, (Padding){10, 10, 10, 10},NULL, NULL, NULL, (Task){NULL, NULL}, NULL, false);
+    return element;
+}
+
+Element *guiAddSimpleRectangle_Color(
+    List_Element *list,
+    const Vec2f pos,
+    const int width,
+    const int height,
+    const Vec3f color
+)
+{
+    Element* element = guiAddElement(list, quadMesh, 1, pos, width, height, NULL, color, (Padding){10, 10, 10, 10},NULL, NULL, NULL, (Task){NULL, NULL}, NULL, false);
     return element;
 }
 

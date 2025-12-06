@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 4.0)
 project(C C)
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -march=native -lpthread")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -march=native -lpthread")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -march=native -lpthread")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -march=native -lpthread")
 
 set(CMAKE_C_STANDARD 11)
 
@@ -65,6 +65,7 @@ add_executable(C
         Extern/Informatik/MonteCarlo.c
         Extern/Informatik/MonteCarlo.h
         Extern/Informatik/libminibmp.c
+        Utils/MemoryArena.c
 )
 #add_subdirectory("${CMAKE_SOURCE_DIR}/Render")
 

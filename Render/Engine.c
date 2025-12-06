@@ -48,19 +48,31 @@ void startEngine() {
     const Task changeButtonTextTask = {.func = changeElementText, .userdata = THIS_ELEMENT};
     const Task nameShenanigans = {.func = namensliste_Aufgabe, .userdata = NULL};
 
-    addChildElements(&renderer.guiRoot,
-        addChildElements(guiAddSimpleButton_Texture(g_Elements, (Vec2f){100.0f, 100.0f}, 0, 0, NULL, changeButtonTextTask,  NULL),
-            guiAddSimpleRectangle(g_Elements, newVec2f(0, 0), 230, pointerSchematic.height, &blackButton),
-            guiAddSimpleButton_Color(g_Elements, (Vec2f){0.0f, 0.0f}, 100, 100, (Vec3f){0.2f, 0.2f, 0.3f}, changeButtonTextTask,  "Hello World and all others too")
-            ,guiAddSimpleButton_Texture(g_Elements, (Vec2f){200.0f, 100.0f}, 100, 100, &pointerSchematic, nameShenanigans,  "Run the namensliste Test")
-            ,guiAddSimpleButton_Color(g_Elements, (Vec2f){0.0f, 0.0f}, 100, 100, (Vec3f){0.9f, 0.2f, 0.3f}, changeButtonTextTask,  "Hello World and all others too")
 
-        )
+    addChildElements(&renderer.guiRoot,
+        addChildElements(guiAddSimpleRectangle_Color(g_Elements, (Vec2f){300.0f, 100.0f}, 230, pointerSchematic.height, (Vec3f){0.0f, 0.0f, 0.0f}),
+            guiAddSimpleRectangle_Texture(g_Elements, fitMode, 230, pointerSchematic.height, &blackButton),
+            guiAddSimpleButton_Color(g_Elements, fitMode, 100, 100, (Vec3f){0.2f, 0.2f, 0.3f}, changeButtonTextTask,  "Hello World and all others too")
+            ,guiAddSimpleButton_Texture(g_Elements, fitMode, 100, 100, &pointerSchematic, nameShenanigans,  "Run the namensliste Test")
+            ,guiAddSimpleButton_Color(g_Elements, fitMode, 100, 100, (Vec3f){0.9f, 0.2f, 0.3f}, changeButtonTextTask,  "Hello World and all others too")
+            ,guiAddSimpleButton_Color(g_Elements, fitMode, 100, 100, (Vec3f){0.9f, 0.2f, 0.3f}, changeButtonTextTask,  "Hello World and all others too")
+            ,guiAddSimpleButton_Color(g_Elements, fitMode, 100, 100, (Vec3f){0.9f, 0.2f, 0.3f}, changeButtonTextTask,  "Hello World and all others too")
+
+            )
         ,guiAddSimpleButton_Texture(g_Elements, (Vec2f){200.0f, 100.0f}, 100, 100, &blackButton, nameShenanigans,  "Run the namensliste Test")
         ,guiAddSimpleButton_Color(g_Elements, (Vec2f){0.0f, 0.0f}, 100, 100, (Vec3f){0.2f, 0.2f, 0.3f}, changeButtonTextTask,  "Hello World and all others too")
         ,guiAddSimpleButton_Color(g_Elements, (Vec2f){0.0f, 0.0f}, 100, 100, (Vec3f){0.2f, 0.2f, 0.3f}, changeButtonTextTask,  "Hello World and all others too")
     );
 
+/*
+    addChildElements(&renderer.guiRoot,
+        addChildElements(guiAddSimpleButton_Color(g_Elements, (Vec2f){0.0f, 0.0f}, 100, 100, (Vec3f){0.2f, 0.2f, 0.3f}, changeButtonTextTask,  "Hello World and all others too"),
+            guiAddElement(g_Elements, quadMesh, 1, (Vec2f){-1, -1}, 300, 200, NULL, (Vec3f){1.0, 0.0, 1.0}, (Padding){10, 10, 10, 10}, isSelected_Quad, NULL, NULL, (Task){}, "Halla 1", true),
+            guiAddElement(g_Elements, quadMesh, 1, (Vec2f){-1, -1}, 300, 200, NULL, (Vec3f){0.3, 1.0, 1.0}, (Padding){10, 10, 10, 10}, isSelected_Quad, NULL, NULL, (Task){}, "Halla 2", true)
+
+        )
+    );
+*/
     guiInitialized = true;
     pthread_cond_broadcast(&guiInitCond);
     pthread_mutex_unlock(&guiMutex);
@@ -85,7 +97,9 @@ void startEngine() {
 }
 
 void updateStateRecursively(Element *element, Renderer *renderer) {
+    if (element->isMouseOver && element->isMouseOver(element, renderer->mousePos)) {
 
+    }
 }
 
 void updateState2(Renderer *renderer) {
@@ -94,7 +108,7 @@ void updateState2(Renderer *renderer) {
         renderer->elements->get(renderer->elements, i)->state = 0;
     }
 
-    for (int i = (int)renderer->elements->size - 1; i >= 0; i--) {
+    for (int i = 0; i < renderer->elements->size; i++) {
         Element* el = renderer->elements->get(renderer->elements, i);
         if (el->isMouseOver && el->isMouseOver(el, renderer->mousePos)) {
             hovered = el;

@@ -11,7 +11,6 @@
 #include "../Engine.h"
 
 Element newElement(const Mesh mesh, const short meshCount, const Vec2f pos, const int width, const int height, Texture* texture) {
-    puts("new Element created");
     return (Element){
         .Mesh = mesh,
         .meshCount = meshCount,
@@ -34,7 +33,8 @@ Element newElement(const Mesh mesh, const short meshCount, const Vec2f pos, cons
         .padding = (Padding){0,0,0,0},
         .hasText = false,
         .task = (Task){NULL, NULL},
-        .autoFit = true
+        .autoFit = true,
+        .childGap = 10.0f
     };
 }
 
@@ -112,4 +112,6 @@ void setText_int(Element* element, const int i) {
 
     setText(element, tempText);
 }
+
+
 

@@ -70,6 +70,7 @@ typedef struct Element {
     Element* parentElement;
     List_ChildElements childElements;
     Padding padding;
+    float childGap;
     bool autoFit;
 
 } Element;
@@ -91,6 +92,7 @@ bool isSelected_Quad(const Element *element, Vec2f mousePos);
 f_addChildElements(parent, __VA_ARGS__, NULL)
 
 #define addChildElementsN(parent, count, ...) f_addChildElementsN(parent, count, __VA_ARGS__)
+#define fitMode (Vec2f){-1, -1}
 
 
 typedef struct Element_Functions {

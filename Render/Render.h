@@ -56,12 +56,20 @@ Element *guiAddElement(
     bool forceResize
 );
 
-Element *guiAddSimpleRectangle(
+Element *guiAddSimpleRectangle_Texture(
     List_Element *list,
     Vec2f pos,
     int width,
     int height,
     Texture *tex
+);
+
+Element *guiAddSimpleRectangle_Color(
+    List_Element *list,
+    Vec2f pos,
+    int width,
+    int height,
+    Vec3f color
 );
 
 Element *guiAddSimpleButton_Texture(
