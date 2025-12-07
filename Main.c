@@ -27,8 +27,8 @@ int main(){
     SetConsoleOutputCP(CP_UTF8);
     pthread_t workerThreadID;
     pthread_create(&workerThreadID, NULL, workerThread, NULL);
-    //monteCarlo();
-    startEngine();
+    monteCarlo();
+    //startEngine();
     return 0;
 }
 

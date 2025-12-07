@@ -96,6 +96,6 @@ f_addChildElements(parent, __VA_ARGS__, NULL)
 
 
 typedef struct Element_Functions {
-
-}Element_Functions;
+ //TODO
+} Element_Functions;
 #endif //C_GUIELEMENT_H

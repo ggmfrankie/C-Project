@@ -33,7 +33,7 @@ void drawPolygon(Vec2i polygon[], const size_t length) {
         drawLine(&bitmap, pointA, pointB, COL_black);
     }
     drawRectangle(&bitmap, (Vec2i){0, 0}, (Vec2i){corners.x, corners.y});
-    drawRandomPoints(&bitmap, polygon, corners, length, 30000);
+    drawRandomPoints(&bitmap, polygon, corners, length, 300000);
     save_BMP("Polygon.bmp",&bitmap);
 }
 
