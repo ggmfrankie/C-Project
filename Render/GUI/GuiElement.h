@@ -37,7 +37,6 @@ typedef enum {
     S_active = 1,
 } ElementState;
 
-
 ARRAY_LIST(ChildElements, Element*)
 
 typedef struct Element {

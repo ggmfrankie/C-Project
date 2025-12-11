@@ -48,7 +48,6 @@ void startEngine() {
     const Task changeButtonTextTask = {.func = changeElementText, .userdata = THIS_ELEMENT};
     const Task nameShenanigans = {.func = namensliste_Aufgabe, .userdata = NULL};
 
-
     addChildElements(&renderer.guiRoot,
         addChildElements(guiAddSimpleRectangle_Color(g_Elements, (Vec2f){300.0f, 100.0f}, 230, pointerSchematic.height, (Vec3f){0.0f, 0.0f, 0.0f}),
             guiAddSimpleRectangle_Texture(g_Elements, fitMode, 230, pointerSchematic.height, &blackButton),
