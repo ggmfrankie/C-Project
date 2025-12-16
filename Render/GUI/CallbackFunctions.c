@@ -6,8 +6,8 @@
 
 #include "../Render.h"
 
-bool dragFunction(Element *element, Renderer *renderer) {
-    static Vec2f offset;
+bool dragFunction(Element *element, const Renderer *renderer) {
+    static Vec2i offset;
     static bool dragging = false;
     const bool isMouseDown = isMousePressed(renderer->window, GLFW_MOUSE_BUTTON_LEFT);
 
@@ -17,13 +17,14 @@ bool dragFunction(Element *element, Renderer *renderer) {
     }
 
     if (glfwGetKey(renderer->window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+        const Vec2i parentWorldPos = element->parentElement ? element->parentElement->worldPos : (Vec2i){0, 0};
         if (!dragging) {
-            offset.x = renderer->mousePos.x - element->worldPos.x;
-            offset.y = renderer->mousePos.y - element->worldPos.y;
+            offset.x = (renderer->mousePos.x - parentWorldPos.x) - (element->worldPos.x - parentWorldPos.x);
+            offset.y = (renderer->mousePos.y - parentWorldPos.y) - (element->worldPos.y - parentWorldPos.y);
             dragging = true;
         } else {
-            element->pos.x = renderer->mousePos.x - offset.x;
-            element->pos.y = renderer->mousePos.y - offset.y;
+            element->pos.x = (renderer->mousePos.x - parentWorldPos.x) - offset.x;
+            element->pos.y = (renderer->mousePos.y - parentWorldPos.y) - offset.y;
         }
         return true;
     }
@@ -33,7 +34,6 @@ bool dragFunction(Element *element, Renderer *renderer) {
 bool hoverCallbackFunction(Element *element, Renderer *renderer) {
     element->state = 1;
     return dragFunction(element, renderer);
-    //return false;
 }
 
 bool clickCallbackFunction(Element *element, Renderer *renderer) {
@@ -53,5 +53,9 @@ bool click(GLFWwindow *window, const int mouseButton) {
         wasClicked = true;
         return true;
     }
+    return false;
+}
+
+bool sliderCallbackFunction(Element *element, Renderer *renderer) {
     return false;
 }

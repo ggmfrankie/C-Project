@@ -7,9 +7,10 @@
 #include "GuiElement.h"
 #include "GLFW/glfw3.h"
 
-bool dragFunction(Element *element, Renderer *renderer);
+bool dragFunction(Element *element, const Renderer *renderer);
 bool clickCallbackFunction(Element *element, Renderer *renderer);
 bool hoverCallbackFunction(Element *element, Renderer *renderer);
+bool sliderCallbackFunction(Element *element, Renderer *renderer);
 bool click(GLFWwindow *window, int mouseButton);
 
 

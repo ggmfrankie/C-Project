@@ -11,13 +11,16 @@
 #include "../Utils/Vector.h"
 #include "GUI/CallbackFunctions.h"
 
+Mesh quadMesh;
+
 void loadDefaultQuadMesh();
 void resizeCallback(GLFWwindow *window, int width, int height);
 void cursorPositionCallback(GLFWwindow* window, double xPos, double yPos);
 void renderElementsRecursively(Element* element, const Renderer* renderer);
-Vec2f measureText(const Renderer* renderer, const TextElement* textElement);
 
-Vec2f updateLayout(Element *element, Vec2f parentPos, const Renderer* renderer, float verticalOffset);
+Vec2i measureText(const Renderer *renderer, const TextElement *textElement);
+
+Vec2i updateLayout(Element *element, Vec2i parentPos, const Renderer *renderer, int verticalOffset);
 Element createRootElement();
 
 GLFWwindow* initWindow(const int width, const int height, const char* name) {
@@ -96,7 +99,7 @@ void Renderer_render(Renderer *renderer) {
 
     Element* guiRoot = &renderer->guiRoot;
 
-    updateLayout(guiRoot, (Vec2f){0.0f, 0.0f}, renderer, 0.0f);
+    updateLayout(guiRoot, (Vec2i){0, 0}, renderer, 0);
 
     for (int i = 0; i < guiRoot->childElements.size; i++) {
         renderElementsRecursively(guiRoot->childElements.content[i], renderer);
@@ -111,16 +114,16 @@ void renderElementsRecursively(Element* element, const Renderer* renderer) {
 
     const Shader* shader = &renderer->guiShader;
 
-    setUniform(shader, ("width"), element->actualWidth);
-    setUniform(shader, ("height"), element->actualHeight);
+    setUniform(shader, "width", (float)element->actualWidth);
+    setUniform(shader, "height", (float)element->actualHeight);
 
-    setUniform(shader, ("hasTexture"), element->texture != NULL);
-    setUniform(shader, ("state"), (int)element->state);
+    setUniform(shader, "hasTexture", element->texture != NULL);
+    setUniform(shader, "state", (int)element->state);
 
-    setUniform(shader, ("positionObject"), element->worldPos);
-    setUniform(shader, ("transformTexCoords"), 0);
+    setUniform(shader, "positionObject", toVec2f(element->worldPos));
+    setUniform(shader, "transformTexCoords", 0);
 
-    setUniform(shader, ("texture_sampler"), 0);
+    setUniform(shader, "texture_sampler", 0);
 
     setUniform(shader, "color", element->color);
 
@@ -145,13 +148,13 @@ void renderElementsRecursively(Element* element, const Renderer* renderer) {
     }
 }
 
-Vec2f updateLayout(Element *element, const Vec2f parentPos, const Renderer* renderer, float verticalOffset) {
-    if (!element) return (Vec2f){0,0};
+Vec2i updateLayout(Element *element, const Vec2i parentPos, const Renderer *renderer, const int verticalOffset) {
+    if (!element) return (Vec2i){0,0};
 
     const Element* parent = element->parentElement;
 
-    float paddingHorizontal = 0;
-    float paddingVertical = 0;
+    int paddingHorizontal = 0;
+    int paddingVertical = 0;
 
     if (parent) {
         paddingHorizontal = parent->padding.left;
@@ -170,28 +173,28 @@ Vec2f updateLayout(Element *element, const Vec2f parentPos, const Renderer* rend
         element->worldPos.y = parentPos.y + max(element->pos.y, paddingVertical);
     }
 
-    float realWidth = element->width;
-    float realHeight = element->height;
+    int realWidth = element->width;
+    int realHeight = element->height;
 
     const Padding* padding = &element->padding;
 
     if (element->hasText) {
-        const Vec2f textSize = measureText(renderer, &element->textElement);
-        const float textW = padding->left + textSize.x + element->textElement.offset.x + padding->right;
-        const float textH = padding->up + textSize.y + element->textElement.offset.y + padding->down;
+        const Vec2i textSize = measureText(renderer, &element->textElement);
+        const int textW = padding->left + textSize.x + element->textElement.offset.x + padding->right;
+        const int textH = padding->up + textSize.y + element->textElement.offset.y + padding->down;
 
         realWidth  = max(realWidth,  textW);
         realHeight = max(realHeight, textH);
     }
 
-    float accumulatedHeight = 0;
+    int accumulatedHeight = 0;
 
     for (int i = 0; i < element->childElements.size; i++) {
         Element *child = element->childElements.content[i];
-        const Vec2f childDimensions = updateLayout(child, element->worldPos, renderer, accumulatedHeight);
+        const Vec2i childDimensions = updateLayout(child, element->worldPos, renderer, accumulatedHeight);
 
-        const float childWidth = padding->left + ((child->pos.x == -1)? 0 : child->pos.x) + childDimensions.x + padding->right;
-        const float childHeight = padding->up + ((child->pos.y == -1)? accumulatedHeight : child->pos.y) + childDimensions.y + padding->down;
+        const int childWidth = padding->left + ((child->pos.x == -1)? 0 : child->pos.x) + childDimensions.x + padding->right;
+        const int childHeight = padding->up + ((child->pos.y == -1)? accumulatedHeight : child->pos.y) + childDimensions.y + padding->down;
 
         realWidth = max(realWidth, childWidth);
         realHeight = max(realHeight, childHeight);
@@ -203,10 +206,10 @@ Vec2f updateLayout(Element *element, const Vec2f parentPos, const Renderer* rend
         element->actualWidth = realWidth;
         element->actualHeight = realHeight;
     }
-    return (Vec2f){realWidth, realHeight};
+    return (Vec2i){realWidth, realHeight};
 }
 
-Vec2f measureText(const Renderer* renderer, const TextElement* textElement) {
+Vec2i measureText(const Renderer *renderer, const TextElement *textElement) {
     const Font* font = &renderer->font;
     const float scale = textElement->textScale;
 
@@ -238,7 +241,7 @@ Vec2f measureText(const Renderer* renderer, const TextElement* textElement) {
             maxHeight = gh;
     }
 
-    return (Vec2f){ width, maxHeight };
+    return (Vec2i){ (int)width, (int)maxHeight };
 }
 
 
@@ -252,8 +255,8 @@ void resizeCallback(GLFWwindow *window, const int width, const int height) {
 
 void cursorPositionCallback(GLFWwindow* window, const double xPos, const double yPos) {
     Renderer *renderer = (Renderer *)glfwGetWindowUserPointer(window);
-    renderer->mousePos.x = (float)xPos;
-    renderer->mousePos.y = (float)yPos;
+    renderer->mousePos.x = (int)xPos;
+    renderer->mousePos.y = (int)yPos;
 }
 
 inline bool isMousePressed(GLFWwindow* window, const int mouseButton) {
@@ -291,109 +294,8 @@ Renderer* newRenderer_h(const int width, const int height, const char* name, Lis
     return renderer;
 }
 
-Element *guiAddElement(
-    List_Element *list,
-    const Mesh mesh,
-    const short meshCount,
-    const Vec2f pos,
-    const int width,
-    const int height,
-    Texture *tex,
-    const Vec3f color,
-    const Padding padding,
-    bool (*mouseOver)(const Element *, Vec2f),
-    bool (*hover)(Element *, Renderer *),
-    bool (*click)(Element *, Renderer *),
-    const Task task,
-    const char *text,
-    const bool forceResize
-)
-{
-    Element_ListAdd(list, newElement(mesh, meshCount, pos, width, height, tex));
-    Element* lastElement = Element_ListGetLast(list);
-    if (mouseOver) {
-        lastElement->isMouseOver = mouseOver;
-        if (hover) lastElement->onHover = hover;
-        if (click) {
-            lastElement->onClick = click;
-            if (task.func) {
-                lastElement->task = task;
-                if (task.userdata == NULL) lastElement->task.userdata = lastElement;
-            }
-        }
-    }
-    lastElement->color = color;
-    lastElement->padding = padding;
-
-    if (text) {
-
-        lastElement->textElement = (TextElement) {
-            .offset = (Vec2f){2, 2},
-            .text = newReservedString(512),
-            .textScale = 1.0f,
-            .textColor = (Vec3f){1.0f, 1.0f, 1.0f},
-            .forceResize = forceResize,
-        };
-        setText(lastElement, text);
-        lastElement->hasText = true;
-    }
-    return lastElement;
-}
-
-Element *guiAddSimpleRectangle_Texture(
-    List_Element *list,
-    const Vec2f pos,
-    const int width,
-    const int height,
-    Texture *tex
-)
-{
-    Element* element = guiAddElement(list, quadMesh, 1, pos, width, height, tex, (Vec3f){0.6f, 0.6f, 0.6f}, (Padding){10, 10, 10, 10},NULL, NULL, NULL, (Task){NULL, NULL}, NULL, false);
-    return element;
-}
-
-Element *guiAddSimpleRectangle_Color(
-    List_Element *list,
-    const Vec2f pos,
-    const int width,
-    const int height,
-    const Vec3f color
-)
-{
-    Element* element = guiAddElement(list, quadMesh, 1, pos, width, height, NULL, color, (Padding){10, 10, 10, 10},NULL, NULL, NULL, (Task){NULL, NULL}, NULL, false);
-    return element;
-}
-
-Element *guiAddSimpleButton_Texture(
-    List_Element *list,
-    const Vec2f pos,
-    const int width,
-    const int height,
-    Texture *tex,
-    const Task task,
-    const char *text
-)
-{
-    Element* element = guiAddElement(list, quadMesh, 1, pos, width, height, tex, (Vec3f){0.6f, 0.6f, 0.6f}, (Padding){10, 10, 10, 10}, isSelected_Quad, hoverCallbackFunction, clickCallbackFunction, task, text, true);
-    return element;
-}
-
-Element *guiAddSimpleButton_Color(
-    List_Element *list,
-    const Vec2f pos,
-    const int width,
-    const int height,
-    const Vec3f color,
-    const Task task,
-    const char *text
-)
-{
-    Element* element = guiAddElement(list, quadMesh, 1, pos, width, height, NULL, color, (Padding){10, 10, 10, 10}, isSelected_Quad, hoverCallbackFunction, clickCallbackFunction, task, text, true);
-    return element;
-}
-
 Element createRootElement() {
-    return newElement((Mesh){}, 0, (Vec2f){}, 0, 0, NULL);
+    return newElement((Mesh){}, (Vec2i){}, 0, 0, NULL);
 }
 
 void loadDefaultQuadMesh() {

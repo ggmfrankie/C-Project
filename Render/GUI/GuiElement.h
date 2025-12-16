@@ -22,14 +22,14 @@ typedef struct TextElement {
     String text;
     Vec3f textColor;
     float textScale;
-    Vec2f offset;
+    Vec2i offset;
 } TextElement;
 
 typedef struct Padding {
-    float left;
-    float up;
-    float right;
-    float down;
+    int left;
+    int up;
+    int right;
+    int down;
 } Padding;
 
 typedef enum {
@@ -40,16 +40,15 @@ typedef enum {
 ARRAY_LIST(ChildElements, Element*)
 
 typedef struct Element {
-    Vec2f pos;
-    Vec2f worldPos;
+    Vec2i pos;
+    Vec2i worldPos;
 
-    float width;
-    float height;
+    int width;
+    int height;
 
-    float actualWidth;
-    float actualHeight;
+    int actualWidth;
+    int actualHeight;
 
-    short meshCount;
     Mesh Mesh;
     Texture* texture;
     Vec3f color;
@@ -61,7 +60,7 @@ typedef struct Element {
     //Interaction
     ElementState state;
     bool isVisible;
-    bool (*isMouseOver)(const struct Element* element, Vec2f mousePos);
+    bool (*isMouseOver)(const struct Element* element, Vec2i mousePos);
     bool (*onClick)(struct Element* element, Renderer *renderer);
     bool (*onHover)(struct Element* element, Renderer *renderer);
 
@@ -69,30 +68,85 @@ typedef struct Element {
     Element* parentElement;
     List_ChildElements childElements;
     Padding padding;
-    float childGap;
+    int childGap;
     bool autoFit;
+
+    bool needsDeletion;
+
+    void* ElementData;
 
 } Element;
 
 ARRAY_LIST(Element, Element)
 
 
-Element newElement(Mesh mesh, short meshCount, Vec2f pos, int width, int height, Texture* texture);
+Element newElement(Mesh mesh, Vec2i pos, int width, int height, Texture* texture);
 Element* f_addChildElements(Element* parent, ...);
 Element* f_addChildElementsN(Element* parent, int count, ...);
 void setOnClickCallback(Element* element, bool (*onClick)(Element* element, Renderer* renderer));
 void setOnHoverCallback(Element* element, bool (*onHover)(Element* element, Renderer* renderer));
-void setBoundingBox(Element* element, bool (*isMouseOver)(const Element* element, Vec2f mousePos));
+void setBoundingBox(Element* element, bool (*isMouseOver)(const Element *element, Vec2i mousePos));
 void setText(Element* element, const char* text);
 void setText_int(Element* element, int i);
-bool isSelected_Quad(const Element *element, Vec2f mousePos);
+bool isSelected_Quad(const Element *element, Vec2i mousePos);
 
-#define addChildElements(parent, ...) \
-f_addChildElements(parent, __VA_ARGS__, NULL)
+#define addChildElements(parent, ...) f_addChildElements(parent, __VA_ARGS__, NULL)
 
 #define addChildElementsN(parent, count, ...) f_addChildElementsN(parent, count, __VA_ARGS__)
-#define fitMode (Vec2f){-1, -1}
+#define fitMode (Vec2i){-1, -1}
 
+Element *guiAddElement(
+    List_Element *list,
+    Mesh mesh,
+    Vec2i pos,
+    int width,
+    int height,
+    Texture *tex,
+    Vec3f color,
+    Padding padding,
+    bool (*mouseOver)(const Element *, Vec2i),
+    bool (*hover)(Element *, Renderer *),
+    bool (*click)(Element *, Renderer *),
+    Task task,
+    const char *text,
+    bool forceResize
+);
+
+Element *guiAddSimpleRectangle_Texture(
+    List_Element *list,
+    Vec2i pos,
+    int width,
+    int height,
+    Texture *tex
+);
+
+Element *guiAddSimpleRectangle_Color(
+    List_Element *list,
+    Vec2i pos,
+    int width,
+    int height,
+    Vec3f color
+);
+
+Element *guiAddSimpleButton_Texture(
+    List_Element *list,
+    Vec2i pos,
+    int width,
+    int height,
+    Texture *tex,
+    Task task,
+    const char *text
+);
+
+Element *guiAddSimpleButton_Color(
+    List_Element *list,
+    Vec2i pos,
+    int width,
+    int height,
+    Vec3f color,
+    Task task,
+    const char *text
+);
 
 typedef struct Element_Functions {
  //TODO

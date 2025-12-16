@@ -12,13 +12,13 @@
 #include "GLFW/glfw3.h"
 #include "GUI/TextDisplaying.h"
 
-static Mesh quadMesh;
+extern Mesh quadMesh;
 
 typedef struct Renderer {
     int screenWidth;
     int screenHeight;
     GLFWwindow *window;
-    Vec2f mousePos;
+    Vec2i mousePos;
     Shader guiShader;
     ComputeShader computeShader;
     List_Element* elements;
@@ -37,60 +37,6 @@ Renderer* newRenderer_h(int width, int height, const char* name, List_Element* e
 void Renderer_init(Renderer *renderer);
 void Renderer_render(Renderer *renderer);
 void Renderer_destroy(const Renderer *renderer);
-
-Element *guiAddElement(
-    List_Element *list,
-    Mesh mesh,
-    short meshCount,
-    Vec2f pos,
-    int width,
-    int height,
-    Texture *tex,
-    Vec3f color,
-    Padding padding,
-    bool (*mouseOver)(const Element *, Vec2f),
-    bool (*hover)(Element *, Renderer *),
-    bool (*click)(Element *, Renderer *),
-    Task task,
-    const char *text,
-    bool forceResize
-);
-
-Element *guiAddSimpleRectangle_Texture(
-    List_Element *list,
-    Vec2f pos,
-    int width,
-    int height,
-    Texture *tex
-);
-
-Element *guiAddSimpleRectangle_Color(
-    List_Element *list,
-    Vec2f pos,
-    int width,
-    int height,
-    Vec3f color
-);
-
-Element *guiAddSimpleButton_Texture(
-    List_Element *list,
-    Vec2f pos,
-    int width,
-    int height,
-    Texture *tex,
-    Task task,
-    const char *text
-);
-
-Element *guiAddSimpleButton_Color(
-    List_Element *list,
-    Vec2f pos,
-    int width,
-    int height,
-    Vec3f color,
-    Task task,
-    const char *text
-);
 bool isMousePressed(GLFWwindow* window, int mouseButton);
 
 #endif //C_RENDER_H

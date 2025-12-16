@@ -66,6 +66,8 @@ add_executable(C
         Extern/Informatik/MonteCarlo.h
         Extern/Informatik/libminibmp.c
         Utils/MemoryArena.c
+        Render/GUI/GuiElementData.c
+        Render/GUI/GuiElementData.h
 )
 #add_subdirectory("${CMAKE_SOURCE_DIR}/Render")
 

@@ -6,6 +6,7 @@
 #include <math.h>
 #include <windows.h>
 
+#include "GUI/GuiElement.h"
 #include "Render.h"
 #include "GUI/CallbackFunctions.h"
 #include "../Extern/Informatik/Spannungsteiler_A3.h"
@@ -22,6 +23,7 @@ int guiInitialized = false;
 
 void updateState(Renderer *renderer);
 void updateState2(Renderer *renderer);
+bool updateStateRecursively(Element *element, Renderer *renderer);
 
 void startEngine() {
 
@@ -49,29 +51,18 @@ void startEngine() {
     const Task nameShenanigans = {.func = namensliste_Aufgabe, .userdata = NULL};
 
     addChildElements(&renderer.guiRoot,
-        addChildElements(guiAddSimpleRectangle_Color(g_Elements, (Vec2f){300.0f, 100.0f}, 230, pointerSchematic.height, (Vec3f){0.0f, 0.0f, 0.0f}),
+        addChildElements(guiAddSimpleRectangle_Color(g_Elements, (Vec2i){300, 100}, 230, pointerSchematic.height, (Vec3f){0.0f, 0.0f, 0.0f}),
             guiAddSimpleRectangle_Texture(g_Elements, fitMode, 230, pointerSchematic.height, &blackButton),
             guiAddSimpleButton_Color(g_Elements, fitMode, 100, 100, (Vec3f){0.2f, 0.2f, 0.3f}, changeButtonTextTask,  "Hello World and all others too")
             ,guiAddSimpleButton_Texture(g_Elements, fitMode, 100, 100, &pointerSchematic, nameShenanigans,  "Run the namensliste Test")
             ,guiAddSimpleButton_Color(g_Elements, fitMode, 100, 100, (Vec3f){0.9f, 0.2f, 0.3f}, changeButtonTextTask,  "Hello World and all others too")
             ,guiAddSimpleButton_Color(g_Elements, fitMode, 100, 100, (Vec3f){0.9f, 0.2f, 0.3f}, changeButtonTextTask,  "Hello World and all others too")
             ,guiAddSimpleButton_Color(g_Elements, fitMode, 100, 100, (Vec3f){0.9f, 0.2f, 0.3f}, changeButtonTextTask,  "Hello World and all others too")
-
             )
-        ,guiAddSimpleButton_Texture(g_Elements, (Vec2f){200.0f, 100.0f}, 100, 100, &blackButton, nameShenanigans,  "Run the namensliste Test")
-        ,guiAddSimpleButton_Color(g_Elements, (Vec2f){0.0f, 0.0f}, 100, 100, (Vec3f){0.2f, 0.2f, 0.3f}, changeButtonTextTask,  "Hello World and all others too")
-        ,guiAddSimpleButton_Color(g_Elements, (Vec2f){0.0f, 0.0f}, 100, 100, (Vec3f){0.2f, 0.2f, 0.3f}, changeButtonTextTask,  "Hello World and all others too")
+        ,guiAddSimpleButton_Texture(g_Elements, (Vec2i){200, 100}, 100, 100, &blackButton, nameShenanigans,  "Run the namensliste Test")
+        ,guiAddSimpleButton_Color(g_Elements, (Vec2i){0, 0}, 100, 100, (Vec3f){0.2f, 0.2f, 0.3f}, changeButtonTextTask,  "Hello World and all others too")
+        ,guiAddSimpleButton_Color(g_Elements, (Vec2i){0, 0}, 100, 100, (Vec3f){0.2f, 0.2f, 0.3f}, changeButtonTextTask,  "Hello World and all others too")
     );
-
-/*
-    addChildElements(&renderer.guiRoot,
-        addChildElements(guiAddSimpleButton_Color(g_Elements, (Vec2f){0.0f, 0.0f}, 100, 100, (Vec3f){0.2f, 0.2f, 0.3f}, changeButtonTextTask,  "Hello World and all others too"),
-            guiAddElement(g_Elements, quadMesh, 1, (Vec2f){-1, -1}, 300, 200, NULL, (Vec3f){1.0, 0.0, 1.0}, (Padding){10, 10, 10, 10}, isSelected_Quad, NULL, NULL, (Task){}, "Halla 1", true),
-            guiAddElement(g_Elements, quadMesh, 1, (Vec2f){-1, -1}, 300, 200, NULL, (Vec3f){0.3, 1.0, 1.0}, (Padding){10, 10, 10, 10}, isSelected_Quad, NULL, NULL, (Task){}, "Halla 2", true)
-
-        )
-    );
-*/
     guiInitialized = true;
     pthread_cond_broadcast(&guiInitCond);
     pthread_mutex_unlock(&guiMutex);
@@ -79,7 +70,8 @@ void startEngine() {
     while (!glfwWindowShouldClose(renderer.window)) {
         const u_int64 timeStart = now_ns();
         glfwPollEvents();
-        updateState2(&renderer);
+        //updateState2(&renderer);
+        updateStateRecursively(&renderer.guiRoot, &renderer);
 
         pthread_mutex_lock(&guiMutex);
         renderer.render(&renderer);
@@ -95,12 +87,21 @@ void startEngine() {
     glfwTerminate();
 }
 
-void updateStateRecursively(Element *element, Renderer *renderer) {
+bool updateStateRecursively(Element *element, Renderer *renderer) {
+    if (element == NULL) return false;
+    element->state = 0;
+    for (int i = 0; i < element->childElements.size; i++) {
+        if (updateStateRecursively(element->childElements.content[i], renderer)) return true;
+    }
     if (element->isMouseOver && element->isMouseOver(element, renderer->mousePos)) {
 
+        if (element->onHover && element->onHover(element, renderer)) return true;
+        if (click(renderer->window, GLFW_MOUSE_BUTTON_LEFT) && element->onClick && element->onClick(element, renderer)) return true;
     }
+    return false;
 }
 
+[[deprecated]]
 void updateState2(Renderer *renderer) {
     Element *hovered = NULL;
     for (int i = 0; i < renderer->elements->size; i++) {

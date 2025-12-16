@@ -37,6 +37,8 @@ Vec2f Vec2f_Sub(Vec2f v1, Vec2f v2);
 
 Vec2f newVec2f(float x, float y);
 
+Vec2f toVec2f(Vec2i vec);
+
 #define v_sub(vec1, vec2) _Generic((vec1),\
 Vec2i: Vec2i_Sub,\
 Vec2f: Vec2f_Sub\

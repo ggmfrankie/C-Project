@@ -43,3 +43,10 @@ inline Vec2f Vec2f_Sub(const Vec2f v1, const Vec2f v2) {
     };
     return result;
 }
+
+inline Vec2f toVec2f(const Vec2i vec) {
+    return (Vec2f){
+        .x = (float)vec.x,
+        .y = (float)vec.y
+    };
+}
