@@ -83,13 +83,13 @@ void renderText(const Renderer *renderer, const Element *element) {
     const float textScale = textElement->textScale;
 
     //TODO relative Position
-    const Vec2f startPos = (Vec2f){
+    const Vec2i startPos = (Vec2i){
         .x = element->worldPos.x + textElement->offset.x,
         .y = element->worldPos.y + element->height + textElement->offset.y
     };
     Vec2f cursor = (Vec2f){
-        .x = startPos.x,
-        .y = startPos.y
+        .x = (float)startPos.x,
+        .y = (float)startPos.y
     };
 
     glBindTexture(GL_TEXTURE_2D, font->fontAtlas.textureId);
@@ -120,7 +120,7 @@ void renderText(const Renderer *renderer, const Element *element) {
         setUniform_i(shader, ("hasTexture"), 1);
         setUniform_f(shader, ("width"), glyphWidth);
         setUniform_f(shader, ("height"), glyphHeight);
-        setUniform_Vec2(shader, ("positionObject"), (Vec2f){ (q.x0-startPos.x)*textScale + startPos.x, (q.y0-startPos.y)*textScale + startPos.y });
+        setUniform_Vec2(shader, ("positionObject"), (Vec2f){ (q.x0-(float)startPos.x)*textScale + (float)startPos.x, (q.y0-(float)startPos.y)*textScale + (float)startPos.y });
 
         setUniform_i(shader, ("transformTexCoords"), 1);
         setUniform_Vec2(shader, ("texPosStart"), (Vec2f){ q.s0, q.t0 });
@@ -131,6 +131,7 @@ void renderText(const Renderer *renderer, const Element *element) {
     setUniform_i(&renderer->guiShader, ("transformTexCoords"), 0);
 }
 
+[[deprecated]]
 void renderTextOptimized(const Renderer *renderer, const Element *element) {
     const TextElement *textElement = &element->textElement;
     if (textElement->text.length == 0) return;

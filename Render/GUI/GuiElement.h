@@ -40,6 +40,7 @@ typedef enum {
 ARRAY_LIST(ChildElements, Element*)
 
 typedef struct Element {
+    bool isActive;
     Vec2i pos;
     Vec2i worldPos;
 
@@ -59,7 +60,6 @@ typedef struct Element {
 
     //Interaction
     ElementState state;
-    bool isVisible;
     bool (*isMouseOver)(const struct Element* element, Vec2i mousePos);
     bool (*onClick)(struct Element* element, Renderer *renderer);
     bool (*onHover)(struct Element* element, Renderer *renderer);
@@ -78,6 +78,22 @@ typedef struct Element {
 } Element;
 
 ARRAY_LIST(Element, Element)
+
+typedef struct {
+    Vec2i pos;
+    int width;
+    int height;
+    Texture* texture;
+    Vec3f color;
+    char* text;
+    bool (*onClick)(Element* element, Renderer *renderer);
+    bool (*onHover)(Element* element, Renderer *renderer);
+    Task task;
+    Padding padding;
+    int childGap;
+    bool autoFit;
+
+} ElementSettings;
 
 
 Element newElement(Mesh mesh, Vec2i pos, int width, int height, Texture* texture);
@@ -147,6 +163,8 @@ Element *guiAddSimpleButton_Color(
     Task task,
     const char *text
 );
+
+Element *createElement(ElementSettings elementSettings);
 
 typedef struct Element_Functions {
  //TODO

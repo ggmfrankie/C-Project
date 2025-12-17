@@ -14,6 +14,7 @@
 
 extern Mesh quadMesh;
 
+
 typedef struct Renderer {
     int screenWidth;
     int screenHeight;
@@ -28,6 +29,7 @@ typedef struct Renderer {
     void (*render)(Renderer *renderer);
 
     Element guiRoot;
+    List_Element guiRoots;
 
     OtherShaders otherShaders;
 } Renderer;

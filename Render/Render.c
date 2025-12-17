@@ -110,7 +110,7 @@ void Renderer_render(Renderer *renderer) {
 }
 
 void renderElementsRecursively(Element* element, const Renderer* renderer) {
-    if (element == NULL) return;
+    if (element == NULL || !element->isActive) return;
 
     const Shader* shader = &renderer->guiShader;
 
@@ -119,6 +119,7 @@ void renderElementsRecursively(Element* element, const Renderer* renderer) {
 
     setUniform(shader, "hasTexture", element->texture != NULL);
     setUniform(shader, "state", (int)element->state);
+    element->state = 0;
 
     setUniform(shader, "positionObject", toVec2f(element->worldPos));
     setUniform(shader, "transformTexCoords", 0);
@@ -149,29 +150,24 @@ void renderElementsRecursively(Element* element, const Renderer* renderer) {
 }
 
 Vec2i updateLayout(Element *element, const Vec2i parentPos, const Renderer *renderer, const int verticalOffset) {
-    if (!element) return (Vec2i){0,0};
-
-    const Element* parent = element->parentElement;
-
-    int paddingHorizontal = 0;
-    int paddingVertical = 0;
-
-    if (parent) {
-        paddingHorizontal = parent->padding.left;
-        paddingVertical = parent->padding.up;
-    }
+    if (!element || !element->isActive) return (Vec2i){0,0};
 
     if (element->pos.x == -1) {
-        element->worldPos.x = parentPos.x + paddingHorizontal;
+        element->worldPos.x = parentPos.x;
     } else {
-        element->worldPos.x = parentPos.x + max(element->pos.x, paddingHorizontal);
+        element->worldPos.x = parentPos.x + element->pos.x;
     }
 
     if (element->pos.y == -1) {
-        element->worldPos.y = parentPos.y + paddingVertical + verticalOffset;
+        element->worldPos.y = parentPos.y + verticalOffset;
     } else {
-        element->worldPos.y = parentPos.y + max(element->pos.y, paddingVertical);
+        element->worldPos.y = parentPos.y + element->pos.y;
     }
+
+    const Vec2i contentOrigin = {
+        .x = element->worldPos.x + element->padding.left,
+        .y = element->worldPos.y + element->padding.up
+    };
 
     int realWidth = element->width;
     int realHeight = element->height;
@@ -188,19 +184,24 @@ Vec2i updateLayout(Element *element, const Vec2i parentPos, const Renderer *rend
     }
 
     int accumulatedHeight = 0;
+    int maxChildWidth = 0;
+    int maxChildHeight = 0;
 
     for (int i = 0; i < element->childElements.size; i++) {
         Element *child = element->childElements.content[i];
-        const Vec2i childDimensions = updateLayout(child, element->worldPos, renderer, accumulatedHeight);
+        const Vec2i childDimensions = updateLayout(child, contentOrigin, renderer, accumulatedHeight);
 
-        const int childWidth = padding->left + ((child->pos.x == -1)? 0 : child->pos.x) + childDimensions.x + padding->right;
-        const int childHeight = padding->up + ((child->pos.y == -1)? accumulatedHeight : child->pos.y) + childDimensions.y + padding->down;
+        const int childWidth = ((child->pos.x == -1) ? 0 : child->pos.x) + childDimensions.x;
+        const int childHeight = ((child->pos.y == -1) ? accumulatedHeight : child->pos.y) + childDimensions.y;
 
-        realWidth = max(realWidth, childWidth);
-        realHeight = max(realHeight, childHeight);
+        maxChildWidth = max(maxChildWidth, childWidth);
+        maxChildHeight = max(maxChildHeight, childHeight);
 
         accumulatedHeight += childDimensions.y + element->childGap;
     }
+
+    realWidth  = max(realWidth,  padding->left + maxChildWidth  + padding->right);
+    realHeight = max(realHeight, padding->up   + maxChildHeight + padding->down);
 
     if (element->autoFit) {
         element->actualWidth = realWidth;
@@ -213,11 +214,10 @@ Vec2i measureText(const Renderer *renderer, const TextElement *textElement) {
     const Font* font = &renderer->font;
     const float scale = textElement->textScale;
 
-    float width = 0.0f;
-    float maxHeight = 0.0f;
-
     float x = 0.0f;
     float y = 0.0f;
+
+    float maxHeight = 0.0f;
 
     for (int i = 0; i < textElement->text.length; i++) {
         const char c = textElement->text.content[i];
@@ -233,15 +233,15 @@ Vec2i measureText(const Renderer *renderer, const TextElement *textElement) {
                             &q,
                             1);
 
-        float gw = (q.x1 - q.x0) * scale;
-        float gh = (q.y1 - q.y0) * scale;
+        const float glyphHeight = (q.y1 - q.y0);
 
-        width += gw;
-        if (gh > maxHeight)
-            maxHeight = gh;
+        maxHeight = max(maxHeight, glyphHeight);
     }
 
-    return (Vec2i){ (int)width, (int)maxHeight };
+    return (Vec2i){
+        (int)(x * scale),
+        (int)(maxHeight * scale)
+    };
 }
 
 
@@ -273,7 +273,7 @@ Renderer newRenderer(const int width, const int height, const char* name, List_E
         .render = Renderer_render,
         .screenWidth = width,
         .screenHeight = height,
-        .font = loadFontAtlas("From Cartoon Blocks.ttf"),
+        .font = loadFontAtlas("ARIAL.TTF"),
         .basicQuadMesh = Mesh_loadSimpleQuad(),
         .defaultClick = NULL,
         .guiRoot = createRootElement()

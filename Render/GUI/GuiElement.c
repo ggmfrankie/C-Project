@@ -11,12 +11,12 @@
 #include "../Render.h"
 #include "../Engine.h"
 #include "GuiElementData.h"
+#define defaultColor (Vec3f){0.5, 0.5, 0.5}
 
 Element newElement(const Mesh mesh, const Vec2i pos, const int width, const int height, Texture* texture) {
     return (Element){
         .Mesh = mesh,
         .state = 0,
-        .isVisible = true,
         .onClick = NULL,
         .onHover = NULL,
         .isMouseOver = NULL,
@@ -37,7 +37,8 @@ Element newElement(const Mesh mesh, const Vec2i pos, const int width, const int 
         .autoFit = true,
         .childGap = 10,
         .ElementData = NULL,
-        .needsDeletion = false
+        .needsDeletion = false,
+        .isActive = true
     };
 }
 
@@ -226,5 +227,24 @@ Element *guiAddSimpleSlider(
     element->ElementData = sliderData;
     return element;
 }
+
+Element *createElement(const ElementSettings elementSettings) {
+    return guiAddElement(g_Elements, quadMesh,
+        elementSettings.pos,
+        elementSettings.width,
+        elementSettings.height,
+        elementSettings.texture,
+        elementSettings.color,
+        elementSettings.padding,
+        isSelected_Quad,
+        elementSettings.onHover,
+        elementSettings.onClick,
+        elementSettings.task,
+        elementSettings.text,
+        true
+    );
+}
+
+
 
 

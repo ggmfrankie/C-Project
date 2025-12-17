@@ -50,6 +50,7 @@ void startEngine() {
     const Task changeButtonTextTask = {.func = changeElementText, .userdata = THIS_ELEMENT};
     const Task nameShenanigans = {.func = namensliste_Aufgabe, .userdata = NULL};
 
+
     addChildElements(&renderer.guiRoot,
         addChildElements(guiAddSimpleRectangle_Color(g_Elements, (Vec2i){300, 100}, 230, pointerSchematic.height, (Vec3f){0.0f, 0.0f, 0.0f}),
             guiAddSimpleRectangle_Texture(g_Elements, fitMode, 230, pointerSchematic.height, &blackButton),
@@ -58,11 +59,114 @@ void startEngine() {
             ,guiAddSimpleButton_Color(g_Elements, fitMode, 100, 100, (Vec3f){0.9f, 0.2f, 0.3f}, changeButtonTextTask,  "Hello World and all others too")
             ,guiAddSimpleButton_Color(g_Elements, fitMode, 100, 100, (Vec3f){0.9f, 0.2f, 0.3f}, changeButtonTextTask,  "Hello World and all others too")
             ,guiAddSimpleButton_Color(g_Elements, fitMode, 100, 100, (Vec3f){0.9f, 0.2f, 0.3f}, changeButtonTextTask,  "Hello World and all others too")
-            )
-        ,guiAddSimpleButton_Texture(g_Elements, (Vec2i){200, 100}, 100, 100, &blackButton, nameShenanigans,  "Run the namensliste Test")
-        ,guiAddSimpleButton_Color(g_Elements, (Vec2i){0, 0}, 100, 100, (Vec3f){0.2f, 0.2f, 0.3f}, changeButtonTextTask,  "Hello World and all others too")
-        ,guiAddSimpleButton_Color(g_Elements, (Vec2i){0, 0}, 100, 100, (Vec3f){0.2f, 0.2f, 0.3f}, changeButtonTextTask,  "Hello World and all others too")
+        )
     );
+
+
+    addChildElements(&renderer.guiRoot,
+        addChildElements(
+            createElement((ElementSettings){
+                .pos = (Vec2i){100, 100},
+                .padding = (Padding){10, 10, 10, 10},
+                .width = 100,
+                .height = 200,
+                .color = (Vec3f){1.0f, 0.4f, 0.3f},
+                .onHover = hoverCallbackFunction,
+                .childGap = 10
+            }),
+            createElement((ElementSettings){
+                .pos = fitMode,
+                .texture = &pointerSchematic,
+                .width = 100,
+                .height = 20,
+                .text = "This is a test and yes Text Positioning must be refractored"
+            }),
+            addChildElements(
+                createElement((ElementSettings){
+                    .pos = fitMode,
+                    .width = 20,
+                    .height = 200,
+                    .color = (Vec3f){0.0f, 0.0f, 0.0f},
+                    .childGap = 5,
+                    .padding = (Padding){20, 20, 20, 20},
+                }),
+                createElement((ElementSettings){
+                    .pos = fitMode,
+                    .onHover = hoverCallbackFunction,
+                    .onClick = clickCallbackFunction,
+                    .texture = &pointerSchematic,
+                    .width = 100,
+                    .height = 20,
+                    .text = "hoosaasas"
+                }),
+                createElement((ElementSettings){
+                    .pos = fitMode,
+                    .onHover = hoverCallbackFunction,
+                    .onClick = clickCallbackFunction,
+                    .texture = &pointerSchematic,
+                    .width = 100,
+                    .height = 20,
+                    .text = "hoosaasas"
+                }),
+                createElement((ElementSettings){
+                    .pos = fitMode,
+                    .onHover = hoverCallbackFunction,
+                    .onClick = clickCallbackFunction,
+                    .texture = &pointerSchematic,
+                    .width = 100,
+                    .height = 20,
+                    .text = "hoosaasas"
+                }),
+                createElement((ElementSettings){
+                    .pos = fitMode,
+                    .onHover = hoverCallbackFunction,
+                    .onClick = clickCallbackFunction,
+                    .texture = &pointerSchematic,
+                    .width = 100,
+                    .height = 20,
+                    .text = "hoosaasas"
+                }),
+                createElement((ElementSettings){
+                    .pos = fitMode,
+                    .onHover = hoverCallbackFunction,
+                    .onClick = clickCallbackFunction,
+                    .texture = &pointerSchematic,
+                    .width = 100,
+                    .height = 20,
+                    .text = "hoosaasas"
+                }),
+                createElement((ElementSettings){
+                    .pos = fitMode,
+                    .onHover = hoverCallbackFunction,
+                    .onClick = clickCallbackFunction,
+                    .texture = &pointerSchematic,
+                    .width = 100,
+                    .height = 20,
+                    .text = "hoosaasas"
+                }),
+                createElement((ElementSettings){
+                    .pos = fitMode,
+                    .onHover = hoverCallbackFunction,
+                    .onClick = clickCallbackFunction,
+                    .texture = &pointerSchematic,
+                    .width = 100,
+                    .height = 20,
+                    .text = "hoosaasas"
+                }),
+                createElement((ElementSettings){
+                    .pos = fitMode,
+                    .onHover = hoverCallbackFunction,
+                    .onClick = clickCallbackFunction,
+                    .texture = &pointerSchematic,
+                    .width = 100,
+                    .height = 20,
+                    .text = "hoosaasas"
+                })
+            )
+
+        )
+    );
+
     guiInitialized = true;
     pthread_cond_broadcast(&guiInitCond);
     pthread_mutex_unlock(&guiMutex);
@@ -81,15 +185,14 @@ void startEngine() {
         Sleep(1);
     }
 
-
     //renderer.guiShader.delete(&renderer.guiShader); TODO
     //renderer.elements.delete(&renderer.elements); TODO
     glfwTerminate();
 }
 
 bool updateStateRecursively(Element *element, Renderer *renderer) {
-    if (element == NULL) return false;
-    element->state = 0;
+    if (element == NULL || !element->isActive) return false;
+
     for (int i = 0; i < element->childElements.size; i++) {
         if (updateStateRecursively(element->childElements.content[i], renderer)) return true;
     }
@@ -97,6 +200,7 @@ bool updateStateRecursively(Element *element, Renderer *renderer) {
 
         if (element->onHover && element->onHover(element, renderer)) return true;
         if (click(renderer->window, GLFW_MOUSE_BUTTON_LEFT) && element->onClick && element->onClick(element, renderer)) return true;
+        return true;
     }
     return false;
 }

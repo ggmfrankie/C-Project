@@ -4,6 +4,7 @@
 
 #include "Vector.h"
 
+
 Vec2f Vec2f_Cross(const Vec2f* v1, const Vec2f* v2) {
     return (Vec2f){
         .x = (v1->y * v2->x) - (v2->y * v1->x),
@@ -15,6 +16,10 @@ Vec3f Vec3f_Cross(const Vec3f* v1, const Vec3f* v2) {
     return (Vec3f){
         .x = (v1->y)
     };
+}
+
+inline bool Vec3f_Equals(const Vec3f a, const Vec3f b) {
+    return a.x == b.x && a.y == b.y && a.z == b.y;
 }
 
 Vec2f newVec2f(const float x, const float y) {
@@ -49,4 +54,8 @@ inline Vec2f toVec2f(const Vec2i vec) {
         .x = (float)vec.x,
         .y = (float)vec.y
     };
+}
+
+inline bool Vec2i_Equals(const Vec2i a, const Vec2i b) {
+    return a.x == b.x && a.y == b.y;
 }
