@@ -88,7 +88,7 @@ void startEngine() {
                     .height = 200,
                     .color = (Vec3f){0.0f, 0.0f, 0.0f},
                     .childGap = 5,
-                    .padding = (Padding){20, 20, 20, 20},
+                    .padding = (Padding){10, 10, 10, 10},
                 }),
                 createElement((ElementSettings){
                     .pos = fitMode,
