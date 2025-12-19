@@ -15,6 +15,7 @@
 
 Element newElement(const Mesh mesh, const Vec2i pos, const int width, const int height, Texture* texture) {
     return (Element){
+        .name = NULL,
         .Mesh = mesh,
         .state = 0,
         .onClick = NULL,
@@ -110,6 +111,7 @@ void setText_int(Element* element, const int i) {
 
 Element *guiAddElement(
     List_Element *list,
+    char *name,
     const Mesh mesh,
     const Vec2i pos,
     const int width,
@@ -140,6 +142,7 @@ Element *guiAddElement(
     }
     lastElement->color = color;
     lastElement->padding = padding;
+    lastElement->name = name;
 
     if (text) {
 
@@ -164,7 +167,7 @@ Element *guiAddSimpleRectangle_Texture(
     Texture *tex
 )
 {
-    Element* element = guiAddElement(list, quadMesh, pos, width, height, tex, (Vec3f){0.6f, 0.6f, 0.6f}, (Padding){10, 10, 10, 10}, NULL, NULL, NULL, (Task){NULL, NULL}, NULL, false);
+    Element* element = guiAddElement(list, NULL, quadMesh, pos, width, height, tex, (Vec3f){0.6f, 0.6f, 0.6f}, (Padding){10, 10, 10, 10}, NULL, NULL, NULL, (Task){NULL, NULL}, NULL,false);
     return element;
 }
 
@@ -176,7 +179,7 @@ Element *guiAddSimpleRectangle_Color(
     const Vec3f color
 )
 {
-    Element* element = guiAddElement(list, quadMesh, pos, width, height, NULL, color, (Padding){10, 10, 10, 10}, NULL, NULL, NULL, (Task){NULL, NULL}, NULL, false);
+    Element* element = guiAddElement(list, NULL, quadMesh, pos, width, height, NULL, color, (Padding){10, 10, 10, 10}, NULL, NULL, NULL, (Task){NULL, NULL}, NULL,false);
     return element;
 }
 
@@ -190,7 +193,7 @@ Element *guiAddSimpleButton_Texture(
     const char *text
 )
 {
-    Element* element = guiAddElement(list, quadMesh, pos, width, height, tex, (Vec3f){0.6f, 0.6f, 0.6f}, (Padding){10, 10, 10, 10}, isSelected_Quad, hoverCallbackFunction, clickCallbackFunction, task, text, true);
+    Element* element = guiAddElement(list, NULL, quadMesh, pos, width, height, tex, (Vec3f){0.6f, 0.6f, 0.6f}, (Padding){10, 10, 10, 10}, isSelected_Quad, hoverCallbackFunction, clickCallbackFunction, task, text,true);
     return element;
 }
 
@@ -204,7 +207,7 @@ Element *guiAddSimpleButton_Color(
     const char *text
 )
 {
-    Element* element = guiAddElement(list, quadMesh, pos, width, height, NULL, color, (Padding){10, 10, 10, 10}, isSelected_Quad, hoverCallbackFunction, clickCallbackFunction, task, text, true);
+    Element* element = guiAddElement(list, NULL, quadMesh, pos, width, height, NULL, color, (Padding){10, 10, 10, 10}, isSelected_Quad, hoverCallbackFunction, clickCallbackFunction, task, text,true);
     return element;
 }
 
@@ -218,30 +221,31 @@ Element *guiAddSimpleSlider(
     SliderData* sliderData
 )
 {
-    Element* element = guiAddElement(list, quadMesh, pos, width, height, NULL, colorBackground, (Padding){10, 10, 10, 10}, isSelected_Quad, hoverCallbackFunction, NULL, (Task){}, NULL, true);
+    Element* element = guiAddElement(list, NULL, quadMesh, pos, width, height, NULL, colorBackground, (Padding){10, 10, 10, 10}, isSelected_Quad, hoverCallbackFunction, NULL, (Task){}, NULL,true);
     Vec2i sliderPos = {};
     sliderPos.x = width/2;
     sliderPos.y = height;
-    Element* sliderElement = guiAddElement(list, quadMesh, pos, width, height, NULL, colorSlider, (Padding){10, 10, 10, 10}, isSelected_Quad, hoverCallbackFunction, sliderCallbackFunction, (Task){}, NULL, true);
+    Element* sliderElement = guiAddElement(list, NULL, quadMesh, pos, width, height, NULL, colorSlider, (Padding){10, 10, 10, 10}, isSelected_Quad, hoverCallbackFunction, sliderCallbackFunction, (Task){}, NULL,true);
     element->childElements.add(&element->childElements, sliderElement);
     element->ElementData = sliderData;
     return element;
 }
 
 Element *createElement(const ElementSettings elementSettings) {
-    return guiAddElement(g_Elements, quadMesh,
-        elementSettings.pos,
-        elementSettings.width,
-        elementSettings.height,
-        elementSettings.texture,
-        elementSettings.color,
-        elementSettings.padding,
-        isSelected_Quad,
-        elementSettings.onHover,
-        elementSettings.onClick,
-        elementSettings.task,
-        elementSettings.text,
-        true
+    return guiAddElement(g_Elements,
+                        elementSettings.name,
+                        quadMesh,
+                        elementSettings.pos,
+                        elementSettings.width,
+                        elementSettings.height,
+                        elementSettings.texture,
+                        elementSettings.color,
+                        elementSettings.padding,
+                        isSelected_Quad,
+                        elementSettings.onHover,
+                        elementSettings.onClick,
+                        elementSettings.task,
+                        elementSettings.text,true
     );
 }
 

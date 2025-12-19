@@ -66,6 +66,7 @@ void startEngine() {
     addChildElements(&renderer.guiRoot,
         addChildElements(
             createElement((ElementSettings){
+                .name = "Table",
                 .pos = (Vec2i){100, 100},
                 .padding = (Padding){10, 10, 10, 10},
                 .width = 100,

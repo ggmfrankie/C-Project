@@ -40,6 +40,7 @@ typedef enum {
 ARRAY_LIST(ChildElements, Element*)
 
 typedef struct Element {
+    char* name;
     bool isActive;
     Vec2i pos;
     Vec2i worldPos;
@@ -80,6 +81,7 @@ typedef struct Element {
 ARRAY_LIST(Element, Element)
 
 typedef struct {
+    char* name;
     Vec2i pos;
     int width;
     int height;
@@ -113,6 +115,7 @@ bool isSelected_Quad(const Element *element, Vec2i mousePos);
 
 Element *guiAddElement(
     List_Element *list,
+    char *name,
     Mesh mesh,
     Vec2i pos,
     int width,
@@ -124,8 +127,7 @@ Element *guiAddElement(
     bool (*hover)(Element *, Renderer *),
     bool (*click)(Element *, Renderer *),
     Task task,
-    const char *text,
-    bool forceResize
+    const char *text,bool forceResize
 );
 
 Element *guiAddSimpleRectangle_Texture(
