@@ -73,7 +73,7 @@ void Shader_createUniform(Shader *shader, const char* name) {
     if(uniformLocation < 0){
         printf("Error creating Uniform");
     }
-    Hashmap_Name_add(&shader->uniforms, name, uniformLocation);
+    Hashmap_Uniforms_add(&shader->uniforms, name, uniformLocation);
 }
 
 int createVertexShader(const String *fileName, const int programId) {
@@ -113,19 +113,19 @@ int createShader(const GLchar** shaderSource, const int shaderType, const int pr
 }
 
 void setUniform_f(const Shader *shader, const char* name, const float value) {
-    glUniform1f(*Hashmap_Name_get(&shader->uniforms, name), value);
+    glUniform1f(*Hashmap_Uniforms_get(&shader->uniforms, name), value);
 }
 
 void setUniform_i(const Shader *shader, const char* name, const int value) {
-    glUniform1i(*Hashmap_Name_get(&shader->uniforms, name), value);
+    glUniform1i(*Hashmap_Uniforms_get(&shader->uniforms, name), value);
 }
 
 void setUniform_Vec2(const Shader *shader, const char* name, const Vec2f value) {
-    glUniform2f(*Hashmap_Name_get(&shader->uniforms, name), value.x, value.y);
+    glUniform2f(*Hashmap_Uniforms_get(&shader->uniforms, name), value.x, value.y);
 }
 
 void setUniform_Vec3(const Shader *shader, const char* name, const Vec3f value) {
-    glUniform3f(*Hashmap_Name_get(&shader->uniforms, name), value.x, value.y, value.z);
+    glUniform3f(*Hashmap_Uniforms_get(&shader->uniforms, name), value.x, value.y, value.z);
 }
 
 void Shader_bindProgram(const Shader *shader) {

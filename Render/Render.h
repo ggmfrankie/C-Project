@@ -22,23 +22,23 @@ typedef struct Renderer {
     Vec2i mousePos;
     Shader guiShader;
     ComputeShader computeShader;
-    List_Element* elements;
+
     Font font;
     Mesh basicQuadMesh;
     bool (*defaultClick)(Renderer *renderer);
-    void (*render)(Renderer *renderer);
+    void (*render)(const Renderer *renderer);
 
     Element guiRoot;
-    List_Element guiRoots;
 
     OtherShaders otherShaders;
 } Renderer;
 
-Renderer newRenderer(int width, int height, const char* name, List_Element* elements);
+Renderer newRenderer(int width, int height, const char* name);
 Renderer* newRenderer_h(int width, int height, const char* name, List_Element* elements);
 void Renderer_init(Renderer *renderer);
-void Renderer_render(Renderer *renderer);
+void Renderer_render(const Renderer *renderer);
 void Renderer_destroy(const Renderer *renderer);
+Vec2i updateLayout(Element *element, Vec2i parentPos, const Renderer *renderer, int verticalOffset);
 bool isMousePressed(GLFWwindow* window, int mouseButton);
 
 #endif //C_RENDER_H

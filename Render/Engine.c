@@ -16,7 +16,8 @@
     #define WIDTH 4096
     #define HEIGHT 600
 
-List_Element* g_Elements;
+
+Hashmap_Element g_Hashmap;
 pthread_mutex_t guiMutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t  guiInitCond = PTHREAD_COND_INITIALIZER;
 int guiInitialized = false;
@@ -30,9 +31,9 @@ void startEngine() {
     static Renderer renderer;
     static List_Element elementList;
     elementList = Element_newList(32);
+    g_Hashmap = newHashmap_Element(512);
 
-    g_Elements = &elementList;
-    renderer = newRenderer(512, 512, "Huhu", g_Elements);
+    renderer = newRenderer(512, 512, "Huhu");
 
     Texture graphTexture = newEmptyTexture(WIDTH, HEIGHT);
     Texture blackButton = loadTextureFromPng("GrayBox.png");
@@ -52,13 +53,13 @@ void startEngine() {
 
 
     addChildElements(&renderer.guiRoot,
-        addChildElements(guiAddSimpleRectangle_Color(g_Elements, (Vec2i){300, 100}, 230, pointerSchematic.height, (Vec3f){0.0f, 0.0f, 0.0f}),
-            guiAddSimpleRectangle_Texture(g_Elements, fitMode, 230, pointerSchematic.height, &blackButton),
-            guiAddSimpleButton_Color(g_Elements, fitMode, 100, 100, (Vec3f){0.2f, 0.2f, 0.3f}, changeButtonTextTask,  "Hello World and all others too")
-            ,guiAddSimpleButton_Texture(g_Elements, fitMode, 100, 100, &pointerSchematic, nameShenanigans,  "Run the namensliste Test")
-            ,guiAddSimpleButton_Color(g_Elements, fitMode, 100, 100, (Vec3f){0.9f, 0.2f, 0.3f}, changeButtonTextTask,  "Hello World and all others too")
-            ,guiAddSimpleButton_Color(g_Elements, fitMode, 100, 100, (Vec3f){0.9f, 0.2f, 0.3f}, changeButtonTextTask,  "Hello World and all others too")
-            ,guiAddSimpleButton_Color(g_Elements, fitMode, 100, 100, (Vec3f){0.9f, 0.2f, 0.3f}, changeButtonTextTask,  "Hello World and all others too")
+        addChildElements(guiAddSimpleRectangle_Color((Vec2i){300, 100}, 230, pointerSchematic.height, (Vec3f){0.0f, 0.0f, 0.0f}),
+            guiAddSimpleRectangle_Texture(fitMode, 230, pointerSchematic.height, &blackButton),
+            guiAddSimpleButton_Color(fitMode, 100, 100, (Vec3f){0.2f, 0.2f, 0.3f}, changeButtonTextTask,  "Hello World and all others too")
+            ,guiAddSimpleButton_Texture(fitMode, 100, 100, &pointerSchematic, nameShenanigans,  "Run the namensliste Test")
+            ,guiAddSimpleButton_Color(fitMode, 100, 100, (Vec3f){0.9f, 0.2f, 0.3f}, changeButtonTextTask,  "Hello World and all others too")
+            ,guiAddSimpleButton_Color(fitMode, 100, 100, (Vec3f){0.9f, 0.2f, 0.3f}, changeButtonTextTask,  "Hello World and all others too")
+            ,guiAddSimpleButton_Color(fitMode, 100, 100, (Vec3f){0.9f, 0.2f, 0.3f}, changeButtonTextTask,  "Hello World and all others too")
         )
     );
 
@@ -73,18 +74,18 @@ void startEngine() {
                 .height = 200,
                 .color = (Vec3f){1.0f, 0.4f, 0.3f},
                 .onHover = hoverCallbackFunction,
-                .childGap = 10
+                .childGap = 10,
+                .posMode = POS_ABSOLUTE
             }),
             createElement((ElementSettings){
-                .pos = fitMode,
                 .texture = &pointerSchematic,
                 .width = 100,
                 .height = 20,
+                .padding = (Padding){10,10,10,10},
                 .text = "This is a test and yes Text Positioning must be refractored"
             }),
             addChildElements(
                 createElement((ElementSettings){
-                    .pos = fitMode,
                     .width = 20,
                     .height = 200,
                     .color = (Vec3f){0.0f, 0.0f, 0.0f},
@@ -92,90 +93,111 @@ void startEngine() {
                     .padding = (Padding){10, 10, 10, 10},
                 }),
                 createElement((ElementSettings){
-                    .pos = fitMode,
                     .onHover = hoverCallbackFunction,
                     .onClick = clickCallbackFunction,
                     .texture = &pointerSchematic,
                     .width = 100,
                     .height = 20,
+                    .padding = (Padding){5, 5, 5, 5},
+                    .text = "hoosaasas"
+                }),
+                addChildElements(
+                    createElement((ElementSettings){
+                        .width = 20,
+                        .height = 200,
+                        .color = (Vec3f){0.7f, 0.0f, 0.0f},
+                        .childGap = 5,
+                        .padding = (Padding){10, 10, 10, 10},
+                    }),
+                    createElement((ElementSettings){
+                        .onHover = hoverCallbackFunction,
+                        .onClick = clickCallbackFunction,
+                        .color = (Vec3f){0.5f, 0.3f, 0.7f},
+                        .padding = (Padding){10, 10, 10, 10},
+                        .text = "Horray is finally Works"
+                    })
+                ),
+                createElement((ElementSettings){
+                    .onHover = hoverCallbackFunction,
+                    .onClick = clickCallbackFunction,
+                    .texture = &pointerSchematic,
+                    .width = 100,
+                    .height = 20,
+                    .padding = (Padding){4, 4, 4, 4},
                     .text = "hoosaasas"
                 }),
                 createElement((ElementSettings){
-                    .pos = fitMode,
                     .onHover = hoverCallbackFunction,
                     .onClick = clickCallbackFunction,
                     .texture = &pointerSchematic,
                     .width = 100,
                     .height = 20,
+                    .padding = (Padding){4, 4, 4, 4},
                     .text = "hoosaasas"
                 }),
                 createElement((ElementSettings){
-                    .pos = fitMode,
                     .onHover = hoverCallbackFunction,
                     .onClick = clickCallbackFunction,
                     .texture = &pointerSchematic,
                     .width = 100,
                     .height = 20,
+                    .padding = (Padding){4, 4, 4, 4},
                     .text = "hoosaasas"
                 }),
                 createElement((ElementSettings){
-                    .pos = fitMode,
                     .onHover = hoverCallbackFunction,
                     .onClick = clickCallbackFunction,
                     .texture = &pointerSchematic,
                     .width = 100,
                     .height = 20,
+                    .padding = (Padding){4, 4, 4, 4},
                     .text = "hoosaasas"
                 }),
                 createElement((ElementSettings){
-                    .pos = fitMode,
                     .onHover = hoverCallbackFunction,
                     .onClick = clickCallbackFunction,
                     .texture = &pointerSchematic,
                     .width = 100,
                     .height = 20,
+                    .padding = (Padding){4, 4, 4, 4},
                     .text = "hoosaasas"
                 }),
                 createElement((ElementSettings){
-                    .pos = fitMode,
                     .onHover = hoverCallbackFunction,
                     .onClick = clickCallbackFunction,
                     .texture = &pointerSchematic,
                     .width = 100,
                     .height = 20,
+                    .padding = (Padding){4, 4, 4, 4},
                     .text = "hoosaasas"
                 }),
                 createElement((ElementSettings){
-                    .pos = fitMode,
                     .onHover = hoverCallbackFunction,
                     .onClick = clickCallbackFunction,
                     .texture = &pointerSchematic,
                     .width = 100,
                     .height = 20,
-                    .text = "hoosaasas"
-                }),
-                createElement((ElementSettings){
-                    .pos = fitMode,
-                    .onHover = hoverCallbackFunction,
-                    .onClick = clickCallbackFunction,
-                    .texture = &pointerSchematic,
-                    .width = 100,
-                    .height = 20,
+                    .padding = (Padding){4, 4, 4, 4},
                     .text = "hoosaasas"
                 })
             )
-
         )
     );
 
     guiInitialized = true;
     pthread_cond_broadcast(&guiInitCond);
     pthread_mutex_unlock(&guiMutex);
-
+    int i = 0;
     while (!glfwWindowShouldClose(renderer.window)) {
         const u_int64 timeStart = now_ns();
         glfwPollEvents();
-        //updateState2(&renderer);
+
+        if (i == 1) {
+            updateLayout(&renderer.guiRoot, (Vec2i){0, 0}, &renderer, 0);
+            i = 0;
+        }
+        i++;
+
         updateStateRecursively(&renderer.guiRoot, &renderer);
 
         pthread_mutex_lock(&guiMutex);
@@ -185,9 +207,6 @@ void startEngine() {
         const u_int64 elapsedTime = now_ns()-timeStart;
         Sleep(1);
     }
-
-    //renderer.guiShader.delete(&renderer.guiShader); TODO
-    //renderer.elements.delete(&renderer.elements); TODO
     glfwTerminate();
 }
 
@@ -206,7 +225,12 @@ bool updateStateRecursively(Element *element, Renderer *renderer) {
     return false;
 }
 
+void addShaderPrograms(Renderer *renderer) {
+    OtherShaders* otherShaders = &renderer->otherShaders;
+}
+
 [[deprecated]]
+/*
 void updateState2(Renderer *renderer) {
     Element *hovered = NULL;
     for (int i = 0; i < renderer->elements->size; i++) {
@@ -233,12 +257,12 @@ void updateState2(Renderer *renderer) {
         }
     }
 }
+*/
 
-void addShaderPrograms(Renderer *renderer) {
-    OtherShaders* otherShaders = &renderer->otherShaders;
-}
+
 
 [[deprecated]]
+/*
 void updateState(Renderer *renderer) {
     for (int i = 0; i < renderer->elements->size; i++) {
         renderer->elements->get(renderer->elements, i)->state = 0;
@@ -260,6 +284,7 @@ void updateState(Renderer *renderer) {
         if (renderer->defaultClick != NULL) renderer->defaultClick(renderer);
     }
 }
+*/
 
 double graphingFunction(const double x) {
     const Spannung value = berechneSpannungsteiler(10, 40, berechneErsatzwiderstand(30, 10 * x));

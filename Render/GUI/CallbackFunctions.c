@@ -4,6 +4,7 @@
 
 #include "../GUI/CallbackFunctions.h"
 
+#include "GuiElementData.h"
 #include "../Render.h"
 
 bool dragFunction(Element *element, const Renderer *renderer) {
@@ -19,12 +20,13 @@ bool dragFunction(Element *element, const Renderer *renderer) {
     if (glfwGetKey(renderer->window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
         const Vec2i parentWorldPos = element->parentElement ? element->parentElement->worldPos : (Vec2i){0, 0};
         if (!dragging) {
-            offset.x = (renderer->mousePos.x - parentWorldPos.x) - (element->worldPos.x - parentWorldPos.x);
-            offset.y = (renderer->mousePos.y - parentWorldPos.y) - (element->worldPos.y - parentWorldPos.y);
+            offset.x = renderer->mousePos.x - element->worldPos.x;
+            offset.y = renderer->mousePos.y - element->worldPos.y;
             dragging = true;
         } else {
-            element->pos.x = (renderer->mousePos.x - parentWorldPos.x) - offset.x;
-            element->pos.y = (renderer->mousePos.y - parentWorldPos.y) - offset.y;
+            element->positionMode = POS_ABSOLUTE;
+            element->pos.x = (renderer->mousePos.x - parentWorldPos.x) - offset.x - ((element->parentElement)?element->parentElement->padding.left:0);
+            element->pos.y = (renderer->mousePos.y - parentWorldPos.y) - offset.y - ((element->parentElement)?element->parentElement->padding.up:0);
         }
         return true;
     }
@@ -57,5 +59,7 @@ bool click(GLFWwindow *window, const int mouseButton) {
 }
 
 bool sliderCallbackFunction(Element *element, Renderer *renderer) {
+    SliderData* sliderDate = (SliderData*)element->ElementData;
+
     return false;
 }

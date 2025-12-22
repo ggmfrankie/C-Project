@@ -45,7 +45,7 @@ void ComputeShader_createUniform(ComputeShader *shader, const char* name) {
     if(uniformLocation < 0){
         printf("Error creating Uniform");
     }
-    Hashmap_Name_add(&shader->uniforms, name, uniformLocation);
+    Hashmap_Uniforms_add(&shader->uniforms, name, uniformLocation);
 }
 
 ComputeShader newComputeShader(Texture *texture, const int size) {

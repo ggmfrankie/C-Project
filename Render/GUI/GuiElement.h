@@ -10,6 +10,7 @@
 #include "Tasks.h"
 #include "../GUI/Texture.h"
 #include "../../Utils/SimpleArray.h"
+#include "../../Utils/HashMap.h"
 #include "../../Utils/Vector.h"
 
 struct Renderer;
@@ -22,7 +23,6 @@ typedef struct TextElement {
     String text;
     Vec3f textColor;
     float textScale;
-    Vec2i offset;
 } TextElement;
 
 typedef struct Padding {
@@ -37,13 +37,21 @@ typedef enum {
     S_active = 1,
 } ElementState;
 
+typedef enum {
+    POS_FIT = 0,
+    POS_ABSOLUTE = 1,
+} PositionMode;
+
 ARRAY_LIST(ChildElements, Element*)
 
 typedef struct Element {
     char* name;
     bool isActive;
+
     Vec2i pos;
     Vec2i worldPos;
+
+    PositionMode positionMode;
 
     int width;
     int height;
@@ -61,9 +69,9 @@ typedef struct Element {
 
     //Interaction
     ElementState state;
-    bool (*isMouseOver)(const struct Element* element, Vec2i mousePos);
-    bool (*onClick)(struct Element* element, Renderer *renderer);
-    bool (*onHover)(struct Element* element, Renderer *renderer);
+    bool (*isMouseOver)(const Element* element, Vec2i mousePos);
+    bool (*onClick)(Element* element, Renderer *renderer);
+    bool (*onHover)(Element* element, Renderer *renderer);
 
     Task task;
     Element* parentElement;
@@ -80,9 +88,12 @@ typedef struct Element {
 
 ARRAY_LIST(Element, Element)
 
+HASH_MAP(Element, char*, Element*)
+
 typedef struct {
     char* name;
     Vec2i pos;
+    PositionMode posMode;
     int width;
     int height;
     Texture* texture;
@@ -127,11 +138,10 @@ Element *guiAddElement(
     bool (*hover)(Element *, Renderer *),
     bool (*click)(Element *, Renderer *),
     Task task,
-    const char *text,bool forceResize
+    const char *text,bool forceResize, PositionMode positionMode
 );
 
 Element *guiAddSimpleRectangle_Texture(
-    List_Element *list,
     Vec2i pos,
     int width,
     int height,
@@ -139,7 +149,6 @@ Element *guiAddSimpleRectangle_Texture(
 );
 
 Element *guiAddSimpleRectangle_Color(
-    List_Element *list,
     Vec2i pos,
     int width,
     int height,
@@ -147,7 +156,6 @@ Element *guiAddSimpleRectangle_Color(
 );
 
 Element *guiAddSimpleButton_Texture(
-    List_Element *list,
     Vec2i pos,
     int width,
     int height,
@@ -157,7 +165,6 @@ Element *guiAddSimpleButton_Texture(
 );
 
 Element *guiAddSimpleButton_Color(
-    List_Element *list,
     Vec2i pos,
     int width,
     int height,

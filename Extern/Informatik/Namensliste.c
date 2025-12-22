@@ -155,11 +155,11 @@ void namensliste_schnell() {
 
     const u_int64 startNs = now_ns();
     forEach(names, const String, content,
-        int* count = Hashmap_Name_get(&nameCounter, content.content);
+        int* count = Hashmap_NameCounter_get(&nameCounter, content.content);
         if (count) {
             (*count)++;
         } else {
-            Hashmap_Name_add(&nameCounter, content.content, 1);
+            Hashmap_NameCounter_add(&nameCounter, content.content, 1);
         }
     )
     const u_int64 time = now_ns() - startNs;

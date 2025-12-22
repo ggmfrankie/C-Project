@@ -83,7 +83,7 @@ void Renderer_init(Renderer *renderer) {
     Shader_createUniform(&renderer->guiShader, "texPosEnd");
 }
 
-void Renderer_render(Renderer *renderer) {
+void Renderer_render(const Renderer *renderer) {
     ComputeShader_run(&renderer->computeShader);
 
     glClear(GL_COLOR_BUFFER_BIT);
@@ -97,9 +97,7 @@ void Renderer_render(Renderer *renderer) {
     setUniform(&renderer->guiShader, ("screenWidth"), (float) renderer->screenWidth);
     setUniform(&renderer->guiShader, ("screenHeight"), (float) renderer->screenHeight);
 
-    Element* guiRoot = &renderer->guiRoot;
-
-    updateLayout(guiRoot, (Vec2i){0, 0}, renderer, 0);
+    const Element* guiRoot = &renderer->guiRoot;
 
     for (int i = 0; i < guiRoot->childElements.size; i++) {
         renderElementsRecursively(guiRoot->childElements.content[i], renderer);
@@ -136,7 +134,6 @@ void renderElementsRecursively(Element* element, const Renderer* renderer) {
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
-
     Mesh_render(&element->Mesh);
 
     if (element->hasText) {
@@ -152,17 +149,13 @@ void renderElementsRecursively(Element* element, const Renderer* renderer) {
 Vec2i updateLayout(Element *element, const Vec2i parentPos, const Renderer *renderer, const int verticalOffset) {
     if (!element || !element->isActive) return (Vec2i){0,0};
 
-    if (element->pos.x == -1) {
-        element->worldPos.x = parentPos.x;
-    } else {
-        element->worldPos.x = parentPos.x + element->pos.x;
+    if (element->positionMode == POS_FIT) {
+        element->pos.x = 0;
+        element->pos.y = verticalOffset;
     }
 
-    if (element->pos.y == -1) {
-        element->worldPos.y = parentPos.y + verticalOffset;
-    } else {
-        element->worldPos.y = parentPos.y + element->pos.y;
-    }
+    element->worldPos.x = parentPos.x + element->pos.x;
+    element->worldPos.y = parentPos.y + element->pos.y;
 
     const Vec2i contentOrigin = {
         .x = element->worldPos.x + element->padding.left,
@@ -176,8 +169,8 @@ Vec2i updateLayout(Element *element, const Vec2i parentPos, const Renderer *rend
 
     if (element->hasText) {
         const Vec2i textSize = measureText(renderer, &element->textElement);
-        const int textW = padding->left + textSize.x + element->textElement.offset.x + padding->right;
-        const int textH = padding->up + textSize.y + element->textElement.offset.y + padding->down;
+        const int textW = padding->left + textSize.x + padding->right;
+        const int textH = padding->up + textSize.y + padding->down;
 
         realWidth  = max(realWidth,  textW);
         realHeight = max(realHeight, textH);
@@ -191,8 +184,8 @@ Vec2i updateLayout(Element *element, const Vec2i parentPos, const Renderer *rend
         Element *child = element->childElements.content[i];
         const Vec2i childDimensions = updateLayout(child, contentOrigin, renderer, accumulatedHeight);
 
-        const int childWidth = ((child->pos.x == -1) ? 0 : child->pos.x) + childDimensions.x;
-        const int childHeight = ((child->pos.y == -1) ? accumulatedHeight : child->pos.y) + childDimensions.y;
+        const int childWidth = child->pos.x + childDimensions.x;
+        const int childHeight = child->pos.y + childDimensions.y;
 
         maxChildWidth = max(maxChildWidth, childWidth);
         maxChildHeight = max(maxChildHeight, childHeight);
@@ -203,10 +196,9 @@ Vec2i updateLayout(Element *element, const Vec2i parentPos, const Renderer *rend
     realWidth  = max(realWidth,  padding->left + maxChildWidth  + padding->right);
     realHeight = max(realHeight, padding->up   + maxChildHeight + padding->down);
 
-    if (element->autoFit) {
-        element->actualWidth = realWidth;
-        element->actualHeight = realHeight;
-    }
+    element->actualWidth = realWidth;
+    element->actualHeight = realHeight;
+
     return (Vec2i){realWidth, realHeight};
 }
 
@@ -263,9 +255,8 @@ inline bool isMousePressed(GLFWwindow* window, const int mouseButton) {
     return glfwGetMouseButton(window, mouseButton) == GLFW_PRESS;
 }
 
-Renderer newRenderer(const int width, const int height, const char* name, List_Element* elements) {
+Renderer newRenderer(const int width, const int height, const char* name) {
     return (Renderer){
-        .elements = elements,
         .guiShader = newShader("GuiVertexShader.vert", "GuiFragmentShader.frag"),
         .otherShaders = (OtherShaders){0, {}},
         .computeShader = 0,
@@ -282,7 +273,6 @@ Renderer newRenderer(const int width, const int height, const char* name, List_E
 
 Renderer* newRenderer_h(const int width, const int height, const char* name, List_Element* elements) {
     Renderer* renderer = malloc(sizeof(Renderer));
-    renderer->elements = elements;
     renderer->guiShader = newShader("GuiVertexShader.vert", "GuiFragmentShader.frag");
     renderer->window = initWindow(width, height, name);
     renderer->render = Renderer_render;
