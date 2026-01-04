@@ -68,6 +68,10 @@ add_executable(C
         Utils/MemoryArena.c
         Render/GUI/GuiElementData.c
         Render/GUI/GuiElementData.h
+        Extern/Libraries/WinAdapt.c
+        Extern/Libraries/WinAdapt.h
+        Extern/Informatik/TowersOfHanoi.c
+        Extern/Informatik/TowersOfHanoi.h
 )
 #add_subdirectory("${CMAKE_SOURCE_DIR}/Render")
 

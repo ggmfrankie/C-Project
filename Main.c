@@ -1,5 +1,6 @@
 
 #include <stdio.h>
+#include <windows.h>
 
 #include "Render/Engine.h"
 #include "Utils/Map.h"
@@ -10,10 +11,9 @@
 #include "Extern/Informatik/MonteCarlo.h"
 #include "Extern/Informatik/PointerFun.h"
 #include "Extern/Informatik/Namensliste.h"
+#include "Extern/Informatik/TowersOfHanoi.h"
 
 void* workerThread(void* args);
-
-#include <windows.h>
 
 void mainFun() {
 
@@ -22,15 +22,18 @@ void mainFun() {
         t.func(t.userdata);
     } while (1);
 }
-
+#define WINADAPT
+#ifndef WINADAPT
 int main(){
+
     SetConsoleOutputCP(CP_UTF8);
     pthread_t workerThreadID;
     pthread_create(&workerThreadID, NULL, workerThread, NULL);
-    //monteCarlo();
-    startEngine();
+
+    //startEngine();
     return 0;
 }
+#endif
 
 void* workerThread(void* args) {
     pthread_mutex_lock(&guiMutex);
