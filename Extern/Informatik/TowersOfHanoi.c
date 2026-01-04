@@ -5,16 +5,19 @@
 #include "TowersOfHanoi.h"
 
 #include <math.h>
+#include <pthread.h>
 #include <stdio.h>
 #include <time.h>
 
 #include "../Libraries/WinAdapt.h"
 #include "../../Utils/Vector.h"
 
-#define NUMFLOORS 7
+#define NUMFLOORS 12
 #define NUMTOWERS 3
 
 int g_towers[NUMTOWERS][NUMFLOORS] = {};
+
+pthread_mutex_t towerMutex = PTHREAD_MUTEX_INITIALIZER;
 
 void VtlInit(void);
 void VtlPaint(int xl, int yo, int xr, int yu);
@@ -27,7 +30,7 @@ int removeDisc(int towers[][NUMFLOORS], int sourceTower);
 void addDisk(int towers[][NUMFLOORS], int destTower, int discSize);
 void moveDisk(int towers[][NUMFLOORS], int sourceTower, int destTower);
 
-void drawTowers(int towers[][NUMFLOORS], int xLeft, int xRight, int yTop, int yBottom) {
+void drawTowers(int towers[][NUMFLOORS], const int xLeft, const int xRight, const int yTop, const int yBottom) {
     const int baseWidth = (xRight - xLeft)/4;
     const int baseDistance = baseWidth/4;
     const int poleHeight = (yBottom - yTop)*8/10;
@@ -84,12 +87,30 @@ inline void drawDisc(const Vec2i pos, const int discWidth, const int discHeight)
     Rect(pos.x, pos.y, pos.x+discWidth, pos.y+discHeight);
 }
 
+int moveTower2(int towers[][NUMFLOORS], const int sourceTower, const int numDiscs, const int destTower) {
+    if (numDiscs == 0) return 0;
+    int moves = 1;
+    const int tempTower = 0x03^sourceTower^destTower;
+
+    moves += moveTower2(towers, sourceTower, numDiscs-1, tempTower);
+
+    pthread_mutex_lock(&towerMutex);
+    moveDisk(towers, sourceTower, destTower);
+    pthread_mutex_unlock(&towerMutex);
+    //Sleep(50);
+    moves += moveTower2(towers, tempTower, numDiscs-1, destTower);
+    return moves;
+}
+
 int moveTower(int towers[][NUMFLOORS], const int sourceTower, const int numDiscs, const int destTower, const int tempTower) {
     if (numDiscs == 0) return 0;
     int moves = 1;
     moves += moveTower(towers, sourceTower, numDiscs-1, tempTower, destTower);
+
+    pthread_mutex_lock(&towerMutex);
     moveDisk(towers, sourceTower, destTower);
-    Sleep(200);
+    pthread_mutex_unlock(&towerMutex);
+    //Sleep(50);
     moves += moveTower(towers, tempTower, numDiscs-1, destTower, sourceTower);
     return moves;
 }
@@ -107,34 +128,23 @@ void addDisk(int towers[][NUMFLOORS], const int destTower, const int discSize) {
 }
 
 void* runTowersAsync(void* nix) {
-    const int moves = moveTower(g_towers, 0, NUMFLOORS-1, 2, 1);
+    const int moves = moveTower2(g_towers, 0, NUMFLOORS-1, 2);
     printf("Required moves for %i discs: %i\n", NUMFLOORS-1, moves);
+    return 0;
 }
-
-char szStartString[128] = "Gestartet am ";
-char szLaufzeit[128];
-int xMaus=-1, yMaus=-1;
-char nKey[] = "X";
-
 
 void VtlZyk(void)
 {
-    time_t tLaufzeit;
-    tLaufzeit = time(0);
-    const struct tm tmStruktur = *localtime(&tLaufzeit);
-    sprintf(szLaufzeit, "Laufzeit: %d:%d:%d",
-            tmStruktur.tm_hour, tmStruktur.tm_min, tmStruktur.tm_sec);
+
 }
 
 void VtlMouse(int X, int Y)
 {
-    xMaus=X;
-    yMaus=Y;
+
 }
 
 void VtlKeyHit(int key)
 {
-    nKey[0] = key;
     runAsThread(runTowersAsync);
 }
 
@@ -151,5 +161,7 @@ void VtlInit(void)
 
 void VtlPaint(int xl, int yo, int xr, int yu)
 {
+    pthread_mutex_lock(&towerMutex);
     drawTowers(g_towers, xl, xr, yo, yu);
+    pthread_mutex_unlock(&towerMutex);
 }
