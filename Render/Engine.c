@@ -78,7 +78,7 @@ void startEngine() {
                 .posMode = POS_ABSOLUTE
             }),
             createElement((ElementSettings){
-                .texture = &pointerSchematic,
+                .texture = &graphTexture,
                 .width = 100,
                 .height = 20,
                 .padding = (Padding){10,10,10,10},
@@ -108,6 +108,7 @@ void startEngine() {
                         .color = (Vec3f){0.7f, 0.0f, 0.0f},
                         .childGap = 5,
                         .padding = (Padding){10, 10, 10, 10},
+                        .texture = &graphTexture
                     }),
                     createElement((ElementSettings){
                         .onHover = hoverCallbackFunction,
