@@ -22,7 +22,7 @@ void mainFun() {
         t.func(t.userdata);
     } while (1);
 }
-#define WINADAPT
+//#define WINADAPT
 #ifndef WINADAPT
 int main(){
 
@@ -30,7 +30,7 @@ int main(){
     pthread_t workerThreadID;
     pthread_create(&workerThreadID, NULL, workerThread, NULL);
 
-    //startEngine();
+    startEngine();
     return 0;
 }
 #endif
