@@ -8,10 +8,11 @@
 #include "GLFW/glfw3.h"
 
 bool dragFunction(Element *element, const Renderer *renderer);
-bool clickCallbackFunction(Element *element, Renderer *renderer);
-bool hoverCallbackFunction(Element *element, Renderer *renderer);
+bool runTaskFunction(Element *element, Renderer *renderer);
+bool hoverAndDragFunction(Element *element, Renderer *renderer);
 bool sliderCallbackFunction(Element *element, Renderer *renderer);
 bool click(GLFWwindow *window, int mouseButton);
+bool defaultHoverFunction(Element *element, Renderer *renderer);
 
 
 #endif //C_CALLBACKFUNCTIONS_H

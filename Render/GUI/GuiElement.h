@@ -134,6 +134,7 @@ Element *guiAddElement(
     Texture *tex,
     Vec3f color,
     Padding padding,
+    int childGap,
     bool (*mouseOver)(const Element *, Vec2i),
     bool (*hover)(Element *, Renderer *),
     bool (*click)(Element *, Renderer *),

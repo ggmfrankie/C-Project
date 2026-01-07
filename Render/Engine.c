@@ -10,7 +10,7 @@
 #include "Render.h"
 #include "GUI/CallbackFunctions.h"
 #include "../Extern/Informatik/Spannungsteiler_A3.h"
-#include "../Extern/Informatik/Namensliste.h"
+
 #include "../Utils/TimeMeasurenments.h"
 
     #define WIDTH 4096
@@ -20,27 +20,24 @@
 Hashmap_Element g_Hashmap;
 pthread_mutex_t guiMutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t  guiInitCond = PTHREAD_COND_INITIALIZER;
-int guiInitialized = false;
+bool guiInitialized = false;
 
 void updateState(Renderer *renderer);
 void updateState2(Renderer *renderer);
 bool updateStateRecursively(Element *element, Renderer *renderer);
 
-void startEngine() {
+void startEngine(void (*generateGUI)(Element* guiRoot)) {
 
     static Renderer renderer;
     static List_Element elementList;
     elementList = Element_newList(32);
     g_Hashmap = newHashmap_Element(512);
 
-    renderer = newRenderer(512, 512, "Huhu");
+    renderer = newRenderer(2048, 1024, "Huhu");
 
-    Texture graphTexture = newEmptyTexture(WIDTH, HEIGHT);
-    Texture blackButton = loadTextureFromPng("GrayBox.png");
-    Texture pointerSchematic = loadTextureFromPng("Pointer Schematic.png");
-
+    Texture* graphTexture = newEmptyTexture(WIDTH, HEIGHT);
     renderer.computeShader = newComputeShader(NULL, 1024);
-    renderer.computeShader.texture = &graphTexture;
+    renderer.computeShader.texture = graphTexture;
     renderer.computeShader.thickness = 2;
 
     renderer.computeShader.startX = 0.0f;
@@ -48,141 +45,7 @@ void startEngine() {
 
     Renderer_init(&renderer);
 
-    const Task changeButtonTextTask = {.func = changeElementText, .userdata = THIS_ELEMENT};
-    const Task nameShenanigans = {.func = namensliste_Aufgabe, .userdata = NULL};
-
-
-    addChildElements(&renderer.guiRoot,
-        addChildElements(guiAddSimpleRectangle_Color((Vec2i){300, 100}, 230, pointerSchematic.height, (Vec3f){0.0f, 0.0f, 0.0f}),
-            guiAddSimpleRectangle_Texture(fitMode, 230, pointerSchematic.height, &blackButton),
-            guiAddSimpleButton_Color(fitMode, 100, 100, (Vec3f){0.2f, 0.2f, 0.3f}, changeButtonTextTask,  "Hello World and all others too")
-            ,guiAddSimpleButton_Texture(fitMode, 100, 100, &pointerSchematic, nameShenanigans,  "Run the namensliste Test")
-            ,guiAddSimpleButton_Color(fitMode, 100, 100, (Vec3f){0.9f, 0.2f, 0.3f}, changeButtonTextTask,  "Hello World and all others too")
-            ,guiAddSimpleButton_Color(fitMode, 100, 100, (Vec3f){0.9f, 0.2f, 0.3f}, changeButtonTextTask,  "Hello World and all others too")
-            ,guiAddSimpleButton_Color(fitMode, 100, 100, (Vec3f){0.9f, 0.2f, 0.3f}, changeButtonTextTask,  "Hello World and all others too")
-        )
-    );
-
-
-    addChildElements(&renderer.guiRoot,
-        addChildElements(
-            createElement((ElementSettings){
-                .name = "Table",
-                .pos = (Vec2i){100, 100},
-                .padding = (Padding){10, 10, 10, 10},
-                .width = 100,
-                .height = 200,
-                .color = (Vec3f){1.0f, 0.4f, 0.3f},
-                .onHover = hoverCallbackFunction,
-                .childGap = 10,
-                .posMode = POS_ABSOLUTE
-            }),
-            createElement((ElementSettings){
-                .texture = &pointerSchematic,
-                .width = 100,
-                .height = 20,
-                .padding = (Padding){10,10,10,10},
-                .text = "This is a test and yes Text Positioning must be refractored"
-            }),
-            addChildElements(
-                createElement((ElementSettings){
-                    .width = 20,
-                    .height = 200,
-                    .color = (Vec3f){0.0f, 0.0f, 0.0f},
-                    .childGap = 5,
-                    .padding = (Padding){10, 10, 10, 10},
-                }),
-                createElement((ElementSettings){
-                    .onHover = hoverCallbackFunction,
-                    .onClick = clickCallbackFunction,
-                    .texture = &pointerSchematic,
-                    .width = 100,
-                    .height = 20,
-                    .padding = (Padding){5, 5, 5, 5},
-                    .text = "hoosaasas"
-                }),
-                addChildElements(
-                    createElement((ElementSettings){
-                        .width = 20,
-                        .height = 200,
-                        .color = (Vec3f){0.7f, 0.0f, 0.0f},
-                        .childGap = 5,
-                        .padding = (Padding){10, 10, 10, 10},
-                    }),
-                    createElement((ElementSettings){
-                        .onHover = hoverCallbackFunction,
-                        .onClick = clickCallbackFunction,
-                        .color = (Vec3f){0.5f, 0.3f, 0.7f},
-                        .padding = (Padding){10, 10, 10, 10},
-                        .text = "Horray is finally Works"
-                    })
-                ),
-                createElement((ElementSettings){
-                    .onHover = hoverCallbackFunction,
-                    .onClick = clickCallbackFunction,
-                    .texture = &pointerSchematic,
-                    .width = 100,
-                    .height = 20,
-                    .padding = (Padding){4, 4, 4, 4},
-                    .text = "hoosaasas"
-                }),
-                createElement((ElementSettings){
-                    .onHover = hoverCallbackFunction,
-                    .onClick = clickCallbackFunction,
-                    .texture = &pointerSchematic,
-                    .width = 100,
-                    .height = 20,
-                    .padding = (Padding){4, 4, 4, 4},
-                    .text = "hoosaasas"
-                }),
-                createElement((ElementSettings){
-                    .onHover = hoverCallbackFunction,
-                    .onClick = clickCallbackFunction,
-                    .texture = &pointerSchematic,
-                    .width = 100,
-                    .height = 20,
-                    .padding = (Padding){4, 4, 4, 4},
-                    .text = "hoosaasas"
-                }),
-                createElement((ElementSettings){
-                    .onHover = hoverCallbackFunction,
-                    .onClick = clickCallbackFunction,
-                    .texture = &pointerSchematic,
-                    .width = 100,
-                    .height = 20,
-                    .padding = (Padding){4, 4, 4, 4},
-                    .text = "hoosaasas"
-                }),
-                createElement((ElementSettings){
-                    .onHover = hoverCallbackFunction,
-                    .onClick = clickCallbackFunction,
-                    .texture = &pointerSchematic,
-                    .width = 100,
-                    .height = 20,
-                    .padding = (Padding){4, 4, 4, 4},
-                    .text = "hoosaasas"
-                }),
-                createElement((ElementSettings){
-                    .onHover = hoverCallbackFunction,
-                    .onClick = clickCallbackFunction,
-                    .texture = &pointerSchematic,
-                    .width = 100,
-                    .height = 20,
-                    .padding = (Padding){4, 4, 4, 4},
-                    .text = "hoosaasas"
-                }),
-                createElement((ElementSettings){
-                    .onHover = hoverCallbackFunction,
-                    .onClick = clickCallbackFunction,
-                    .texture = &pointerSchematic,
-                    .width = 100,
-                    .height = 20,
-                    .padding = (Padding){4, 4, 4, 4},
-                    .text = "hoosaasas"
-                })
-            )
-        )
-    );
+    generateGUI(&renderer.guiRoot);
 
     guiInitialized = true;
     pthread_cond_broadcast(&guiInitCond);
@@ -223,6 +86,10 @@ bool updateStateRecursively(Element *element, Renderer *renderer) {
         return true;
     }
     return false;
+}
+
+Element* getGuiRoot() {
+
 }
 
 void addShaderPrograms(Renderer *renderer) {

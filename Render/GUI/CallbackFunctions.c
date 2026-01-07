@@ -33,13 +33,19 @@ bool dragFunction(Element *element, const Renderer *renderer) {
     return false;
 }
 
-bool hoverCallbackFunction(Element *element, Renderer *renderer) {
+bool hoverAndDragFunction(Element *element, Renderer *renderer) {
     element->state = 1;
     return dragFunction(element, renderer);
 }
 
-bool clickCallbackFunction(Element *element, Renderer *renderer) {
-    if (element->task.func) pushTask(element->task.func, element->task.userdata);
+bool defaultHoverFunction(Element *element, Renderer *renderer) {
+    element->state = 1;
+    return false;
+}
+
+bool runTaskFunction(Element *element, Renderer *renderer) {
+    if (element->task.func && !element->task.isRunning) pushTask(element->task.func, element->task.userdata);
+    element->task.isRunning = true;
     return true;
 }
 

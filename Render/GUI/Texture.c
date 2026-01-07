@@ -7,6 +7,11 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
 
+ARRAY_LIST(Texture, Texture)
+
+Texture textureArray[256];
+List_Texture g_Textures = (List_Texture){.content = textureArray, .capacity = 256, .size = 0};
+
 
 Texture newTexture(const int width, const int height, const GLuint textureId) {
     return (Texture){
@@ -16,11 +21,10 @@ Texture newTexture(const int width, const int height, const GLuint textureId) {
     };
 }
 
-Texture newEmptyTexture(const int width, const int height) {
+Texture *newEmptyTexture(const int width, const int height) {
     GLuint tex;
     glGenTextures(1, &tex);
     glBindTexture(GL_TEXTURE_2D, tex);
-
 
     glTexImage2D(
         GL_TEXTURE_2D,
@@ -39,14 +43,14 @@ Texture newEmptyTexture(const int width, const int height) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
     glBindTexture(GL_TEXTURE_2D, 0);
-    return (Texture){
-        .width = width,
-        .height = height,
-        .textureId = tex
-    };
+
+
+    Texture_ListAdd(&g_Textures, (Texture){.width = width, .height = height, .textureId = tex});
+
+    return Texture_ListGetLast(&g_Textures);
 }
 
-Texture loadTextureFromPng(char* fileName) {
+Texture *loadTextureFromPng(char *fileName) {
     const String fileNameString = stringOf(fileName);
     const String defaultPath = stringOf("../Resources/Textures/");
     String fullPath = Strings.combine(&defaultPath, &fileNameString);
@@ -72,17 +76,13 @@ Texture loadTextureFromPng(char* fileName) {
 
     glGenerateMipmap(GL_TEXTURE_2D);
 
-    // Set filtering/wrapping
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    // Free CPU-side image memory
     stbi_image_free(data);
-    return (Texture){
-        .width = width,
-        .height = height,
-        .textureId = texture
-    };
+    Texture_ListAdd(&g_Textures, (Texture){.width = width, .height = height, .textureId = texture});
+
+    return Texture_ListGetLast(&g_Textures);
 }

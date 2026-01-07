@@ -14,7 +14,6 @@
 
 extern Mesh quadMesh;
 
-
 typedef struct Renderer {
     int screenWidth;
     int screenHeight;
@@ -34,7 +33,6 @@ typedef struct Renderer {
 } Renderer;
 
 Renderer newRenderer(int width, int height, const char* name);
-Renderer* newRenderer_h(int width, int height, const char* name, List_Element* elements);
 void Renderer_init(Renderer *renderer);
 void Renderer_render(const Renderer *renderer);
 void Renderer_destroy(const Renderer *renderer);

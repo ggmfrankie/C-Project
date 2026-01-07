@@ -72,6 +72,10 @@ add_executable(C
         Extern/Libraries/WinAdapt.h
         Extern/Informatik/TowersOfHanoi.c
         Extern/Informatik/TowersOfHanoi.h
+        Render/TestGUI.c
+        Render/TestGUI.h
+        Projects/Chess/ChessGame.c
+        Projects/Chess/ChessGame.h
 )
 #add_subdirectory("${CMAKE_SOURCE_DIR}/Render")
 

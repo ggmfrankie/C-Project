@@ -13,8 +13,12 @@ typedef struct {
     GLuint textureId;
 } Texture;
 
+
+
 Texture newTexture(int width, int height, GLuint textureId);
-Texture newEmptyTexture(int width, int height);
-Texture loadTextureFromPng(char* fileName);
+
+Texture *newEmptyTexture(int width, int height);
+
+Texture *loadTextureFromPng(char *fileName);
 
 #endif //C_TEXTURE_H

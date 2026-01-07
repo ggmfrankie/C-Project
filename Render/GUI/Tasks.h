@@ -5,6 +5,7 @@
 #ifndef C_TASKS_H
 #define C_TASKS_H
 #include <pthread.h>
+#include <stdbool.h>
 
 #define TASK_QUEUE_MAX 128
 #define THIS_ELEMENT ((void*)0)
@@ -18,6 +19,7 @@ typedef void (*GuiTask)(void* userData);
 typedef struct {
     GuiTask func;
     void *userdata;
+    bool isRunning;
 } Task;
 
 extern Task taskQueue[];

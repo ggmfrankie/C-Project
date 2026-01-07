@@ -20,7 +20,6 @@ void renderElementsRecursively(Element* element, const Renderer* renderer);
 
 Vec2i measureText(const Renderer *renderer, const TextElement *textElement);
 
-Vec2i updateLayout(Element *element, Vec2i parentPos, const Renderer *renderer, int verticalOffset);
 Element createRootElement();
 
 GLFWwindow* initWindow(const int width, const int height, const char* name) {
@@ -269,19 +268,6 @@ Renderer newRenderer(const int width, const int height, const char* name) {
         .defaultClick = NULL,
         .guiRoot = createRootElement()
     };
-}
-
-Renderer* newRenderer_h(const int width, const int height, const char* name, List_Element* elements) {
-    Renderer* renderer = malloc(sizeof(Renderer));
-    renderer->guiShader = newShader("GuiVertexShader.vert", "GuiFragmentShader.frag");
-    renderer->window = initWindow(width, height, name);
-    renderer->render = Renderer_render;
-    renderer->screenWidth = width;
-    renderer->screenHeight = height;
-    renderer->font = loadFontAtlas("ARIAL.TTF");
-    renderer->basicQuadMesh = Mesh_loadSimpleQuad();
-    renderer->defaultClick = NULL;
-    return renderer;
 }
 
 Element createRootElement() {
