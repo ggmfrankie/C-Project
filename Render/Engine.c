@@ -29,8 +29,6 @@ bool updateStateRecursively(Element *element, Renderer *renderer);
 void startEngine(void (*generateGUI)(Element* guiRoot)) {
 
     static Renderer renderer;
-    static List_Element elementList;
-    elementList = Element_newList(32);
     g_Hashmap = newHashmap_Element(512);
 
     renderer = newRenderer(2048, 1024, "Huhu");
@@ -55,7 +53,7 @@ void startEngine(void (*generateGUI)(Element* guiRoot)) {
         const u_int64 timeStart = now_ns();
         glfwPollEvents();
 
-        if (i == 1) {
+        if (i == 2) {
             updateLayout(&renderer.guiRoot, (Vec2i){0, 0}, &renderer, 0);
             i = 0;
         }
