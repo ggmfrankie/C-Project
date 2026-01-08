@@ -40,7 +40,6 @@ Element* createChessSquares(ElementSettings es) {
     } else {
         row++;
     }
-
     return createElement(es);
 }
 
