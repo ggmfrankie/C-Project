@@ -111,12 +111,18 @@ typedef struct {
 
 Element newElement(Mesh mesh, Vec2i pos, int width, int height, Texture* texture);
 Element* f_addChildElements(Element* parent, ...);
-Element* f_addChildElementsN(Element* parent, int count, ...);
+
+Element* addChildrenAsGrid(ElementSettings parentData, ElementSettings es, int numX, int numY);
+Element* addChildrenAsGridWithGenerator(ElementSettings parentData, ElementSettings es, int numX, int numY, Element* (*generateElement)(ElementSettings));
+
 void setOnClickCallback(Element* element, bool (*onClick)(Element* element, Renderer* renderer));
 void setOnHoverCallback(Element* element, bool (*onHover)(Element* element, Renderer* renderer));
 void setBoundingBox(Element* element, bool (*isMouseOver)(const Element *element, Vec2i mousePos));
+
 void setText(Element* element, const char* text);
 void setText_int(Element* element, int i);
+void setVisible(Element* element, bool b);
+
 bool isSelected_Quad(const Element *element, Vec2i mousePos);
 
 #define addChildElements(parent, ...) f_addChildElements(parent, __VA_ARGS__, NULL)

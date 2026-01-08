@@ -85,20 +85,6 @@ Element* f_addChildElements(Element* parent, ...) {
     return parent;
 }
 
-[[deprecated]]
-Element* f_addChildElementsN(Element* parent, const int count, ...) {
-    va_list args;
-    va_start(args, count);
-    for (int i = 0; i < count; i++) {
-        Element* child = va_arg(args, Element*);
-        if (!child) continue; // skip NULLs
-        child->parentElement = parent;
-        ChildElements_ListAdd(&parent->childElements, child);
-    }
-    va_end(args);
-    return parent;
-}
-
 void setText(Element* element, const char* text) {
     pthread_mutex_lock(&guiMutex);
     Strings.setContent_c(&element->textElement.text, text);
@@ -111,6 +97,12 @@ void setText_int(Element* element, const int i) {
     Strings.fromInt(tempText, 512, i);
 
     setText(element, tempText);
+}
+
+void setVisible(Element* element, const bool b) {
+    pthread_mutex_lock(&guiMutex);
+    element->isActive = b;
+    pthread_mutex_unlock(&guiMutex);
 }
 
 Element *guiAddElement(
@@ -255,4 +247,42 @@ Element *createElement(const ElementSettings elementSettings) {
                          true,
                          elementSettings.posMode
     );
+}
+
+Element* addChildrenAsGrid(const ElementSettings parentData, ElementSettings es, const int numX, const int numY) {
+    Element* parent = createElement(parentData);
+    const int childWidth = parent->width/numX;
+    const int childHeight = parent->height/numY;
+
+    es.posMode = POS_ABSOLUTE;
+    es.width = childWidth;
+    es.height = childHeight;
+
+    for (int i = 0; i < numX; i++) {
+        for (int ii = 0; ii < numY; ii++) {
+            es.pos.x = childWidth * i;
+            es.pos.y = childHeight * ii;
+            addChildElements(parent, createElement(es));
+        }
+    }
+    return parent;
+}
+
+Element* addChildrenAsGridWithGenerator(const ElementSettings parentData, ElementSettings es, const int numX, const int numY, Element* (*generateElement)(ElementSettings)) {
+    Element* parent = createElement(parentData);
+    const int childWidth = parent->width/numX;
+    const int childHeight = parent->height/numY;
+
+    es.posMode = POS_ABSOLUTE;
+    es.width = childWidth;
+    es.height = childHeight;
+
+    for (int i = 0; i < numX; i++) {
+        for (int ii = 0; ii < numY; ii++) {
+            es.pos.x = childWidth * i;
+            es.pos.y = childHeight * ii;
+            addChildElements(parent, generateElement(es));
+        }
+    }
+    return parent;
 }
