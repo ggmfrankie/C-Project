@@ -83,7 +83,7 @@ static inline void _resize_##Name(Hashmap_##Name* map) {\
 }\
 \
 static inline void Hashmap_##Name##_add(Hashmap_##Name* map, const Key key, Value value) {\
-    if ((float)map->size / (float)map->capacity > 0.75f) _resize_##Name(map);\
+    if ((float)map->size+1 / (float)map->capacity > 0.75f) _resize_##Name(map);\
 \
     const uint32_t hash = FNV_##Name(key, 0);\
     size_t index = hash % map->capacity;\

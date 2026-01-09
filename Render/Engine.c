@@ -17,7 +17,6 @@
     #define HEIGHT 600
 
 
-Hashmap_Element g_Hashmap;
 pthread_mutex_t guiMutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t  guiInitCond = PTHREAD_COND_INITIALIZER;
 bool guiInitialized = false;
@@ -29,7 +28,6 @@ bool updateStateRecursively(Element *element, Renderer *renderer);
 void startEngine(void (*generateGUI)(Element* guiRoot)) {
 
     static Renderer renderer;
-    g_Hashmap = newHashmap_Element(512);
 
     renderer = newRenderer(2048, 1024, "Huhu");
 
@@ -42,6 +40,7 @@ void startEngine(void (*generateGUI)(Element* guiRoot)) {
     renderer.computeShader.endX = 5.0f;
 
     Renderer_init(&renderer);
+    initElements();
 
     generateGUI(&renderer.guiRoot);
 

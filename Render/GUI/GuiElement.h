@@ -116,6 +116,7 @@ typedef struct {
 
 } ElementSettings;
 
+void initElements();
 
 Element newElement(Mesh mesh, Vec2i pos, int width, int height, Texture* texture);
 Element* f_addChildElements(Element* parent, ...);
@@ -131,6 +132,7 @@ void defaultReset(Element* element);
 void setText(Element* element, const char* text);
 void setText_int(Element* element, int i);
 void setVisible(Element* element, bool b);
+Element* getElement(const char* name);
 
 bool isSelected_Quad(const Element *element, Vec2i mousePos);
 

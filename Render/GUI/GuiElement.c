@@ -15,6 +15,11 @@
 
 Element elementArray[1024];
 List_Element g_Elements = (List_Element){.content = elementArray, .capacity = 1024, .size = 0};
+Hashmap_Element g_Hashmap = {};
+
+void initElements() {
+    g_Hashmap = newHashmap_Element(512);
+}
 
 Element newElement(const Mesh mesh, const Vec2i pos, const int width, const int height, Texture* texture) {
     return (Element){
@@ -96,6 +101,10 @@ void setVisible(Element* element, const bool b) {
     pthread_mutex_lock(&guiMutex);
     element->isActive = b;
     pthread_mutex_unlock(&guiMutex);
+}
+
+Element* getElement(const char* name) {
+    return *Hashmap_Element_get(&g_Hashmap, name);
 }
 
 bool isSelected_Quad(const Element *element, const Vec2i mousePos) {

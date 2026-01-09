@@ -12,7 +12,6 @@
 extern pthread_mutex_t guiMutex;
 extern pthread_cond_t  guiInitCond;
 extern bool guiInitialized;
-extern Hashmap_Element g_Hashmap;
 
 void startEngine(void (*generateGUI)(Element* guiRoot));
 double graphingFunction(double x);
