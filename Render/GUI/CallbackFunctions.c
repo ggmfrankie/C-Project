@@ -7,6 +7,8 @@
 #include "GuiElementData.h"
 #include "../Render.h"
 
+
+
 bool dragFunction(Element *element, const Renderer *renderer) {
     static Vec2i offset;
     static bool dragging = false;
@@ -43,9 +45,13 @@ bool defaultHoverFunction(Element *element, Renderer *renderer) {
     return false;
 }
 
+bool changeColorOnHoverFunction(Element *element, Renderer *renderer) {
+    element->color = *(Vec3f*) (element->elementData);
+    return false;
+}
+
 bool runTaskFunction(Element *element, Renderer *renderer) {
     if (element->task.func && !element->task.isRunning) pushTask(element->task.func, element->task.userdata);
-    element->task.isRunning = true;
     return true;
 }
 
@@ -65,7 +71,7 @@ bool click(GLFWwindow *window, const int mouseButton) {
 }
 
 bool sliderCallbackFunction(Element *element, Renderer *renderer) {
-    SliderData* sliderDate = (SliderData*)element->ElementData;
+    SliderData* sliderDate = (SliderData*)element->elementData;
 
     return false;
 }

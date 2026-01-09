@@ -13,6 +13,11 @@ bool hoverAndDragFunction(Element *element, Renderer *renderer);
 bool sliderCallbackFunction(Element *element, Renderer *renderer);
 bool click(GLFWwindow *window, int mouseButton);
 bool defaultHoverFunction(Element *element, Renderer *renderer);
+bool changeColorOnHoverFunction(Element *element, Renderer *renderer);
+
+#define CHANGE_COLOR_ON_HOVER(color)\
+.elementData = (color),\
+.onHover = changeColorOnHoverFunction,
 
 
 #endif //C_CALLBACKFUNCTIONS_H

@@ -116,7 +116,6 @@ void renderElementsRecursively(Element* element, const Renderer* renderer) {
 
     setUniform(shader, "hasTexture", element->texture != NULL);
     setUniform(shader, "state", (int)element->state);
-    element->state = 0;
 
     setUniform(shader, "positionObject", toVec2f(element->worldPos));
     setUniform(shader, "transformTexCoords", 0);
@@ -147,6 +146,7 @@ void renderElementsRecursively(Element* element, const Renderer* renderer) {
 
 Vec2i updateLayout(Element *element, const Vec2i parentPos, const Renderer *renderer, const int verticalOffset) {
     if (!element || !element->isActive) return (Vec2i){0,0};
+    if (element->reset) element->reset(element);
 
     if (element->positionMode == POS_FIT) {
         element->pos.x = 0;
@@ -179,6 +179,8 @@ Vec2i updateLayout(Element *element, const Vec2i parentPos, const Renderer *rend
     int maxChildWidth = 0;
     int maxChildHeight = 0;
 
+    Vec2i contentExtend = (Vec2i){0,0};
+
     for (int i = 0; i < element->childElements.size; i++) {
         Element *child = element->childElements.content[i];
         const Vec2i childDimensions = updateLayout(child, contentOrigin, renderer, accumulatedHeight);
@@ -189,7 +191,14 @@ Vec2i updateLayout(Element *element, const Vec2i parentPos, const Renderer *rend
         maxChildWidth = max(maxChildWidth, childWidth);
         maxChildHeight = max(maxChildHeight, childHeight);
 
-        accumulatedHeight += childDimensions.y + element->childGap;
+        contentExtend.x = max(contentExtend.x, childWidth);
+        contentExtend.y = max(contentExtend.y, childHeight);
+
+        if (child->positionMode == POS_FIT) {
+            accumulatedHeight += childDimensions.y + element->childGap;
+        } else {
+            accumulatedHeight = contentExtend.y + element->childGap;
+        }
     }
 
     realWidth  = max(realWidth,  padding->left + maxChildWidth  + padding->right);

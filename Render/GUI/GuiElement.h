@@ -62,6 +62,7 @@ typedef struct Element {
     Mesh Mesh;
     Texture* texture;
     Vec3f color;
+    Vec3f defaultColor;
 
     //Text display
     bool hasText;
@@ -72,6 +73,7 @@ typedef struct Element {
     bool (*isMouseOver)(const Element* element, Vec2i mousePos);
     bool (*onClick)(Element* element, Renderer *renderer);
     bool (*onHover)(Element* element, Renderer *renderer);
+    void (*reset)(Element* element);
 
     Task task;
     Element* parentElement;
@@ -82,7 +84,7 @@ typedef struct Element {
 
     bool needsDeletion;
 
-    void* ElementData;
+    void* elementData;
 
 } Element;
 
@@ -101,10 +103,16 @@ typedef struct {
     char* text;
     bool (*onClick)(Element* element, Renderer *renderer);
     bool (*onHover)(Element* element, Renderer *renderer);
+    //NYI
+    void (*reset)(Element* element);
+
     Task task;
     Padding padding;
     int childGap;
     bool autoFit;
+    bool notSelectable;
+
+    void* elementData;
 
 } ElementSettings;
 
@@ -118,6 +126,7 @@ Element* addChildrenAsGridWithGenerator(ElementSettings parentData, ElementSetti
 void setOnClickCallback(Element* element, bool (*onClick)(Element* element, Renderer* renderer));
 void setOnHoverCallback(Element* element, bool (*onHover)(Element* element, Renderer* renderer));
 void setBoundingBox(Element* element, bool (*isMouseOver)(const Element *element, Vec2i mousePos));
+void defaultReset(Element* element);
 
 void setText(Element* element, const char* text);
 void setText_int(Element* element, int i);
@@ -145,7 +154,10 @@ Element *guiAddElement(
     bool (*hover)(Element *, Renderer *),
     bool (*click)(Element *, Renderer *),
     Task task,
-    const char *text,bool forceResize, PositionMode positionMode
+    const char *text,
+    bool forceResize,
+    PositionMode positionMode,
+    void *elementData, bool notSelectable
 );
 
 Element *guiAddSimpleRectangle_Texture(

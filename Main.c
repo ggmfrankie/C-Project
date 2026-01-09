@@ -33,6 +33,7 @@ int main(){
     pthread_create(&workerThreadID, NULL, workerThread, NULL);
 
     startEngine(createChessGUI);
+    //startEngine(generateTestGUI);
     return 0;
 }
 #endif
