@@ -8,6 +8,7 @@
 #include "../../Render/Engine.h"
 #include "../../Render/GUI/CallbackFunctions.h"
 #include "../../Utils/Makros.h"
+#include "../../Utils/TimeMeasurenments.h"
 #define COOL_COLOR (Vec3f){.2, .3, .3}
 #define COLOR_WHITE (Vec3f){1, 1, 1}
 #define COLOR_BLACK (Vec3f){0, 0, 0}
@@ -61,7 +62,7 @@ typedef enum {
 } MarkType;
 
 typedef void (*MarkerFun)(PieceColor color, int row, int column, MarkType type);
-typedef bool (*Marker)(int row, int column, PieceColor color);
+typedef bool (*Marker)(int row, int column, int pieceRow, int pieceCol, PieceColor color);
 
 Square board[8][8] = {};
 Element* pieceSlots[8][8] = {};
@@ -76,42 +77,44 @@ void setUpPieces();
 void syncGui();
 Vec2i getPosition(const Element* element);
 
-bool markAttack(int row, int column, PieceColor color);
+bool markAttack(int row, int column, int pieceRow, int pieceCol, PieceColor color);
+bool markDefend(int row, int column, int pieceRow, int pieceCol, PieceColor color);
+bool markerFun(int row, int column, int pieceRow, int pieceCol, PieceColor color, MarkType type);
 
-bool markDefend(int row, int column, PieceColor color);
+bool isKingAttacked(PieceColor color);
+bool isCheckmate(PieceColor color);
+bool doesMoveCauseCheck(int row, int column, int pieceRow, int pieceCol, PieceColor pieceColor);
 
-bool markerFun(int row, int column, PieceColor color, MarkType type);
-
-void markedOnlyIfEnemy(int row, int column, PieceColor color);
-void markedOnlyIfFree(int row, int column);
-void chessCheckedMark(int row, int column, PieceColor color);
+void markedOnlyIfEnemy(int row, int column, int pieceRow, int pieceCol, PieceColor color);
+void markedOnlyIfFree(int row, int column, int pieceRow, int pieceCol, PieceColor color);
+void chessCheckedMark(int row, int column, int pieceRow, int pieceCol, PieceColor color);
 
 void runMarking(ChessPiece piece, int row, int column, MarkType type);
-void runMarkAllPieces(PieceColor color);
+
+void runMarkAllPieces(PieceColor color, MarkType type);
 void unmarkAll();
 
 void markPawn(const PieceColor color, const int row, const int column, const MarkType type) {
-
     if (type == attack) {
-        markedOnlyIfEnemy(row + color, column+1, color);
-        markedOnlyIfEnemy(row + color, column-1, color);
-        markedOnlyIfFree(row + color, column);
-        if ((color == 1 && row == 1)||(color == -1 && row == 6)) markedOnlyIfFree(row + 2*color, column);
+        markedOnlyIfEnemy(row + color, column+1, row, column, color);
+        markedOnlyIfEnemy(row + color, column-1, row, column, color);
+        markedOnlyIfFree(row + color, column, row, column, color);
+        if (((color == 1 && row == 1 )||(color == -1 && row == 6)) && board[row+color][column].piece == empty) markedOnlyIfFree(row + 2*color, column, row, column, color);
     } else {
-        markDefend(row + color, column+1, color);
-        markDefend(row + color, column-1, color);
+        markDefend(row + color, column+1, row, column, color);
+        markDefend(row + color, column-1, row, column, color);
     }
 }
 
 void markKnight(const PieceColor color, const int row, const int column, const MarkType type) {
-    markerFun(row+1, column+2, color, type);
-    markerFun(row-1, column-2, color, type);
-    markerFun(row+1, column-2, color, type);
-    markerFun(row-1, column+2, color, type);
-    markerFun(row+2, column+1, color, type);
-    markerFun(row-2, column-1, color, type);
-    markerFun(row+2, column-1, color, type);
-    markerFun(row-2, column+1, color, type);
+    markerFun(row+1, column+2, row, column, color, type);
+    markerFun(row-1, column-2, row, column, color, type);
+    markerFun(row+1, column-2, row, column, color, type);
+    markerFun(row-1, column+2, row, column, color, type);
+    markerFun(row+2, column+1, row, column, color, type);
+    markerFun(row-2, column-1, row, column, color, type);
+    markerFun(row+2, column-1, row, column, color, type);
+    markerFun(row-2, column+1, row, column, color, type);
 }
 
 void markBishop(const PieceColor color, const int row, const int column, const MarkType type) {
@@ -123,11 +126,11 @@ void markBishop(const PieceColor color, const int row, const int column, const M
 
         int validMoves = 0;
 
-        if (downRight && markerFun(row+i, column+i, color, type) == 0) {validMoves++;} else downRight = false;
-        if (downLeft && markerFun(row+i, column+i*-1, color, type) == 0) {validMoves++;} else downLeft = false;
+        if (downRight && markerFun(row+i, column+i, row, column, color, type) == 0) {validMoves++;} else downRight = false;
+        if (downLeft && markerFun(row+i, column+-i, row, column, color, type) == 0) {validMoves++;} else downLeft = false;
 
-        if (upRight && markerFun(row+i*-1, column+i, color, type) == 0) {validMoves++;} else upRight = false;
-        if (upLeft && markerFun(row+i*-1, column+i*-1, color, type) == 0) {validMoves++;} else upLeft = false;
+        if (upRight && markerFun(row+-i, column+i, row, column, color, type) == 0) {validMoves++;} else upRight = false;
+        if (upLeft && markerFun(row+-i, column+-i, row, column, color, type) == 0) {validMoves++;} else upLeft = false;
 
         if (validMoves == 0) return;
     }
@@ -142,11 +145,11 @@ void markRook(const PieceColor color, const int row, const int column, const Mar
 
         int validMoves = 0;
 
-        if (left && markerFun(row, column+i*-1, color, type) == 0) {validMoves++;} else left = false;
-        if (right && markerFun(row, column+i, color, type) == 0) {validMoves++;} else right = false;
+        if (left && markerFun(row, column+-i, row, column, color, type) == 0) {validMoves++;} else left = false;
+        if (right && markerFun(row, column+i, row, column, color, type) == 0) {validMoves++;} else right = false;
 
-        if (up && markerFun(row+i*-1, column, color, type) == 0) {validMoves++;} else up = false;
-        if (down && markerFun(row+i, column, color, type) == 0) {validMoves++;} else down = false;
+        if (up && markerFun(row+-i, column, row, column, color, type) == 0) {validMoves++;} else up = false;
+        if (down && markerFun(row+i, column, row, column, color, type) == 0) {validMoves++;} else down = false;
 
         if (validMoves == 0) return;
     }
@@ -159,35 +162,35 @@ void markQueen(const PieceColor color, const int row, const int column, const Ma
 
 void markKing(const PieceColor color, const int row, const int column, const MarkType type) {
     if (type == attack) {
-        runMarkAllPieces(color*-1);
+        runMarkAllPieces(color*-1, defend);
 
-        chessCheckedMark(row+1, column, color);
-        chessCheckedMark(row-1, column, color);
-        chessCheckedMark(row, column+1, color);
-        chessCheckedMark(row, column-1, color);
-        chessCheckedMark(row+1, column+1, color);
-        chessCheckedMark(row-1, column-1, color);
-        chessCheckedMark(row+1, column-1, color);
-        chessCheckedMark(row-1, column+1, color);
+        chessCheckedMark(row+1, column, row, column, color);
+        chessCheckedMark(row-1, column, row, column, color);
+        chessCheckedMark(row, column+1, row, column, color);
+        chessCheckedMark(row, column-1, row, column, color);
+        chessCheckedMark(row+1, column+1, row, column, color);
+        chessCheckedMark(row-1, column-1, row, column, color);
+        chessCheckedMark(row+1, column-1, row, column, color);
+        chessCheckedMark(row-1, column+1, row, column, color);
 
         unmarkAll();
     } else {
-        markDefend(row+1, column, color);
-        markDefend(row-1, column, color);
-        markDefend(row, column+1, color);
-        markDefend(row, column-1, color);
-        markDefend(row+1, column+1, color);
-        markDefend(row-1, column-1, color);
-        markDefend(row+1, column-1, color);
-        markDefend(row-1, column+1, color);
+        markDefend(row+1, column, row, column, color);
+        markDefend(row-1, column, row, column, color);
+        markDefend(row, column+1, row, column, color);
+        markDefend(row, column-1, row, column, color);
+        markDefend(row+1, column+1, row, column, color);
+        markDefend(row-1, column-1, row, column, color);
+        markDefend(row+1, column-1, row, column, color);
+        markDefend(row-1, column+1, row, column, color);
     }
 
 }
 
-void runMarkAllPieces(const PieceColor color) {
+void runMarkAllPieces(const PieceColor color, const MarkType type) {
     for (int i = 0; i < 8; i++) {
         for (int ii = 0; ii < 8; ii++) {
-            if (sig(board[i][ii].piece) == color) runMarking(board[i][ii].piece, i, ii, defend);
+            if (sig(board[i][ii].piece) == color) runMarking(board[i][ii].piece, i, ii, type);
         }
     }
 }
@@ -200,36 +203,74 @@ void unmarkAll() {
     }
 }
 
-bool markerFun(const int row, const int column, const PieceColor color, const MarkType type) {
+bool markerFun(const int row, const int column, const int pieceRow, const int pieceCol, const PieceColor color, const MarkType type) {
     static Marker markingFuns[] = {markAttack, markDefend};
-    return markingFuns[type](row, column, color);
+    return markingFuns[type](row, column, pieceRow, pieceCol, color);
 }
 
-bool markAttack(const int row, const int column, const PieceColor color) {
+bool markAttack(const int row, const int column, const int pieceRow, const int pieceCol, const PieceColor color) {
     if (row > 7 || column > 7 || row < 0 || column < 0) return 1;
-    board[row][column].isMarked = sig(board[row][column].piece) != color;
+    if (sig(board[row][column].piece) != color) {
+        board[row][column].isMarked =  !doesMoveCauseCheck(row, column, pieceRow, pieceCol, color);
+    }
     return abs(board[row][column].piece) != 0;
 }
 
-bool markDefend(const int row, const int column, PieceColor color) {
+bool markDefend(const int row, const int column, int pieceRow, int pieceCol, PieceColor color) {
     if (row > 7 || column > 7 || row < 0 || column < 0) return 1;
     board[row][column].isMarked = true;
     return abs(board[row][column].piece) != 0;
 }
 
-void chessCheckedMark(const int row, const int column, const PieceColor color) {
+void chessCheckedMark(const int row, const int column, const int pieceRow, const int pieceCol, const PieceColor color) {
     if (row > 7 || column > 7 || row < 0 || column < 0) return;
-    board[row][column].isMarked = 2*(sig(board[row][column].piece) != color && !board[row][column].isMarked);
+    if (sig(board[row][column].piece) != color && !board[row][column].isMarked) {
+        board[row][column].isMarked = 2*!doesMoveCauseCheck(row, column, pieceRow, pieceCol, color);
+    }
+
 }
 
-void markedOnlyIfEnemy(const int row, const int column, const PieceColor color) {
+void markedOnlyIfEnemy(const int row, const int column, const int pieceRow, const int pieceCol, const PieceColor color) {
     if (row > 7 || column > 7 || row < 0 || column < 0) return;
-    board[row][column].isMarked = sig(board[row][column].piece)*-1 == color;
+    if (-sig(board[row][column].piece) == color) {
+        board[row][column].isMarked = !doesMoveCauseCheck(row, column, pieceRow, pieceCol, color);
+    }
 }
 
-void markedOnlyIfFree(const int row, const int column) {
+void markedOnlyIfFree(const int row, const int column, const int pieceRow, const int pieceCol, const PieceColor color) {
     if (row > 7 || column > 7 || row < 0 || column < 0) return;
-    board[row][column].isMarked = sig(board[row][column].piece) == 0;
+    if (sig(board[row][column].piece) == 0) {
+        board[row][column].isMarked = !doesMoveCauseCheck(row, column, pieceRow, pieceCol, color);
+    }
+}
+
+bool doesMoveCauseCheck(const int row, const int column, const int pieceRow, const int pieceCol, const PieceColor pieceColor) {
+    int copyMarkers[8][8] = {};
+
+    for (int i = 0; i < 8; i++) {
+        for (int ii = 0; ii < 8; ii++) {
+            copyMarkers[i][ii] = board[i][ii].isMarked;
+            board[i][ii].isMarked = false;
+        }
+    }
+
+    const ChessPiece temp = board[row][column].piece;
+
+    board[row][column].piece = board[pieceRow][pieceCol].piece;
+    board[pieceRow][pieceCol].piece = empty;
+
+    const bool isCheck = isKingAttacked(pieceColor);
+
+    board[pieceRow][pieceCol].piece = board[row][column].piece;
+    board[row][column].piece = temp;
+
+    for (int i = 0; i < 8; i++) {
+        for (int ii = 0; ii < 8; ii++) {
+            board[i][ii].isMarked = copyMarkers[i][ii];
+        }
+    }
+
+    return isCheck;
 }
 
 void createChessGUI(Element* root) {
@@ -245,29 +286,74 @@ void startChessGameTask(void* nix) {
     setVisible(chessBoard, true);
 }
 
-void onSquareClicked(void* el) {
+void showWinnerScreen() {
+    puts("Someone won");
+}
 
+void onSquareClicked(void* el) {
+    static bool isGameOver = false;
+    if (isGameOver) return;
     const Element* element = (Element*) el;
     const Vec2i pos = getPosition(element);
 
     const ChessPiece currentPiece = board[pos.y][pos.x].piece;
 
     static Vec2i selectedPiecePos = {0,0};
-    static int turn = -1;
+    static PieceColor turn = -1;
 
     if (board[pos.y][pos.x].isMarked) {
         board[pos.y][pos.x].piece = board[selectedPiecePos.y][selectedPiecePos.x].piece;
         board[selectedPiecePos.y][selectedPiecePos.x].piece = empty;
         turn *= -1;
         unmarkAll();
+        if (isCheckmate(turn)) {
+            showWinnerScreen();
+            isGameOver = true;
+        }
     } else {
+        const u_int64 startTime = now_ns();
         unmarkAll();
         if (sig(currentPiece) == turn) {
             runMarking(currentPiece, pos.y, pos.x, attack);
         }
         selectedPiecePos = pos;
+        printf("Elapsed time: %llu\n", now_ns()-startTime);
     }
     syncGui();
+}
+
+bool isKingAttacked(const PieceColor color) {
+    runMarkAllPieces(color*-1, defend);
+    for (int i = 0; i < 8; i++) {
+        for (int ii = 0; ii < 8; ii++) {
+            if (abs(board[i][ii].piece) == king && sig(board[i][ii].piece) == color) {
+                bool isKingAttacked = false;
+                if (board[i][ii].isMarked) {
+                    isKingAttacked = true;
+                }
+                unmarkAll();
+                return isKingAttacked;
+            }
+        }
+    }
+    return false;
+}
+
+bool isCheckmate(const PieceColor color) {
+    bool checkmate = true;
+    if (!isKingAttacked(color)) return false;
+    runMarkAllPieces(color, attack);
+    for (int i = 0; i < 8; i++) {
+        for (int ii = 0; ii < 8; ii++) {
+            if (board[i][ii].isMarked) {
+                checkmate = false;
+                goto End;
+            }
+        }
+    }
+    End:
+    unmarkAll();
+    return checkmate;
 }
 
 void runMarking(const ChessPiece piece, const int row, const int column, const MarkType type) {
