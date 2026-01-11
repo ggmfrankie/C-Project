@@ -49,6 +49,14 @@ inline Vec2i Vec2i_Sub(const Vec2i v1, const Vec2i v2) {
     return result;
 }
 
+inline Vec2i Vec2i_Mul(const Vec2i v1, const int factor) {
+    const Vec2i result = {
+        v1.x * factor,
+        v1.y * factor
+    };
+    return result;
+}
+
 inline Vec2f Vec2f_Sub(const Vec2f v1, const Vec2f v2) {
     const Vec2f result = {
         v1.x - v2.x,

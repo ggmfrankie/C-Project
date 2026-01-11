@@ -38,6 +38,7 @@ bool Vec2i_Equals(Vec2i a, Vec2i b);
 Vec2f Vec2f_Cross(const Vec2f* v1, const Vec2f* v2);
 Vec2i Vec2i_Add(Vec2i v1, Vec2i v2);
 Vec2f Vec2f_Sub(Vec2f v1, Vec2f v2);
+Vec2i Vec2i_Mul(Vec2i v1, int factor);
 
 Vec3f Vec3f_Add(Vec3f v1, Vec3f v2);
 Vec3f Vec3f_Mul(Vec3f v1, float factor);

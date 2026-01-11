@@ -210,6 +210,73 @@ Vec2i updateLayout(Element *element, const Vec2i parentPos, const Renderer *rend
     return (Vec2i){realWidth, realHeight};
 }
 
+Vec2i updateLayout2(Element *element, const Vec2i parentPos, const Renderer *renderer, const Vec2i offset, LayoutDirection layoutDirection) {
+    if (!element || !element->isActive) return (Vec2i){0,0};
+    if (element->reset) element->reset(element);
+
+    if (element->positionMode == POS_FIT) {
+        if (layoutDirection == L_down) {
+            element->pos.x = 0;
+            element->pos.y = offset.y;
+        } else if (layoutDirection == L_right) {
+            element->pos.x = offset.x;
+            element->pos.y = 0;
+        }
+    }
+
+    element->worldPos.x = parentPos.x + element->pos.x;
+    element->worldPos.y = parentPos.y + element->pos.y;
+
+    Vec2i contentOrigin = {
+        .x = element->worldPos.x + element->padding.left,
+        .y = element->worldPos.y + element->padding.up
+    };
+
+    int realWidth = element->width;
+    int realHeight = element->height;
+
+    const Padding padding = element->padding;
+
+    if (element->hasText) {
+        const Vec2i textSize = measureText(renderer, &element->textElement);
+        const int textW = padding.left + textSize.x + padding.right;
+        const int textH = padding.up + textSize.y + padding.down;
+
+        realWidth  = max(realWidth,  textW);
+        realHeight = max(realHeight, textH);
+    }
+
+
+    Vec2i cursor = {};
+
+    for (int i = 0; i < element->childElements.size; i++) {
+        Element *child = element->childElements.content[i];
+
+        const Vec2i childDimensions = updateLayout2(child, contentOrigin, renderer, cursor, element->layoutDirection);
+
+        const int childWidth = child->pos.x + childDimensions.x;
+        const int childHeight = child->pos.y + childDimensions.y;
+
+        cursor.x = max(cursor.x, childWidth + ((child->positionMode == POS_FIT) ? element->childGap : 0));
+        cursor.y = max(cursor.y, childHeight + ((child->positionMode == POS_FIT) ? element->childGap : 0));
+
+        if (i + 1 < element->childElements.size) {
+            if (element->positionMode == POS_FIT) {
+                if (layoutDirection == L_down) cursor.y += element->childGap;
+                else                           cursor.x += element->childGap;
+            }
+        }
+    }
+
+    realWidth  = max(realWidth,  padding.left + cursor.x  + padding.right);
+    realHeight = max(realHeight, padding.up   + cursor.y + padding.down);
+
+    element->actualWidth = realWidth;
+    element->actualHeight = realHeight;
+
+    return (Vec2i){realWidth, realHeight};
+}
+
 Vec2i measureText(const Renderer *renderer, const TextElement *textElement) {
     const Font* font = &renderer->font;
     const float scale = textElement->textScale;

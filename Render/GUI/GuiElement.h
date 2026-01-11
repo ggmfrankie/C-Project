@@ -42,6 +42,13 @@ typedef enum {
     POS_ABSOLUTE = 1,
 } PositionMode;
 
+typedef enum {
+    L_down = 0,
+    L_up = 1,
+    L_left = 1,
+    L_right = 1
+} LayoutDirection;
+
 ARRAY_LIST(ChildElements, Element*)
 
 typedef struct Element {
@@ -52,6 +59,7 @@ typedef struct Element {
     Vec2i worldPos;
 
     PositionMode positionMode;
+    LayoutDirection layoutDirection;
 
     int width;
     int height;
@@ -82,6 +90,9 @@ typedef struct Element {
     int childGap;
     bool autoFit;
 
+    bool fixedWidth;
+    bool fixedHeight;
+
     bool needsDeletion;
 
     void* elementData;
@@ -96,6 +107,7 @@ typedef struct {
     char* name;
     Vec2i pos;
     PositionMode posMode;
+    LayoutDirection layoutDirection;
     int width;
     int height;
     Texture* texture;
@@ -111,6 +123,8 @@ typedef struct {
     int childGap;
     bool autoFit;
     bool notSelectable;
+    bool fixedWidth;
+    bool fixedHeight;
 
     void* elementData;
 
@@ -159,7 +173,7 @@ Element *guiAddElement(
     const char *text,
     bool forceResize,
     PositionMode positionMode,
-    void *elementData, bool notSelectable
+    void *elementData, bool notSelectable, LayoutDirection layoutDirection, bool fixedWidth, bool fixedHeight
 );
 
 Element *guiAddSimpleRectangle_Texture(

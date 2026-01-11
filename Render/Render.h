@@ -37,6 +37,7 @@ void Renderer_init(Renderer *renderer);
 void Renderer_render(const Renderer *renderer);
 void Renderer_destroy(const Renderer *renderer);
 Vec2i updateLayout(Element *element, Vec2i parentPos, const Renderer *renderer, int verticalOffset);
+Vec2i updateLayout2(Element *element, Vec2i parentPos, const Renderer *renderer, Vec2i verticalOffset, LayoutDirection layoutDirection);
 bool isMousePressed(GLFWwindow* window, int mouseButton);
 
 #endif //C_RENDER_H

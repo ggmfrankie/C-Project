@@ -52,8 +52,8 @@ typedef enum {
 } PieceType;
 
 typedef enum {
-    white = 1,
-    black = -1
+    down = -1,
+    up = 1
 } PieceColor;
 
 typedef enum {
@@ -61,11 +61,21 @@ typedef enum {
     defend = 1
 } MarkType;
 
+typedef enum {
+    whiteDown = 0,
+    blackDown = 1
+} BoardDirection;
+
 typedef void (*MarkerFun)(PieceColor color, int row, int column, MarkType type);
 typedef bool (*Marker)(int row, int column, int pieceRow, int pieceCol, PieceColor color);
 
 Square board[8][8] = {};
 Element* pieceSlots[8][8] = {};
+BoardDirection boardDirection = whiteDown;
+bool turnPosCanCastle = true;
+bool turnNegCanCastle = true;
+
+PieceColor turn = -1;
 
 Texture* pieceTextures[13] = {};
 
@@ -74,6 +84,8 @@ void loadTextures();
 void createStartScreen(Element* root);
 void createChessBoard(Element* root);
 void setUpPieces();
+void setUpPiecesForTest();
+void switchSides();
 void syncGui();
 Vec2i getPosition(const Element* element);
 
@@ -163,6 +175,23 @@ void markQueen(const PieceColor color, const int row, const int column, const Ma
 void markKing(const PieceColor color, const int row, const int column, const MarkType type) {
     if (type == attack) {
         runMarkAllPieces(color*-1, defend);
+
+        if ((color == L_down && turnNegCanCastle) || (color == up && turnPosCanCastle)) {
+            for (int i = 1;; i++) {
+                if (column+i > 7) break;
+                if (board[row][column+i].piece == empty) continue;
+                if (board[row][column+i].piece == rook * color) {
+                    chessCheckedMark(row, 6, row, column, color);
+                } else if (board[row][column+i].piece != empty) break;
+            }
+            for (int i = 1;; i++) {
+                if (column-i < 0) break;
+                if (board[row][column-i].piece == empty) continue;
+                if (board[row][column-i].piece == rook * color) {
+                    chessCheckedMark(row, 1, row, column, color);
+                } else if (board[row][column-i].piece != empty) break;
+            }
+        }
 
         chessCheckedMark(row+1, column, row, column, color);
         chessCheckedMark(row-1, column, row, column, color);
@@ -299,9 +328,31 @@ void onSquareClicked(void* el) {
     const ChessPiece currentPiece = board[pos.y][pos.x].piece;
 
     static Vec2i selectedPiecePos = {0,0};
-    static PieceColor turn = -1;
+
 
     if (board[pos.y][pos.x].isMarked) {
+        if (turnPosCanCastle || turnNegCanCastle) {
+            if (abs(board[selectedPiecePos.y][selectedPiecePos.x].piece) == rook || abs(board[selectedPiecePos.y][selectedPiecePos.x].piece) == king) {
+                if (turn == 1) {
+                    turnPosCanCastle = false;
+                } else {
+                    turnNegCanCastle = false;
+                }
+                if (pos.x == 1) {
+                    if (pos.y == 0 || pos.y == 7) {
+                        board[pos.y][2].piece = board[pos.y][0].piece;
+                        board[pos.y][0].piece = empty;
+                    }
+                } else if (pos.x == 6) {
+                    if (pos.y == 0 || pos.y == 7) {
+                        board[pos.y][5].piece = board[pos.y][7].piece;
+                        board[pos.y][7].piece = empty;
+                    }
+                }
+            }
+        }
+
+
         board[pos.y][pos.x].piece = board[selectedPiecePos.y][selectedPiecePos.x].piece;
         board[selectedPiecePos.y][selectedPiecePos.x].piece = empty;
         turn *= -1;
@@ -317,7 +368,7 @@ void onSquareClicked(void* el) {
             runMarking(currentPiece, pos.y, pos.x, attack);
         }
         selectedPiecePos = pos;
-        printf("Elapsed time: %llu\n", now_ns()-startTime);
+        //printf("Elapsed time: %llu\n", now_ns()-startTime);
     }
     syncGui();
 }
@@ -364,6 +415,7 @@ void runMarking(const ChessPiece piece, const int row, const int column, const M
 }
 
 void resetBoard(void* nix) {
+    turn = boardDirection ? 1 : -1;
     setUpPieces();
     unmarkAll();
     syncGui();
@@ -382,11 +434,23 @@ void closeProgram(void* nix) {
 }
 
 Texture* getTexture(ChessPiece piece) {
+    piece = boardDirection ? -piece : piece;
     if (piece < 0) piece = -piece + 6;
     return pieceTextures[piece];
 }
 
+void switchSides() {
+    boardDirection = !boardDirection;
+    turn = -turn;
+    resetBoard(NULL);
+}
+
 void setUpPieces() {
+    for (int r = 0; r < 8; r++) {
+        for (int c = 0; c < 8; c++) {
+            board[r][c].piece = empty;
+        }
+    }
     for (int i = 0; i < 8; i++) {
         board[1][i].piece = down_Pawn;
         board[6][i].piece = up_Pawn;
@@ -400,9 +464,6 @@ void setUpPieces() {
     board[0][2].piece = down_Bishop;
     board[0][5].piece = down_Bishop;
 
-    board[0][3].piece = down_Queen;
-    board[0][4].piece = down_King;
-
     board[7][0].piece = up_Rook;
     board[7][7].piece = up_Rook;
 
@@ -412,8 +473,42 @@ void setUpPieces() {
     board[7][2].piece = up_Bishop;
     board[7][5].piece = up_Bishop;
 
-    board[7][3].piece = up_Queen;
-    board[7][4].piece = up_King;
+    if (boardDirection == whiteDown) {
+        board[7][3].piece = up_Queen;
+        board[7][4].piece = up_King;
+
+        board[0][3].piece = down_Queen;
+        board[0][4].piece = down_King;
+    } else {
+        board[7][4].piece = up_Queen;
+        board[7][3].piece = up_King;
+
+        board[0][4].piece = down_Queen;
+        board[0][3].piece = down_King;
+    }
+}
+
+void setUpPiecesForTest() {
+
+    // Clear board first
+    for (int r = 0; r < 8; r++)
+        for (int c = 0; c < 8; c++)
+            board[r][c].piece = empty;
+
+    // Black King
+    board[0][4].piece = down_King;   // e8
+
+    // Black pawns (to block escape)
+    board[1][5].piece = down_Pawn;   // f7
+    board[1][6].piece = down_Pawn;   // g7
+
+    // White King
+    board[7][4].piece = up_King;     // e1
+
+    // White Queen
+    board[4][7].piece = up_Queen;    // h4
+    board[4][1].piece = up_Queen;
+    // Set side to move: White
 }
 
 void syncGui() {
@@ -448,7 +543,7 @@ void loadTextures() {
 Element* createChessSquares(ElementSettings es) {
     static int row = 0;
     static int column = 0;
-    es.color = (((row+column) % 2) ? COLOR_GRAY : COLOR_WHITE);
+    es.color = ((row+column) % 2 ? COLOR_GRAY : COLOR_WHITE);
 
     const ElementSettings pieceDisplaySettings = {
         .texture = pieceTextures[0],
@@ -478,13 +573,13 @@ void createChessBoard(Element* root) {
                 (ElementSettings){
                     .color = COOL_COLOR,
                     .posMode = POS_ABSOLUTE,
-                    .height = 400,
-                    .width = 400,
-                    .childGap = 0,
+                    .height = 800,
+                    .width = 800,
+                    .childGap = 10,
                     .padding = (Padding){10,10,10,10},
-                    .pos = (Vec2i){800, 200},
+                    .pos = (Vec2i){500, 100},
                     .name = "game board",
-                    .onHover = hoverAndDragFunction
+                    .onHover = hoverAndDragFunctionInvis
                 },
                 (ElementSettings){
                     .color = COLOR_WHITE,
@@ -502,6 +597,16 @@ void createChessBoard(Element* root) {
                     .onHover = defaultHoverFunction,
                     .onClick = runTaskFunction,
                     .task = (Task){resetBoard, NULL}
+                }
+            ),
+            createElement(
+                (ElementSettings){
+                    .color = (Vec3f){.6, .3, .3},
+                    .text = "Switch sides",
+                    .padding = (Padding){10, 10, 10 ,10},
+                    .onHover = defaultHoverFunction,
+                    .onClick = runTaskFunction,
+                    .task = (Task){switchSides, NULL},
                 }
             )
         )

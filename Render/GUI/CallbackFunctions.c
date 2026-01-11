@@ -40,6 +40,10 @@ bool hoverAndDragFunction(Element *element, Renderer *renderer) {
     return dragFunction(element, renderer);
 }
 
+bool hoverAndDragFunctionInvis(Element *element, Renderer *renderer) {
+    return dragFunction(element, renderer);
+}
+
 bool defaultHoverFunction(Element *element, Renderer *renderer) {
     element->state = 1;
     return false;

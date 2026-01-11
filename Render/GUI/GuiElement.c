@@ -134,7 +134,8 @@ Element *guiAddElement(
     const bool forceResize,
     const PositionMode positionMode,
     void *elementData,
-    const bool notSelectable
+    const bool notSelectable,
+    const LayoutDirection layoutDirection, bool fixedWidth, bool fixedHeight
 )
 {
     Element_ListAdd(list, newElement(mesh, pos, width, height, tex));
@@ -158,6 +159,10 @@ Element *guiAddElement(
     lastElement->childGap = childGap;
     lastElement->reset = defaultReset;
     lastElement->elementData = elementData;
+    lastElement->layoutDirection = layoutDirection;
+    lastElement->fixedWidth = fixedWidth;
+    lastElement->fixedHeight = fixedHeight;
+
     if (notSelectable) lastElement->isMouseOver = NULL;
 
     if (name) {
@@ -184,7 +189,7 @@ Element *guiAddSimpleRectangle_Texture(
     Texture *tex
 )
 {
-    Element* element = guiAddElement(&g_Elements, NULL, quadMesh, pos, width, height, tex, (Vec3f){0.6f, 0.6f, 0.6f}, (Padding){10, 10, 10, 10}, 10, NULL, NULL, NULL, (Task){NULL, NULL}, NULL, false, POS_FIT, NULL, false);
+    Element* element = guiAddElement(&g_Elements, NULL, quadMesh, pos, width, height, tex, (Vec3f){0.6f, 0.6f, 0.6f}, (Padding){10, 10, 10, 10}, 10, NULL, NULL, NULL, (Task){NULL, NULL}, NULL, false, POS_FIT, NULL, false, L_down, false, false);
     return element;
 }
 
@@ -195,7 +200,7 @@ Element *guiAddSimpleRectangle_Color(
     const Vec3f color
 )
 {
-    Element* element = guiAddElement(&g_Elements, NULL, quadMesh, pos, width, height, NULL, color, (Padding){10, 10, 10, 10}, 10, NULL, NULL, NULL, (Task){NULL, NULL}, NULL, false, POS_FIT, NULL, false);
+    Element* element = guiAddElement(&g_Elements, NULL, quadMesh, pos, width, height, NULL, color, (Padding){10, 10, 10, 10}, 10, NULL, NULL, NULL, (Task){NULL, NULL}, NULL, false, POS_FIT, NULL, false, L_down, false, false);
     return element;
 }
 
@@ -208,7 +213,7 @@ Element *guiAddSimpleButton_Texture(
     const char *text
 )
 {
-    Element* element = guiAddElement(&g_Elements, NULL, quadMesh, pos, width, height, tex, (Vec3f){0.6f, 0.6f, 0.6f}, (Padding){10, 10, 10, 10}, 10, isSelected_Quad, hoverAndDragFunction, runTaskFunction, task, text, true, POS_FIT, NULL, false);
+    Element* element = guiAddElement(&g_Elements, NULL, quadMesh, pos, width, height, tex, (Vec3f){0.6f, 0.6f, 0.6f}, (Padding){10, 10, 10, 10}, 10, isSelected_Quad, hoverAndDragFunction, runTaskFunction, task, text, true, POS_FIT, NULL, false, L_down, false, false);
     return element;
 }
 
@@ -221,7 +226,7 @@ Element *guiAddSimpleButton_Color(
     const char *text
 )
 {
-    Element* element = guiAddElement(&g_Elements, NULL, quadMesh, pos, width, height, NULL, color, (Padding){10, 10, 10, 10}, 10, isSelected_Quad, hoverAndDragFunction, runTaskFunction, task, text, true, POS_FIT, NULL, false);
+    Element* element = guiAddElement(&g_Elements, NULL, quadMesh, pos, width, height, NULL, color, (Padding){10, 10, 10, 10}, 10, isSelected_Quad, hoverAndDragFunction, runTaskFunction, task, text, true, POS_FIT, NULL, false, L_down, false, false);
     return element;
 }
 
@@ -234,11 +239,11 @@ Element *guiAddSimpleSlider(
     SliderData* sliderData
 )
 {
-    Element* element = guiAddElement(&g_Elements, NULL, quadMesh, pos, width, height, NULL, colorBackground, (Padding){10, 10, 10, 10}, 10, isSelected_Quad, hoverAndDragFunction, NULL, (Task){}, NULL, true, POS_FIT, NULL, false);
+    Element* element = guiAddElement(&g_Elements, NULL, quadMesh, pos, width, height, NULL, colorBackground, (Padding){10, 10, 10, 10}, 10, isSelected_Quad, hoverAndDragFunction, NULL, (Task){}, NULL, true, POS_FIT, NULL, false, L_down, false, false);
     Vec2i sliderPos = {};
     sliderPos.x = width/2;
     sliderPos.y = 0;
-    Element* sliderElement = guiAddElement(&g_Elements, NULL, quadMesh, sliderPos, width, height, NULL, colorSlider, (Padding){10, 10, 10, 10}, 10, isSelected_Quad, hoverAndDragFunction, sliderCallbackFunction, (Task){}, NULL, true, POS_FIT, NULL, false);
+    Element* sliderElement = guiAddElement(&g_Elements, NULL, quadMesh, sliderPos, width, height, NULL, colorSlider, (Padding){10, 10, 10, 10}, 10, isSelected_Quad, hoverAndDragFunction, sliderCallbackFunction, (Task){}, NULL, true, POS_FIT, NULL, false, L_down, false, false);
     element->childElements.add(&element->childElements, sliderElement);
     element->elementData = sliderData;
     return element;
@@ -263,7 +268,10 @@ Element *createElement(const ElementSettings elementSettings) {
                          true,
                          elementSettings.posMode,
                          elementSettings.elementData,
-                         elementSettings.notSelectable
+                         elementSettings.notSelectable,
+                         elementSettings.layoutDirection,
+                         elementSettings.fixedWidth,
+                         elementSettings.fixedHeight
     );
 }
 

@@ -54,6 +54,7 @@ void generateTestGUI(Element *guiRoot) {
                     .color = (Vec3f){0.0f, 0.0f, 0.0f},
                     .childGap = 5,
                     .padding = (Padding){10, 10, 10, 10},
+                    //.fixedHeight = true
                 }),
                 createElement((ElementSettings){
                     .onHover = hoverAndDragFunction,
@@ -64,22 +65,6 @@ void generateTestGUI(Element *guiRoot) {
                     .padding = (Padding){5, 5, 5, 5},
                     .text = "hoosaasas"
                 }),
-                addChildElements(
-                    createElement((ElementSettings){
-                        .width = 20,
-                        .height = 200,
-                        .color = (Vec3f){0.7f, 0.0f, 0.0f},
-                        .childGap = 5,
-                        .padding = (Padding){10, 10, 10, 10},
-                    }),
-                    createElement((ElementSettings){
-                        .onHover = hoverAndDragFunction,
-                        .onClick = runTaskFunction,
-                        .color = (Vec3f){0.5f, 0.3f, 0.7f},
-                        .padding = (Padding){10, 10, 10, 10},
-                        .text = "Horray is finally Works"
-                    })
-                ),
                 createElement((ElementSettings){
                     .onHover = hoverAndDragFunction,
                     .onClick = runTaskFunction,
