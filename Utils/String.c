@@ -17,7 +17,8 @@ StringFunctions Strings = {
     .fromInt_c = str_fromInt_c,
     .fromInt = str_fromInt,
     .recalculateLength = str_recalculateLength,
-    .setContent_c = str_setContent_c
+    .setContent_c = str_setContent_c,
+    .newReservedString = newReservedString
 };
 
 

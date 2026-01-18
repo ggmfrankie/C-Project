@@ -83,9 +83,16 @@ void setBoundingBox(Element* element, bool (*isMouseOver)(const Element *element
     element->isMouseOver = isMouseOver;
 }
 
-void setText(Element* element, const char* text) {
+void copyText(Element* element, const char* text) {
     pthread_mutex_lock(&guiMutex);
     Strings.setContent_c(&element->textElement.text, text);
+    element->hasText = true;
+    pthread_mutex_unlock(&guiMutex);
+}
+
+void setText(Element* element, char* text) {
+    pthread_mutex_lock(&guiMutex);
+    element->textElement.text = stringOf(text);
     element->hasText = true;
     pthread_mutex_unlock(&guiMutex);
 }
@@ -94,12 +101,18 @@ void setText_int(Element* element, const int i) {
     char tempText[512];
     Strings.fromInt(tempText, 512, i);
 
-    setText(element, tempText);
+    copyText(element, tempText);
 }
 
 void setVisible(Element* element, const bool b) {
     pthread_mutex_lock(&guiMutex);
     element->isActive = b;
+    pthread_mutex_unlock(&guiMutex);
+}
+
+void setColor(Element* element, const Vec3f color) {
+    pthread_mutex_lock(&guiMutex);
+    element->color = color;
     pthread_mutex_unlock(&guiMutex);
 }
 
@@ -176,7 +189,7 @@ Element *guiAddElement(
             .textColor = (Vec3f){1.0f, 1.0f, 1.0f},
             .forceResize = forceResize,
         };
-        setText(lastElement, text);
+        copyText(lastElement, text);
         lastElement->hasText = true;
     }
     return lastElement;

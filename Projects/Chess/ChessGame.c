@@ -83,6 +83,7 @@ void loadTextures();
 
 void createStartScreen(Element* root);
 void createChessBoard(Element* root);
+void createEndScreen(Element* root);
 void setUpPieces();
 void setUpPiecesForTest();
 void switchSides();
@@ -176,7 +177,7 @@ void markKing(const PieceColor color, const int row, const int column, const Mar
     if (type == attack) {
         runMarkAllPieces(color*-1, defend);
 
-        if ((color == L_down && turnNegCanCastle) || (color == up && turnPosCanCastle)) {
+        if ((color == down && turnNegCanCastle) || (color == up && turnPosCanCastle)) {
             for (int i = 1;; i++) {
                 if (column+i > 7) break;
                 if (board[row][column+i].piece == empty) continue;
@@ -306,6 +307,7 @@ void createChessGUI(Element* root) {
     loadTextures();
     createStartScreen(root);
     createChessBoard(root);
+    createEndScreen(root);
 }
 
 void startChessGameTask(void* nix) {
@@ -315,8 +317,12 @@ void startChessGameTask(void* nix) {
     setVisible(chessBoard, true);
 }
 
-void showWinnerScreen() {
-    puts("Someone won");
+void showWinnerScreen(const bool winner) {
+    Element* endScreen = getElement("end screen");
+    setVisible(endScreen, true);
+    Element* colorDisplay = getElement("color display");
+    setColor(colorDisplay, winner ? COLOR_WHITE : COLOR_GRAY);
+    setText(colorDisplay, winner ? "White won" : "Black won");
 }
 
 void onSquareClicked(void* el) {
@@ -328,7 +334,6 @@ void onSquareClicked(void* el) {
     const ChessPiece currentPiece = board[pos.y][pos.x].piece;
 
     static Vec2i selectedPiecePos = {0,0};
-
 
     if (board[pos.y][pos.x].isMarked) {
         if (turnPosCanCastle || turnNegCanCastle) {
@@ -352,13 +357,12 @@ void onSquareClicked(void* el) {
             }
         }
 
-
         board[pos.y][pos.x].piece = board[selectedPiecePos.y][selectedPiecePos.x].piece;
         board[selectedPiecePos.y][selectedPiecePos.x].piece = empty;
         turn *= -1;
         unmarkAll();
         if (isCheckmate(turn)) {
-            showWinnerScreen();
+            showWinnerScreen(boardDirection ? turn : -turn);
             isGameOver = true;
         }
     } else {
@@ -418,6 +422,7 @@ void resetBoard(void* nix) {
     turn = boardDirection ? 1 : -1;
     setUpPieces();
     unmarkAll();
+    setVisible(getElement("end screen"), false);
     syncGui();
 }
 
@@ -657,4 +662,42 @@ void createStartScreen(Element* root) {
             )
         )
     );
+}
+
+void createEndScreen(Element* root) {
+    addChildElements(root,
+        addChildElements(
+            createElement(
+                (ElementSettings){
+                    .color = COOL_COLOR,
+                    .posMode = POS_ABSOLUTE,
+                    .childGap = 10,
+                    .padding = (Padding){10,10,10,10},
+                    .pos = (Vec2i){800, 200},
+                    .name = "end screen",
+                }
+            ),
+            createElement(
+                (ElementSettings){
+                    .width = 100,
+                    .height = 100,
+                    .text = "test",
+                    .name = "color display",
+                    .padding = {10,10,10,10}
+                }
+            ),
+            createElement(
+                (ElementSettings){
+                    .color = (Vec3f){.8, .0, .0},
+                    .padding = (Padding){10,10,10,10},
+                    .text = "End it all",
+                    .onHover = defaultHoverFunction,
+                    .onClick = runTaskFunction,
+                    .task = closeProgram
+                }
+            )
+        )
+    );
+    Element* endScreen = getElement("end screen");
+    endScreen->isActive = false;
 }

@@ -143,9 +143,11 @@ void setOnHoverCallback(Element* element, bool (*onHover)(Element* element, Rend
 void setBoundingBox(Element* element, bool (*isMouseOver)(const Element *element, Vec2i mousePos));
 void defaultReset(Element* element);
 
-void setText(Element* element, const char* text);
+void copyText(Element* element, const char* text);
+void setText(Element* element, char* text);
 void setText_int(Element* element, int i);
 void setVisible(Element* element, bool b);
+void setColor(Element* element, Vec3f color);
 Element* getElement(const char* name);
 
 bool isSelected_Quad(const Element *element, Vec2i mousePos);

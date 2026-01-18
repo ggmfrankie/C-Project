@@ -71,7 +71,7 @@ void startEngine(void (*generateGUI)(Element* guiRoot)) {
 bool updateStateRecursively(Element *element, Renderer *renderer) {
     if (element == NULL || !element->isActive) return false;
 
-    for (int i = 0; i < element->childElements.size; i++) {
+    for (int i = (int)element->childElements.size-1; i >=0 ; i--) {
         if (updateStateRecursively(element->childElements.content[i], renderer)) return true;
     }
     if (element->isMouseOver && element->isMouseOver(element, renderer->mousePos)) {

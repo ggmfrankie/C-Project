@@ -82,7 +82,6 @@ void renderText(const Renderer *renderer, const Element *element) {
     const Font* font = &renderer->font;
     const float textScale = textElement->textScale;
 
-    //TODO relative Position
     const Vec2i startPos = (Vec2i){
         .x = element->worldPos.x + element->padding.left,
         .y = element->worldPos.y + element->actualHeight - element->padding.down

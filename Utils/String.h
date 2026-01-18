@@ -21,6 +21,7 @@ typedef struct StringFunctions {
     String (*substring)(const String* string, int start_index, int end_index);
     String (*combine)(const String *string1, const String *string2);
     String (*fromInt_c)(int value);
+    String (*newReservedString)(size_t capacity);
     void (*fromInt)(char* content, size_t size, long long value);
 
     void (*delete)(String* string);
