@@ -7,7 +7,6 @@
 #define STB_RECT_PACK_IMPLEMENTATION
 #include <stb/stb_rect_pack.h>
 #define STB_TRUETYPE_IMPLEMENTATION
-#include <stb/stb_truetype.h>
 
 #include "GuiElement.h"
 #include "../Render.h"
@@ -34,7 +33,7 @@ Font loadFontAtlas(char* file) {
     unsigned char* rgbaBuffer = malloc(FONT_ATLAS_SIZE * FONT_ATLAS_SIZE*4);
 
     FILE* f = fopen(completePath.content, "rb");
-    size_t bytesRead = fread(ttf_buffer, 1, 1<<20, f);
+    const size_t bytesRead = fread(ttf_buffer, 1, 1<<20, f);
     if (bytesRead == 0) {
         printf("Failed to read font file\n");
     }
@@ -47,7 +46,7 @@ Font loadFontAtlas(char* file) {
 
     stbtt_pack_context pc;
     stbtt_PackBegin(&pc, temp_bitmap, FONT_ATLAS_SIZE, FONT_ATLAS_SIZE, 0, 1, NULL);
-    stbtt_PackSetOversampling(&pc, 3, 3);   // 2×2 or even 3×3 gives very smooth edges
+    stbtt_PackSetOversampling(&pc, 3, 3);
 
     stbtt_PackFontRange(&pc, ttf_buffer, 0, FONT_SIZE,
                         32, 96, font.glyphs);
