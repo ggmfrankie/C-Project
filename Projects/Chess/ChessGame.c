@@ -4,11 +4,12 @@
 
 #include "ChessGame.h"
 
-#include "../../Extern/Libraries/WinAdapt.h"
 #include "../../Render/Engine.h"
 #include "../../Render/GUI/CallbackFunctions.h"
 #include "../../Utils/Makros.h"
 #include "../../Utils/TimeMeasurenments.h"
+#include "../../Utils/Network.h"
+#include <psdk_inc/_socket_types.h>
 #define COOL_COLOR (Vec3f){.2, .3, .3}
 #define COLOR_WHITE (Vec3f){1, 1, 1}
 #define COLOR_BLACK (Vec3f){0, 0, 0}
@@ -40,6 +41,12 @@ typedef struct {
     ChessPiece piece;
     int isMarked;
 } Square;
+
+typedef struct {
+    int fromRow, fromCol;
+    int toRow, toCol;
+    ChessPiece promotion;
+} ChessMove;
 
 typedef enum {
     null = 0,
@@ -74,6 +81,7 @@ Element* pieceSlots[8][8] = {};
 BoardDirection boardDirection = whiteDown;
 bool turnPosCanCastle = true;
 bool turnNegCanCastle = true;
+bool isMultiplayer = false;
 
 PieceColor turn = -1;
 
@@ -89,6 +97,10 @@ void setUpPiecesForTest();
 void switchSides();
 void syncGui();
 Vec2i getPosition(const Element* element);
+
+bool applyMove(const ChessMove* move);
+
+void sendMove(ChessMove *move);
 
 bool markAttack(int row, int column, int pieceRow, int pieceCol, PieceColor color);
 bool markDefend(int row, int column, int pieceRow, int pieceCol, PieceColor color);
@@ -310,11 +322,18 @@ void createChessGUI(Element* root) {
     createEndScreen(root);
 }
 
+void* listenToMoves() {
+    return NULL;
+}
+
 void startChessGameTask(void* nix) {
     Element* mainMenu = getElement("start screen");
     Element* chessBoard = getElement("game board");
     setVisible(mainMenu, false);
     setVisible(chessBoard, true);
+
+    pthread_t multiplayerListener;
+    pthread_create(&multiplayerListener, NULL, listenToMoves, NULL);
 }
 
 void showWinnerScreen(const bool winner) {
@@ -325,6 +344,7 @@ void showWinnerScreen(const bool winner) {
     setText(colorDisplay, winner ? "White won" : "Black won");
 }
 
+/*
 void onSquareClicked(void* el) {
     static bool isGameOver = false;
     if (isGameOver) return;
@@ -375,6 +395,80 @@ void onSquareClicked(void* el) {
         //printf("Elapsed time: %llu\n", now_ns()-startTime);
     }
     syncGui();
+}
+*/
+
+void onSquareClicked2(void* el) {
+    static bool isGameOver = false;
+    if (isGameOver) return;
+    const Element* element = (Element*) el;
+    const Vec2i pos = getPosition(element);
+
+    static Vec2i selectedPiecePos = {-1,-1};
+
+    if (board[pos.y][pos.x].isMarked && selectedPiecePos.x != -1) {
+        ChessMove move = {
+            .fromRow = selectedPiecePos.y,
+            .fromCol = selectedPiecePos.x,
+            .toRow = pos.y,
+            .toCol = pos.x,
+            .promotion = 0
+        };
+
+        applyMove(&move);
+        sendMove(&move);
+    } else {
+        unmarkAll();
+        if (sig(board[pos.y][pos.x].piece) == turn) {
+            runMarking(board[pos.y][pos.x].piece, pos.y, pos.x, attack);
+            selectedPiecePos = pos;
+        }
+    }
+
+    syncGui();
+}
+
+void sendMove(ChessMove *move) {
+    static SOCKET;
+    if (!isMultiplayer) return;
+
+}
+
+bool applyMove(const ChessMove* move) {
+    static bool isGameOver = false;
+    if (isGameOver) return false;
+
+    const Vec2i pos = (Vec2i){move->toCol, move->toRow};
+    const Vec2i selectedPiecePos = {move->fromCol,move->fromRow};
+
+    if (!board[pos.y][pos.x].isMarked)
+        return false;
+
+    if (turnPosCanCastle || turnNegCanCastle) {
+        if (abs(board[selectedPiecePos.y][selectedPiecePos.x].piece) == rook || abs(board[selectedPiecePos.y][selectedPiecePos.x].piece) == king) {
+            if (turn == 1) turnPosCanCastle = false;
+            else turnNegCanCastle = false;
+
+            if (pos.x == 1) {
+                if (pos.y == 0 || pos.y == 7) {
+                    board[pos.y][2].piece = board[pos.y][0].piece;
+                    board[pos.y][0].piece = empty;
+                }
+            } else if (pos.x == 6) {
+                if (pos.y == 0 || pos.y == 7) {
+                    board[pos.y][5].piece = board[pos.y][7].piece;
+                    board[pos.y][7].piece = empty;
+                }
+            }
+        }
+    }
+
+    board[pos.y][pos.x].piece = board[selectedPiecePos.y][selectedPiecePos.x].piece;
+    board[selectedPiecePos.y][selectedPiecePos.x].piece = empty;
+    turn *= -1;
+    unmarkAll();
+
+    return true;
 }
 
 bool isKingAttacked(const PieceColor color) {
@@ -448,6 +542,19 @@ void switchSides() {
     boardDirection = !boardDirection;
     turn = -turn;
     resetBoard(NULL);
+}
+
+void flipBoard() {
+    boardDirection = !boardDirection;
+    turn = -turn;
+    for (int i = 0; i < 4; i++) {
+        for (int ii = 0; ii < 8; ii++) {
+            const ChessPiece temp = -board[i][ii].piece;
+            board[i][ii].piece = -board[7-i][ii].piece;
+            board[7-i][ii].piece = temp;
+        }
+    }
+    syncGui();
 }
 
 void setUpPieces() {
@@ -574,45 +681,72 @@ Element* createChessSquares(ElementSettings es) {
 void createChessBoard(Element* root) {
     addChildElements(root,
         addChildElements(
-            addChildrenAsGridWithGenerator(
+            createElement(
                 (ElementSettings){
                     .color = COOL_COLOR,
-                    .posMode = POS_ABSOLUTE,
-                    .height = 800,
-                    .width = 800,
-                    .childGap = 10,
-                    .padding = (Padding){10,10,10,10},
-                    .pos = (Vec2i){500, 100},
+                    .onHover = hoverAndDragFunctionInvis,
                     .name = "game board",
-                    .onHover = hoverAndDragFunctionInvis
+                    .padding = (Padding){10,10,10,10},
+                    .childGap = 10
+                }
+            ),
+            addChildrenAsGridWithGenerator(
+                (ElementSettings){
+                    .color = COLOR_DARKYELLOW,
+                    .width = 400,
+                    .height = 400,
+                    .padding = {10,10,10,10}
                 },
                 (ElementSettings){
                     .color = COLOR_WHITE,
                     .onHover = defaultHoverFunction,
                     .onClick = runTaskFunction,
-                    .task = (Task){onSquareClicked, THIS_ELEMENT}
+                    .task = (Task){onSquareClicked2, THIS_ELEMENT}
                 }, 8, 8,
                 createChessSquares
             ),
-            createElement(
-                (ElementSettings){
-                    .color = (Vec3f){.2, .3, .3},
-                    .text = "Reset",
-                    .padding = (Padding){10, 10, 10 ,10},
-                    .onHover = defaultHoverFunction,
-                    .onClick = runTaskFunction,
-                    .task = (Task){resetBoard, NULL}
-                }
-            ),
-            createElement(
-                (ElementSettings){
-                    .color = (Vec3f){.6, .3, .3},
-                    .text = "Switch sides",
-                    .padding = (Padding){10, 10, 10 ,10},
-                    .onHover = defaultHoverFunction,
-                    .onClick = runTaskFunction,
-                    .task = (Task){switchSides, NULL},
-                }
+            addChildElements(
+                 createElement(
+                    (ElementSettings){
+                        .color = (Vec3f){.25, .35, .355},
+                        .padding = {5,5,5,5},
+                        .childGap = 10,
+                        .width = 400,
+                        .fixedWidth = true,
+                        .layoutDirection = L_right,
+                        .notSelectable = true
+                    }
+                ),
+                createElement(
+                    (ElementSettings){
+                        .color = (Vec3f){.2, .3, .3},
+                        .text = "Reset",
+                        .padding = (Padding){10, 10, 10 ,10},
+                        .onHover = defaultHoverFunction,
+                        .onClick = runTaskFunction,
+                        .task = (Task){resetBoard, NULL}
+                    }
+                ),
+                createElement(
+                    (ElementSettings){
+                        .color = (Vec3f){.6, .3, .3},
+                        .text = "Switch sides",
+                        .padding = (Padding){10, 10, 10 ,10},
+                        .onHover = defaultHoverFunction,
+                        .onClick = runTaskFunction,
+                        .task = (Task){switchSides, NULL},
+                    }
+                ),
+                createElement(
+                    (ElementSettings){
+                        .color = (Vec3f){.6, .3, .3},
+                        .text = "Flip Board",
+                        .padding = (Padding){10, 10, 10 ,10},
+                        .onHover = defaultHoverFunction,
+                        .onClick = runTaskFunction,
+                        .task = (Task){flipBoard, NULL},
+                    }
+                )
             )
         )
     );

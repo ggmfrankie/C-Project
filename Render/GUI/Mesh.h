@@ -5,6 +5,7 @@
 #ifndef C_MESH_H
 #define C_MESH_H
 #include "../../Utils/ArrayList.h"
+#include "../../Utils/SimpleArray.h"
 
 typedef struct MeshData {
     float* vertices;
@@ -21,6 +22,7 @@ typedef struct Mesh {
     int vboCount;
     unsigned int eboId;
     int indexCount;
+    int patchIndices[16];
     void (*render)(const struct Mesh *mesh);
 } Mesh;
 

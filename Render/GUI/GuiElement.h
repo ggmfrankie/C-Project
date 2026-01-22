@@ -43,10 +43,8 @@ typedef enum {
 } PositionMode;
 
 typedef enum {
-    L_down = 0,
-    L_up = 1,
-    L_left = 1,
-    L_right = 1
+    L_down,
+    L_right
 } LayoutDirection;
 
 ARRAY_LIST(ChildElements, Element*)

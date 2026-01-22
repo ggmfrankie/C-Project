@@ -86,3 +86,4 @@ Texture *loadTextureFromPng(char *fileName) {
 
     return Texture_ListGetLast(&g_Textures);
 }
+

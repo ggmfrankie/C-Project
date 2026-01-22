@@ -76,6 +76,8 @@ add_executable(C
         Render/TestGUI.h
         Projects/Chess/ChessGame.c
         Projects/Chess/ChessGame.h
+        Utils/Network.cpp
+        Utils/Network.h
 )
 #add_subdirectory("${CMAKE_SOURCE_DIR}/Render")
 

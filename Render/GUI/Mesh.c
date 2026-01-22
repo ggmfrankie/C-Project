@@ -42,8 +42,6 @@ Mesh newMesh(const MeshData *meshData) {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
-    deleteMeshData((MeshData*)meshData);
-
     return (Mesh){
         .indexCount = (int) meshData->indexCount,
         .vaoId = VAO,
@@ -61,12 +59,11 @@ void Mesh_render(const Mesh *mesh) {
 }
 
 Mesh Mesh_loadSimpleQuad() {
-    MeshData *meshData = malloc(sizeof(MeshData));
-    if (!meshData) return (Mesh){0};
+    MeshData meshData;
 
-    meshData->vertexCount = 4;
+    meshData.vertexCount = 4;
 
-    meshData->vertices = malloc(sizeof(float) * meshData->vertexCount * 3);
+    meshData.vertices = malloc(sizeof(float) * meshData.vertexCount * 3);
 
     const float tmpVertices[] = {
         0.0f, 0.0f, 0.0f,
@@ -74,32 +71,43 @@ Mesh Mesh_loadSimpleQuad() {
         1.0f, 0.0f, 0.0f,
         1.0f, 1.0f, 0.0f
     };
-    memcpy(meshData->vertices, tmpVertices, sizeof(tmpVertices));
+    memcpy(meshData.vertices, tmpVertices, sizeof(tmpVertices));
 
-    meshData->normals = malloc(sizeof(float) * meshData->vertexCount * 3);
+    meshData.normals = malloc(sizeof(float) * meshData.vertexCount * 3);
     const float tmpNormals[] = {
         0.0f, 0.0f, 1.0f,
         0.0f, 0.0f, 1.0f,
         0.0f, 0.0f, 1.0f,
         0.0f, 0.0f, 1.0f
     };
-    memcpy(meshData->normals, tmpNormals, sizeof(tmpNormals));
+    memcpy(meshData.normals, tmpNormals, sizeof(tmpNormals));
 
-    meshData->texCoords = malloc(sizeof(float) * meshData->vertexCount * 2);
+    meshData.texCoords = malloc(sizeof(float) * meshData.vertexCount * 2);
     const float tmpTex[] = {
-        0.0f, 0.0f,  // top-left
-        0.0f, 1.0f,  // bottom-left
-        1.0f, 0.0f,  // top-right
-        1.0f, 1.0f   // bottom-right
+        0.0f, 0.0f,
+        0.0f, 1.0f,
+        1.0f, 0.0f,
+        1.0f, 1.0f
     };
-    memcpy(meshData->texCoords, tmpTex, sizeof(tmpTex));
+    memcpy(meshData.texCoords, tmpTex, sizeof(tmpTex));
 
-    meshData->indexCount = 6;
-    meshData->indices = malloc(sizeof(unsigned int) * meshData->indexCount);
+    meshData.indexCount = 6;
+    meshData.indices = malloc(sizeof(unsigned int) * meshData.indexCount);
     const unsigned int tmpIndices[] = {0, 1, 2, 2, 1, 3};
-    memcpy(meshData->indices, tmpIndices, sizeof(tmpIndices));
+    memcpy(meshData.indices, tmpIndices, sizeof(tmpIndices));
 
-    return newMesh(meshData);
+    return newMesh(&meshData);
+}
+
+Mesh Mesh_loadNinePatchMesh() {
+    MeshData meshData = {};
+
+    int patchIndices[] = {
+                0, 1, -1, 0,
+                2, 3, 4, 2,
+                -2, 5, 6, -2,
+                0, 1, -1, 0
+    };
 }
 
 void deleteMeshData(MeshData *meshData) {

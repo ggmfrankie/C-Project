@@ -10,6 +10,7 @@
 #include "Engine.h"
 #include "../Utils/Vector.h"
 #include "GUI/CallbackFunctions.h"
+#include <stb/stb_truetype.h>
 
 Mesh quadMesh;
 
@@ -18,7 +19,7 @@ void resizeCallback(GLFWwindow *window, int width, int height);
 void cursorPositionCallback(GLFWwindow* window, double xPos, double yPos);
 void renderElementsRecursively(Element* element, const Renderer* renderer);
 
-Vec2i measureText(const Renderer *renderer, const TextElement *textElement);
+Vec2i measureText(const Font *font, const TextElement *textElement);
 
 Element createRootElement();
 
@@ -144,7 +145,7 @@ void renderElementsRecursively(Element* element, const Renderer* renderer) {
     }
 }
 
-Vec2i updateLayout(Element *element, const Vec2i parentPos, const Renderer *renderer, const int verticalOffset) {
+Vec2i updateLayout(Element *element, const Vec2i parentPos, const Font *font, const int verticalOffset) {
     if (!element || !element->isActive) return (Vec2i){0,0};
     if (element->reset) element->reset(element);
 
@@ -167,7 +168,7 @@ Vec2i updateLayout(Element *element, const Vec2i parentPos, const Renderer *rend
     const Padding* padding = &element->padding;
 
     if (element->hasText) {
-        const Vec2i textSize = measureText(renderer, &element->textElement);
+        const Vec2i textSize = measureText(font, &element->textElement);
         const int textW = padding->left + textSize.x + padding->right;
         const int textH = padding->up + textSize.y + padding->down;
 
@@ -183,7 +184,7 @@ Vec2i updateLayout(Element *element, const Vec2i parentPos, const Renderer *rend
 
     for (int i = 0; i < element->childElements.size; i++) {
         Element *child = element->childElements.content[i];
-        const Vec2i childDimensions = updateLayout(child, contentOrigin, renderer, accumulatedHeight);
+        const Vec2i childDimensions = updateLayout(child, contentOrigin, font, accumulatedHeight);
 
         const int childWidth = child->pos.x + childDimensions.x;
         const int childHeight = child->pos.y + childDimensions.y;
@@ -210,7 +211,7 @@ Vec2i updateLayout(Element *element, const Vec2i parentPos, const Renderer *rend
     return (Vec2i){realWidth, realHeight};
 }
 
-Vec2i updateLayout2(Element *element, const Vec2i parentPos, const Renderer *renderer, const Vec2i offset, LayoutDirection layoutDirection) {
+Vec2i updateLayout2(Element *element, const Vec2i parentPos, const Font *font, const Vec2i offset, LayoutDirection layoutDirection) {
     if (!element || !element->isActive) return (Vec2i){0,0};
     if (element->reset) element->reset(element);
 
@@ -238,7 +239,7 @@ Vec2i updateLayout2(Element *element, const Vec2i parentPos, const Renderer *ren
     const Padding padding = element->padding;
 
     if (element->hasText) {
-        const Vec2i textSize = measureText(renderer, &element->textElement);
+        const Vec2i textSize = measureText(font, &element->textElement);
         const int textW = padding.left + textSize.x + padding.right;
         const int textH = padding.up + textSize.y + padding.down;
 
@@ -252,7 +253,7 @@ Vec2i updateLayout2(Element *element, const Vec2i parentPos, const Renderer *ren
     for (int i = 0; i < element->childElements.size; i++) {
         Element *child = element->childElements.content[i];
 
-        const Vec2i childDimensions = updateLayout2(child, contentOrigin, renderer, cursor, element->layoutDirection);
+        const Vec2i childDimensions = updateLayout2(child, contentOrigin, font, cursor, element->layoutDirection);
 
         const int childWidth = child->pos.x + childDimensions.x;
         const int childHeight = child->pos.y + childDimensions.y;
@@ -277,7 +278,7 @@ Vec2i updateLayout2(Element *element, const Vec2i parentPos, const Renderer *ren
     return (Vec2i){realWidth, realHeight};
 }
 
-Vec2i updatelayout3(Element* element, Vec2i parentCursor, Vec2i parentPos) {
+Vec2i updateLayout3(Element* element, const Vec2i parentCursor, const Vec2i parentPos, const Font* font) {
     if (!element || !element->isActive) return (Vec2i){0,0};
     if (element->reset) element->reset(element);
 
@@ -288,43 +289,61 @@ Vec2i updatelayout3(Element* element, Vec2i parentCursor, Vec2i parentPos) {
     element->worldPos.x = element->pos.x + parentPos.x;
     element->worldPos.y = element->pos.y + parentPos.y;
 
+    element->actualWidth = element->width;
+    element->actualHeight = element->height;
+
     Vec2i cursor = (Vec2i){element->padding.left, element->padding.up};
-    LayoutDirection layoutDirection = element->layoutDirection;
+    const LayoutDirection layoutDirection = element->layoutDirection;
 
     int extendRight = element->padding.left;
     int extendDown = element->padding.up;
 
+    const Padding padding = element->padding;
+
+    if (element->hasText) {
+        const Vec2i textSize = measureText(font, &element->textElement);
+        const int textW = padding.left + textSize.x + padding.right;
+        const int textH = padding.up + textSize.y + padding.down;
+
+        element->actualWidth  = max(element->actualWidth ,  textW);
+        element->actualHeight = max(element->actualHeight, textH);
+    }
+
     for (int i = 0; i < element->childElements.size; i++) {
         Element *child = element->childElements.content[i];
-        Vec2i childDimensions = updatelayout3(child, cursor, element->worldPos);
+
+        Vec2i childDimensions = updateLayout3(child, cursor, element->worldPos, font);
 
         if (element->fixedHeight && cursor.y + childDimensions.y > element->height) {
-            if (childDimensions.y > element->height) {
-                element->height = element->padding.up + element->padding.down + childDimensions.y;
-            }
-            cursor.y = element->padding.up;
+            cursor.y = padding.up;
             cursor.x = extendRight + element->childGap;
-            childDimensions = updatelayout3(child, cursor, element->worldPos);
+            childDimensions = updateLayout3(child, cursor, element->worldPos, font);
         }
         if (element->fixedWidth && cursor.x + childDimensions.x > element->width) {
-            if (childDimensions.x > element->width) {
-                element->width = element->padding.left + element->padding.right + childDimensions.x;
-            }
             cursor.y = extendDown + element->childGap;
-            cursor.x = element->padding.left;
-            childDimensions = updatelayout3(child, cursor, element->worldPos);
+            cursor.x = padding.left;
+            childDimensions = updateLayout3(child, cursor, element->worldPos, font);
         }
 
-        if (layoutDirection == L_down) cursor.y += childDimensions.y + element->childGap;
-        else if (layoutDirection == L_right) cursor.x += childDimensions.x + element->childGap;
+        extendRight = max(extendRight, child->pos.x + childDimensions.x);
+        extendDown  = max(extendDown,  child->pos.y + childDimensions.y);
 
-        extendRight = max(extendRight, childDimensions.x + child->pos.x);
-        extendDown = max(extendDown, childDimensions.y + child->pos.y);
+        if (child->positionMode == POS_FIT) {
+            if (layoutDirection == L_down) cursor.y += childDimensions.y + element->childGap;
+            else if (layoutDirection == L_right) cursor.x += childDimensions.x + element->childGap;
+        } else {
+            if (layoutDirection == L_down) cursor.y = extendDown + element->childGap;
+            else if (layoutDirection == L_right) cursor.x = extendRight + element->childGap;
+        }
     }
+
+    element->actualWidth = max(element->actualWidth, extendRight + padding.right);
+    element->actualHeight = max(element->actualHeight, extendDown + padding.down);
+
+    return (Vec2i){element->actualWidth, element->actualHeight};
 }
 
-Vec2i measureText(const Renderer *renderer, const TextElement *textElement) {
-    const Font* font = &renderer->font;
+Vec2i measureText(const Font *font, const TextElement *textElement) {
     const float scale = textElement->textScale;
 
     float x = 0.0f;

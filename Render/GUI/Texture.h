@@ -8,9 +8,18 @@
 #include "../../Utils/String.h"
 
 typedef struct {
+    int stretchStartX;
+    int stretchEndX;
+    int stretchStartY;
+    int stretchEndY;
+} NinePatchData;
+
+typedef struct {
     int width;
     int height;
     GLuint textureId;
+
+    NinePatchData npd;
 } Texture;
 
 

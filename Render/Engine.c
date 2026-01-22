@@ -10,6 +10,7 @@
 #include "Render.h"
 #include "GUI/CallbackFunctions.h"
 #include "../Extern/Informatik/Spannungsteiler_A3.h"
+#include "../Utils/Network.h"
 
 #include "../Utils/TimeMeasurenments.h"
 
@@ -26,7 +27,6 @@ void updateState2(Renderer *renderer);
 bool updateStateRecursively(Element *element, Renderer *renderer);
 
 void startEngine(void (*generateGUI)(Element* guiRoot)) {
-
     static Renderer renderer;
 
     renderer = newRenderer(2048, 1024, "Huhu");
@@ -39,6 +39,7 @@ void startEngine(void (*generateGUI)(Element* guiRoot)) {
     renderer.computeShader.startX = 0.0f;
     renderer.computeShader.endX = 5.0f;
 
+    initSockets();
     Renderer_init(&renderer);
     initElements();
 
@@ -52,7 +53,7 @@ void startEngine(void (*generateGUI)(Element* guiRoot)) {
         glfwPollEvents();
 
         if (i == 1) {
-            updateLayout(&renderer.guiRoot, (Vec2i){0, 0}, &renderer, 0);
+            updateLayout3(&renderer.guiRoot, (Vec2i){0, 0}, (Vec2i){0, 0}, &renderer.font);
             i = 0;
         }
         i++;
