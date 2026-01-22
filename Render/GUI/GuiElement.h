@@ -79,6 +79,8 @@ typedef struct Element {
     bool (*isMouseOver)(const Element* element, Vec2i mousePos);
     bool (*onClick)(Element* element, Renderer *renderer);
     bool (*onHover)(Element* element, Renderer *renderer);
+    void (*whileSelected)(Element* element);
+    void (*onUpdate)(Element* element);
     void (*reset)(Element* element);
 
     Task task;
@@ -90,6 +92,7 @@ typedef struct Element {
 
     bool fixedWidth;
     bool fixedHeight;
+    bool draggable;
 
     bool needsDeletion;
 
@@ -113,6 +116,8 @@ typedef struct {
     char* text;
     bool (*onClick)(Element* element, Renderer *renderer);
     bool (*onHover)(Element* element, Renderer *renderer);
+    void (*whileSelected)(Element* element);
+    void (*onUpdate)(Element* element);
     //NYI
     void (*reset)(Element* element);
 
@@ -121,6 +126,7 @@ typedef struct {
     int childGap;
     bool autoFit;
     bool notSelectable;
+    bool draggable;
     bool fixedWidth;
     bool fixedHeight;
 
@@ -173,7 +179,12 @@ Element *guiAddElement(
     const char *text,
     bool forceResize,
     PositionMode positionMode,
-    void *elementData, bool notSelectable, LayoutDirection layoutDirection, bool fixedWidth, bool fixedHeight
+    void *elementData,
+    bool notSelectable,
+    LayoutDirection layoutDirection,
+    bool fixedWidth,
+    bool fixedHeight,
+    void (*whileSelected)(Element *element), bool draggable, void (*onUpdate)(Element *element)
 );
 
 Element *guiAddSimpleRectangle_Texture(

@@ -36,9 +36,10 @@ void generateTestGUI(Element *guiRoot) {
                 .width = 100,
                 .height = 200,
                 .color = (Vec3f){1.0f, 0.4f, 0.3f},
-                .onHover = hoverAndDragFunction,
+                .onHover = defaultHoverFun,
+                .draggable = true,
                 .childGap = 10,
-                .posMode = POS_ABSOLUTE
+                .posMode = POS_ABSOLUTE,
             }),
             createElement((ElementSettings){
                 .texture = pointerSchematic,
@@ -54,20 +55,12 @@ void generateTestGUI(Element *guiRoot) {
                     .color = (Vec3f){0.0f, 0.0f, 0.0f},
                     .childGap = 5,
                     .padding = (Padding){10, 10, 10, 10},
-                    //.fixedHeight = true
+                    .fixedHeight = true,
+                    .onUpdate = incrementHeight,
                 }),
                 createElement((ElementSettings){
-                    .onHover = hoverAndDragFunction,
-                    .onClick = runTaskFunction,
-                    .texture = pointerSchematic,
-                    .width = 100,
-                    .height = 20,
-                    .padding = (Padding){5, 5, 5, 5},
-                    .text = "hoosaasas"
-                }),
-                createElement((ElementSettings){
-                    .onHover = hoverAndDragFunction,
-                    .onClick = runTaskFunction,
+                    .onHover = defaultHoverFun,
+                    .draggable = true,
                     .texture = pointerSchematic,
                     .width = 100,
                     .height = 20,
@@ -75,8 +68,8 @@ void generateTestGUI(Element *guiRoot) {
                     .text = "hoosaasas"
                 }),
                 createElement((ElementSettings){
-                    .onHover = hoverAndDragFunction,
-                    .onClick = runTaskFunction,
+                    .onHover = hoverAndDragFun,
+                    .onClick = runTaskFun,
                     .texture = pointerSchematic,
                     .width = 100,
                     .height = 20,
@@ -84,8 +77,8 @@ void generateTestGUI(Element *guiRoot) {
                     .text = "hoosaasas"
                 }),
                 createElement((ElementSettings){
-                    .onHover = hoverAndDragFunction,
-                    .onClick = runTaskFunction,
+                    .onHover = hoverAndDragFun,
+                    .onClick = runTaskFun,
                     .texture = pointerSchematic,
                     .width = 100,
                     .height = 20,
@@ -93,8 +86,8 @@ void generateTestGUI(Element *guiRoot) {
                     .text = "hoosaasas"
                 }),
                 createElement((ElementSettings){
-                    .onHover = hoverAndDragFunction,
-                    .onClick = runTaskFunction,
+                    .onHover = hoverAndDragFun,
+                    .onClick = runTaskFun,
                     .texture = pointerSchematic,
                     .width = 100,
                     .height = 20,
@@ -102,8 +95,8 @@ void generateTestGUI(Element *guiRoot) {
                     .text = "hoosaasas"
                 }),
                 createElement((ElementSettings){
-                    .onHover = hoverAndDragFunction,
-                    .onClick = runTaskFunction,
+                    .onHover = hoverAndDragFun,
+                    .onClick = runTaskFun,
                     .texture = pointerSchematic,
                     .width = 100,
                     .height = 20,
@@ -111,8 +104,8 @@ void generateTestGUI(Element *guiRoot) {
                     .text = "hoosaasas"
                 }),
                 createElement((ElementSettings){
-                    .onHover = hoverAndDragFunction,
-                    .onClick = runTaskFunction,
+                    .onHover = hoverAndDragFun,
+                    .onClick = runTaskFun,
                     .texture = pointerSchematic,
                     .width = 100,
                     .height = 20,
@@ -120,8 +113,17 @@ void generateTestGUI(Element *guiRoot) {
                     .text = "hoosaasas"
                 }),
                 createElement((ElementSettings){
-                    .onHover = hoverAndDragFunction,
-                    .onClick = runTaskFunction,
+                    .onHover = hoverAndDragFun,
+                    .onClick = runTaskFun,
+                    .texture = pointerSchematic,
+                    .width = 100,
+                    .height = 20,
+                    .padding = (Padding){4, 4, 4, 4},
+                    .text = "hoosaasas"
+                }),
+                createElement((ElementSettings){
+                    .onHover = hoverAndDragFun,
+                    .onClick = runTaskFun,
                     .texture = pointerSchematic,
                     .width = 100,
                     .height = 20,

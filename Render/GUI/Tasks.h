@@ -19,7 +19,7 @@ typedef void (*GuiTask)(void* userData);
 typedef struct {
     GuiTask func;
     void *userdata;
-    bool isRunning;
+    bool isBlocked;
 } Task;
 
 extern Task taskQueue[];

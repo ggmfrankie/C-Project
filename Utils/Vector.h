@@ -55,4 +55,9 @@ Vec2i: Vec2i_Sub,\
 Vec2f: Vec2f_Sub\
 )(vec1, vec2)
 
+#define v_mul(vec1, factor) _Generic((vec1),\
+Vec2i: Vec2i_Mul,\
+Vec3f: Vec3f_Mul\
+)(vec1, factor)
+
 #endif //C_VECTOR_H

@@ -4,6 +4,7 @@
 
 #include "TimeMeasurenments.h"
 
+#include <stdint.h>
 #include <windows.h>
 
 TimeNs now_ns() {
@@ -18,4 +19,15 @@ TimeNs now_ns() {
     return (counter.QuadPart * 1000000000LL) / freq.QuadPart;
 }
 
+uint64_t now_ns_wallclock(void)
+{
+    FILETIME ft;
+    GetSystemTimePreciseAsFileTime(&ft);
 
+    ULARGE_INTEGER u;
+    u.LowPart  = ft.dwLowDateTime;
+    u.HighPart = ft.dwHighDateTime;
+
+    // FILETIME is 100 ns intervals since Jan 1, 1601 (UTC)
+    return u.QuadPart * 100;
+}

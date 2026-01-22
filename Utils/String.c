@@ -64,8 +64,14 @@ void str_setContent_c(String* string, const char* content) {
         length++;
     }
     if (length+1 >= string->capacity) {
-        puts("String capacity to small for str_setContent");
-        return;
+        char* oldContent = string->content;
+        char* newContent = malloc(length+1);
+        if (newContent) {
+            string->content = newContent;
+            free(oldContent);
+        } else {
+            puts("String growing failed, keeping old Buffer");
+        }
     }
 
     for (int i = 0; i < length; ++i) {

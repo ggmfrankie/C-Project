@@ -6,10 +6,11 @@
 
 #include "GuiElementData.h"
 #include "../Render.h"
+#include "../../Utils/TimeMeasurenments.h"
+#include "../../Utils/UtilityFun.h"
+#include <windows.h>
 
-
-
-bool dragFunction(Element *element, const Renderer *renderer) {
+bool dragFun(Element *element, const Renderer *renderer) {
     static Vec2i offset;
     static bool dragging = false;
     const bool isMouseDown = isMousePressed(renderer->window, GLFW_MOUSE_BUTTON_LEFT);
@@ -35,27 +36,27 @@ bool dragFunction(Element *element, const Renderer *renderer) {
     return false;
 }
 
-bool hoverAndDragFunction(Element *element, Renderer *renderer) {
+bool hoverAndDragFun(Element *element, Renderer *renderer) {
     element->state = 1;
-    return dragFunction(element, renderer);
+    return dragFun(element, renderer);
 }
 
 bool hoverAndDragFunctionInvis(Element *element, Renderer *renderer) {
-    return dragFunction(element, renderer);
+    return dragFun(element, renderer);
 }
 
-bool defaultHoverFunction(Element *element, Renderer *renderer) {
+bool defaultHoverFun(Element *element, Renderer *renderer) {
     element->state = 1;
     return false;
 }
 
-bool changeColorOnHoverFunction(Element *element, Renderer *renderer) {
+bool changeColorOnHoverFun(Element *element, Renderer *renderer) {
     element->color = *(Vec3f*) (element->elementData);
     return false;
 }
 
-bool runTaskFunction(Element *element, Renderer *renderer) {
-    if (element->task.func && !element->task.isRunning) pushTask(element->task.func, element->task.userdata);
+bool runTaskFun(Element *element, Renderer *renderer) {
+    if (element->task.func && !element->task.isBlocked) pushTask(element->task.func, element->task.userdata);
     return true;
 }
 
@@ -74,8 +75,82 @@ bool click(GLFWwindow *window, const int mouseButton) {
     return false;
 }
 
-bool sliderCallbackFunction(Element *element, Renderer *renderer) {
+bool sliderCallbackFun(Element *element, Renderer *renderer) {
     SliderData* sliderDate = (SliderData*)element->elementData;
 
     return false;
+}
+
+bool textFieldCallbackFun(Element *element, Renderer *renderer) {
+
+}
+
+void displayCurrentTime(Element *element) {
+    static u_int64 lastTime = 0;
+    if (lastTime == 0) lastTime = now_ns();
+
+    const u_int64 currentTime = now_ns();
+    const u_int64 timeNs = currentTime - lastTime;
+
+    if ((double)timeNs * 1e-9 < 1.0) return;
+
+    SYSTEMTIME t;
+    GetLocalTime(&t);
+
+    char time[64];
+
+    snprintf(
+        time, 64,
+        "%02d:%02d:%02d\n",
+           t.wHour,
+           t.wMinute,
+           t.wSecond);
+    copyText(element, time);
+}
+
+void updateColorRainbow(Element *element) {
+    static float hue = 0.0f;
+    static u_int64 lastTime = 0;
+
+    if (lastTime == 0) lastTime = now_ns();
+
+    const u_int64 currentTime = now_ns();
+    const u_int64 timeNs = currentTime - lastTime;
+
+    hue += 120.0f * (float)timeNs * 1e-9f;
+    if (hue >= 360.0f) hue -= 360.0f;
+
+    element->color = hsv_to_rgb(hue, .3f, 1.0f);
+    lastTime = currentTime;
+}
+
+void incrementWidth(Element *element) {
+    static int calls = 0;
+    static int direction = 1;
+    calls++;
+    if (calls < 1) return;
+    calls = 0;
+    element->width += direction * 1;
+    if (element->width <= 0) direction = -direction;
+    if (element->width >= 800) direction = -direction;
+}
+
+void incrementHeight(Element *element) {
+    static int calls = 0;
+    static int direction = 1;
+    calls++;
+    if (calls < 1) return;
+    calls = 0;
+    element->height += direction * 1;
+    if (element->height <= 0) direction = -direction;
+    if (element->height >= 800) direction = -direction;
+}
+
+void shiftPosition(Element *element) {
+    static int calls = 0;
+    calls++;
+    if (calls < 100) return;
+    calls = 0;
+    element->pos.x += 20;
+    element->pos.y += 20;
 }

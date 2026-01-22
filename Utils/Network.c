@@ -5,7 +5,7 @@
 #include "Network.h"
 
 #include <stdio.h>
-#include <winsock.h>
+
 
 void initSockets() {
 #ifdef _WIN32
@@ -35,7 +35,6 @@ SOCKET createServerSocket(const int port) {
     printf("Waiting for client...\n");
     SOCKET clientSock = accept(serverSock, NULL, NULL);
     if (clientSock < 0) { perror("accept"); exit(1); }
-
     closesocket(serverSock);
     printf("Client connected!\n");
     return clientSock;

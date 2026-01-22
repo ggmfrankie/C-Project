@@ -76,8 +76,10 @@ add_executable(C
         Render/TestGUI.h
         Projects/Chess/ChessGame.c
         Projects/Chess/ChessGame.h
-        Utils/Network.cpp
+        Utils/Network.c
         Utils/Network.h
+        Utils/UtilityFun.c
+        Utils/UtilityFun.h
 )
 #add_subdirectory("${CMAKE_SOURCE_DIR}/Render")
 
@@ -95,4 +97,5 @@ target_link_libraries(C
         gdi32        # Windows GDI
         user32       # Window and input handling
         kernel32     # Core Windows functions
+        ws2_32
 )

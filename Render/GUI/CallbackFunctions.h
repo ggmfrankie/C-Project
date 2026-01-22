@@ -7,14 +7,21 @@
 #include "GuiElement.h"
 #include "GLFW/glfw3.h"
 
-bool dragFunction(Element *element, const Renderer *renderer);
-bool runTaskFunction(Element *element, Renderer *renderer);
-bool hoverAndDragFunction(Element *element, Renderer *renderer);
+bool dragFun(Element *element, const Renderer *renderer);
+bool runTaskFun(Element *element, Renderer *renderer);
+bool hoverAndDragFun(Element *element, Renderer *renderer);
 bool hoverAndDragFunctionInvis(Element *element, Renderer *renderer);
-bool sliderCallbackFunction(Element *element, Renderer *renderer);
+bool sliderCallbackFun(Element *element, Renderer *renderer);
+bool textFieldCallbackFun(Element *element, Renderer *renderer);
 bool click(GLFWwindow *window, int mouseButton);
-bool defaultHoverFunction(Element *element, Renderer *renderer);
-bool changeColorOnHoverFunction(Element *element, Renderer *renderer);
+bool defaultHoverFun(Element *element, Renderer *renderer);
+bool changeColorOnHoverFun(Element *element, Renderer *renderer);
+
+void updateColorRainbow(Element *element);
+void displayCurrentTime(Element *element);
+void incrementWidth(Element *element);
+void incrementHeight(Element *element);
+void shiftPosition(Element *element);
 
 #define CHANGE_COLOR_ON_HOVER(color)\
 .elementData = (color),\

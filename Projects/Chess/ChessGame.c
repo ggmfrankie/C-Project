@@ -17,6 +17,7 @@
 #define COLOR_LIGHTGREY (Vec3f){0.8, 0.8, 0.8}
 #define COLOR_DARKYELLOW (Vec3f){0.5, 0.5, 0.0}
 #define COLOR_HOVER (Vec3f){0.8, 0.8, 1}
+#define CHESS_PORT 52345
 
 typedef enum {
     empty = 0,
@@ -83,6 +84,9 @@ bool turnPosCanCastle = true;
 bool turnNegCanCastle = true;
 bool isMultiplayer = false;
 
+SOCKET gameSocket = INVALID_SOCKET;
+pthread_t multiplayerListener;
+
 PieceColor turn = -1;
 
 Texture* pieceTextures[13] = {};
@@ -100,7 +104,7 @@ Vec2i getPosition(const Element* element);
 
 bool applyMove(const ChessMove* move);
 
-void sendMove(ChessMove *move);
+void sendMove(const ChessMove *move);
 
 bool markAttack(int row, int column, int pieceRow, int pieceCol, PieceColor color);
 bool markDefend(int row, int column, int pieceRow, int pieceCol, PieceColor color);
@@ -322,8 +326,27 @@ void createChessGUI(Element* root) {
     createEndScreen(root);
 }
 
-void* listenToMoves() {
+void sendMove(const ChessMove *move) {
+    if (!isMultiplayer) return;
+    sendData(gameSocket, move, sizeof(ChessMove));
+}
+
+void* receiveMoves() {
+    ChessMove receivedMove;
+    receiveData(gameSocket, &receivedMove, sizeof(ChessMove));
     return NULL;
+}
+
+void hostGame() {
+    isMultiplayer = true;
+    gameSocket = createServerSocket(CHESS_PORT);
+    pthread_create(&multiplayerListener, NULL, receiveMoves, NULL);
+}
+
+void joinGame(const char* ip) {
+    isMultiplayer = true;
+    gameSocket = createClientSocket(ip, CHESS_PORT);
+    pthread_create(&multiplayerListener, NULL, receiveMoves, NULL);
 }
 
 void startChessGameTask(void* nix) {
@@ -331,9 +354,6 @@ void startChessGameTask(void* nix) {
     Element* chessBoard = getElement("game board");
     setVisible(mainMenu, false);
     setVisible(chessBoard, true);
-
-    pthread_t multiplayerListener;
-    pthread_create(&multiplayerListener, NULL, listenToMoves, NULL);
 }
 
 void showWinnerScreen(const bool winner) {
@@ -426,12 +446,6 @@ void onSquareClicked2(void* el) {
     }
 
     syncGui();
-}
-
-void sendMove(ChessMove *move) {
-    static SOCKET;
-    if (!isMultiplayer) return;
-
 }
 
 bool applyMove(const ChessMove* move) {
@@ -684,7 +698,7 @@ void createChessBoard(Element* root) {
             createElement(
                 (ElementSettings){
                     .color = COOL_COLOR,
-                    .onHover = hoverAndDragFunctionInvis,
+                    .draggable = true,
                     .name = "game board",
                     .padding = (Padding){10,10,10,10},
                     .childGap = 10
@@ -693,17 +707,35 @@ void createChessBoard(Element* root) {
             addChildrenAsGridWithGenerator(
                 (ElementSettings){
                     .color = COLOR_DARKYELLOW,
+                    .onUpdate = updateColorRainbow,
                     .width = 400,
                     .height = 400,
                     .padding = {10,10,10,10}
                 },
                 (ElementSettings){
                     .color = COLOR_WHITE,
-                    .onHover = defaultHoverFunction,
-                    .onClick = runTaskFunction,
+                    .onHover = defaultHoverFun,
+                    .onClick = runTaskFun,
                     .task = (Task){onSquareClicked2, THIS_ELEMENT}
                 }, 8, 8,
                 createChessSquares
+            ),
+            addChildElements(
+                createElement(
+                    (ElementSettings){
+                        .color = COOL_COLOR,
+                        .layoutDirection = L_right,
+                        .childGap = 10
+                    }
+                ),
+                createElement(
+                    (ElementSettings){
+                        .color = COLOR_GRAY,
+                        .padding = {10,10,10,10},
+                        .text = "",
+                        .onUpdate = displayCurrentTime
+                    }
+                )
             ),
             addChildElements(
                  createElement(
@@ -722,8 +754,8 @@ void createChessBoard(Element* root) {
                         .color = (Vec3f){.2, .3, .3},
                         .text = "Reset",
                         .padding = (Padding){10, 10, 10 ,10},
-                        .onHover = defaultHoverFunction,
-                        .onClick = runTaskFunction,
+                        .onHover = defaultHoverFun,
+                        .onClick = runTaskFun,
                         .task = (Task){resetBoard, NULL}
                     }
                 ),
@@ -732,8 +764,8 @@ void createChessBoard(Element* root) {
                         .color = (Vec3f){.6, .3, .3},
                         .text = "Switch sides",
                         .padding = (Padding){10, 10, 10 ,10},
-                        .onHover = defaultHoverFunction,
-                        .onClick = runTaskFunction,
+                        .onHover = defaultHoverFun,
+                        .onClick = runTaskFun,
                         .task = (Task){switchSides, NULL},
                     }
                 ),
@@ -742,8 +774,8 @@ void createChessBoard(Element* root) {
                         .color = (Vec3f){.6, .3, .3},
                         .text = "Flip Board",
                         .padding = (Padding){10, 10, 10 ,10},
-                        .onHover = defaultHoverFunction,
-                        .onClick = runTaskFunction,
+                        .onHover = defaultHoverFun,
+                        .onClick = runTaskFun,
                         .task = (Task){flipBoard, NULL},
                     }
                 )
@@ -779,8 +811,8 @@ void createStartScreen(Element* root) {
                     .color = (Vec3f){.3, .3, .3},
                     .padding = (Padding){10,10,10,10},
                     .text = "Start",
-                    .onHover = defaultHoverFunction,
-                    .onClick = runTaskFunction,
+                    .onHover = defaultHoverFun,
+                    .onClick = runTaskFun,
                     .task = startChessGame
                 }
             ),
@@ -789,8 +821,8 @@ void createStartScreen(Element* root) {
                     .color = (Vec3f){.8, .0, .0},
                     .padding = (Padding){10,10,10,10},
                     .text = "End it all",
-                    .onHover = defaultHoverFunction,
-                    .onClick = runTaskFunction,
+                    .onHover = defaultHoverFun,
+                    .onClick = runTaskFun,
                     .task = closeProgram
                 }
             )
@@ -825,8 +857,8 @@ void createEndScreen(Element* root) {
                     .color = (Vec3f){.8, .0, .0},
                     .padding = (Padding){10,10,10,10},
                     .text = "End it all",
-                    .onHover = defaultHoverFunction,
-                    .onClick = runTaskFunction,
+                    .onHover = defaultHoverFun,
+                    .onClick = runTaskFun,
                     .task = closeProgram
                 }
             )
