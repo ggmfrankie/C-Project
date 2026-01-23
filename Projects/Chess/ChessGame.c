@@ -561,6 +561,7 @@ void switchSides() {
 void flipBoard() {
     boardDirection = !boardDirection;
     turn = -turn;
+    unmarkAll();
     for (int i = 0; i < 4; i++) {
         for (int ii = 0; ii < 8; ii++) {
             const ChessPiece temp = -board[i][ii].piece;
