@@ -321,8 +321,9 @@ bool doesMoveCauseCheck(const int row, const int column, const int pieceRow, con
 
 void createChessGUI(Element* root) {
     loadTextures();
-    createStartScreen(root);
     createChessBoard(root);
+    createStartScreen(root);
+
     createEndScreen(root);
 }
 
@@ -699,7 +700,9 @@ void createChessBoard(Element* root) {
             createElement(
                 (ElementSettings){
                     .color = COOL_COLOR,
+                    .pos = {0,0},
                     .draggable = true,
+                    .posMode = POS_ABSOLUTE,
                     .name = "game board",
                     .padding = (Padding){10,10,10,10},
                     .childGap = 10

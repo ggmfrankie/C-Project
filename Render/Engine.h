@@ -14,6 +14,8 @@ extern pthread_cond_t  guiInitCond;
 extern bool guiInitialized;
 
 void startEngine(void (*generateGUI)(Element* guiRoot));
+Vec2i getMousePos();
+Vec2i getWindowSize();
 double graphingFunction(double x);
 
 

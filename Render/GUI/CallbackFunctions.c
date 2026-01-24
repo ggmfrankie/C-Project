@@ -10,6 +10,8 @@
 #include "../../Utils/UtilityFun.h"
 #include <windows.h>
 
+#include "../Engine.h"
+
 bool dragFun(Element *element, const Renderer *renderer) {
     static Vec2i offset;
     static bool dragging = false;
@@ -106,6 +108,12 @@ void displayCurrentTime(Element *element) {
            t.wMinute,
            t.wSecond);
     copyText(element, time);
+}
+
+void syncWithScreen(Element *element) {
+    const Vec2i window = getWindowSize();
+    element->width = window.x;
+    element->height = window.y;
 }
 
 void updateColorRainbow(Element *element) {

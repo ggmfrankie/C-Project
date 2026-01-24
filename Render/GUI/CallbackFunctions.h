@@ -17,6 +17,7 @@ bool click(GLFWwindow *window, int mouseButton);
 bool defaultHoverFun(Element *element, Renderer *renderer);
 bool changeColorOnHoverFun(Element *element, Renderer *renderer);
 
+void syncWithScreen(Element *element);
 void updateColorRainbow(Element *element);
 void displayCurrentTime(Element *element);
 void incrementWidth(Element *element);

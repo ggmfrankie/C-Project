@@ -21,42 +21,42 @@
 pthread_mutex_t guiMutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t  guiInitCond = PTHREAD_COND_INITIALIZER;
 bool guiInitialized = false;
+Renderer g_Renderer;
 
 void updateState(Renderer *renderer);
 bool updateStateRecursively(Element *element, Renderer *renderer);
 
 void startEngine(void (*generateGUI)(Element* guiRoot)) {
-    static Renderer renderer;
 
-    renderer = newRenderer(2048, 1024, "Huhu");
+    g_Renderer = newRenderer(2048, 1024, "Huhu");
 
     Texture* graphTexture = newEmptyTexture(WIDTH, HEIGHT);
-    renderer.computeShader = newComputeShader(NULL, 1024);
-    renderer.computeShader.texture = graphTexture;
-    renderer.computeShader.thickness = 2;
+    g_Renderer.computeShader = newComputeShader(NULL, 1024);
+    g_Renderer.computeShader.texture = graphTexture;
+    g_Renderer.computeShader.thickness = 2;
 
-    renderer.computeShader.startX = 0.0f;
-    renderer.computeShader.endX = 5.0f;
+    g_Renderer.computeShader.startX = 0.0f;
+    g_Renderer.computeShader.endX = 5.0f;
 
     //initSockets();
-    Renderer_init(&renderer);
+    Renderer_init(&g_Renderer);
     initElements();
 
-    generateGUI(&renderer.guiRoot);
+    generateGUI(&g_Renderer.guiRoot);
 
     guiInitialized = true;
     pthread_cond_broadcast(&guiInitCond);
     pthread_mutex_unlock(&guiMutex);
 
-    while (!glfwWindowShouldClose(renderer.window)) {
+    while (!glfwWindowShouldClose(g_Renderer.window)) {
         glfwPollEvents();
 
-        updateLayout3(&renderer.guiRoot, (Vec2i){0, 0}, (Vec2i){0, 0}, &renderer.font);
+        updateLayout3(&g_Renderer.guiRoot, (Vec2i){0, 0}, (Vec2i){0, 0}, &g_Renderer.font);
 
-        updateState(&renderer);
+        updateState(&g_Renderer);
 
         pthread_mutex_lock(&guiMutex);
-        renderer.render(&renderer);
+        g_Renderer.render(&g_Renderer);
         pthread_mutex_unlock(&guiMutex);
 
         Sleep(1);
@@ -66,14 +66,15 @@ void startEngine(void (*generateGUI)(Element* guiRoot)) {
 
 static Element* focusedElement = NULL;
 static Element* mouseCapturedElement = NULL;
+static bool dragging = false;
 
-bool dragElement(Renderer *renderer) {
+bool dragElement(const Renderer *renderer) {
     if (!mouseCapturedElement) return false;
     if (!mouseCapturedElement->draggable) return false;
 
     Element* element = mouseCapturedElement;
     static Vec2i offset;
-    static bool dragging = false;
+
     const bool isMouseDown = isMousePressed(renderer->window, GLFW_MOUSE_BUTTON_LEFT);
 
     if (!isMouseDown) {
@@ -99,7 +100,7 @@ bool dragElement(Renderer *renderer) {
 }
 
 void updateState(Renderer *renderer) {
-    if (dragElement(renderer)) return;
+    dragElement(renderer);
     const bool consumed = updateStateRecursively(&renderer->guiRoot, renderer);
 
     if (click(renderer->window, GLFW_MOUSE_BUTTON_LEFT) && !consumed) focusedElement = NULL;
@@ -113,6 +114,7 @@ bool updateStateRecursively(Element *element, Renderer *renderer) {
     for (int i = (int)element->childElements.size-1; i >=0 ; i--) {
         if (updateStateRecursively(element->childElements.content[i], renderer)) return true;
     }
+    if (dragging) return false;
     if (element->isMouseOver && element->isMouseOver(element, renderer->mousePos)) {
         if (element->onHover && element->onHover(element, renderer)) return true;
         if (click(renderer->window, GLFW_MOUSE_BUTTON_LEFT)) {
@@ -123,6 +125,20 @@ bool updateStateRecursively(Element *element, Renderer *renderer) {
         return true;
     }
     return false;
+}
+
+Vec2i getMousePos() {
+    pthread_mutex_lock(&guiMutex);
+    const Vec2i mousePos = g_Renderer.mousePos;
+    pthread_mutex_unlock(&guiMutex);
+    return mousePos;
+}
+
+Vec2i getWindowSize() {
+    pthread_mutex_lock(&guiMutex);
+    const Vec2i windowSize = {g_Renderer.screenWidth, g_Renderer.screenHeight};
+    pthread_mutex_unlock(&guiMutex);
+    return windowSize;
 }
 
 void addShaderPrograms(Renderer *renderer) {

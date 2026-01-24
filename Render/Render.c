@@ -412,7 +412,7 @@ Renderer newRenderer(const int width, const int height, const char* name) {
 }
 
 Element createRootElement() {
-    return newElement((Mesh){}, (Vec2i){}, 0, 0, NULL);
+    return newElement((Mesh){}, (Vec2i){0}, 0, 0, NULL);
 }
 
 void loadDefaultQuadMesh() {
