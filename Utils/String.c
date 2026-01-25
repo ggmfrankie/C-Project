@@ -17,10 +17,23 @@ StringFunctions Strings = {
     .fromInt_c = str_fromInt_c,
     .fromInt = str_fromInt,
     .recalculateLength = str_recalculateLength,
-    .setContent_c = str_setContent_c,
-    .newReservedString = newReservedString
+    .copyInto = str_setContent_c,
+    .newReservedString = newReservedString,
+    .appendChar = str_appendChar,
+    .popChar = str_popChar,
+    .isEmpty = str_isEmpty
 };
 
+void str_grow(String * string, const size_t newCapacity) {
+    char* oldContent = string->content;
+    char* newContent = realloc(oldContent, newCapacity);
+    if (newContent) {
+        string->content = newContent;
+        string->capacity = newCapacity;
+    } else {
+        puts("String growing failed, keeping old Buffer");
+    }
+}
 
 String stringOf(char* content){
     int length = 0;
@@ -64,14 +77,7 @@ void str_setContent_c(String* string, const char* content) {
         length++;
     }
     if (length+1 >= string->capacity) {
-        char* oldContent = string->content;
-        char* newContent = malloc(length+1);
-        if (newContent) {
-            string->content = newContent;
-            free(oldContent);
-        } else {
-            puts("String growing failed, keeping old Buffer");
-        }
+        str_grow(string, length+1);
     }
 
     for (int i = 0; i < length; ++i) {
@@ -89,6 +95,19 @@ char str_getCharAt(const String* string, const int index){
 void str_setCharAt(const String* string, const int index, const char value){
     if(index >= string->length || index < 0) return;
     string->content[index] = value;
+}
+
+void str_appendChar(String* string, const char value) {
+    if (string->length == string->capacity) str_grow(string, string->capacity*2 + 1);
+    string->content[string->length++] = value;
+    string->content[string->length] = '\0';
+}
+
+char str_popChar(String* string) {
+    if (string->length < string->capacity/3) str_grow(string, string->capacity/2);
+    const char c = string->content[string->length--];
+    string->content[string->length] = '\0';
+    return c;
 }
 
 String str_substring(const String* string, int start_index, int end_index){
@@ -236,6 +255,10 @@ void str_clear(String* string) {
 
 void str_println(const String* string){
     printf("%s \n",string->content);
+}
+
+bool str_isEmpty(const String* s) {
+    return s->length == 0;
 }
 
 bool str_equals(const String* string,const String* key){

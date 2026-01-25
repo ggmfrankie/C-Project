@@ -47,10 +47,17 @@ typedef enum {
     L_right
 } LayoutDirection;
 
+typedef enum {
+    t_defaultElement,
+    t_slider,
+    t_textField
+} ElementType;
+
 ARRAY_LIST(ChildElements, Element*)
 
 typedef struct Element {
     char* name;
+    ElementType type;
     bool isActive;
 
     Vec2i pos;
@@ -220,6 +227,7 @@ Element *guiAddSimpleButton_Color(
 );
 
 Element *createElement(ElementSettings elementSettings);
+Element *createTextFieldElement( ElementSettings elementSettings);
 
 typedef struct Element_Functions {
  //TODO

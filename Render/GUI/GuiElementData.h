@@ -6,6 +6,7 @@
 #define C_GUIELEMENTDATA_H
 #include <pthread.h>
 #include <stdbool.h>
+#include "../../Utils/String.h"
 
 typedef struct {
     float min;
@@ -17,7 +18,7 @@ typedef struct {
 } SliderData;
 
 typedef struct {
-    char text[256];
+    String text;
 
     size_t cursor;          // byte index
     size_t selectStart;     // byte index

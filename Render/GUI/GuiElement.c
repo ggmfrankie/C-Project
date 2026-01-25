@@ -85,7 +85,7 @@ void setBoundingBox(Element* element, bool (*isMouseOver)(const Element *element
 
 void copyText(Element* element, const char* text) {
     pthread_mutex_lock(&guiMutex);
-    Strings.setContent_c(&element->textElement.text, text);
+    Strings.copyInto(&element->textElement.text, text);
     element->hasText = true;
     pthread_mutex_unlock(&guiMutex);
 }
@@ -188,7 +188,7 @@ Element *guiAddElement(
 
     if (text) {
         lastElement->textElement = (TextElement) {
-            .text = newReservedString(512),
+            .text = newReservedString(128),
             .textScale = 1.0f,
             .textColor = (Vec3f){1.0f, 1.0f, 1.0f},
             .forceResize = forceResize,
@@ -266,19 +266,20 @@ Element *guiAddSimpleSlider(
     return element;
 }
 
-Element *createTexFieldElement(const ElementSettings elementSettings) {
+Element *createTextFieldElement(const ElementSettings elementSettings) {
     Element* element = createElement(elementSettings);
     TextFieldData* textData = calloc(1, sizeof(TextFieldData));
     Element* textField = createElement(
         (ElementSettings){
             .width = elementSettings.width - elementSettings.padding.left - elementSettings.padding.right,
+            .height = elementSettings.height - elementSettings.padding.up - elementSettings.padding.down,
             .elementData = textData,
             .color = v_mul(elementSettings.color, 0.8f),
-            .onClick = textFieldCallbackFun
+            .onClick = textFieldCallbackFun,
+            .text = "hallo"
         }
     );
-    textField->textElement.text = newReservedString(256);
-    textField->hasText = true;
+    textField->type = t_textField;
     addChildElements(element, textField);
 
     return element;

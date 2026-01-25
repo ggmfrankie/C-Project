@@ -84,6 +84,7 @@ bool sliderCallbackFun(Element *element, Renderer *renderer) {
 }
 
 bool textFieldCallbackFun(Element *element, Renderer *renderer) {
+    TextFieldData* data = (TextFieldData*)(element->elementData);
 
 }
 
@@ -117,7 +118,7 @@ void syncWithScreen(Element *element) {
 }
 
 void updateColorRainbow(Element *element) {
-    static float hue = 0.0f;
+    static double hue = 0.0f;
     static u_int64 lastTime = 0;
 
     if (lastTime == 0) lastTime = now_ns();
@@ -125,10 +126,10 @@ void updateColorRainbow(Element *element) {
     const u_int64 currentTime = now_ns();
     const u_int64 timeNs = currentTime - lastTime;
 
-    hue += 120.0f * (float)timeNs * 1e-9f;
-    if (hue >= 360.0f) hue -= 360.0f;
+    hue += 120.0 * (double)timeNs * 1e-9;
+    if (hue >= 360.0) hue -= 360.0;
 
-    element->color = hsv_to_rgb(hue, .3f, 1.0f);
+    element->color = hsv_to_rgb((float)hue, .3f, 1.0f);
     lastTime = currentTime;
 }
 

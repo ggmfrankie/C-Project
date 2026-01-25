@@ -12,7 +12,7 @@
 #include "Extern/Informatik/PointerFun.h"
 #include "Extern/Informatik/Namensliste.h"
 #include "Extern/Informatik/TowersOfHanoi.h"
-#include "Render/TestGUI.h"
+#include "Projects/Test/TestGUI.h"
 #include "Projects/Chess/ChessGame.h"
 
 void* workerThread(void* args);
@@ -32,8 +32,8 @@ int main(){
     pthread_t workerThreadID;
     pthread_create(&workerThreadID, NULL, workerThread, NULL);
 
-    startEngine(createChessGUI);
-    //startEngine(generateTestGUI);
+    //startEngine(createChessGUI);
+    startEngine(generateTestGUI);
     return 0;
 }
 #endif

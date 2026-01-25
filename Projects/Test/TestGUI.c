@@ -4,9 +4,9 @@
 
 #include "TestGUI.h"
 
-#include "GUI/GuiElement.h"
-#include "../Extern/Informatik/Namensliste.h"
-#include "GUI/CallbackFunctions.h"
+#include "../../Render/GUI/GuiElement.h"
+#include "../../Extern/Informatik/Namensliste.h"
+#include "../../Render/GUI/CallbackFunctions.h"
 
 void generateTestGUI(Element *guiRoot) {
 
@@ -47,6 +47,12 @@ void generateTestGUI(Element *guiRoot) {
                 .height = 20,
                 .padding = (Padding){10,10,10,10},
                 .text = "This is a test and yes Text Positioning must be refractored"
+            }),
+            createTextFieldElement((ElementSettings){
+                .padding = {10,10,10,10},
+                .height = 20,
+                .width = 100,
+                .color = {0.5, 1.0, 0.3}
             }),
             addChildElements(
                 createElement((ElementSettings){

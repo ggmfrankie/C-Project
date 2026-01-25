@@ -4,7 +4,7 @@
 
 #ifndef C_TESTGUI_H
 #define C_TESTGUI_H
-#include "GUI/GuiElement.h"
+#include "../../Render/GUI/GuiElement.h"
 
 void generateTestGUI(Element *guiRoot);
 

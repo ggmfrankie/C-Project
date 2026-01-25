@@ -428,14 +428,13 @@ void onSquareClicked2(void* el) {
     static Vec2i selectedPiecePos = {-1,-1};
 
     if (board[pos.y][pos.x].isMarked && selectedPiecePos.x != -1) {
-        ChessMove move = {
+        const ChessMove move = {
             .fromRow = selectedPiecePos.y,
             .fromCol = selectedPiecePos.x,
             .toRow = pos.y,
             .toCol = pos.x,
             .promotion = 0
         };
-
         applyMove(&move);
         sendMove(&move);
     } else {
@@ -445,7 +444,6 @@ void onSquareClicked2(void* el) {
             selectedPiecePos = pos;
         }
     }
-
     syncGui();
 }
 
@@ -482,6 +480,10 @@ bool applyMove(const ChessMove* move) {
     board[selectedPiecePos.y][selectedPiecePos.x].piece = empty;
     turn *= -1;
     unmarkAll();
+    if (isCheckmate(turn)) {
+        showWinnerScreen(boardDirection ? turn : -turn);
+        isGameOver = true;
+    }
 
     return true;
 }

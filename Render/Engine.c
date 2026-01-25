@@ -13,8 +13,9 @@
 #include "../Utils/Network.h"
 
 #include "../Utils/TimeMeasurenments.h"
+#include "GUI/GuiElementData.h"
 
-    #define WIDTH 4096
+#define WIDTH 4096
     #define HEIGHT 600
 
 
@@ -25,6 +26,8 @@ Renderer g_Renderer;
 
 void updateState(Renderer *renderer);
 bool updateStateRecursively(Element *element, Renderer *renderer);
+void charCallback(GLFWwindow*, unsigned int codepoint);
+void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 void startEngine(void (*generateGUI)(Element* guiRoot)) {
 
@@ -41,6 +44,9 @@ void startEngine(void (*generateGUI)(Element* guiRoot)) {
     //initSockets();
     Renderer_init(&g_Renderer);
     initElements();
+
+    glfwSetCharCallback(g_Renderer.window, charCallback);
+    glfwSetKeyCallback(g_Renderer.window, keyCallback);
 
     generateGUI(&g_Renderer.guiRoot);
 
@@ -125,6 +131,41 @@ bool updateStateRecursively(Element *element, Renderer *renderer) {
         return true;
     }
     return false;
+}
+
+void charCallback(GLFWwindow* window, const unsigned int codepoint) {
+    if (focusedElement == NULL || focusedElement->type == t_defaultElement) return;
+
+    if (focusedElement->type == t_textField) {
+        TextFieldData* tfd = focusedElement->elementData;
+        if (codepoint < 128) {
+            Strings.appendChar(&tfd->text, (char) codepoint);
+            tfd->cursor++;
+            Strings.copyInto(&focusedElement->textElement.text, tfd->text.content);
+        }
+    }
+}
+
+void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+    if (focusedElement == NULL || focusedElement->type == t_defaultElement) return;
+
+    if (focusedElement->type == t_textField) {
+        if (action == GLFW_PRESS || action == GLFW_REPEAT)
+        {
+            TextFieldData* tfd = focusedElement->elementData;
+            String* text = &focusedElement->textElement.text;
+            if (key == GLFW_KEY_BACKSPACE && tfd->cursor != 0)
+            {
+                Strings.popChar(&tfd->text);
+                tfd->cursor--;
+                Strings.copyInto(&focusedElement->textElement.text, tfd->text.content);
+            }
+            else if (key == GLFW_KEY_ENTER)
+            {
+                // Handle enter (e.g., submit text)
+            }
+        }
+    }
 }
 
 Vec2i getMousePos() {
