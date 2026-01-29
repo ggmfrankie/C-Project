@@ -39,5 +39,5 @@ Task popTask() {
 
 void changeElementText(void* userdata) {
     Element* element = userdata;
-    copyText(element, "New Text here");
+    setText(element, "New Text here");
 }

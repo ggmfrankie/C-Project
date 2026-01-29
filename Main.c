@@ -32,6 +32,9 @@ int main(){
     pthread_t workerThreadID;
     pthread_create(&workerThreadID, NULL, workerThread, NULL);
 
+    String hallo = stringOf("Hello");
+    Strings.appendCharAt(&hallo, '0', 1);
+    Strings.println(&hallo);
     //startEngine(createChessGUI);
     startEngine(generateTestGUI);
     return 0;

@@ -139,9 +139,11 @@ void charCallback(GLFWwindow* window, const unsigned int codepoint) {
     if (focusedElement->type == t_textField) {
         TextFieldData* tfd = focusedElement->elementData;
         if (codepoint < 128) {
-            Strings.appendChar(&tfd->text, (char) codepoint);
-            tfd->cursor++;
-            Strings.copyInto(&focusedElement->textElement.text, tfd->text.content);
+            puts("here");
+            str_appendChar(&tfd->text, (char) codepoint);
+            tfd->cursor.byteIndex++;
+
+            setText(focusedElement, tfd->text.content);
         }
     }
 }
@@ -154,11 +156,11 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
         {
             TextFieldData* tfd = focusedElement->elementData;
             String* text = &focusedElement->textElement.text;
-            if (key == GLFW_KEY_BACKSPACE && tfd->cursor != 0)
+            if (key == GLFW_KEY_BACKSPACE && tfd->cursor.byteIndex != 0)
             {
-                Strings.popChar(&tfd->text);
-                tfd->cursor--;
-                Strings.copyInto(&focusedElement->textElement.text, tfd->text.content);
+                str_popChar(&tfd->text);
+                tfd->cursor.byteIndex--;
+                setText(focusedElement,  tfd->text.content);
             }
             else if (key == GLFW_KEY_ENTER)
             {
@@ -180,6 +182,13 @@ Vec2i getWindowSize() {
     const Vec2i windowSize = {g_Renderer.screenWidth, g_Renderer.screenHeight};
     pthread_mutex_unlock(&guiMutex);
     return windowSize;
+}
+
+Font* getFont() {
+    pthread_mutex_lock(&guiMutex);
+    Font* font = &g_Renderer.font;
+    pthread_mutex_unlock(&guiMutex);
+    return font;
 }
 
 void addShaderPrograms(Renderer *renderer) {

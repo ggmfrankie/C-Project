@@ -31,10 +31,11 @@ typedef struct StringFunctions {
     void (*println)(const String* string);
     bool (*equals)(const String* string, const String* key);
     bool (*startsWith)(const String* string, const String* key);
-    bool (*isEmpty)(String* s);
+    bool (*isEmpty)(const String* s);
     List_String (*split)(const String* string, const char* key);
     void (*setCharAt)(const String* string, int index, char value);
     void (*appendChar)(String* string, char value);
+    void (*appendCharAt)(String* string, char value, int index);
     char (*popChar)(String* string);
     void (*setAll)(const String* string, char key);
 
@@ -65,6 +66,7 @@ bool str_isEmpty(const String* s);
 List_String str_split(const String* string, const char* key);
 void str_setCharAt(const String* string, int index, char value);
 void str_appendChar(String* string, char value);
+void str_appendCharAt(String* string, char value, int index);
 char str_popChar(String* string);
 void str_setAll(const String* string, char key);
 char str_getCharAt(const String* string, int index);

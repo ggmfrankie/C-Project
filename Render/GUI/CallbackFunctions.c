@@ -38,6 +38,14 @@ bool dragFun(Element *element, const Renderer *renderer) {
     return false;
 }
 
+bool isSelectedCharacter(Vec2f pos, float width, float height, const Vec2i mousePos) {
+    if ((float)mousePos.x <= pos.x+width && (float)mousePos.x >= pos.x &&
+        (float)mousePos.y <= pos.y+height && (float)mousePos.y >= pos.y) {
+        return true;
+        }
+    return false;
+}
+
 bool hoverAndDragFun(Element *element, Renderer *renderer) {
     element->state = 1;
     return dragFun(element, renderer);
@@ -85,7 +93,24 @@ bool sliderCallbackFun(Element *element, Renderer *renderer) {
 
 bool textFieldCallbackFun(Element *element, Renderer *renderer) {
     TextFieldData* data = (TextFieldData*)(element->elementData);
+    if (Strings.isEmpty(&data->text)) return false;
 
+    List_Character* charQuads = &element->textElement.charQuads;
+    Vec2i mousePos = getMousePos();
+
+    Vec2f relMousPos = {(float)(mousePos.x - element->pos.x), (float)(mousePos.y - element->pos.y)};
+    mousePos.x -= element->pos.x;
+    mousePos.y -= element->pos.y;
+    int i = 0;
+    for (; i < charQuads->size; i++) {
+        Character* currentChar = &charQuads->content[i];
+        if (relMousPos.x < currentChar->pos.x + currentChar->width/2) {
+            data->cursor.byteIndex = i;
+            return true;
+        }
+    }
+    data->cursor.byteIndex = i;
+    return true;
 }
 
 void displayCurrentTime(Element *element) {
@@ -108,7 +133,7 @@ void displayCurrentTime(Element *element) {
            t.wHour,
            t.wMinute,
            t.wSecond);
-    copyText(element, time);
+    setText(element, time);
 }
 
 void syncWithScreen(Element *element) {

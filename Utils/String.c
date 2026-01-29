@@ -1,5 +1,8 @@
 
 #include "String.h"
+
+#include <string.h>
+
 #include "StringBuilder.h"
 
 StringFunctions Strings = {
@@ -21,18 +24,31 @@ StringFunctions Strings = {
     .newReservedString = newReservedString,
     .appendChar = str_appendChar,
     .popChar = str_popChar,
-    .isEmpty = str_isEmpty
+    .isEmpty = str_isEmpty,
+    .appendCharAt = str_appendCharAt
 };
 
 void str_grow(String * string, const size_t newCapacity) {
     char* oldContent = string->content;
-    char* newContent = realloc(oldContent, newCapacity);
+    char* newContent;
+    if (string->isHeap) {
+        newContent = realloc(oldContent, newCapacity);
+    } else {
+        newContent = malloc(newCapacity);
+        if (newContent) {
+            for (int i = 0; i < string->length; i++) {
+                newContent[i] = oldContent[i];
+            }
+            newContent[string->length] = '\0';
+        }
+    }
     if (newContent) {
         string->content = newContent;
         string->capacity = newCapacity;
     } else {
         puts("String growing failed, keeping old Buffer");
     }
+    string->isHeap = true;
 }
 
 String stringOf(char* content){
@@ -98,9 +114,20 @@ void str_setCharAt(const String* string, const int index, const char value){
 }
 
 void str_appendChar(String* string, const char value) {
-    if (string->length == string->capacity) str_grow(string, string->capacity*2 + 1);
+    if (string->length+1 >= string->capacity) str_grow(string, string->capacity*2 + 1);
     string->content[string->length++] = value;
     string->content[string->length] = '\0';
+}
+
+void str_appendCharAt(String* string, const char value, int index) {
+    if (index < 0) index = 0;
+    if (string->length+1 >= string->capacity) str_grow(string, string->capacity*2 + 1);
+    size_t i = string->length;
+    for (; i > index; i--) {
+        string->content[i] = string->content[i-1];
+    }
+    string->content[i] = value;
+    string->length++;
 }
 
 char str_popChar(String* string) {

@@ -18,17 +18,23 @@ typedef struct {
 } SliderData;
 
 typedef struct {
-    String text;
-
-    size_t cursor;          // byte index
-    size_t selectStart;     // byte index
-    size_t selectEnd;       // byte index
-
-    bool focused;
-    bool selecting;
+    int byteIndex;
+    float posX;
 
     float blinkTimer;
     bool cursorVisible;
+
+    size_t selectStart;
+    size_t selectEnd;
+} TextFieldCursor;
+
+typedef struct {
+    String text;
+
+    TextFieldCursor cursor;
+
+    bool focused;
+    bool selecting;
 } TextFieldData;
 
 #endif //C_GUIELEMENTDATA_H
