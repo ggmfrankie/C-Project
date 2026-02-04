@@ -20,6 +20,7 @@ struct Element;
 typedef Element Element;
 
 typedef struct TextElement {
+    bool hasText;
     bool forceResize;
     String text;
     Vec3f textColor;
@@ -56,12 +57,28 @@ typedef enum {
     t_textField
 } ElementType;
 
+struct Flags {
+    bool isActive: 1;
+    bool autoFit: 1;
+    bool fixedWidth: 1;
+    bool fixedHeight: 1;
+    bool draggable: 1;
+    bool needsDeletion: 1;
+    bool wantGrowHorizontal: 1;
+    bool wantGrowVertical: 1;
+};
+
+typedef union {
+    u_int64 data;
+    struct Flags bits;
+} ElementFlags;
+
 ARRAY_LIST(ChildElements, Element*)
 
 typedef struct Element {
     char* name;
     ElementType type;
-    bool isActive;
+    ElementFlags flags;
 
     Vec2i pos;
     Vec2i worldPos;
@@ -81,7 +98,6 @@ typedef struct Element {
     Vec3f defaultColor;
 
     //Text display
-    bool hasText;
     TextElement textElement;
 
     //Interaction
@@ -98,13 +114,6 @@ typedef struct Element {
     List_ChildElements childElements;
     Padding padding;
     int childGap;
-    bool autoFit;
-
-    bool fixedWidth;
-    bool fixedHeight;
-    bool draggable;
-
-    bool needsDeletion;
 
     void* elementData;
 
@@ -128,7 +137,6 @@ typedef struct {
     bool (*onHover)(Element* element, Renderer *renderer);
     void (*whileSelected)(Element* element);
     void (*onUpdate)(Element* element);
-    //NYI
     void (*reset)(Element* element);
 
     Task task;
@@ -139,6 +147,8 @@ typedef struct {
     bool draggable;
     bool fixedWidth;
     bool fixedHeight;
+    bool wantGrowHorizontal;
+    bool wantGrowVertical;
 
     void* elementData;
 
@@ -193,7 +203,8 @@ Element *guiAddElement(
     LayoutDirection layoutDirection,
     bool fixedWidth,
     bool fixedHeight,
-    void (*whileSelected)(Element *element), bool draggable, void (*onUpdate)(Element *element)
+    void (*whileSelected)(Element *element), bool draggable, void (*onUpdate)(Element *element), bool wantGrowHorizontal, bool
+    wantGrowVertical
 );
 
 Element *guiAddSimpleRectangle_Texture(

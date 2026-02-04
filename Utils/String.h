@@ -68,6 +68,7 @@ void str_setCharAt(const String* string, int index, char value);
 void str_appendChar(String* string, char value);
 void str_appendCharAt(String* string, char value, int index);
 char str_popChar(String* string);
+char str_popCharAt(String* string, int index);
 void str_setAll(const String* string, char key);
 char str_getCharAt(const String* string, int index);
 

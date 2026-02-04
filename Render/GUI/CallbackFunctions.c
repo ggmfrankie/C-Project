@@ -188,3 +188,12 @@ void shiftPosition(Element *element) {
     element->pos.x += 20;
     element->pos.y += 20;
 }
+
+void changeTextSize(Element *element) {
+    static int calls = 0;
+    calls++;
+    if (calls < 10) return;
+    calls = 0;
+    element->textElement.textScale *= 1.1f;
+    if (element->textElement.textScale > 5.0f) element->textElement.textScale = 1.0f;
+}

@@ -24,17 +24,16 @@ void mainFun() {
         t.func(t.userdata);
     } while (1);
 }
+
+
 //#define WINADAPT
 #ifndef WINADAPT
 int main(){
-
     SetConsoleOutputCP(CP_UTF8);
     pthread_t workerThreadID;
-    pthread_create(&workerThreadID, NULL, workerThread, NULL);
 
-    String hallo = stringOf("Hello");
-    Strings.appendCharAt(&hallo, '0', 1);
-    Strings.println(&hallo);
+    pthread_create(&workerThreadID, NULL, workerThread, NULL);
+    printf("Size %llu\n", sizeof(Element));
     //startEngine(createChessGUI);
     startEngine(generateTestGUI);
     return 0;

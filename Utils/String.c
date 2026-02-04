@@ -127,12 +127,23 @@ void str_appendCharAt(String* string, const char value, int index) {
         string->content[i] = string->content[i-1];
     }
     string->content[i] = value;
-    string->length++;
+    string->content[++string->length] = '\0';
 }
 
 char str_popChar(String* string) {
     if (string->length < string->capacity/3) str_grow(string, string->capacity/2);
     const char c = string->content[string->length--];
+    string->content[string->length] = '\0';
+    return c;
+}
+
+char str_popCharAt(String* string, int index) {
+    if (index < 0) index = 0;
+    if (string->length < string->capacity/3) str_grow(string, string->capacity/2);
+    const char c = string->content[index];
+    for (size_t i = index; i < string->length; i++) {
+        string->content[i] = string->content[i+1];
+    }
     string->content[string->length] = '\0';
     return c;
 }
@@ -338,5 +349,3 @@ void str_setAll(const String* string, const char key) {
         string->content[i] = key;
     }
 }
-
-

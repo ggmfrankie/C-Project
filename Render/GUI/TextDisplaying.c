@@ -7,6 +7,7 @@
 #define STB_RECT_PACK_IMPLEMENTATION
 #include <stb/stb_rect_pack.h>
 #define STB_TRUETYPE_IMPLEMENTATION
+#include <minwindef.h>
 #include <stb/stb_truetype.h>
 #include "GuiElement.h"
 #include "../Render.h"
@@ -14,6 +15,8 @@
 #include "../../Utils/String.h"
 #define FONT_ATLAS_SIZE 2048
 #define FONT_SIZE 32.0f
+
+void measureFont(Font *font);
 
 typedef struct {
     float x, y;     // position
@@ -40,7 +43,7 @@ Font loadFontAtlas(char* file) {
     fclose(f);
     Strings.delete(&completePath);
 
-    Font font;
+    Font font = {};
 
     font.fontSize = FONT_SIZE;
 
@@ -67,6 +70,8 @@ Font loadFontAtlas(char* file) {
         .height = FONT_ATLAS_SIZE,
         .textureId = tex
     };
+
+    measureFont(&font);
 
     free(temp_bitmap);
     free(ttf_buffer);
@@ -127,6 +132,44 @@ void renderText(const Renderer *renderer, const Element *element) {
         Mesh_render(&renderer->basicQuadMesh);
     }
     setUniform_i(&renderer->guiShader, ("transformTexCoords"), 0);
+}
+
+Vec2i measureElementText(const Font *font, const TextElement* textElement) {
+    const Vec2i measurements = measureText(font, &textElement->text);
+    const float scale = textElement->textScale;
+    return (Vec2i){(int)(measurements.x * scale), (int)(measurements.y * scale)};
+}
+
+Vec2i measureText(const Font *font, const String *text) {
+
+    float x = 0.0f;
+    float y = 0.0f;
+
+    float maxHeight = 0.0f;
+
+    for (int i = 0; i < text->length; i++) {
+        const char c = text->content[i];
+        if (c < 32 || c > 126) continue;
+
+        stbtt_aligned_quad q;
+        stbtt_GetPackedQuad(font->glyphs,
+                            font->fontAtlas.width,
+                            font->fontAtlas.height,
+                            c - 32,
+                            &x,
+                            &y,
+                            &q,
+                            1);
+
+        const float glyphHeight = (q.y1 - q.y0);
+
+        maxHeight = max(maxHeight, glyphHeight);
+    }
+
+    return (Vec2i){
+        (int)(x),
+        (int)(maxHeight)
+    };
 }
 
 void reloadTextQuads(const Font* font, Element *element) {
@@ -228,6 +271,11 @@ void renderTextOptimized(const Renderer *renderer, const Element *element) {
 
         totalGlyphLength += glyphWidth;
         if (maxGlyphHeight < glyphHeight) maxGlyphHeight = glyphHeight;
-
     }
+}
+
+void measureFont(Font *font) {
+    const String allChars = stringOf("' !#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~'");
+    const Vec2i fontSize = measureText(font, &allChars);
+    font->maxCharHeight = fontSize.y;
 }

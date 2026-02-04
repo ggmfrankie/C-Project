@@ -42,13 +42,10 @@ Element newElement(const Mesh mesh, const Vec2i pos, const int width, const int 
         .parentElement = NULL,
         .childElements = ChildElements_newList(8),
         .padding = (Padding){0,0,0,0},
-        .hasText = false,
+        .flags = {.bits = {.isActive = true, .autoFit = true, .needsDeletion = true}},
         .task = (Task){NULL, NULL},
-        .autoFit = true,
         .childGap = 0,
         .elementData = NULL,
-        .needsDeletion = false,
-        .isActive = true,
         .positionMode = POS_FIT
     };
 }
@@ -86,8 +83,8 @@ void setBoundingBox(Element* element, bool (*isMouseOver)(const Element *element
 void setText(Element* element, const char* text) {
     pthread_mutex_lock(&guiMutex);
     Strings.copyInto(&element->textElement.text, text);
-    element->hasText = true;
-    reloadTextQuads(getFont(), element);
+    element->textElement.hasText = true;
+    //reloadTextQuads(getFont(), element);
     pthread_mutex_unlock(&guiMutex);
 }
 
@@ -100,7 +97,7 @@ void setText_int(Element* element, const int i) {
 
 void setVisible(Element* element, const bool b) {
     pthread_mutex_lock(&guiMutex);
-    element->isActive = b;
+    element->flags.bits.isActive = b;
     pthread_mutex_unlock(&guiMutex);
 }
 
@@ -142,8 +139,14 @@ Element *guiAddElement(
     const PositionMode positionMode,
     void *elementData,
     const bool notSelectable,
-    const LayoutDirection layoutDirection, bool fixedWidth, bool fixedHeight, void (*whileSelected)(Element *element), bool
-    draggable, void (*onUpdate)(Element *element)
+    const LayoutDirection layoutDirection,
+    bool fixedWidth,
+    bool fixedHeight,
+    void (*whileSelected)(Element *element),
+    bool draggable,
+    void (*onUpdate)(Element *element),
+    bool wantGrowHorizontal,
+    bool wantGrowVertical
 )
 {
     Element_ListAdd(list, newElement(mesh, pos, width, height, tex));
@@ -168,11 +171,13 @@ Element *guiAddElement(
     lastElement->reset = defaultReset;
     lastElement->elementData = elementData;
     lastElement->layoutDirection = layoutDirection;
-    lastElement->fixedWidth = fixedWidth;
-    lastElement->fixedHeight = fixedHeight;
+    lastElement->flags.bits.fixedWidth = fixedWidth;
+    lastElement->flags.bits.fixedHeight = fixedHeight;
     lastElement->whileSelected = whileSelected;
-    lastElement->draggable = draggable;
+    lastElement->flags.bits.draggable = draggable;
     lastElement->onUpdate = onUpdate;
+    lastElement->flags.bits.wantGrowHorizontal = wantGrowHorizontal;
+    lastElement->flags.bits.wantGrowVertical = wantGrowVertical;
 
     if (notSelectable) lastElement->isMouseOver = NULL;
 
@@ -189,7 +194,7 @@ Element *guiAddElement(
             .charQuads = Character_newList(16)
         };
         setText(lastElement, text);
-        lastElement->hasText = true;
+        lastElement->textElement.hasText = true;
     }
     return lastElement;
 }
@@ -201,7 +206,7 @@ Element *guiAddSimpleRectangle_Texture(
     Texture *tex
 )
 {
-    Element* element = guiAddElement(&g_Elements, NULL, quadMesh, pos, width, height, tex, (Vec3f){0.6f, 0.6f, 0.6f}, (Padding){10, 10, 10, 10}, 10, NULL, NULL, NULL, (Task){NULL, NULL}, NULL, false, POS_FIT, NULL, false, L_down, false, false, NULL, false,NULL);
+    Element* element = guiAddElement(&g_Elements, NULL, quadMesh, pos, width, height, tex, (Vec3f){0.6f, 0.6f, 0.6f}, (Padding){10, 10, 10, 10}, 10, NULL, NULL, NULL, (Task){NULL, NULL}, NULL, false, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false);
     return element;
 }
 
@@ -212,7 +217,7 @@ Element *guiAddSimpleRectangle_Color(
     const Vec3f color
 )
 {
-    Element* element = guiAddElement(&g_Elements, NULL, quadMesh, pos, width, height, NULL, color, (Padding){10, 10, 10, 10}, 10, NULL, NULL, NULL, (Task){NULL, NULL}, NULL, false, POS_FIT, NULL, false, L_down, false, false, NULL, false,NULL);
+    Element* element = guiAddElement(&g_Elements, NULL, quadMesh, pos, width, height, NULL, color, (Padding){10, 10, 10, 10}, 10, NULL, NULL, NULL, (Task){NULL, NULL}, NULL, false, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false);
     return element;
 }
 
@@ -225,7 +230,7 @@ Element *guiAddSimpleButton_Texture(
     const char *text
 )
 {
-    Element* element = guiAddElement(&g_Elements, NULL, quadMesh, pos, width, height, tex, (Vec3f){0.6f, 0.6f, 0.6f}, (Padding){10, 10, 10, 10}, 10, isSelected_Quad, hoverAndDragFun, runTaskFun, task, text, true, POS_FIT, NULL, false, L_down, false, false, NULL, false,NULL);
+    Element* element = guiAddElement(&g_Elements, NULL, quadMesh, pos, width, height, tex, (Vec3f){0.6f, 0.6f, 0.6f}, (Padding){10, 10, 10, 10}, 10, isSelected_Quad, hoverAndDragFun, runTaskFun, task, text, true, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false);
     return element;
 }
 
@@ -238,7 +243,7 @@ Element *guiAddSimpleButton_Color(
     const char *text
 )
 {
-    Element* element = guiAddElement(&g_Elements, NULL, quadMesh, pos, width, height, NULL, color, (Padding){10, 10, 10, 10}, 10, isSelected_Quad, hoverAndDragFun, runTaskFun, task, text, true, POS_FIT, NULL, false, L_down, false, false, NULL, false,NULL);
+    Element* element = guiAddElement(&g_Elements, NULL, quadMesh, pos, width, height, NULL, color, (Padding){10, 10, 10, 10}, 10, isSelected_Quad, hoverAndDragFun, runTaskFun, task, text, true, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false);
     return element;
 }
 
@@ -251,11 +256,11 @@ Element *guiAddSimpleSlider(
     SliderData* sliderData
 )
 {
-    Element* element = guiAddElement(&g_Elements, NULL, quadMesh, pos, width, height, NULL, colorBackground, (Padding){10, 10, 10, 10}, 10, isSelected_Quad, hoverAndDragFun, NULL, (Task){}, NULL, true, POS_FIT, NULL, false, L_down, false, false, NULL, false,NULL);
+    Element* element = guiAddElement(&g_Elements, NULL, quadMesh, pos, width, height, NULL, colorBackground, (Padding){10, 10, 10, 10}, 10, isSelected_Quad, hoverAndDragFun, NULL, (Task){}, NULL, true, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false);
     Vec2i sliderPos = {};
     sliderPos.x = width/2;
     sliderPos.y = 0;
-    Element* sliderElement = guiAddElement(&g_Elements, NULL, quadMesh, sliderPos, width, height, NULL, colorSlider, (Padding){10, 10, 10, 10}, 10, isSelected_Quad, hoverAndDragFun, sliderCallbackFun, (Task){}, NULL, true, POS_FIT, NULL, false, L_down, false, false, NULL, false,NULL);
+    Element* sliderElement = guiAddElement(&g_Elements, NULL, quadMesh, sliderPos, width, height, NULL, colorSlider, (Padding){10, 10, 10, 10}, 10, isSelected_Quad, hoverAndDragFun, sliderCallbackFun, (Task){}, NULL, true, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false);
     element->childElements.add(&element->childElements, sliderElement);
     element->elementData = sliderData;
     return element;
@@ -305,7 +310,9 @@ Element *createElement(const ElementSettings elementSettings) {
                          elementSettings.fixedHeight,
                          elementSettings.whileSelected,
                          elementSettings.draggable,
-                         elementSettings.onUpdate
+                         elementSettings.onUpdate,
+                         elementSettings.wantGrowHorizontal,
+                         elementSettings.wantGrowVertical
     );
 }
 

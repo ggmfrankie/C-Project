@@ -23,6 +23,7 @@ void displayCurrentTime(Element *element);
 void incrementWidth(Element *element);
 void incrementHeight(Element *element);
 void shiftPosition(Element *element);
+void changeTextSize(Element *element);
 
 #define CHANGE_COLOR_ON_HOVER(color)\
 .elementData = (color),\

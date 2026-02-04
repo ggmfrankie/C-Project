@@ -752,7 +752,8 @@ void createChessBoard(Element* root) {
                         .width = 400,
                         .fixedWidth = true,
                         .layoutDirection = L_right,
-                        .notSelectable = true
+                        .notSelectable = true,
+                        .wantGrowHorizontal = true
                     }
                 ),
                 createElement(
@@ -789,7 +790,7 @@ void createChessBoard(Element* root) {
         )
     );
     Element* chessBoard = getElement("game board");;
-    chessBoard->isActive = false;
+    chessBoard->flags.bits.isActive = false;
 }
 
 void createStartScreen(Element* root) {
@@ -871,5 +872,5 @@ void createEndScreen(Element* root) {
         )
     );
     Element* endScreen = getElement("end screen");
-    endScreen->isActive = false;
+    endScreen->flags.bits.isActive = false;
 }

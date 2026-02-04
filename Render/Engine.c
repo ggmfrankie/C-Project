@@ -54,16 +54,38 @@ void startEngine(void (*generateGUI)(Element* guiRoot)) {
     pthread_cond_broadcast(&guiInitCond);
     pthread_mutex_unlock(&guiMutex);
 
+    int num = 0;
     while (!glfwWindowShouldClose(g_Renderer.window)) {
+            const u_int64 startTime = now_ns();
+
         glfwPollEvents();
+
+            const u_int64 pollEventsTime = now_ns() - startTime;
+
+            const u_int64 updateLayoutTimeStart = now_ns();
 
         updateLayout3(&g_Renderer.guiRoot, (Vec2i){0, 0}, (Vec2i){0, 0}, &g_Renderer.font);
 
+            const u_int64 updateLayoutTime = now_ns() - updateLayoutTimeStart;
+
+            const u_int64 updateStateTimeStart = now_ns();
+
         updateState(&g_Renderer);
+
+            const u_int64 updateStateTime = now_ns() - updateStateTimeStart;
+
+            const u_int64 renderTimeStart = now_ns();
 
         pthread_mutex_lock(&guiMutex);
         g_Renderer.render(&g_Renderer);
         pthread_mutex_unlock(&guiMutex);
+
+            const u_int64 renderTime = now_ns() - renderTimeStart;
+
+        if (num++ > 100) {
+            printf("Elapsed Time: %lf ms\n Poll: %llu, Update Layout: %llu, Update State: %llu, Render: %llu\n",(double)(now_ns()-startTime)/1000000, pollEventsTime, updateLayoutTime, updateStateTime, renderTime);
+            num = 0;
+        }
 
         Sleep(1);
     }
@@ -76,7 +98,7 @@ static bool dragging = false;
 
 bool dragElement(const Renderer *renderer) {
     if (!mouseCapturedElement) return false;
-    if (!mouseCapturedElement->draggable) return false;
+    if (!mouseCapturedElement->flags.bits.draggable) return false;
 
     Element* element = mouseCapturedElement;
     static Vec2i offset;
@@ -106,6 +128,9 @@ bool dragElement(const Renderer *renderer) {
 }
 
 void updateState(Renderer *renderer) {
+    renderer->guiRoot.width = renderer->screenWidth;
+    renderer->guiRoot.height = renderer->screenHeight;
+
     dragElement(renderer);
     const bool consumed = updateStateRecursively(&renderer->guiRoot, renderer);
 
@@ -114,7 +139,7 @@ void updateState(Renderer *renderer) {
 }
 
 bool updateStateRecursively(Element *element, Renderer *renderer) {
-    if (element == NULL || !element->isActive) return false;
+    if (element == NULL || !element->flags.bits.isActive) return false;
     if (element->onUpdate) element->onUpdate(element);
 
     for (int i = (int)element->childElements.size-1; i >=0 ; i--) {
@@ -140,8 +165,7 @@ void charCallback(GLFWwindow* window, const unsigned int codepoint) {
         TextFieldData* tfd = focusedElement->elementData;
         if (codepoint < 128) {
             puts("here");
-            str_appendChar(&tfd->text, (char) codepoint);
-            tfd->cursor.byteIndex++;
+            str_appendCharAt(&tfd->text, (char) codepoint, tfd->cursor.byteIndex++);
 
             setText(focusedElement, tfd->text.content);
         }
@@ -155,17 +179,17 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
         if (action == GLFW_PRESS || action == GLFW_REPEAT)
         {
             TextFieldData* tfd = focusedElement->elementData;
-            String* text = &focusedElement->textElement.text;
-            if (key == GLFW_KEY_BACKSPACE && tfd->cursor.byteIndex != 0)
-            {
-                str_popChar(&tfd->text);
-                tfd->cursor.byteIndex--;
+            if (key == GLFW_KEY_BACKSPACE && tfd->cursor.byteIndex != 0) {
+                str_popCharAt(&tfd->text, --tfd->cursor.byteIndex);
                 setText(focusedElement,  tfd->text.content);
             }
-            else if (key == GLFW_KEY_ENTER)
-            {
-                // Handle enter (e.g., submit text)
+            else if (key == GLFW_KEY_LEFT && tfd->cursor.byteIndex != 0) {
+                tfd->cursor.byteIndex--;
             }
+            else if (key == GLFW_KEY_RIGHT && tfd->cursor.byteIndex < tfd->text.length) {
+                tfd->cursor.byteIndex++;
+            }
+
         }
     }
 }
