@@ -106,6 +106,7 @@ void Renderer_render(const Renderer *renderer) {
         renderElementsRecursively(guiRoot->childElements.content[i], renderer);
     }
 
+
     glfwSwapBuffers(renderer->window);
     Shaders.unbind();
 }
