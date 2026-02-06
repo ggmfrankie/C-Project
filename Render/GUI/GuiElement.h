@@ -20,6 +20,8 @@ struct Element;
 typedef Element Element;
 
 typedef struct TextElement {
+    Vec2f pos;
+    float width;
     bool hasText;
     bool forceResize;
     String text;

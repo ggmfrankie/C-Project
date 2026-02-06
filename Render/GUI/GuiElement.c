@@ -84,7 +84,7 @@ void setText(Element* element, const char* text) {
     pthread_mutex_lock(&guiMutex);
     Strings.copyInto(&element->textElement.text, text);
     element->textElement.hasText = true;
-    //reloadTextQuads(getFont(), element);
+    reloadTextQuads(getFont(), element);
     pthread_mutex_unlock(&guiMutex);
 }
 
@@ -197,7 +197,9 @@ Element *guiAddElement(
             .textScale = 1.0f,
             .textColor = (Vec3f){1.0f, 1.0f, 1.0f},
             .forceResize = forceResize,
-            .charQuads = Character_newList(16)
+            .charQuads = Character_newList(16),
+            .pos = (Vec2f){},
+            .width = 0
         };
         setText_noLock(lastElement, text);
         lastElement->textElement.hasText = true;

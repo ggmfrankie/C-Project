@@ -134,8 +134,8 @@ void renderTextRetained(const Renderer* renderer, const Element* element) {
     for (int i = 0; i < textElement->charQuads.size; i++) {
         const Character* c = &textElement->charQuads.content[i];
 
-        const float x = c->pos.x + (float) element->worldPos.x;
-        const float y = c->pos.y + (float) element->worldPos.y;
+        const float x = c->pos.x + (float) element->worldPos.x + element->padding.left;
+        const float y = c->pos.y + (float) element->worldPos.y + renderer->font.maxCharHeight * element->textElement.textScale + element->padding.left;
         const float w = c->width;
         const float h = c->height;
 
@@ -155,6 +155,7 @@ void renderTextRetained(const Renderer* renderer, const Element* element) {
     Shaders.unbind();
 }
 
+[[deprecated]]
 void renderText(const Renderer *renderer, const Element *element) {
     const TextElement *textElement = &element->textElement;
     if (textElement->text.length == 0) return;
@@ -257,8 +258,8 @@ void reloadTextQuads(const Font* font, Element *element) {
     const float textScale = textElement->textScale;
 
     const Vec2i startPos = (Vec2i){
-        .x = element->padding.left,
-        .y = element->actualHeight - element->padding.down
+        .x = 0,
+        .y = 0
     };
     Vec2f cursor = (Vec2f){
         .x = (float)startPos.x,
@@ -267,8 +268,6 @@ void reloadTextQuads(const Font* font, Element *element) {
 
     glBindTexture(GL_TEXTURE_2D, font->fontAtlas.textureId);
 
-    float maxGlyphHeight = 0;
-    float totalGlyphLength = 0;
     float prevX = 0.0f;
 
     for (int i = 0; i < textElement->text.length; i++) {
@@ -289,8 +288,6 @@ void reloadTextQuads(const Font* font, Element *element) {
         const float glyphWidth  = (q.x1 - q.x0) * textScale;
         const float glyphHeight = (q.y1 - q.y0) * textScale;
 
-        totalGlyphLength += glyphWidth;
-        if (maxGlyphHeight < glyphHeight) maxGlyphHeight = glyphHeight;
         character->pos = (Vec2f){ (q.x0-(float)startPos.x)*textScale + (float)startPos.x, (q.y0-(float)startPos.y)*textScale + (float)startPos.y };
         character->width = glyphWidth;
         character->height = glyphHeight;
@@ -300,6 +297,7 @@ void reloadTextQuads(const Font* font, Element *element) {
         character->advance = cursor.x - prevX;
         prevX = cursor.x;
     }
+    textElement->width = cursor.x * textScale;
 }
 
 [[deprecated]]

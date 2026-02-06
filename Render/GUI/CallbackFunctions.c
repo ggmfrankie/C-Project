@@ -196,4 +196,5 @@ void changeTextSize(Element *element) {
     calls = 0;
     element->textElement.textScale *= 1.1f;
     if (element->textElement.textScale > 5.0f) element->textElement.textScale = 1.0f;
+    reloadTextQuads(getFont(), element);
 }

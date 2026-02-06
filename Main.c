@@ -34,8 +34,8 @@ int main(){
 
     pthread_create(&workerThreadID, NULL, workerThread, NULL);
     printf("Size %llu\n", sizeof(Element));
-    //startEngine(createChessGUI);
-    startEngine(generateTestGUI);
+    startEngine(createChessGUI);
+    //startEngine(generateTestGUI);
     return 0;
 }
 #endif

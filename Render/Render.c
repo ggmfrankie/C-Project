@@ -90,7 +90,7 @@ void Renderer_render(const Renderer *renderer) {
     ComputeShader_run(&renderer->computeShader);
 
     glClear(GL_COLOR_BUFFER_BIT);
-    #define DEBUG
+    //#define DEBUG
 #ifdef DEBUG
     glDisable(GL_CULL_FACE);
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -307,9 +307,9 @@ Vec2i updateLayout3(Element* element, const Vec2i parentCursor, const Vec2i pare
     const Padding padding = element->padding;
 
     if (element->textElement.hasText) {
-        const Vec2i textSize = measureElementText(font, &element->textElement);
-        const int textW = padding.left + textSize.x + padding.right;
-        const int textH = padding.up + (int)((font->maxCharHeight)*element->textElement.textScale) + padding.down;
+        //const Vec2i textSize = measureElementText(font, &element->textElement);
+        const int textW = padding.left + (int)element->textElement.width + padding.right;
+        const int textH = padding.up + (int)((float)(font->maxCharHeight) * element->textElement.textScale) + padding.down;
 
         element->actualWidth  = max(element->actualWidth ,  textW);
         element->actualHeight = max(element->actualHeight, textH);
