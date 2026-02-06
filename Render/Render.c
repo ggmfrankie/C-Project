@@ -79,13 +79,18 @@ void Renderer_init(Renderer *renderer) {
     Shader_createUniform(&renderer->guiShader, "transformTexCoords");
     Shader_createUniform(&renderer->guiShader, "texPosStart");
     Shader_createUniform(&renderer->guiShader, "texPosEnd");
+
+    Shader_createUniform(&renderer->textShader, "fontAtlas");
+    Shader_createUniform(&renderer->textShader, "screenWidth");
+    Shader_createUniform(&renderer->textShader, "screenHeight");
+    Shader_createUniform(&renderer->textShader, "color");
 }
 
 void Renderer_render(const Renderer *renderer) {
     ComputeShader_run(&renderer->computeShader);
 
     glClear(GL_COLOR_BUFFER_BIT);
-    //#define DEBUG
+    #define DEBUG
 #ifdef DEBUG
     glDisable(GL_CULL_FACE);
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -133,7 +138,8 @@ void renderElementsRecursively(Element* element, const Renderer* renderer) {
     Mesh_render(&element->Mesh);
 
     if (element->textElement.hasText) {
-        renderText(renderer, element);
+        renderTextRetained(renderer, element);
+        Shaders.bind(&renderer->guiShader);
     }
 
     for (int i = 0; i < element->childElements.size; i++) {
@@ -375,6 +381,7 @@ inline bool isMousePressed(GLFWwindow* window, const int mouseButton) {
 Renderer newRenderer(const int width, const int height, const char* name) {
     return (Renderer){
         .guiShader = newShader("GuiVertexShader.vert", "GuiFragmentShader.frag"),
+        .textShader = newShader("TextRender.vert", "TextRender.frag"),
         .otherShaders = (OtherShaders){0, {}},
         .computeShader = 0,
         .window = initWindow(width, height, name),

@@ -38,7 +38,7 @@ Element newElement(const Mesh mesh, const Vec2i pos, const int width, const int 
         .texture = texture,
         .color = (Vec3f){0.0f, 0.0f, 0.0f},
         .defaultColor = (Vec3f){0.0f, 0.0f, 0.0f},
-        .textElement = NULL,
+        .textElement = (TextElement){.charQuads = Character_newList(16)},
         .parentElement = NULL,
         .childElements = ChildElements_newList(8),
         .padding = (Padding){0,0,0,0},
@@ -86,6 +86,12 @@ void setText(Element* element, const char* text) {
     element->textElement.hasText = true;
     //reloadTextQuads(getFont(), element);
     pthread_mutex_unlock(&guiMutex);
+}
+
+void setText_noLock(Element* element, const char* text) {
+    Strings.copyInto(&element->textElement.text, text);
+    element->textElement.hasText = true;
+    reloadTextQuads(getFont(), element);
 }
 
 void setText_int(Element* element, const int i) {
@@ -193,8 +199,9 @@ Element *guiAddElement(
             .forceResize = forceResize,
             .charQuads = Character_newList(16)
         };
-        setText(lastElement, text);
+        setText_noLock(lastElement, text);
         lastElement->textElement.hasText = true;
+        reloadTextQuads(getFont(), lastElement);
     }
     return lastElement;
 }

@@ -16,6 +16,8 @@
 #define FONT_ATLAS_SIZE 2048
 #define FONT_SIZE 32.0f
 
+#define MAX_TEXT_VERTICES 16384
+
 void measureFont(Font *font);
 
 typedef struct {
@@ -71,12 +73,86 @@ Font loadFontAtlas(char* file) {
         .textureId = tex
     };
 
+    GLuint textVAO;
+    GLuint textVBO;
+    glGenVertexArrays(1, &textVAO);
+    glGenBuffers(1, &textVBO);
+
+    glBindVertexArray(textVAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, textVBO);
+    glEnableVertexAttribArray(0); // position
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE,
+                          sizeof(Vertex), (void*)offsetof(Vertex, x));
+
+    glEnableVertexAttribArray(1); // UV
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE,
+                          sizeof(Vertex), (void*)offsetof(Vertex, u));
+
+    glBufferData(GL_ARRAY_BUFFER,
+             MAX_TEXT_VERTICES * sizeof(Vertex),
+             NULL,
+             GL_DYNAMIC_DRAW);
+
+    font.textVAO = textVAO;
+    font.textVBO = textVBO;
+
     measureFont(&font);
 
     free(temp_bitmap);
     free(ttf_buffer);
     free(rgbaBuffer);
     return font;
+}
+
+void drawTextBatched(const Renderer* renderer, const Vertex* vertices, const int num) {
+    glBindTexture(GL_TEXTURE_2D, renderer->font.fontAtlas.textureId);
+    glBindVertexArray(renderer->font.textVAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, renderer->font.textVBO);
+    glBufferSubData(GL_ARRAY_BUFFER, 0,sizeof(Vertex) * num, vertices);
+
+    glDrawArrays(GL_TRIANGLES, 0, num);
+}
+
+void renderTextRetained(const Renderer* renderer, const Element* element) {
+    const TextElement *textElement = &element->textElement;
+    if (textElement->text.length == 0) return;
+
+    Shaders.bind(&renderer->textShader);
+
+    Vertex vertices[textElement->charQuads.size * 6];
+
+    Vec3f color = {};
+
+    setUniform(&renderer->textShader, "fontAtlas", 0);
+    setUniform(&renderer->textShader, ("screenWidth"), (float) renderer->screenWidth);
+    setUniform(&renderer->textShader, ("screenHeight"), (float) renderer->screenHeight);
+    setUniform(&renderer->textShader, "color", color);
+
+    int v = 0;
+    for (int i = 0; i < textElement->charQuads.size; i++) {
+        const Character* c = &textElement->charQuads.content[i];
+
+        const float x = c->pos.x + (float) element->worldPos.x;
+        const float y = c->pos.y + (float) element->worldPos.y;
+        const float w = c->width;
+        const float h = c->height;
+
+        const Vec2f uv0 = c->texPosStart;
+        const Vec2f uv1 = c->texPosEnd;
+
+        vertices[v++] = (Vertex){x, y, uv0.x, uv0.y};
+        vertices[v++] = (Vertex){x+w, y, uv1.x, uv0.y};
+        vertices[v++] = (Vertex){x+w, y+h, uv1.x, uv1.y};
+
+        vertices[v++] = (Vertex){x, y, uv0.x, uv0.y};
+        vertices[v++] = (Vertex){x+w, y+h, uv1.x, uv1.y};
+        vertices[v++] = (Vertex){x, y+h, uv0.x, uv1.y};
+    }
+
+    drawTextBatched(renderer, vertices, v);
+    Shaders.unbind();
 }
 
 void renderText(const Renderer *renderer, const Element *element) {
@@ -176,14 +252,13 @@ void reloadTextQuads(const Font* font, Element *element) {
     TextElement *textElement = &element->textElement;
     if (textElement->text.length == 0) return;
 
-    puts("in here?");
-    Character_ListFree(&textElement->charQuads);
+    Character_ListClear(&textElement->charQuads);
 
     const float textScale = textElement->textScale;
 
     const Vec2i startPos = (Vec2i){
-        .x = element->worldPos.x + element->padding.left,
-        .y = element->worldPos.y + element->actualHeight - element->padding.down
+        .x = element->padding.left,
+        .y = element->actualHeight - element->padding.down
     };
     Vec2f cursor = (Vec2f){
         .x = (float)startPos.x,

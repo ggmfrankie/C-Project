@@ -20,6 +20,7 @@ typedef struct Renderer {
     GLFWwindow *window;
     Vec2i mousePos;
     Shader guiShader;
+    Shader textShader;
     ComputeShader computeShader;
 
     Font font;

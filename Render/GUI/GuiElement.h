@@ -168,6 +168,7 @@ void setBoundingBox(Element* element, bool (*isMouseOver)(const Element *element
 void defaultReset(Element* element);
 
 void setText(Element* element, const char* text);
+void setText_noLock(Element* element, const char* text);
 void setText_int(Element* element, int i);
 void setVisible(Element* element, bool b);
 void setColor(Element* element, Vec3f color);

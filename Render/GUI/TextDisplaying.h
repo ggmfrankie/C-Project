@@ -20,6 +20,9 @@ typedef struct {
     stbtt_packedchar glyphs[96];
     float fontSize;
     int maxCharHeight;
+
+    GLuint textVAO;
+    GLuint textVBO;
 } Font;
 
 typedef struct {
@@ -39,6 +42,7 @@ ARRAY_LIST(Character, Character)
 Font loadFontAtlas(char* file);
 void reloadTextQuads(const Font* font, Element *element);
 void renderText(const Renderer *renderer, const Element *element);
+void renderTextRetained(const Renderer* renderer, const Element* element);
 Vec2i measureText(const Font *font, const String *text);
 Vec2i measureElementText(const Font *font, const TextElement* textElement);
 

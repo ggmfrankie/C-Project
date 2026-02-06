@@ -167,7 +167,7 @@ void charCallback(GLFWwindow* window, const unsigned int codepoint) {
             puts("here");
             str_appendCharAt(&tfd->text, (char) codepoint, tfd->cursor.byteIndex++);
 
-            setText(focusedElement, tfd->text.content);
+            setText_noLock(focusedElement, tfd->text.content);
         }
     }
 }
@@ -181,7 +181,7 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
             TextFieldData* tfd = focusedElement->elementData;
             if (key == GLFW_KEY_BACKSPACE && tfd->cursor.byteIndex != 0) {
                 str_popCharAt(&tfd->text, --tfd->cursor.byteIndex);
-                setText(focusedElement,  tfd->text.content);
+                setText_noLock(focusedElement,  tfd->text.content);
             }
             else if (key == GLFW_KEY_LEFT && tfd->cursor.byteIndex != 0) {
                 tfd->cursor.byteIndex--;
@@ -209,9 +209,7 @@ Vec2i getWindowSize() {
 }
 
 Font* getFont() {
-    pthread_mutex_lock(&guiMutex);
     Font* font = &g_Renderer.font;
-    pthread_mutex_unlock(&guiMutex);
     return font;
 }
 

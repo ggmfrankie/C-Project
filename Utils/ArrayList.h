@@ -28,8 +28,12 @@ static inline void name##_error() { \
 } \
 \
 static inline void name##_ListAdd(List_##name *list, type value) { \
+    if(!list->content){\
+        puts("List not initialized");\
+        name##_error();\
+    } \
     if (list->size >= list->capacity) { \
-        type *tmp = realloc(list->content, list->capacity * 2 * sizeof(type)); \
+        type *tmp = realloc(list->content, list->capacity * 2 * sizeof(type) + 1); \
         if (!tmp) name##_error(); \
         list->content = tmp; \
         list->capacity *= 2; \
@@ -56,6 +60,10 @@ static inline void name##_ListFree(List_##name *list) { \
     list->content = NULL; \
     list->size = 0; \
     list->capacity = 0; \
+}\
+\
+static inline void name##_ListClear(List_##name *list) { \
+list->size = 0; \
 }\
 \
 static inline void name##_iterator(List_##name *list, void (*foo)(type *content)){\
