@@ -4,5 +4,6 @@
 
 #ifndef C_CHESS_V_2_H
 #define C_CHESS_V_2_H
-
+void chess_run ();
 #endif //C_CHESS_V_2_H
+

@@ -14,6 +14,7 @@
 #include "Extern/Informatik/TowersOfHanoi.h"
 #include "Projects/Test/TestGUI.h"
 #include "Projects/Chess/ChessGame.h"
+#include "Projects/ChessNewandImproved/ChessBetter2.h"
 
 void* workerThread(void* args);
 
@@ -31,10 +32,10 @@ void mainFun() {
 int main(){
     SetConsoleOutputCP(CP_UTF8);
     pthread_t workerThreadID;
-
+    chess_run ();
     pthread_create(&workerThreadID, NULL, workerThread, NULL);
-    printf("Size %llu\n", sizeof(Element));
-    startEngine(createChessGUI);
+    //printf("Size %llu\n", sizeof(Element));
+    //startEngine(createChessGUI);
     //startEngine(generateTestGUI);
     return 0;
 }

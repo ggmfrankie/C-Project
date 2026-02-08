@@ -6,6 +6,7 @@
 #include "ChessBetter2.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #define COOL_COLOR (Vec3f){.2, .3, .3}
 #define COLOR_WHITE (Vec3f){1, 1, 1}
@@ -78,6 +79,12 @@ Color chess_getPieceColor(ChessPiece piece) {
 
 }
 
+PieceType chess_getPieceType(ChessPiece piece) {
+
+    return abs (piece);
+
+}
+
 void chess_setUpPieces () {
 
     int j = 0;
@@ -120,16 +127,24 @@ void chess_setUpPieces () {
     }
 }
 
-void printBoard () {
+void chess_printBoard () {
+
+static char *chess_names[] = {"[ ]","[P]","[N]","[B]","[R]","[Q]","[K]"};
 
     for (int i = 0; i < 8; i++) {
         for (int ii = 0; ii < 8; ii++) {
 
-            //printf("chess",);
-            //board.squares[i][ii].piece;
+            printf("%s",chess_names[chess_getPieceType(chess_board.squares[i][ii].piece)]);
+            if (ii == 7) printf("\n");
 
         }
     }
 
 }
 
+void chess_run () {
+
+    chess_setUpPieces ();
+    chess_printBoard ();
+
+}
