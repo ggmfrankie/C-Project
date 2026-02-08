@@ -205,7 +205,7 @@ void markKing(const PieceColor color, const int row, const int column, const Mar
                 if (column-i < 0) break;
                 if (board[row][column-i].piece == empty) continue;
                 if (board[row][column-i].piece == rook * color) {
-                    chessCheckedMark(row, 1, row, column, color);
+                    chessCheckedMark(row, 2, row, column, color);
                 } else if (board[row][column-i].piece != empty) break;
             }
         }
@@ -462,9 +462,9 @@ bool applyMove(const ChessMove* move) {
             if (turn == 1) turnPosCanCastle = false;
             else turnNegCanCastle = false;
 
-            if (pos.x == 1) {
+            if (pos.x == 2) {
                 if (pos.y == 0 || pos.y == 7) {
-                    board[pos.y][2].piece = board[pos.y][0].piece;
+                    board[pos.y][3].piece = board[pos.y][0].piece;
                     board[pos.y][0].piece = empty;
                 }
             } else if (pos.x == 6) {
@@ -531,6 +531,8 @@ void runMarking(const ChessPiece piece, const int row, const int column, const M
 
 void resetBoard(void* nix) {
     turn = boardDirection ? 1 : -1;
+    turnPosCanCastle = true;
+    turnNegCanCastle = true;
     setUpPieces();
     unmarkAll();
     setVisible(getElement("end screen"), false);
