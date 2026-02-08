@@ -3,7 +3,9 @@
 // The Start of a new era
 // Trust
 
-#include "Chess V.2.h"
+#include "ChessBetter2.h"
+
+#include <stdio.h>
 
 #define COOL_COLOR (Vec3f){.2, .3, .3}
 #define COLOR_WHITE (Vec3f){1, 1, 1}
@@ -116,5 +118,18 @@ void setUpPieces () {
         board.squares[6][i].piece = whitePawn;
 
     }
+}
+
+void printBoard () {
+
+    for (int i = 0; i < 8; i++) {
+        for (int ii = 0; ii < 8; ii++) {
+
+            printf("chess",);
+            board.squares[i][ii].piece;
+
+        }
+    }
+
 }
 
