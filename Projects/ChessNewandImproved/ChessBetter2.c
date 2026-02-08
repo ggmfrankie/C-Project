@@ -69,21 +69,21 @@ typedef struct {
 
 } Board;
 
-Board board = {};
+Board chess_board = {};
 
-Color getPieceColor(ChessPiece piece) {
+Color chess_getPieceColor(ChessPiece piece) {
 
     if (piece > 0) return White;
     else return Black;
 
 }
 
-void setUpPieces () {
+void chess_setUpPieces () {
 
     int j = 0;
     for (int i = 0; j < 8; i++) {
 
-        board.squares[j][i].piece = empty;
+        chess_board.squares[j][i].piece = empty;
 
         if (i == 7) {
 
@@ -94,28 +94,28 @@ void setUpPieces () {
 
     }
 
-    board.squares[0][0].piece = blackRook;
-    board.squares[0][1].piece = blackKnight;
-    board.squares[0][2].piece = blackBishop;
-    board.squares[0][3].piece = blackQueen;
-    board.squares[0][4].piece = blackKing;
-    board.squares[0][5].piece = blackBishop;
-    board.squares[0][6].piece = blackKnight;
-    board.squares[0][7].piece = blackRook;
+    chess_board.squares[0][0].piece = blackRook;
+    chess_board.squares[0][1].piece = blackKnight;
+    chess_board.squares[0][2].piece = blackBishop;
+    chess_board.squares[0][3].piece = blackQueen;
+    chess_board.squares[0][4].piece = blackKing;
+    chess_board.squares[0][5].piece = blackBishop;
+    chess_board.squares[0][6].piece = blackKnight;
+    chess_board.squares[0][7].piece = blackRook;
 
-    board.squares[7][0].piece = whiteRook;
-    board.squares[7][1].piece = whiteKnight;
-    board.squares[7][2].piece = whiteBishop;
-    board.squares[7][3].piece = whiteQueen;
-    board.squares[7][4].piece = whiteKing;
-    board.squares[7][5].piece = whiteBishop;
-    board.squares[7][6].piece = whiteKnight;
-    board.squares[7][7].piece = whiteRook;
+    chess_board.squares[7][0].piece = whiteRook;
+    chess_board.squares[7][1].piece = whiteKnight;
+    chess_board.squares[7][2].piece = whiteBishop;
+    chess_board.squares[7][3].piece = whiteQueen;
+    chess_board.squares[7][4].piece = whiteKing;
+    chess_board.squares[7][5].piece = whiteBishop;
+    chess_board.squares[7][6].piece = whiteKnight;
+    chess_board.squares[7][7].piece = whiteRook;
 
     for (int i = 0; i < 8; i++) {
 
-        board.squares[1][i].piece = blackPawn;
-        board.squares[6][i].piece = whitePawn;
+        chess_board.squares[1][i].piece = blackPawn;
+        chess_board.squares[6][i].piece = whitePawn;
 
     }
 }
@@ -125,8 +125,8 @@ void printBoard () {
     for (int i = 0; i < 8; i++) {
         for (int ii = 0; ii < 8; ii++) {
 
-            printf("chess",);
-            board.squares[i][ii].piece;
+            //printf("chess",);
+            //board.squares[i][ii].piece;
 
         }
     }
