@@ -110,6 +110,10 @@ Mesh Mesh_loadNinePatchMesh() {
     };
 }
 
+Mesh Mesh_loadRoundedCornerMesh(int radius) {
+
+}
+
 void deleteMeshData(MeshData *meshData) {
     if (!meshData) return;
     if (meshData->vertices) free(meshData->vertices);
