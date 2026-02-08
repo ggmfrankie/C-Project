@@ -79,8 +79,7 @@ add_executable(C
         Utils/UtilityFun.c
         Utils/UtilityFun.h
         Projects/Test/TestGUI.c
-        "Projects/Chess New and Improved/ChessBetter2.c"
-        "Projects/Chess New and Improved/ChessBetter2.h"
+
 )
 #add_subdirectory("${CMAKE_SOURCE_DIR}/Render")
 
