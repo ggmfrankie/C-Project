@@ -5,6 +5,7 @@
 
 #include "ChessBetter2.h"
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -66,9 +67,20 @@ typedef struct {
 
 typedef struct {
 
+    int row, col;
+    bool isCapture;
+    bool isCheck;
+
+} PossibleMove;
+
+typedef struct {
+
     Square squares [8][8];
+    PossibleMove possibleMoves [64];
+    int index;
 
 } Board;
+
 
 Board chess_board = {};
 
@@ -146,5 +158,115 @@ void chess_run () {
 
     chess_setUpPieces ();
     chess_printBoard ();
+
+}
+
+void chess_Mark (int row, int col, bool isCheck, bool isCapture) {
+
+    if (row < 0 || row >= 8 || col < 0 || col >= 8) return;
+    chess_board.possibleMoves[chess_board.index]=(PossibleMove){.row = row,.col = col,.isCheck = isCheck,.isCapture = isCapture};
+
+}
+
+void chess_Checking(int row, int col,ChessPiece piece,ChessPiece ppiece) {
+
+    if (ppiece != 0) {
+
+        if (chess_getPieceColor(ppiece) != chess_getPieceColor(piece)) {
+
+            bool isCheck = false;
+            bool isCapture = true;
+
+            if (chess_getPieceType(ppiece) == King) {
+
+                isCheck = true;
+                isCapture = false;
+
+            }
+            chess_Mark(row, col, isCheck, isCapture);
+
+        }
+
+        return;
+
+    }
+
+    chess_Mark(row, col, false, false);
+
+}
+
+void chess_generateMovesPawn (ChessPiece piece, int row, int col) {
+
+
+
+}
+
+void chess_generateMovesKnight (ChessPiece piece, int row, int col) {
+
+
+
+}
+
+void chess_generateMovesBishop (ChessPiece piece, int row, int col) {
+
+
+
+}
+
+void chess_generateMovesRook (ChessPiece piece, int row, int col) {
+
+    for (int i = 1; i < 8; i++) {
+
+        ChessPiece ppiece = chess_board.squares[row][col+i].piece;
+        chess_Checking(row, col+i, ppiece, ppiece);
+
+    }
+
+    for (int i = 1; i < 8; i++) {
+
+        ChessPiece ppiece = chess_board.squares[row][col-i].piece;
+        chess_Checking(row, col-i, ppiece, ppiece);
+
+    }
+
+    for (int i = 1; i < 8; i++) {
+
+        ChessPiece ppiece = chess_board.squares[row+i][col].piece;
+        chess_Checking(row+i, col, ppiece, ppiece);
+
+    }
+
+    for (int i = 1; i < 8; i++) {
+
+        ChessPiece ppiece = chess_board.squares[row-i][col].piece;
+        chess_Checking(row-i, col, ppiece, ppiece);
+
+    }
+}
+
+void chess_generateMovesQueen (ChessPiece piece, int row, int col) {
+
+
+
+}
+
+void chess_generateMovesKing (ChessPiece piece, int row, int col) {
+
+
+
+}
+
+void chess_getMoves (ChessPiece piece, int row, int col) {
+
+    switch (chess_getPieceType(piece)) {
+
+        case Pawn: chess_generateMovesPawn (piece, row, col); break;
+        case Knight: chess_generateMovesKnight (piece, row, col); break;
+        case Bishop: chess_generateMovesBishop (piece, row, col); break;
+        case Rook: chess_generateMovesRook (piece, row, col); break;
+        case Queen: chess_getMoves (piece, row, col); break;
+        case King: chess_getMoves (piece, row, col); break;
+
+    }
 
 }
