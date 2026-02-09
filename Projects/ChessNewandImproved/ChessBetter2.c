@@ -273,6 +273,9 @@ void chess_getMoves (ChessPiece piece, int row, int col) {
 
 void chess_createChessBoard(Element* element) {
 
-    addChildElements(element,createElement((ElementSettings){.pos = {200, 200},.width = 500,.height = 500,.color = COLOR_GRAY}),createElement((ElementSettings){.text = "Chess"}));
+    Font font = loadFontAtlas("ARIAL.TTF");
+    Texture tex = font.fontAtlas;
+
+    addChildElements(element,createElement((ElementSettings){.pos = {200, 200},.width = 5000,.height = 500,.texture = &tex}),createElement((ElementSettings){.text = "Chess", .color = {1,1,1}}));
 
 }

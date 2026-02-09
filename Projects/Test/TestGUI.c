@@ -16,6 +16,9 @@ void generateTestGUI(Element *guiRoot) {
     const Task changeButtonTextTask = {.func = changeElementText, .userdata = THIS_ELEMENT};
     const Task nameShenanigans = {.func = namensliste_Aufgabe, .userdata = NULL};
 
+    Font font = loadFontAtlas("ARIAL.TTF");
+    Texture tex = font.fontAtlas;
+
     addChildElements(guiRoot,
         addChildElements(guiAddSimpleRectangle_Color((Vec2i){300, 100}, 230, pointerSchematic->height, (Vec3f){0.0f, 0.0f, 0.0f}),
             guiAddSimpleRectangle_Texture(fitMode, 230, pointerSchematic->height, blackButton),
@@ -35,7 +38,7 @@ void generateTestGUI(Element *guiRoot) {
                 .padding = (Padding){10, 10, 10, 10},
                 .width = 100,
                 .height = 200,
-                .color = (Vec3f){1.0f, 0.4f, 0.3f},
+                .texture = &tex,
                 .onHover = defaultHoverFun,
                 .draggable = true,
                 .childGap = 10,
@@ -47,7 +50,6 @@ void generateTestGUI(Element *guiRoot) {
                 .height = 20,
                 .padding = (Padding){10,10,10,10},
                 .text = "This is a test and yes Text Positioning must be refractored",
-                .onUpdate = changeTextSize
             }),
             createTextFieldElement((ElementSettings){
                 .padding = {10,10,10,10},

@@ -58,9 +58,24 @@ Font loadFontAtlas(char* file) {
     stbtt_PackEnd(&pc);
 
     GLuint tex;
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glGenTextures(1, &tex);
     glBindTexture(GL_TEXTURE_2D, tex);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, FONT_ATLAS_SIZE, FONT_ATLAS_SIZE, 0, GL_ALPHA, GL_UNSIGNED_BYTE, temp_bitmap);
+
+    glTexImage2D(
+    GL_TEXTURE_2D,
+    0,
+    GL_R8,
+    FONT_ATLAS_SIZE,
+    FONT_ATLAS_SIZE,
+    0,
+    GL_RED,
+    GL_UNSIGNED_BYTE,
+    temp_bitmap
+    );
+
+    const GLint swizzle[] = { GL_ONE, GL_ONE, GL_ONE, GL_RED };
+    glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_RGBA, swizzle);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
