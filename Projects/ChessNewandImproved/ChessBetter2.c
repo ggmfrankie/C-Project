@@ -4,7 +4,7 @@
 // Trust
 
 #include "ChessBetter2.h"
-
+#include "../../Render/GUI/GuiElement.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -268,5 +268,11 @@ void chess_getMoves (ChessPiece piece, int row, int col) {
         case King: chess_getMoves (piece, row, col); break;
 
     }
+
+}
+
+void chess_createChessBoard(Element* element) {
+
+    addChildElements(element,createElement((ElementSettings){.pos = {200, 200},.width = 500,.height = 500,.color = COLOR_GRAY}),createElement((ElementSettings){.text = "Chess"}));
 
 }

@@ -388,7 +388,7 @@ Renderer newRenderer(const int width, const int height, const char* name) {
         .render = Renderer_render,
         .screenWidth = width,
         .screenHeight = height,
-        .font = loadFontAtlas("Inktype-MAp2J.ttf"),
+        .font = loadFontAtlas("ARIAL.TTF"),
         .basicQuadMesh = Mesh_loadSimpleQuad(),
         .defaultClick = NULL,
         .guiRoot = createRootElement()

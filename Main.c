@@ -35,7 +35,7 @@ int main(){
     chess_run ();
     pthread_create(&workerThreadID, NULL, workerThread, NULL);
     //printf("Size %llu\n", sizeof(Element));
-    //startEngine(createChessGUI);
+    startEngine(chess_createChessBoard);
     //startEngine(generateTestGUI);
     return 0;
 }
