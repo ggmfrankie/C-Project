@@ -31,7 +31,7 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 
 void startEngine(void (*generateGUI)(Element* guiRoot)) {
 
-    g_Renderer = newRenderer(2048, 1024, "Huhu");
+    g_Renderer = newRenderer(2048, 1024, "Huhu", "ARIAL.TTF");
 
     Texture* graphTexture = newEmptyTexture(WIDTH, HEIGHT);
     g_Renderer.computeShader = newComputeShader(NULL, 1024);

@@ -18,6 +18,7 @@
 #define COLOR_HOVER (Vec3f){0.8, 0.8, 1}
 #define CHESS_PORT 52345
 
+void chess_loadChessPosition(char* fen);
 
 
 typedef enum {
@@ -74,6 +75,7 @@ typedef struct {
 } PossibleMove;
 
 typedef struct {
+    Color turn;
 
     Square squares [8][8];
     PossibleMove possibleMoves [64];
@@ -156,7 +158,8 @@ static char *chess_names[] = {"[ ]","[P]","[N]","[B]","[R]","[Q]","[K]"};
 
 void chess_run () {
 
-    chess_setUpPieces ();
+    //chess_setUpPieces ();
+    chess_loadChessPosition("q3rr2/1b1p4/3P1n1k/4p1p1/1P2P3/2N1Q2P/5PP1/6K1 b - e3 17 32");
     chess_printBoard ();
 
 }
@@ -271,11 +274,49 @@ void chess_getMoves (ChessPiece piece, int row, int col) {
 
 }
 
+void chess_loadChessPosition(char* fen) {
+    String fenString = stringOf(fen);
+    List_String fenPieces = str_split(&fenString, " ");
+
+    List_String ranks = str_split(String_ListGet(&fenPieces, 0), "/");
+    for (int i = 0; i < ranks.size; i++) {
+        String* rank = &ranks.content[i];
+        int col = 0;
+        for (int j = 0; j < rank->length; j++) {
+            char c = rank->content[j];
+            switch (c) {
+                case 'p': chess_board.squares[i][col++].piece = blackPawn; break;
+                case 'n': chess_board.squares[i][col++].piece = blackKing; break;
+                case 'b': chess_board.squares[i][col++].piece = blackBishop; break;
+                case 'r': chess_board.squares[i][col++].piece = blackRook; break;
+                case 'q': chess_board.squares[i][col++].piece = blackQueen; break;
+                case 'k': chess_board.squares[i][col++].piece = blackKing; break;
+
+                case 'P': chess_board.squares[i][col++].piece = whitePawn; break;
+                case 'N': chess_board.squares[i][col++].piece = whiteKing; break;
+                case 'B': chess_board.squares[i][col++].piece = whiteBishop; break;
+                case 'R': chess_board.squares[i][col++].piece = whiteRook; break;
+                case 'Q': chess_board.squares[i][col++].piece = whiteQueen; break;
+                case 'K': chess_board.squares[i][col++].piece = whiteKing; break;
+
+                default:
+                    if (c >= '0' && c <= '9') {
+                        for (int a = 0; a < c - '0'; a++) {
+                            chess_board.squares[i][col++].piece = empty;
+                        }
+                    }
+                    break;
+            }
+        }
+    }
+    chess_board.turn = String_ListGet(&fenPieces, 1)->content[0] == 'b' ? Black : White;
+
+    String_ListFree(&fenPieces);
+    String_ListFree(&ranks);
+}
+
 void chess_createChessBoard(Element* element) {
 
-    Font font = loadFontAtlas("ARIAL.TTF");
-    Texture tex = font.fontAtlas;
-
-    addChildElements(element,createElement((ElementSettings){.pos = {200, 200},.width = 5000,.height = 500,.texture = &tex}),createElement((ElementSettings){.text = "Chess", .color = {1,1,1}}));
+    addChildElements(element, addChildElements(createElement((ElementSettings){.pos = {200, 200},.width = 500,.height = 500,.color = COLOR_DARKYELLOW}),createElement((ElementSettings){.text = "Chess", .color = {1,1,1}, .padding = {10,1,10,10}})));
 
 }

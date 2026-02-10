@@ -67,7 +67,6 @@ void Renderer_init(Renderer *renderer) {
     ComputeShader_update(&renderer->computeShader, graphingFunction);
 
     Shader_createUniform(&renderer->guiShader, "hasTexture");
-    Shader_createUniform(&renderer->guiShader, "state");
     Shader_createUniform(&renderer->guiShader, "width");
     Shader_createUniform(&renderer->guiShader, "height");
     Shader_createUniform(&renderer->guiShader, "screenWidth");
@@ -75,10 +74,8 @@ void Renderer_init(Renderer *renderer) {
     Shader_createUniform(&renderer->guiShader, "positionObject");
     Shader_createUniform(&renderer->guiShader, "texture_sampler");
     Shader_createUniform(&renderer->guiShader, "color");
-
-    Shader_createUniform(&renderer->guiShader, "transformTexCoords");
-    Shader_createUniform(&renderer->guiShader, "texPosStart");
-    Shader_createUniform(&renderer->guiShader, "texPosEnd");
+    Shader_createUniform(&renderer->guiShader, "transparency");
+    Shader_createUniform(&renderer->guiShader, "brightness");
 
     Shader_createUniform(&renderer->textShader, "fontAtlas");
     Shader_createUniform(&renderer->textShader, "screenWidth");
@@ -116,12 +113,12 @@ void renderElementsRecursively(Element* element, const Renderer* renderer) {
 
     setUniform(shader, "width", (float)element->actualWidth);
     setUniform(shader, "height", (float)element->actualHeight);
+    setUniform(shader, "transparency", (float)1-element->transparency);
+    setUniform(shader, "brightness", (float)element->brightness);
 
     setUniform(shader, "hasTexture", element->texture != NULL);
-    setUniform(shader, "state", (int)element->state);
 
     setUniform(shader, "positionObject", toVec2f(element->worldPos));
-    setUniform(shader, "transformTexCoords", 0);
 
     setUniform(shader, "texture_sampler", 0);
 
@@ -306,7 +303,6 @@ Vec2i updateLayout3(Element* element, const Vec2i parentCursor, const Vec2i pare
     const Padding padding = element->padding;
 
     if (element->textElement.hasText) {
-        //const Vec2i textSize = measureElementText(font, &element->textElement);
         const int textW = padding.left + (int)element->textElement.width + padding.right;
         const int textH = padding.up + (int)((float)(font->maxCharHeight) * element->textElement.textScale) + padding.down;
 
@@ -378,7 +374,7 @@ inline bool isMousePressed(GLFWwindow* window, const int mouseButton) {
     return glfwGetMouseButton(window, mouseButton) == GLFW_PRESS;
 }
 
-Renderer newRenderer(const int width, const int height, const char* name) {
+Renderer newRenderer(const int width, const int height, const char* name, char *fontFile) {
     return (Renderer){
         .guiShader = newShader("GuiVertexShader.vert", "GuiFragmentShader.frag"),
         .textShader = newShader("TextRender.vert", "TextRender.frag"),
@@ -388,7 +384,7 @@ Renderer newRenderer(const int width, const int height, const char* name) {
         .render = Renderer_render,
         .screenWidth = width,
         .screenHeight = height,
-        .font = loadFontAtlas("ARIAL.TTF"),
+        .font = loadFontAtlas(fontFile),
         .basicQuadMesh = Mesh_loadSimpleQuad(),
         .defaultClick = NULL,
         .guiRoot = createRootElement()
@@ -402,7 +398,6 @@ Element createRootElement() {
 void loadDefaultQuadMesh() {
     quadMesh = Mesh_loadSimpleQuad();
 }
-
 
 void Renderer_destroy(const Renderer *renderer) {
     glfwDestroyWindow(renderer->window);

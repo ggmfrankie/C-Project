@@ -46,7 +46,7 @@ static inline type name##_ListGet_val(List_##name *list, size_t index) { \
     return list->content[index]; \
 } \
 \
-static inline type* name##_ListGet_ptr(List_##name *list, size_t index) { \
+static inline type* name##_ListGet(List_##name *list, size_t index) { \
     if (index < 0 || index >= list->size) name##_error(); \
     return &list->content[index]; \
 }\
@@ -68,7 +68,7 @@ list->size = 0; \
 \
 static inline void name##_iterator(List_##name *list, void (*foo)(type *content)){\
     for (size_t i = 0; i < list->size; i++) {\
-        foo(name##_ListGet_ptr(list, i));\
+        foo(name##_ListGet(list, i));\
     }\
 }\
 \
@@ -89,7 +89,7 @@ static inline List_##name name##_newList(int capacity) {\
         .capacity = capacity,\
         .add = name##_ListAdd,\
         .getVal = name##_ListGet_val,\
-        .get = name##_ListGet_ptr,\
+        .get = name##_ListGet,\
         .getLast = name##_ListGetLast,\
         .free = name##_ListFree,\
         .iterator = name##_iterator,\

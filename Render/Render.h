@@ -33,7 +33,7 @@ typedef struct Renderer {
     OtherShaders otherShaders;
 } Renderer;
 
-Renderer newRenderer(int width, int height, const char* name);
+Renderer newRenderer(int width, int height, const char* name, char *fontFile);
 void Renderer_init(Renderer *renderer);
 void Renderer_render(const Renderer *renderer);
 void Renderer_destroy(const Renderer *renderer);

@@ -25,7 +25,6 @@ typedef struct {
     float u, v;     // UVs
 } Vertex;
 
-
 Font loadFontAtlas(char* file) {
     const String fileName = stringOf(file);
     const String defaultPath = stringOf("../Resources/Fonts/");
@@ -150,7 +149,7 @@ void renderTextRetained(const Renderer* renderer, const Element* element) {
         const Character* c = &textElement->charQuads.content[i];
 
         const float x = c->pos.x + (float) element->worldPos.x + element->padding.left;
-        const float y = c->pos.y + (float) element->worldPos.y + renderer->font.maxCharHeight * element->textElement.textScale + element->padding.left;
+        const float y = c->pos.y + (float) element->worldPos.y + renderer->font.maxCharHeight * element->textElement.textScale + element->padding.up;
         const float w = c->width;
         const float h = c->height;
 

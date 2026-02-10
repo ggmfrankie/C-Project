@@ -47,7 +47,6 @@ bool isSelectedCharacter(Vec2f pos, float width, float height, const Vec2i mouse
 }
 
 bool hoverAndDragFun(Element *element, Renderer *renderer) {
-    element->state = 1;
     return dragFun(element, renderer);
 }
 
@@ -56,7 +55,7 @@ bool hoverAndDragFunctionInvis(Element *element, Renderer *renderer) {
 }
 
 bool defaultHoverFun(Element *element, Renderer *renderer) {
-    element->state = 1;
+    element->brightness = 0.8f;
     return false;
 }
 

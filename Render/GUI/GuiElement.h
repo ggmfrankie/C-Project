@@ -39,11 +39,6 @@ typedef struct Padding {
 } Padding;
 
 typedef enum {
-    S_default = 0,
-    S_active = 1,
-} ElementState;
-
-typedef enum {
     POS_FIT = 0,
     POS_ABSOLUTE = 1,
 } PositionMode;
@@ -84,6 +79,8 @@ typedef struct Element {
 
     Vec2i pos;
     Vec2i worldPos;
+    float transparency;
+    float brightness;
 
     PositionMode positionMode;
     LayoutDirection layoutDirection;
@@ -103,7 +100,6 @@ typedef struct Element {
     TextElement textElement;
 
     //Interaction
-    ElementState state;
     bool (*isMouseOver)(const Element* element, Vec2i mousePos);
     bool (*onClick)(Element* element, Renderer *renderer);
     bool (*onHover)(Element* element, Renderer *renderer);
@@ -134,6 +130,7 @@ typedef struct {
     int height;
     Texture* texture;
     Vec3f color;
+    float transparency;
     char* text;
     bool (*onClick)(Element* element, Renderer *renderer);
     bool (*onHover)(Element* element, Renderer *renderer);
@@ -207,7 +204,7 @@ Element *guiAddElement(
     bool fixedWidth,
     bool fixedHeight,
     void (*whileSelected)(Element *element), bool draggable, void (*onUpdate)(Element *element), bool wantGrowHorizontal, bool
-    wantGrowVertical
+    wantGrowVertical, float transparency
 );
 
 Element *guiAddSimpleRectangle_Texture(
@@ -242,7 +239,7 @@ Element *guiAddSimpleButton_Color(
     const char *text
 );
 
-Element *createElement(ElementSettings elementSettings);
+Element *createElement(ElementSettings es);
 Element *createTextFieldElement( ElementSettings elementSettings);
 
 typedef struct Element_Functions {
