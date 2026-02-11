@@ -15,7 +15,6 @@
 #include "Projects/Test/TestGUI.h"
 #include "Projects/Chess/ChessGame.h"
 #include "Projects/ChessNewandImproved/ChessBetter2.h"
-#include "Projects/CLAY_Test/Clay_Test.h"
 
 void* workerThread(void* args);
 

@@ -81,9 +81,6 @@ add_executable(C
         Projects/Test/TestGUI.c
         Projects/ChessNewandImproved/ChessBetter2.c
         Projects/ChessNewandImproved/ChessBetter2.c
-        Dependencies/include/CLAY/Clay.h
-        Projects/CLAY_Test/Clay_Test.c
-        Projects/CLAY_Test/Clay_Test.h
         Render/GUI/BatchedRendering.c
         Render/GUI/BatchedRendering.h
 )
