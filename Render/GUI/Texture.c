@@ -30,7 +30,7 @@ Simple_Texture newTexture(const int width, const int height, const GLuint textur
     };
 }
 
-Hashmap_AtlasTextures loadTextures(int atlasWidth, int atlasHeight, char *first, ...) {
+Hashmap_AtlasTextures Texture_loadTextures(int atlasWidth, int atlasHeight, char *first, ...) {
 
     va_list args;
     va_start(args, first);

@@ -18,7 +18,7 @@ void initSockets() {
 }
 
 SOCKET createServerSocket(const int port) {
-    SOCKET serverSock = socket(AF_INET, SOCK_STREAM, 0);
+    const SOCKET serverSock = socket(AF_INET, SOCK_STREAM, 0);
     if (serverSock == INVALID_SOCKET) { perror("socket"); exit(1); }
 
     struct sockaddr_in addr;
@@ -33,8 +33,7 @@ SOCKET createServerSocket(const int port) {
     if (listen(serverSock, 1) < 0) { perror("listen"); exit(1); }
 
     printf("Waiting for client...\n");
-    SOCKET clientSock = accept(serverSock, NULL, NULL);
-    if (clientSock < 0) { perror("accept"); exit(1); }
+    const SOCKET clientSock = accept(serverSock, NULL, NULL);
     closesocket(serverSock);
     printf("Client connected!\n");
     return clientSock;
