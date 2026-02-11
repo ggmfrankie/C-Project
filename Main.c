@@ -34,7 +34,7 @@ int main(){
     pthread_t workerThreadID;
     chess_run ();
     pthread_create(&workerThreadID, NULL, workerThread, NULL);
-    //startEngine(chess_createChessBoard);
+    startEngine(chess_createChessBoard);
     //startEngine(generateTestGUI);
     //startEngine(createChessGUI);
     return 0;

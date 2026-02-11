@@ -8,6 +8,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "../../Render/GUI/CallbackFunctions.h"
 
 #define COOL_COLOR (Vec3f){.2, .3, .3}
 #define COLOR_WHITE (Vec3f){1, 1, 1}
@@ -85,6 +86,7 @@ typedef struct {
 
 
 Board chess_board = {};
+Simple_Texture* chess_pieceTextures[13] = {};
 
 Color chess_getPieceColor(ChessPiece piece) {
 
@@ -315,18 +317,99 @@ void chess_loadChessPosition(char* fen) {
     String_ListFree(&ranks);
 }
 
+void chess_loadTextures() {
+    chess_pieceTextures[0] = newEmptyTexture(64, 64);
+
+    chess_pieceTextures[1] = loadTextureFromPng("ChessPieces/b_pawn_1x_ns.png");
+    chess_pieceTextures[2] = loadTextureFromPng("ChessPieces/b_knight_1x_ns.png");
+    chess_pieceTextures[3] = loadTextureFromPng("ChessPieces/b_bishop_1x_ns.png");
+    chess_pieceTextures[4] = loadTextureFromPng("ChessPieces/b_rook_1x_ns.png");
+    chess_pieceTextures[5] = loadTextureFromPng("ChessPieces/b_queen_1x_ns.png");
+    chess_pieceTextures[6] = loadTextureFromPng("ChessPieces/b_king_1x_ns.png");
+
+    chess_pieceTextures[7] = loadTextureFromPng("ChessPieces/w_pawn_1x_ns.png");
+    chess_pieceTextures[8] = loadTextureFromPng("ChessPieces/w_knight_1x_ns.png");
+    chess_pieceTextures[9] = loadTextureFromPng("ChessPieces/w_bishop_1x_ns.png");
+    chess_pieceTextures[10] = loadTextureFromPng("ChessPieces/w_rook_1x_ns.png");
+    chess_pieceTextures[11] = loadTextureFromPng("ChessPieces/w_queen_1x_ns.png");
+    chess_pieceTextures[12] = loadTextureFromPng("ChessPieces/w_king_1x_ns.png");
+}
+
+static Element* createChessSquares(ElementSettings es) {
+    static int row = 0;
+    static int column = 0;
+    es.color = ((row+column) % 2 ? COLOR_GRAY : COLOR_WHITE);
+
+    const ElementSettings pieceDisplaySettings = {
+        .texture = chess_pieceTextures[0],
+        .width = es.width,
+        .height = es.height,
+        .notSelectable = true
+    };
+
+    Element* square = createElement(es);
+    Element* piece = createElement(pieceDisplaySettings);
+
+    if (row == 7) {
+        column++;
+        row = 0;
+    } else {
+        row++;
+    }
+    return square;
+}
+
 void chess_createChessBoard(Element* element) {
 
     addChildElements(element,
         addChildElements(createElement((ElementSettings){
+            .draggable = true,
             .pos = {200, 200},
-            .width = 500,.height = 500,
-            .color = COLOR_DARKYELLOW}),
+            .color = COLOR_DARKYELLOW,
+            .padding = 10, 10, 10, 10,}
+            ),
             createElement((ElementSettings){
                 .text = "Chess",
                 .color = {1,1,1},
                 .padding = {10,1,10,10}
-            })
+            }  ),
+            addChildElements(createElement((ElementSettings){
+
+
+
+            }),
+                addChildrenAsGridWithGenerator(
+
+                 (ElementSettings){
+                     .color = 0.5, 0, 0.3,
+                     .width = 400,
+                     .height = 400,
+                 },
+                 (ElementSettings){
+                     .color = COLOR_WHITE,
+                     .onHover = defaultHoverFun,
+                     .onClick = runTaskFun,
+                 }, 8, 8,
+                 createChessSquares
+                )
+                ,addChildElements(createElement((ElementSettings){}),createElement((ElementSettings){
+                    .color =  0.5,0,0.25,.width = 400/8,.height = 400/8,}))
+                    ,addChildElements(createElement((ElementSettings){}),createElement((ElementSettings){
+                    .color =  0.5,0,0.25,.width = 400/8,.height = 400/8,}))
+                    ,addChildElements(createElement((ElementSettings){}),createElement((ElementSettings){
+                    .color =  0.5,0,0.25,.width = 400/8,.height = 400/8,}))
+                    ,addChildElements(createElement((ElementSettings){}),createElement((ElementSettings){
+                    .color =  0.5,0,0.25,.width = 400/8,.height = 400/8,}))
+                    ,addChildElements(createElement((ElementSettings){}),createElement((ElementSettings){
+                    .color =  0.5,0,0.25,.width = 400/8,.height = 400/8,}))
+                    ,addChildElements(createElement((ElementSettings){}),createElement((ElementSettings){
+                    .color =  0.5,0,0.25,.width = 400/8,.height = 400/8,}))
+                    ,addChildElements(createElement((ElementSettings){}),createElement((ElementSettings){
+                    .color =  0.5,0,0.25,.width = 400/8,.height = 400/8,}))
+                    ,addChildElements(createElement((ElementSettings){}),createElement((ElementSettings){
+                    .color =  0.5,0,0.25,.width = 400/8,.height = 400/8,}))
+             )
+
         )
     );
 }

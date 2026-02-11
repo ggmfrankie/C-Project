@@ -8,5 +8,6 @@
 #include "../../Render/GUI/GuiElement.h"
 
 void createChessGUI(Element* root);
+Element* createChessSquares(ElementSettings es);
 
 #endif //C_CHESSGAME_H
