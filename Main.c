@@ -15,7 +15,6 @@
 #include "Projects/Test/TestGUI.h"
 #include "Projects/Chess/ChessGame.h"
 #include "Projects/ChessNewandImproved/ChessBetter2.h"
-#include "Projects/CLAY_Test/Clay_Test.h"
 
 void* workerThread(void* args);
 
@@ -35,7 +34,6 @@ int main(){
     pthread_t workerThreadID;
     chess_run ();
     pthread_create(&workerThreadID, NULL, workerThread, NULL);
-    clayTest();
     //startEngine(chess_createChessBoard);
     //startEngine(generateTestGUI);
     //startEngine(createChessGUI);
