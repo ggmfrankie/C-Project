@@ -360,6 +360,19 @@ static Element* createChessSquares(ElementSettings es) {
 }
 
 void chess_createChessBoard(Element* element) {
+    Element* board = addChildrenAsGridWithGenerator(
+                 (ElementSettings){
+                     .color = 0.5f, 0.0f, 0.3f,
+                     .width = 400,
+                     .height = 400,
+                 },
+                 (ElementSettings){
+                     .color = COLOR_WHITE,
+                     .onHover = defaultHoverFun,
+                     .onClick = runTaskFun,
+                 }, 8, 8,
+                 createChessSquares
+                );
 
     addChildElements(element,
         addChildElements(createElement((ElementSettings){
@@ -370,46 +383,48 @@ void chess_createChessBoard(Element* element) {
             ),
             createElement((ElementSettings){
                 .text = "Chess",
-                .color = {1,1,1},
-                .padding = {10,1,10,10}
+                .color = COLOR_DARKYELLOW,
+                .padding = {10,1,10,10},
+                .notSelectable = true
             }  ),
-            addChildElements(createElement((ElementSettings){
+            addChildElements(
+                createElement((ElementSettings){
+                    .height = 600,
+                    .fixedHeight = true,
+                    .notSelectable = true,
+                    .color = COLOR_GRAY,
+                }),
+                board
+                ,addChildElements(
+                    createElement((ElementSettings){
+                        .layoutDirection = L_right
+                    })
+                    ,createElement((ElementSettings){.color =  0.5,0,0.25,.width = 400/8,.height = 400/8, .text = "a"})
+                    ,createElement((ElementSettings){.color =  0.5,0,0.25,.width = 400/8,.height = 400/8, .text = "b"})
+                    ,createElement((ElementSettings){.color =  0.5,0,0.25,.width = 400/8,.height = 400/8, .text = "c"})
+                    ,createElement((ElementSettings){.color =  0.5,0,0.25,.width = 400/8,.height = 400/8, .text = "d"})
+                    ,createElement((ElementSettings){.color =  0.5,0,0.25,.width = 400/8,.height = 400/8, .text = "e"})
+                    ,createElement((ElementSettings){.color =  0.5,0,0.25,.width = 400/8,.height = 400/8, .text = "f"})
+                    ,createElement((ElementSettings){.color =  0.5,0,0.25,.width = 400/8,.height = 400/8, .text = "g"})
+                    ,createElement((ElementSettings){.color =  0.5,0,0.25,.width = 400/8,.height = 400/8, .text = "h"})
+                    ),
+                    addChildElements(
+                createElement((ElementSettings){
+                        .layoutDirection = L_down,
+                    })
 
-
-
-            }),
-                addChildrenAsGridWithGenerator(
-
-                 (ElementSettings){
-                     .color = 0.5, 0, 0.3,
-                     .width = 400,
-                     .height = 400,
-                 },
-                 (ElementSettings){
-                     .color = COLOR_WHITE,
-                     .onHover = defaultHoverFun,
-                     .onClick = runTaskFun,
-                 }, 8, 8,
-                 createChessSquares
+                    ,createElement((ElementSettings){.color =  0.5,0,0.25,.width = 400/8,.height = 400/8,.text = "1"})
+                    ,createElement((ElementSettings){.color =  0.5,0,0.25,.width = 400/8,.height = 400/8,.text = "2"})
+                    ,createElement((ElementSettings){.color =  0.5,0,0.25,.width = 400/8,.height = 400/8,.text = "3"})
+                    ,createElement((ElementSettings){.color =  0.5,0,0.25,.width = 400/8,.height = 400/8,.text = "4"})
+                    ,createElement((ElementSettings){.color =  0.5,0,0.25,.width = 400/8,.height = 400/8,.text = "5"})
+                    ,createElement((ElementSettings){.color =  0.5,0,0.25,.width = 400/8,.height = 400/8,.text = "6"})
+                    ,createElement((ElementSettings){.color =  0.5,0,0.25,.width = 400/8,.height = 400/8,.text = "7"})
+                    ,createElement((ElementSettings){.color =  0.5,0,0.25,.width = 400/8,.height = 400/8,.text = "8"})
                 )
-                ,addChildElements(createElement((ElementSettings){}),createElement((ElementSettings){
-                    .color =  0.5,0,0.25,.width = 400/8,.height = 400/8,}))
-                    ,addChildElements(createElement((ElementSettings){}),createElement((ElementSettings){
-                    .color =  0.5,0,0.25,.width = 400/8,.height = 400/8,}))
-                    ,addChildElements(createElement((ElementSettings){}),createElement((ElementSettings){
-                    .color =  0.5,0,0.25,.width = 400/8,.height = 400/8,}))
-                    ,addChildElements(createElement((ElementSettings){}),createElement((ElementSettings){
-                    .color =  0.5,0,0.25,.width = 400/8,.height = 400/8,}))
-                    ,addChildElements(createElement((ElementSettings){}),createElement((ElementSettings){
-                    .color =  0.5,0,0.25,.width = 400/8,.height = 400/8,}))
-                    ,addChildElements(createElement((ElementSettings){}),createElement((ElementSettings){
-                    .color =  0.5,0,0.25,.width = 400/8,.height = 400/8,}))
-                    ,addChildElements(createElement((ElementSettings){}),createElement((ElementSettings){
-                    .color =  0.5,0,0.25,.width = 400/8,.height = 400/8,}))
-                    ,addChildElements(createElement((ElementSettings){}),createElement((ElementSettings){
-                    .color =  0.5,0,0.25,.width = 400/8,.height = 400/8,}))
              )
 
-        )
+
+             )
     );
 }

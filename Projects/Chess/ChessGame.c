@@ -77,53 +77,53 @@ typedef enum {
 typedef void (*MarkerFun)(PieceColor color, int row, int column, MarkType type);
 typedef bool (*Marker)(int row, int column, int pieceRow, int pieceCol, PieceColor color);
 
-Square board[8][8] = {};
-Element* pieceSlots[8][8] = {};
-BoardDirection boardDirection = whiteDown;
-bool turnPosCanCastle = true;
-bool turnNegCanCastle = true;
-bool isMultiplayer = false;
+static Square board[8][8] = {};
+static Element* pieceSlots[8][8] = {};
+static BoardDirection boardDirection = whiteDown;
+static bool turnPosCanCastle = true;
+static bool turnNegCanCastle = true;
+static bool isMultiplayer = false;
 
-SOCKET gameSocket = INVALID_SOCKET;
-pthread_t multiplayerListener;
+static SOCKET gameSocket = INVALID_SOCKET;
+static pthread_t multiplayerListener;
 
-PieceColor turn = -1;
+static PieceColor turn = -1;
 
-Simple_Texture* pieceTextures[13] = {};
+static Simple_Texture* pieceTextures[13] = {};
 
-void loadTextures();
+static void loadTextures();
 
-void createStartScreen(Element* root);
-void createChessBoard(Element* root);
-void createEndScreen(Element* root);
-void setUpPieces();
-void setUpPiecesForTest();
-void switchSides();
-void syncGui();
-Vec2i getPosition(const Element* element);
+static void createStartScreen(Element* root);
+static void createChessBoard(Element* root);
+static void createEndScreen(Element* root);
+static void setUpPieces();
+static void setUpPiecesForTest();
+static void switchSides();
+static void syncGui();
+static Vec2i getPosition(const Element* element);
 
-bool applyMove(const ChessMove* move);
+static bool applyMove(const ChessMove* move);
 
-void sendMove(const ChessMove *move);
+static void sendMove(const ChessMove *move);
 
-bool markAttack(int row, int column, int pieceRow, int pieceCol, PieceColor color);
-bool markDefend(int row, int column, int pieceRow, int pieceCol, PieceColor color);
-bool markerFun(int row, int column, int pieceRow, int pieceCol, PieceColor color, MarkType type);
+static bool markAttack(int row, int column, int pieceRow, int pieceCol, PieceColor color);
+static bool markDefend(int row, int column, int pieceRow, int pieceCol, PieceColor color);
+static bool markerFun(int row, int column, int pieceRow, int pieceCol, PieceColor color, MarkType type);
 
-bool isKingAttacked(PieceColor color);
-bool isCheckmate(PieceColor color);
-bool doesMoveCauseCheck(int row, int column, int pieceRow, int pieceCol, PieceColor pieceColor);
+static bool isKingAttacked(PieceColor color);
+static bool isCheckmate(PieceColor color);
+static bool doesMoveCauseCheck(int row, int column, int pieceRow, int pieceCol, PieceColor pieceColor);
 
-void markedOnlyIfEnemy(int row, int column, int pieceRow, int pieceCol, PieceColor color);
-void markedOnlyIfFree(int row, int column, int pieceRow, int pieceCol, PieceColor color);
-void chessCheckedMark(int row, int column, int pieceRow, int pieceCol, PieceColor color);
+static void markedOnlyIfEnemy(int row, int column, int pieceRow, int pieceCol, PieceColor color);
+static void markedOnlyIfFree(int row, int column, int pieceRow, int pieceCol, PieceColor color);
+static void chessCheckedMark(int row, int column, int pieceRow, int pieceCol, PieceColor color);
 
-void runMarking(ChessPiece piece, int row, int column, MarkType type);
+static void runMarking(ChessPiece piece, int row, int column, MarkType type);
 
-void runMarkAllPieces(PieceColor color, MarkType type);
-void unmarkAll();
+static void runMarkAllPieces(PieceColor color, MarkType type);
+static void unmarkAll();
 
-void markPawn(const PieceColor color, const int row, const int column, const MarkType type) {
+static void markPawn(const PieceColor color, const int row, const int column, const MarkType type) {
     if (type == attack) {
         markedOnlyIfEnemy(row + color, column+1, row, column, color);
         markedOnlyIfEnemy(row + color, column-1, row, column, color);
@@ -135,7 +135,7 @@ void markPawn(const PieceColor color, const int row, const int column, const Mar
     }
 }
 
-void markKnight(const PieceColor color, const int row, const int column, const MarkType type) {
+static void markKnight(const PieceColor color, const int row, const int column, const MarkType type) {
     markerFun(row+1, column+2, row, column, color, type);
     markerFun(row-1, column-2, row, column, color, type);
     markerFun(row+1, column-2, row, column, color, type);
@@ -146,7 +146,7 @@ void markKnight(const PieceColor color, const int row, const int column, const M
     markerFun(row-2, column+1, row, column, color, type);
 }
 
-void markBishop(const PieceColor color, const int row, const int column, const MarkType type) {
+static void markBishop(const PieceColor color, const int row, const int column, const MarkType type) {
     bool upRight = true;
     bool upLeft = true;
     bool downRight = true;
@@ -165,7 +165,7 @@ void markBishop(const PieceColor color, const int row, const int column, const M
     }
 }
 
-void markRook(const PieceColor color, const int row, const int column, const MarkType type) {
+static void markRook(const PieceColor color, const int row, const int column, const MarkType type) {
     bool up = true;
     bool down = true;
     bool left = true;
@@ -184,12 +184,12 @@ void markRook(const PieceColor color, const int row, const int column, const Mar
     }
 }
 
-void markQueen(const PieceColor color, const int row, const int column, const MarkType type) {
+static void markQueen(const PieceColor color, const int row, const int column, const MarkType type) {
     markBishop(color, row, column, type);
     markRook(color, row, column, type);
 }
 
-void markKing(const PieceColor color, const int row, const int column, const MarkType type) {
+static void markKing(const PieceColor color, const int row, const int column, const MarkType type) {
     if (type == attack) {
         runMarkAllPieces(color*-1, defend);
 
@@ -233,7 +233,7 @@ void markKing(const PieceColor color, const int row, const int column, const Mar
 
 }
 
-void runMarkAllPieces(const PieceColor color, const MarkType type) {
+static void runMarkAllPieces(const PieceColor color, const MarkType type) {
     for (int i = 0; i < 8; i++) {
         for (int ii = 0; ii < 8; ii++) {
             if (sig(board[i][ii].piece) == color) runMarking(board[i][ii].piece, i, ii, type);
@@ -241,7 +241,7 @@ void runMarkAllPieces(const PieceColor color, const MarkType type) {
     }
 }
 
-void unmarkAll() {
+static void unmarkAll() {
     for (int i = 0; i < 8; i++) {
         for (int ii = 0; ii < 8; ii++) {
             if (board[i][ii].isMarked) board[i][ii].isMarked--;
@@ -249,12 +249,12 @@ void unmarkAll() {
     }
 }
 
-bool markerFun(const int row, const int column, const int pieceRow, const int pieceCol, const PieceColor color, const MarkType type) {
+static bool markerFun(const int row, const int column, const int pieceRow, const int pieceCol, const PieceColor color, const MarkType type) {
     static Marker markingFuns[] = {markAttack, markDefend};
     return markingFuns[type](row, column, pieceRow, pieceCol, color);
 }
 
-bool markAttack(const int row, const int column, const int pieceRow, const int pieceCol, const PieceColor color) {
+static bool markAttack(const int row, const int column, const int pieceRow, const int pieceCol, const PieceColor color) {
     if (row > 7 || column > 7 || row < 0 || column < 0) return 1;
     if (sig(board[row][column].piece) != color) {
         board[row][column].isMarked =  !doesMoveCauseCheck(row, column, pieceRow, pieceCol, color);
@@ -262,13 +262,13 @@ bool markAttack(const int row, const int column, const int pieceRow, const int p
     return abs(board[row][column].piece) != 0;
 }
 
-bool markDefend(const int row, const int column, int pieceRow, int pieceCol, PieceColor color) {
+static bool markDefend(const int row, const int column, int pieceRow, int pieceCol, PieceColor color) {
     if (row > 7 || column > 7 || row < 0 || column < 0) return 1;
     board[row][column].isMarked = true;
     return abs(board[row][column].piece) != 0;
 }
 
-void chessCheckedMark(const int row, const int column, const int pieceRow, const int pieceCol, const PieceColor color) {
+static void chessCheckedMark(const int row, const int column, const int pieceRow, const int pieceCol, const PieceColor color) {
     if (row > 7 || column > 7 || row < 0 || column < 0) return;
     if (sig(board[row][column].piece) != color && !board[row][column].isMarked) {
         board[row][column].isMarked = 2*!doesMoveCauseCheck(row, column, pieceRow, pieceCol, color);
@@ -276,21 +276,21 @@ void chessCheckedMark(const int row, const int column, const int pieceRow, const
 
 }
 
-void markedOnlyIfEnemy(const int row, const int column, const int pieceRow, const int pieceCol, const PieceColor color) {
+static void markedOnlyIfEnemy(const int row, const int column, const int pieceRow, const int pieceCol, const PieceColor color) {
     if (row > 7 || column > 7 || row < 0 || column < 0) return;
     if (-sig(board[row][column].piece) == color) {
         board[row][column].isMarked = !doesMoveCauseCheck(row, column, pieceRow, pieceCol, color);
     }
 }
 
-void markedOnlyIfFree(const int row, const int column, const int pieceRow, const int pieceCol, const PieceColor color) {
+static void markedOnlyIfFree(const int row, const int column, const int pieceRow, const int pieceCol, const PieceColor color) {
     if (row > 7 || column > 7 || row < 0 || column < 0) return;
     if (sig(board[row][column].piece) == 0) {
         board[row][column].isMarked = !doesMoveCauseCheck(row, column, pieceRow, pieceCol, color);
     }
 }
 
-bool doesMoveCauseCheck(const int row, const int column, const int pieceRow, const int pieceCol, const PieceColor pieceColor) {
+static bool doesMoveCauseCheck(const int row, const int column, const int pieceRow, const int pieceCol, const PieceColor pieceColor) {
     int copyMarkers[8][8] = {};
 
     for (int i = 0; i < 8; i++) {
@@ -327,37 +327,37 @@ void createChessGUI(Element* root) {
     createEndScreen(root);
 }
 
-void sendMove(const ChessMove *move) {
+static void sendMove(const ChessMove *move) {
     if (!isMultiplayer) return;
     sendData(gameSocket, move, sizeof(ChessMove));
 }
 
-void* receiveMoves() {
+static void* receiveMoves() {
     ChessMove receivedMove;
     receiveData(gameSocket, &receivedMove, sizeof(ChessMove));
     return NULL;
 }
 
-void hostGame() {
+static void hostGame() {
     isMultiplayer = true;
     gameSocket = createServerSocket(CHESS_PORT);
     pthread_create(&multiplayerListener, NULL, receiveMoves, NULL);
 }
 
-void joinGame(const char* ip) {
+static void joinGame(const char* ip) {
     isMultiplayer = true;
     gameSocket = createClientSocket(ip, CHESS_PORT);
     pthread_create(&multiplayerListener, NULL, receiveMoves, NULL);
 }
 
-void startChessGameTask(void* nix) {
+static void startChessGameTask(void* nix) {
     Element* mainMenu = getElement("start screen");
     Element* chessBoard = getElement("game board");
     setVisible(mainMenu, false);
     setVisible(chessBoard, true);
 }
 
-void showWinnerScreen(const bool winner) {
+static void showWinnerScreen(const bool winner) {
     Element* endScreen = getElement("end screen");
     setVisible(endScreen, true);
     Element* colorDisplay = getElement("color display");
@@ -419,7 +419,7 @@ void onSquareClicked(void* el) {
 }
 */
 
-void onSquareClicked2(void* el) {
+static void onSquareClicked2(void* el) {
     static bool isGameOver = false;
     if (isGameOver) return;
     const Element* element = (Element*) el;
@@ -447,7 +447,7 @@ void onSquareClicked2(void* el) {
     syncGui();
 }
 
-bool applyMove(const ChessMove* move) {
+static bool applyMove(const ChessMove* move) {
     static bool isGameOver = false;
     if (isGameOver) return false;
 
@@ -488,7 +488,7 @@ bool applyMove(const ChessMove* move) {
     return true;
 }
 
-bool isKingAttacked(const PieceColor color) {
+static bool isKingAttacked(const PieceColor color) {
     runMarkAllPieces(color*-1, defend);
     for (int i = 0; i < 8; i++) {
         for (int ii = 0; ii < 8; ii++) {
@@ -505,7 +505,7 @@ bool isKingAttacked(const PieceColor color) {
     return false;
 }
 
-bool isCheckmate(const PieceColor color) {
+static bool isCheckmate(const PieceColor color) {
     bool checkmate = true;
     if (!isKingAttacked(color)) return false;
     runMarkAllPieces(color, attack);
@@ -522,14 +522,14 @@ bool isCheckmate(const PieceColor color) {
     return checkmate;
 }
 
-void runMarking(const ChessPiece piece, const int row, const int column, const MarkType type) {
+static void runMarking(const ChessPiece piece, const int row, const int column, const MarkType type) {
     static MarkerFun markerFun[7] = {
         unmarkAll, markPawn, markKnight, markBishop, markRook, markQueen, markKing
     };
     markerFun[abs(piece)](sig(piece), row, column, type);
 }
 
-void resetBoard(void* nix) {
+static void resetBoard(void* nix) {
     turn = boardDirection ? 1 : -1;
     turnPosCanCastle = true;
     turnNegCanCastle = true;
@@ -539,7 +539,7 @@ void resetBoard(void* nix) {
     syncGui();
 }
 
-Vec2i getPosition(const Element* element) {
+static Vec2i getPosition(const Element* element) {
     const Element* parent = element->parentElement;
      return (Vec2i) {
         element->pos.x / (parent->width/8),
@@ -547,23 +547,23 @@ Vec2i getPosition(const Element* element) {
     };
 }
 
-void closeProgram(void* nix) {
+static void closeProgram(void* nix) {
     exit(69);
 }
 
-Simple_Texture* getTexture(ChessPiece piece) {
+static Simple_Texture* getTexture(ChessPiece piece) {
     piece = boardDirection ? -piece : piece;
     if (piece < 0) piece = -piece + 6;
     return pieceTextures[piece];
 }
 
-void switchSides() {
+static void switchSides() {
     boardDirection = !boardDirection;
     turn = -turn;
     resetBoard(NULL);
 }
 
-void flipBoard() {
+static void flipBoard() {
     boardDirection = !boardDirection;
     turn = -turn;
     unmarkAll();
@@ -577,7 +577,7 @@ void flipBoard() {
     syncGui();
 }
 
-void setUpPieces() {
+static void setUpPieces() {
     for (int r = 0; r < 8; r++) {
         for (int c = 0; c < 8; c++) {
             board[r][c].piece = empty;
@@ -620,7 +620,7 @@ void setUpPieces() {
     }
 }
 
-void setUpPiecesForTest() {
+static void setUpPiecesForTest() {
 
     // Clear board first
     for (int r = 0; r < 8; r++)
@@ -643,7 +643,7 @@ void setUpPiecesForTest() {
     // Set side to move: White
 }
 
-void syncGui() {
+static void syncGui() {
     pthread_mutex_lock(&guiMutex);
     for (int i = 0; i < 8; i++) {
         for (int ii = 0; ii < 8; ii++) {
@@ -654,7 +654,7 @@ void syncGui() {
     pthread_mutex_unlock(&guiMutex);
 }
 
-void loadTextures() {
+static void loadTextures() {
     pieceTextures[0] = newEmptyTexture(64, 64);
 
     pieceTextures[1] = loadTextureFromPng("ChessPieces/b_pawn_1x_ns.png");
@@ -672,7 +672,7 @@ void loadTextures() {
     pieceTextures[12] = loadTextureFromPng("ChessPieces/w_king_1x_ns.png");
 }
 
-Element* createChessSquares(ElementSettings es) {
+static Element* createChessSquares(ElementSettings es) {
     static int row = 0;
     static int column = 0;
     es.color = ((row+column) % 2 ? COLOR_GRAY : COLOR_WHITE);
@@ -698,7 +698,7 @@ Element* createChessSquares(ElementSettings es) {
     return addChildElements(square, piece);
 }
 
-void createChessBoard(Element* root) {
+static void createChessBoard(Element* root) {
     addChildElements(root,
         addChildElements(
             createElement(
@@ -795,7 +795,7 @@ void createChessBoard(Element* root) {
     chessBoard->flags.bits.isActive = false;
 }
 
-void createStartScreen(Element* root) {
+static void createStartScreen(Element* root) {
     const Task startChessGame = (Task){startChessGameTask, NULL};
     addChildElements(root,
         addChildElements(
@@ -839,7 +839,7 @@ void createStartScreen(Element* root) {
     );
 }
 
-void createEndScreen(Element* root) {
+static void createEndScreen(Element* root) {
     addChildElements(root,
         addChildElements(
             createElement(
