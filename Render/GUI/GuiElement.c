@@ -21,7 +21,7 @@ void initElements() {
     g_Hashmap = newHashmap_Element(512);
 }
 
-Element newElement(const Mesh mesh, const Vec2i pos, const int width, const int height, Texture* texture) {
+Element newElement(const Mesh mesh, const Vec2i pos, const int width, const int height, Simple_Texture* texture) {
     return (Element){
         .name = NULL,
         .Mesh = mesh,
@@ -34,7 +34,7 @@ Element newElement(const Mesh mesh, const Vec2i pos, const int width, const int 
         .height = height,
         .actualWidth = width,
         .actualHeight = height,
-        .texture = texture,
+        .simpleTexture = texture,
         .color = (Vec3f){0.0f, 0.0f, 0.0f},
         .defaultColor = (Vec3f){0.0f, 0.0f, 0.0f},
         .textElement = (TextElement){.charQuads = Character_newList(16)},
@@ -132,7 +132,7 @@ Element *guiAddElement(
     const Vec2i pos,
     const int width,
     const int height,
-    Texture *tex,
+    Simple_Texture *tex,
     const Vec3f color,
     const Padding padding,
     const int childGap,
@@ -214,7 +214,7 @@ Element *guiAddSimpleRectangle_Texture(
     const Vec2i pos,
     const int width,
     const int height,
-    Texture *tex
+    Simple_Texture *tex
 )
 {
     Element* element = guiAddElement(&g_Elements, NULL, quadMesh, pos, width, height, tex, (Vec3f){0.6f, 0.6f, 0.6f}, (Padding){10, 10, 10, 10}, 10, NULL, NULL, NULL, (Task){NULL, NULL}, NULL, false, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false, 0.0f);
@@ -236,7 +236,7 @@ Element *guiAddSimpleButton_Texture(
     const Vec2i pos,
     const int width,
     const int height,
-    Texture *tex,
+    Simple_Texture *tex,
     const Task task,
     const char *text
 )

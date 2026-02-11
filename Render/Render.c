@@ -116,7 +116,7 @@ void renderElementsRecursively(Element* element, const Renderer* renderer) {
     setUniform(shader, "transparency", (float)1-element->transparency);
     setUniform(shader, "brightness", (float)element->brightness);
 
-    setUniform(shader, "hasTexture", element->texture != NULL);
+    setUniform(shader, "hasTexture", element->simpleTexture != NULL);
 
     setUniform(shader, "positionObject", toVec2f(element->worldPos));
 
@@ -126,8 +126,8 @@ void renderElementsRecursively(Element* element, const Renderer* renderer) {
 
     glActiveTexture(GL_TEXTURE0);
 
-    if (element->texture != NULL) {
-        glBindTexture(GL_TEXTURE_2D, element->texture->textureId);
+    if (element->simpleTexture != NULL) {
+        glBindTexture(GL_TEXTURE_2D, element->simpleTexture->textureId);
     } else {
         glBindTexture(GL_TEXTURE_2D, 0);
     }

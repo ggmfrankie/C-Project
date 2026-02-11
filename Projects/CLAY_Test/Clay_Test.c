@@ -57,7 +57,7 @@ int main() {
     // Note: screenWidth and screenHeight will need to come from your environment, Clay doesn't handle window related tasks
     Clay_Initialize(arena, (Clay_Dimensions) { screenWidth, screenHeight }, (Clay_ErrorHandler) { HandleClayErrors });
 
-    while(renderLoop()) { // Will be different for each renderer / environment
+    while(true) { // Will be different for each renderer / environment
         // Optional: Update internal layout dimensions to support resizing
         Clay_SetLayoutDimensions((Clay_Dimensions) { screenWidth, screenHeight });
         // Optional: Update internal pointer position for handling mouseover / click / touch events - needed for scrolling & debug tools

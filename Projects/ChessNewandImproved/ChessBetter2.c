@@ -317,6 +317,16 @@ void chess_loadChessPosition(char* fen) {
 
 void chess_createChessBoard(Element* element) {
 
-    addChildElements(element, addChildElements(createElement((ElementSettings){.pos = {200, 200},.width = 500,.height = 500,.color = COLOR_DARKYELLOW}),createElement((ElementSettings){.text = "Chess", .color = {1,1,1}, .padding = {10,1,10,10}})));
-
+    addChildElements(element,
+        addChildElements(createElement((ElementSettings){
+            .pos = {200, 200},
+            .width = 500,.height = 500,
+            .color = COLOR_DARKYELLOW}),
+            createElement((ElementSettings){
+                .text = "Chess",
+                .color = {1,1,1},
+                .padding = {10,1,10,10}
+            })
+        )
+    );
 }

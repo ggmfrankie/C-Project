@@ -12,14 +12,14 @@ typedef struct ComputeShader {
     GLuint SSBO;
     GLuint ssboSize;
     GLuint programId;
-    Texture* texture;
+    Simple_Texture* texture;
     Hashmap_Uniforms uniforms;
     float thickness;
     float startX;
     float endX;
 } ComputeShader;
 
-ComputeShader newComputeShader(Texture *texture, int size);
+ComputeShader newComputeShader(Simple_Texture *texture, int size);
 void ComputeShader_update(const ComputeShader *computeShader, double (*func)(double x));
 void ComputeShader_createUniform(ComputeShader *shader, const char* name);
 void ComputeShader_run(const ComputeShader *computeShader);

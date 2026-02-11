@@ -6,6 +6,7 @@
 #define C_TEXTURE_H
 #include "glad/gl.h"
 #include "../../Utils/String.h"
+#include "../../Utils/Vector.h"
 
 typedef struct {
     int stretchStartX;
@@ -20,14 +21,20 @@ typedef struct {
     GLuint textureId;
 
     NinePatchData npd;
+} Simple_Texture;
+
+typedef struct {
+    GLuint atlasId;
+    Vec2i uv0;
+    Vec2i uv1;
 } Texture;
 
 
 
-Texture newTexture(int width, int height, GLuint textureId);
+Simple_Texture newTexture(int width, int height, GLuint textureId);
 
-Texture *newEmptyTexture(int width, int height);
+Simple_Texture *newEmptyTexture(int width, int height);
 
-Texture *loadTextureFromPng(char *fileName);
+Simple_Texture *loadTextureFromPng(char *fileName);
 
 #endif //C_TEXTURE_H

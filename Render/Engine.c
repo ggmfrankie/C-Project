@@ -33,7 +33,7 @@ void startEngine(void (*generateGUI)(Element* guiRoot)) {
 
     g_Renderer = newRenderer(2048, 1024, "Huhu", "ARIAL.TTF");
 
-    Texture* graphTexture = newEmptyTexture(WIDTH, HEIGHT);
+    Simple_Texture* graphTexture = newEmptyTexture(WIDTH, HEIGHT);
     g_Renderer.computeShader = newComputeShader(NULL, 1024);
     g_Renderer.computeShader.texture = graphTexture;
     g_Renderer.computeShader.thickness = 2;

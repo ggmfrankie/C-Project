@@ -89,7 +89,7 @@ pthread_t multiplayerListener;
 
 PieceColor turn = -1;
 
-Texture* pieceTextures[13] = {};
+Simple_Texture* pieceTextures[13] = {};
 
 void loadTextures();
 
@@ -551,7 +551,7 @@ void closeProgram(void* nix) {
     exit(69);
 }
 
-Texture* getTexture(ChessPiece piece) {
+Simple_Texture* getTexture(ChessPiece piece) {
     piece = boardDirection ? -piece : piece;
     if (piece < 0) piece = -piece + 6;
     return pieceTextures[piece];
@@ -647,7 +647,7 @@ void syncGui() {
     pthread_mutex_lock(&guiMutex);
     for (int i = 0; i < 8; i++) {
         for (int ii = 0; ii < 8; ii++) {
-            pieceSlots[i][ii]->texture = getTexture(board[i][ii].piece);
+            pieceSlots[i][ii]->simpleTexture = getTexture(board[i][ii].piece);
             pieceSlots[i][ii]->parentElement->color = board[i][ii].isMarked ? Vec3f_Add(COLOR_DARKYELLOW, Vec3f_Mul(pieceSlots[i][ii]->parentElement->defaultColor, 0.2f)) : pieceSlots[i][ii]->parentElement->defaultColor;
         }
     }

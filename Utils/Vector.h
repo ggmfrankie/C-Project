@@ -8,6 +8,10 @@
 
 #include "../Utils/ArrayList.h"
 #include "../Utils/SimpleArray.h"
+    typedef struct {
+        float x,y,z,w;
+    } Vec4f;
+
     typedef struct vec3f {
         float x, y, z;
     } Vec3f;

@@ -29,7 +29,6 @@ typedef struct Renderer {
     void (*render)(const Renderer *renderer);
 
     Element guiRoot;
-
     OtherShaders otherShaders;
 } Renderer;
 

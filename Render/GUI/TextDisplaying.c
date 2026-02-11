@@ -81,7 +81,7 @@ Font loadFontAtlas(char* file) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    font.fontAtlas = (Texture){
+    font.fontAtlas = (Simple_Texture){
         .width = FONT_ATLAS_SIZE,
         .height = FONT_ATLAS_SIZE,
         .textureId = tex

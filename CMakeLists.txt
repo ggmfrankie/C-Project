@@ -84,6 +84,8 @@ add_executable(C
         Dependencies/include/CLAY/Clay.h
         Projects/CLAY_Test/Clay_Test.c
         Projects/CLAY_Test/Clay_Test.h
+        Render/GUI/BatchedRendering.c
+        Render/GUI/BatchedRendering.h
 )
 #add_subdirectory("${CMAKE_SOURCE_DIR}/Render")
 
