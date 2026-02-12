@@ -11,7 +11,7 @@
 #include "../Utils/DataStructures.h"
 #include "../Utils/Vector.h"
 
-GLuint generateGraphSSBO(const size_t size) {
+static GLuint generateGraphSSBO(const size_t size) {
     GLuint graphSSBO;
     glGenBuffers(1, &graphSSBO);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, graphSSBO);
@@ -20,7 +20,7 @@ GLuint generateGraphSSBO(const size_t size) {
     return graphSSBO;
 }
 
-GLuint createGraphingShader(const String *fileName, const int programId) {
+static GLuint createGraphingShader(const String *fileName, const int programId) {
     String shaderSource = readShaderFile(fileName);
     const GLchar* source = (GLchar*)shaderSource.content;
 
@@ -78,7 +78,7 @@ ComputeShader newComputeShader(Simple_Texture *texture, const int size) {
     };
 }
 
-void setBufferData_Vec2f(const ComputeShader *computeShader, const vec2_Array *data) {
+static void setBufferData_Vec2f(const ComputeShader *computeShader, const vec2_Array *data) {
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, computeShader->SSBO);
     glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, (long long) (data->size * sizeof(Vec2f)), data->content);
 }

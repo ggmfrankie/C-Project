@@ -81,8 +81,6 @@ add_executable(C
         Projects/Test/TestGUI.c
         Projects/ChessNewandImproved/ChessBetter2.c
         Projects/ChessNewandImproved/ChessBetter2.c
-        Render/GUI/BatchedRendering.c
-        Render/GUI/BatchedRendering.h
 )
 #add_subdirectory("${CMAKE_SOURCE_DIR}/Render")
 

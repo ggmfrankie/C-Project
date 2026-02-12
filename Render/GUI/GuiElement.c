@@ -125,6 +125,36 @@ bool isSelected_Quad(const Element *element, const Vec2i mousePos) {
     return false;
 }
 
+void buildQuadMesh(Element* element) {
+    GuiMesh *gm = &element->guiMesh;
+
+    for (int i = 0; i < 6; i++) {
+        gm->vertices[i] = (GuiVertex){
+            .hasTexture = element->flags.bits.hasTexture,
+            .brightness = element->brightness,
+            .color = (Vec4f){element->color.x, element->color.y, element->color.z, 1.0f},
+        };
+    }
+
+    gm->vertices[0].pos = (Vec2f){0.0f, 0.0f};
+    gm->vertices[0].uv = element->texture.uv0;
+
+    gm->vertices[1].pos = (Vec2f){0.0f, 1.0f};
+    gm->vertices[1].uv = (Vec2f){element->texture.uv0.x, element->texture.uv1.y};
+
+    gm->vertices[2].pos = (Vec2f){1.0f, 0.0f};
+    gm->vertices[2].uv = (Vec2f){element->texture.uv1.x, element->texture.uv0.y};
+
+    gm->vertices[3].pos = (Vec2f){1.0f, 0.0f};
+    gm->vertices[3].uv = (Vec2f){element->texture.uv1.x, element->texture.uv0.y};
+
+    gm->vertices[4].pos = (Vec2f){0.0f, 1.0f};
+    gm->vertices[4].uv = (Vec2f){element->texture.uv0.x, element->texture.uv1.y};
+
+    gm->vertices[5].pos = (Vec2f){1.0f, 1.0f};
+    gm->vertices[5].uv = (Vec2f){element->texture.uv1.x, element->texture.uv1.y};
+}
+
 Element *guiAddElement(
     List_Element *list,
     char *name,

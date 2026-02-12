@@ -7,6 +7,7 @@
 #include "glad/gl.h"
 #include "../../Utils/String.h"
 #include "../../Utils/Vector.h"
+#include "../../Utils/HashMap.h"
 
 typedef struct {
     int stretchStartX;
@@ -24,17 +25,20 @@ typedef struct {
 } Simple_Texture;
 
 typedef struct {
-    GLuint atlasId;
-    Vec2i uv0;
-    Vec2i uv1;
+    Vec2f uv0;
+    Vec2f uv1;
 } Texture;
 
-
+HASH_MAP(AtlasTextures, char*, Texture);
 
 Simple_Texture newTexture(int width, int height, GLuint textureId);
 
 Simple_Texture *newEmptyTexture(int width, int height);
 
 Simple_Texture *loadTextureFromPng(char *fileName);
+
+Hashmap_AtlasTextures f_loadTextures(GLuint* atlasId, int atlasWidth, int atlasHeight, char *first, ...);
+
+#define loadTextures(a, w, h, ...) f_loadTextures(a, w, h, __VA_ARGS__, NULL)
 
 #endif //C_TEXTURE_H

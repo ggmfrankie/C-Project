@@ -119,7 +119,7 @@ Font loadFontAtlas(char* file) {
     return font;
 }
 
-void drawTextBatched(const Renderer* renderer, const Vertex* vertices, const int num) {
+static void drawTextBatched(const Renderer* renderer, const Vertex* vertices, const int num) {
     glBindTexture(GL_TEXTURE_2D, renderer->font.fontAtlas.textureId);
     glBindVertexArray(renderer->font.textVAO);
 
@@ -167,62 +167,6 @@ void renderTextRetained(const Renderer* renderer, const Element* element) {
 
     drawTextBatched(renderer, vertices, v);
     Shaders.unbind();
-}
-
-[[deprecated]]
-void renderText(const Renderer *renderer, const Element *element) {
-    const TextElement *textElement = &element->textElement;
-    if (textElement->text.length == 0) return;
-
-    const Font* font = &renderer->font;
-    const float textScale = textElement->textScale;
-
-    const Vec2i startPos = (Vec2i){
-        .x = element->worldPos.x + element->padding.left,
-        .y = element->worldPos.y + element->actualHeight - element->padding.down
-    };
-    Vec2f cursor = (Vec2f){
-        .x = (float)startPos.x,
-        .y = (float)startPos.y
-    };
-
-    glBindTexture(GL_TEXTURE_2D, font->fontAtlas.textureId);
-
-    float maxGlyphHeight = 0;
-    float totalGlyphLength = 0;
-    for (int i = 0; i < textElement->text.length; i++) {
-        const char c = textElement->text.content[i];
-        if (c < 32 || c > 126) continue;
-
-        stbtt_aligned_quad q;
-        stbtt_GetPackedQuad(font->glyphs,
-                            font->fontAtlas.width,
-                            font->fontAtlas.height,
-                            c - 32,
-                            &cursor.x,
-                            &cursor.y,
-                            &q,
-                            1);
-
-        const float glyphWidth  = (q.x1 - q.x0) * textScale;
-        const float glyphHeight = (q.y1 - q.y0) * textScale;
-
-        totalGlyphLength += glyphWidth;
-        if (maxGlyphHeight < glyphHeight) maxGlyphHeight = glyphHeight;
-
-        const Shader* shader = &renderer->guiShader;
-        setUniform_i(shader, ("hasTexture"), 1);
-        setUniform_f(shader, ("width"), glyphWidth);
-        setUniform_f(shader, ("height"), glyphHeight);
-        setUniform_Vec2(shader, ("positionObject"), (Vec2f){ (q.x0-(float)startPos.x)*textScale + (float)startPos.x, (q.y0-(float)startPos.y)*textScale + (float)startPos.y });
-
-        setUniform_i(shader, ("transformTexCoords"), 1);
-        setUniform_Vec2(shader, ("texPosStart"), (Vec2f){ q.s0, q.t0 });
-        setUniform_Vec2(shader, ("texPosEnd"), (Vec2f){ q.s1, q.t1 });
-
-        Mesh_render(&renderer->basicQuadMesh);
-    }
-    setUniform_i(&renderer->guiShader, ("transformTexCoords"), 0);
 }
 
 Vec2i measureElementText(const Font *font, const TextElement* textElement) {
@@ -312,53 +256,6 @@ void reloadTextQuads(const Font* font, Element *element) {
         prevX = cursor.x;
     }
     textElement->width = cursor.x * textScale;
-}
-
-[[deprecated]]
-void renderTextOptimized(const Renderer *renderer, const Element *element) {
-    const TextElement *textElement = &element->textElement;
-    if (textElement->text.length == 0) return;
-
-    Vertex vertices[textElement->text.length * 6];
-    int vertCount = 0;
-
-    const Font* font = &renderer->font;
-    const float textScale = textElement->textScale;
-
-    //TODO relative Position
-    const Vec2f startPos = (Vec2f){
-        .x = element->worldPos.x + element->padding.left,
-        .y = element->worldPos.y + element->actualHeight - element->padding.down
-    };
-    Vec2f cursor = (Vec2f){
-        .x = startPos.x,
-        .y = startPos.y
-    };
-
-    glBindTexture(GL_TEXTURE_2D, font->fontAtlas.textureId);
-
-    float maxGlyphHeight = 0;
-    float totalGlyphLength = 0;
-    for (int i = 0; i < textElement->text.length; i++) {
-        const char c = textElement->text.content[i];
-        if (c < 32 || c > 126) continue;
-
-        stbtt_aligned_quad q;
-        stbtt_GetPackedQuad(font->glyphs,
-                            font->fontAtlas.width,
-                            font->fontAtlas.height,
-                            c - 32,
-                            &cursor.x,
-                            &cursor.y,
-                            &q,
-                            1);
-
-        const float glyphWidth  = (q.x1 - q.x0) * textScale;
-        const float glyphHeight = (q.y1 - q.y0) * textScale;
-
-        totalGlyphLength += glyphWidth;
-        if (maxGlyphHeight < glyphHeight) maxGlyphHeight = glyphHeight;
-    }
 }
 
 void measureFont(Font *font) {

@@ -16,7 +16,7 @@
 #include "GUI/GuiElementData.h"
 
 #define WIDTH 4096
-    #define HEIGHT 600
+#define HEIGHT 600
 
 
 pthread_mutex_t guiMutex = PTHREAD_MUTEX_INITIALIZER;
@@ -24,14 +24,14 @@ pthread_cond_t  guiInitCond = PTHREAD_COND_INITIALIZER;
 bool guiInitialized = false;
 Renderer g_Renderer;
 
-void updateState(Renderer *renderer);
-bool updateStateRecursively(Element *element, Renderer *renderer);
-void charCallback(GLFWwindow*, unsigned int codepoint);
-void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+static void updateState(Renderer *renderer);
+static bool updateStateRecursively(Element *element, Renderer *renderer);
+static void charCallback(GLFWwindow*, unsigned int codepoint);
+static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 void startEngine(void (*generateGUI)(Element* guiRoot)) {
 
-    g_Renderer = newRenderer(2048, 1024, "Huhu", "ARIAL.TTF");
+    g_Renderer = newRenderer(1024, 1024, "Chess Game", "ARIAL.TTF");
 
     Simple_Texture* graphTexture = newEmptyTexture(WIDTH, HEIGHT);
     g_Renderer.computeShader = newComputeShader(NULL, 1024);
@@ -47,6 +47,8 @@ void startEngine(void (*generateGUI)(Element* guiRoot)) {
 
     glfwSetCharCallback(g_Renderer.window, charCallback);
     glfwSetKeyCallback(g_Renderer.window, keyCallback);
+
+    loadTextures(1024, 1024, "Pointer Schematic.png");
 
     generateGUI(&g_Renderer.guiRoot);
 
@@ -64,7 +66,7 @@ void startEngine(void (*generateGUI)(Element* guiRoot)) {
 
             const u_int64 updateLayoutTimeStart = now_ns();
 
-        updateLayout3(&g_Renderer.guiRoot, (Vec2i){0, 0}, (Vec2i){0, 0}, &g_Renderer.font);
+        updateLayout(&g_Renderer.guiRoot, (Vec2i){0, 0}, (Vec2i){0, 0}, &g_Renderer.font);
 
             const u_int64 updateLayoutTime = now_ns() - updateLayoutTimeStart;
 
@@ -96,7 +98,7 @@ static Element* focusedElement = NULL;
 static Element* mouseCapturedElement = NULL;
 static bool dragging = false;
 
-bool dragElement(const Renderer *renderer) {
+static bool dragElement(const Renderer *renderer) {
     if (!mouseCapturedElement) return false;
     if (!mouseCapturedElement->flags.bits.draggable) return false;
 
@@ -127,7 +129,7 @@ bool dragElement(const Renderer *renderer) {
     return false;
 }
 
-void updateState(Renderer *renderer) {
+static void updateState(Renderer *renderer) {
     renderer->guiRoot.width = renderer->screenWidth;
     renderer->guiRoot.height = renderer->screenHeight;
 
@@ -138,7 +140,7 @@ void updateState(Renderer *renderer) {
     if (focusedElement && focusedElement->whileSelected) focusedElement->whileSelected(focusedElement);
 }
 
-bool updateStateRecursively(Element *element, Renderer *renderer) {
+static bool updateStateRecursively(Element *element, Renderer *renderer) {
     if (element == NULL || !element->flags.bits.isActive) return false;
     if (element->onUpdate) element->onUpdate(element);
 
@@ -158,7 +160,7 @@ bool updateStateRecursively(Element *element, Renderer *renderer) {
     return false;
 }
 
-void charCallback(GLFWwindow* window, const unsigned int codepoint) {
+static void charCallback(GLFWwindow* window, const unsigned int codepoint) {
     if (focusedElement == NULL || focusedElement->type == t_defaultElement) return;
 
     if (focusedElement->type == t_textField) {
@@ -172,7 +174,7 @@ void charCallback(GLFWwindow* window, const unsigned int codepoint) {
     }
 }
 
-void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     if (focusedElement == NULL || focusedElement->type == t_defaultElement) return;
 
     if (focusedElement->type == t_textField) {
@@ -213,7 +215,7 @@ Font* getFont() {
     return font;
 }
 
-void addShaderPrograms(Renderer *renderer) {
+static void addShaderPrograms(Renderer *renderer) {
     OtherShaders* otherShaders = &renderer->otherShaders;
 }
 

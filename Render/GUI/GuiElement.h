@@ -6,6 +6,7 @@
 #define C_GUIELEMENT_H
 #include <stdbool.h>
 
+
 #include "Mesh.h"
 #include "Tasks.h"
 #include "TextDisplaying.h"
@@ -18,6 +19,23 @@ struct Renderer;
 typedef Renderer Renderer;
 struct Element;
 typedef Element Element;
+
+typedef struct {
+    Vec2f pos;
+    Vec2f uv;
+
+    Vec4f color;
+    float brightness;
+
+    bool hasTexture;
+
+} GuiVertex;
+
+typedef struct {
+    GuiVertex vertices[32];
+    int length;
+    bool needUpdate;
+} GuiMesh;
 
 typedef struct TextElement {
     Vec2f pos;
@@ -63,6 +81,7 @@ struct Flags {
     bool needsDeletion: 1;
     bool wantGrowHorizontal: 1;
     bool wantGrowVertical: 1;
+    bool hasTexture: 1;
 };
 
 typedef union {
@@ -92,6 +111,7 @@ typedef struct Element {
     int actualHeight;
 
     Mesh Mesh;
+    GuiMesh guiMesh;
     Simple_Texture* simpleTexture;
     Texture texture;
     Vec3f color;

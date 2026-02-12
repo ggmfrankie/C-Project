@@ -91,7 +91,7 @@ static PieceColor turn = -1;
 
 static Simple_Texture* pieceTextures[13] = {};
 
-static void loadTextures();
+static void chess_loadTextures();
 
 static void createStartScreen(Element* root);
 static void createChessBoard(Element* root);
@@ -320,7 +320,7 @@ static bool doesMoveCauseCheck(const int row, const int column, const int pieceR
 }
 
 void createChessGUI(Element* root) {
-    loadTextures();
+    chess_loadTextures();
     createChessBoard(root);
     createStartScreen(root);
 
@@ -654,7 +654,7 @@ static void syncGui() {
     pthread_mutex_unlock(&guiMutex);
 }
 
-static void loadTextures() {
+static void chess_loadTextures() {
     pieceTextures[0] = newEmptyTexture(64, 64);
 
     pieceTextures[1] = loadTextureFromPng("ChessPieces/b_pawn_1x_ns.png");
