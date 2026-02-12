@@ -341,7 +341,7 @@ static Element* createChessSquares(ElementSettings es) {
     es.color = ((row+column) % 2 ? COLOR_GRAY : COLOR_WHITE);
 
     const ElementSettings pieceDisplaySettings = {
-        .texture = chess_pieceTextures[0],
+        .old_texture = chess_pieceTextures[0],
         .width = es.width,
         .height = es.height,
         .notSelectable = true

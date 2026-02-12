@@ -127,11 +127,12 @@ bool isSelected_Quad(const Element *element, const Vec2i mousePos) {
 
 void buildQuadMesh(Element* element) {
     GuiMesh *gm = &element->guiMesh;
+    gm->length = 6;
 
     for (int i = 0; i < 6; i++) {
         gm->vertices[i] = (GuiVertex){
             .hasTexture = element->flags.bits.hasTexture,
-            .brightness = element->brightness,
+            .brightness = 1.0f,
             .color = (Vec4f){element->color.x, element->color.y, element->color.z, 1.0f},
         };
     }
@@ -183,7 +184,8 @@ Element *guiAddElement(
     void (*onUpdate)(Element *element),
     bool wantGrowHorizontal,
     bool wantGrowVertical,
-    float transparency
+    float transparency,
+    char *texture
 )
 {
     Element_ListAdd(list, newElement(mesh, pos, width, height, tex));
@@ -216,6 +218,13 @@ Element *guiAddElement(
     lastElement->flags.bits.wantGrowHorizontal = wantGrowHorizontal;
     lastElement->flags.bits.wantGrowVertical = wantGrowVertical;
     lastElement->transparency = transparency;
+    lastElement->flags.bits.hasTexture = false;
+
+    if (texture) {
+        lastElement->texture = getTexture(texture);
+    }
+
+    buildQuadMesh(lastElement);
 
     if (notSelectable) lastElement->isMouseOver = NULL;
 
@@ -247,7 +256,7 @@ Element *guiAddSimpleRectangle_Texture(
     Simple_Texture *tex
 )
 {
-    Element* element = guiAddElement(&g_Elements, NULL, quadMesh, pos, width, height, tex, (Vec3f){0.6f, 0.6f, 0.6f}, (Padding){10, 10, 10, 10}, 10, NULL, NULL, NULL, (Task){NULL, NULL}, NULL, false, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false, 0.0f);
+    Element* element = guiAddElement(&g_Elements, NULL, quadMesh, pos, width, height, tex, (Vec3f){0.6f, 0.6f, 0.6f}, (Padding){10, 10, 10, 10}, 10, NULL, NULL, NULL, (Task){NULL, NULL}, NULL, false, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false, 0.0f,NULL);
     return element;
 }
 
@@ -258,7 +267,7 @@ Element *guiAddSimpleRectangle_Color(
     const Vec3f color
 )
 {
-    Element* element = guiAddElement(&g_Elements, NULL, quadMesh, pos, width, height, NULL, color, (Padding){10, 10, 10, 10}, 10, NULL, NULL, NULL, (Task){NULL, NULL}, NULL, false, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false, 0.0f);
+    Element* element = guiAddElement(&g_Elements, NULL, quadMesh, pos, width, height, NULL, color, (Padding){10, 10, 10, 10}, 10, NULL, NULL, NULL, (Task){NULL, NULL}, NULL, false, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false, 0.0f,NULL);
     return element;
 }
 
@@ -271,7 +280,7 @@ Element *guiAddSimpleButton_Texture(
     const char *text
 )
 {
-    Element* element = guiAddElement(&g_Elements, NULL, quadMesh, pos, width, height, tex, (Vec3f){0.6f, 0.6f, 0.6f}, (Padding){10, 10, 10, 10}, 10, isSelected_Quad, hoverAndDragFun, runTaskFun, task, text, true, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false, 0.0f);
+    Element* element = guiAddElement(&g_Elements, NULL, quadMesh, pos, width, height, tex, (Vec3f){0.6f, 0.6f, 0.6f}, (Padding){10, 10, 10, 10}, 10, isSelected_Quad, hoverAndDragFun, runTaskFun, task, text, true, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false, 0.0f,NULL);
     return element;
 }
 
@@ -284,7 +293,7 @@ Element *guiAddSimpleButton_Color(
     const char *text
 )
 {
-    Element* element = guiAddElement(&g_Elements, NULL, quadMesh, pos, width, height, NULL, color, (Padding){10, 10, 10, 10}, 10, isSelected_Quad, hoverAndDragFun, runTaskFun, task, text, true, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false, 0.0f);
+    Element* element = guiAddElement(&g_Elements, NULL, quadMesh, pos, width, height, NULL, color, (Padding){10, 10, 10, 10}, 10, isSelected_Quad, hoverAndDragFun, runTaskFun, task, text, true, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false, 0.0f,NULL);
     return element;
 }
 
@@ -297,11 +306,11 @@ Element *guiAddSimpleSlider(
     SliderData* sliderData
 )
 {
-    Element* element = guiAddElement(&g_Elements, NULL, quadMesh, pos, width, height, NULL, colorBackground, (Padding){10, 10, 10, 10}, 10, isSelected_Quad, hoverAndDragFun, NULL, (Task){}, NULL, true, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false, 0.0f);
+    Element* element = guiAddElement(&g_Elements, NULL, quadMesh, pos, width, height, NULL, colorBackground, (Padding){10, 10, 10, 10}, 10, isSelected_Quad, hoverAndDragFun, NULL, (Task){}, NULL, true, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false, 0.0f,NULL);
     Vec2i sliderPos = {};
     sliderPos.x = width/2;
     sliderPos.y = 0;
-    Element* sliderElement = guiAddElement(&g_Elements, NULL, quadMesh, sliderPos, width, height, NULL, colorSlider, (Padding){10, 10, 10, 10}, 10, isSelected_Quad, hoverAndDragFun, sliderCallbackFun, (Task){}, NULL, true, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false, 0.0f);
+    Element* sliderElement = guiAddElement(&g_Elements, NULL, quadMesh, sliderPos, width, height, NULL, colorSlider, (Padding){10, 10, 10, 10}, 10, isSelected_Quad, hoverAndDragFun, sliderCallbackFun, (Task){}, NULL, true, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false, 0.0f,NULL);
     element->childElements.add(&element->childElements, sliderElement);
     element->elementData = sliderData;
     return element;
@@ -333,7 +342,7 @@ Element *createElement(const ElementSettings es) {
                          es.pos,
                          es.width,
                          es.height,
-                         es.texture,
+                         es.old_texture,
                          es.color,
                          es.padding,
                          es.childGap,
@@ -354,7 +363,7 @@ Element *createElement(const ElementSettings es) {
                          es.onUpdate,
                          es.wantGrowHorizontal,
                          es.wantGrowVertical,
-                         es.transparency
+                         es.transparency,NULL
     );
 }
 

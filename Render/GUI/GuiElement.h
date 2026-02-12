@@ -149,7 +149,8 @@ typedef struct {
     LayoutDirection layoutDirection;
     int width;
     int height;
-    Simple_Texture* texture;
+    Simple_Texture* old_texture;
+    char* texture;
     Vec3f color;
     float transparency;
     char* text;
@@ -225,7 +226,7 @@ Element *guiAddElement(
     bool fixedWidth,
     bool fixedHeight,
     void (*whileSelected)(Element *element), bool draggable, void (*onUpdate)(Element *element), bool wantGrowHorizontal, bool
-    wantGrowVertical, float transparency
+    wantGrowVertical, float transparency, char *texture
 );
 
 Element *guiAddSimpleRectangle_Texture(

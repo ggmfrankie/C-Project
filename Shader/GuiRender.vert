@@ -11,8 +11,8 @@ uniform float screenHeight;
 
 out vec2 outUV;
 out vec4 outColor;
-out float outBrightness;
-out int outHasTexture;
+flat out float outBrightness;
+flat out int outHasTexture;
 
 
 void main() {
@@ -21,4 +21,5 @@ void main() {
     gl_Position = vec4(normPos, 0.0, 1.0);
     outUV = uv;
     outHasTexture = hasTexture;
+    outColor = color;
 }

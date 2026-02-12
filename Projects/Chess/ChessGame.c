@@ -551,7 +551,7 @@ static void closeProgram(void* nix) {
     exit(69);
 }
 
-static Simple_Texture* getTexture(ChessPiece piece) {
+static Simple_Texture* getTextureForPiece(ChessPiece piece) {
     piece = boardDirection ? -piece : piece;
     if (piece < 0) piece = -piece + 6;
     return pieceTextures[piece];
@@ -647,7 +647,7 @@ static void syncGui() {
     pthread_mutex_lock(&guiMutex);
     for (int i = 0; i < 8; i++) {
         for (int ii = 0; ii < 8; ii++) {
-            pieceSlots[i][ii]->simpleTexture = getTexture(board[i][ii].piece);
+            pieceSlots[i][ii]->simpleTexture = getTextureForPiece(board[i][ii].piece);
             pieceSlots[i][ii]->parentElement->color = board[i][ii].isMarked ? Vec3f_Add(COLOR_DARKYELLOW, Vec3f_Mul(pieceSlots[i][ii]->parentElement->defaultColor, 0.2f)) : pieceSlots[i][ii]->parentElement->defaultColor;
         }
     }
@@ -678,7 +678,7 @@ static Element* createChessSquares(ElementSettings es) {
     es.color = ((row+column) % 2 ? COLOR_GRAY : COLOR_WHITE);
 
     const ElementSettings pieceDisplaySettings = {
-        .texture = pieceTextures[0],
+        .old_texture = pieceTextures[0],
         .width = es.width,
         .height = es.height,
         .notSelectable = true

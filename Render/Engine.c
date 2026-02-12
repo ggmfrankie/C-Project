@@ -48,7 +48,7 @@ void startEngine(void (*generateGUI)(Element* guiRoot)) {
     glfwSetCharCallback(g_Renderer.window, charCallback);
     glfwSetKeyCallback(g_Renderer.window, keyCallback);
 
-    loadTextures(1024, 1024, "Pointer Schematic.png");
+    loadTextures(&g_Renderer.atlasId, 1024, 1024, "Pointer Schematic.png");
 
     generateGUI(&g_Renderer.guiRoot);
 

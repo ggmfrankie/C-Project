@@ -15,6 +15,7 @@
 #include "Projects/Test/TestGUI.h"
 #include "Projects/Chess/ChessGame.h"
 #include "Projects/ChessNewandImproved/ChessBetter2.h"
+#include "Projects/Tokenizer/Calculator.h"
 
 void* workerThread(void* args);
 
@@ -32,11 +33,12 @@ void mainFun() {
 int main(){
     SetConsoleOutputCP(CP_UTF8);
     pthread_t workerThreadID;
-    chess_run ();
+    //chess_run ();
     pthread_create(&workerThreadID, NULL, workerThread, NULL);
-    startEngine(chess_createChessBoard);
+    //startEngine(chess_createChessBoard);
     //startEngine(generateTestGUI);
     //startEngine(createChessGUI);
+    runParser();
     return 0;
 }
 #endif

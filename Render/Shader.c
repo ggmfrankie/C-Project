@@ -71,7 +71,7 @@ void Shader_createUniform(Shader *shader, const char* name) {
     const int uniformLocation = glGetUniformLocation(shader->programId, name);
 
     if(uniformLocation < 0){
-        printf("Error creating Uniform");
+        printf("Error creating Uniform: %s", name);
     }
     Hashmap_Uniforms_add(&shader->uniforms, name, uniformLocation);
 }

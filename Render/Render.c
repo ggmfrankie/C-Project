@@ -111,9 +111,9 @@ void Renderer_render(const Renderer *renderer) {
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 #endif
 
-    Shaders.bind(&renderer->guiShader);
-    setUniform(&renderer->guiShader, ("screenWidth"), (float) renderer->screenWidth);
-    setUniform(&renderer->guiShader, ("screenHeight"), (float) renderer->screenHeight);
+    Shaders.bind(&renderer->old_guiShader);
+    setUniform(&renderer->old_guiShader, ("screenWidth"), (float) renderer->screenWidth);
+    setUniform(&renderer->old_guiShader, ("screenHeight"), (float) renderer->screenHeight);
 
     const Element* guiRoot = &renderer->guiRoot;
 
@@ -170,7 +170,12 @@ void Renderer_render2(const Renderer *renderer) {
 
     Element* textElements[1024];
     int numTextElements = 0;
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+    glDisable(GL_DEPTH_TEST);
+    glDepthMask(GL_FALSE);
+
     //#define DEBUG
 #ifdef DEBUG
     glDisable(GL_CULL_FACE);
@@ -181,7 +186,7 @@ void Renderer_render2(const Renderer *renderer) {
     setUniform(&renderer->guiShader, ("screenWidth"), (float) renderer->screenWidth);
     setUniform(&renderer->guiShader, ("screenHeight"), (float) renderer->screenHeight);
 
-    setUniform(&renderer->guiShader, "texture_sampler", 0);
+    setUniform(&renderer->guiShader, "atlasSampler", 0);
 
     const Element* guiRoot = &renderer->guiRoot;
 
@@ -195,6 +200,10 @@ void Renderer_render2(const Renderer *renderer) {
         );
     }
     renderBatchedQuads(renderer->atlasId, vertices, numVertices);
+
+    for (int i = 0; i < numTextElements; i++) {
+        renderTextRetained(renderer, textElements[i]);
+    }
 
     glfwSwapBuffers(renderer->window);
     Shaders.unbind();
@@ -216,10 +225,10 @@ GuiVertex getUpdatedVertex(const GuiVertex *vertex, int width, int height, Vec2i
 void accumulateMeshes(Element *element, const Renderer *renderer, GuiVertex *vertices, int *index, Element **textElements, int *numTextElements) {
     if (element == NULL || !element->flags.bits.isActive) return;
 
-    if (element->textElement.hasText) textElements[*numTextElements++] = element;
+    if (element->textElement.hasText) textElements[(*numTextElements)++] = element;
 
     for (int i = 0; i < element->guiMesh.length; i++) {
-        vertices[*index++] = getUpdatedVertex(&element->guiMesh.vertices[i], element->actualWidth, element->actualHeight, element->worldPos);
+        vertices[(*index)++] = getUpdatedVertex(&element->guiMesh.vertices[i], element->actualWidth, element->actualHeight, element->worldPos);
     }
 
     for (int i = 0; i < element->childElements.size; i++) {
@@ -256,7 +265,7 @@ void initBatchedRendering() {
                           sizeof(GuiVertex), (void*)offsetof(GuiVertex, brightness));
 
     glEnableVertexAttribArray(4); //texture flag
-    glVertexAttribPointer(4, 1, GL_INT, GL_FALSE,
+    glVertexAttribIPointer(4, 1, GL_INT,
                           sizeof(GuiVertex), (void*)offsetof(GuiVertex, hasTexture));
 
     glBufferData(GL_ARRAY_BUFFER,
@@ -266,6 +275,7 @@ void initBatchedRendering() {
 }
 
 void renderBatchedQuads(const GLuint atlasId, const GuiVertex *vertices, const int length) {
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, atlasId);
     glBindVertexArray(graphicsData.VAO);
     glBindBuffer(GL_ARRAY_BUFFER, graphicsData.VBO);

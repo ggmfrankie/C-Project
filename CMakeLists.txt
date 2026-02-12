@@ -81,6 +81,8 @@ add_executable(C
         Projects/Test/TestGUI.c
         Projects/ChessNewandImproved/ChessBetter2.c
         Projects/ChessNewandImproved/ChessBetter2.c
+        Projects/Tokenizer/Calculator.c
+        Projects/Tokenizer/Calculator.h
 )
 #add_subdirectory("${CMAKE_SOURCE_DIR}/Render")
 

@@ -37,7 +37,8 @@ Simple_Texture *newEmptyTexture(int width, int height);
 
 Simple_Texture *loadTextureFromPng(char *fileName);
 
-Hashmap_AtlasTextures f_loadTextures(GLuint* atlasId, int atlasWidth, int atlasHeight, char *first, ...);
+void f_loadTextures(GLuint *atlasId, int atlasWidth, int atlasHeight, char *first, ...);
+Texture getTexture(const char* name);
 
 #define loadTextures(a, w, h, ...) f_loadTextures(a, w, h, __VA_ARGS__, NULL)
 
