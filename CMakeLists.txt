@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 4.0)
-project(C C)
+project(MixedProject LANGUAGES C CXX)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -march=native -lpthread")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -march=native -lpthread")
 
@@ -7,11 +7,11 @@ set(CMAKE_C_STANDARD 11)
 
 include_directories("${CMAKE_SOURCE_DIR}/Dependencies/include")
 
-add_executable(C
+add_executable(C-Project
         Utils/GenericLinkedList.h
         Main.c
-        Utils/String.c
-        Utils/String.h
+        Utils/CString.c
+        Utils/CString.h
         Render/Render.c
         Render/Render.h
         Render/GUI/Mesh.c
@@ -83,6 +83,12 @@ add_executable(C
         Projects/ChessNewandImproved/ChessBetter2.c
         Projects/Tokenizer/Calculator.c
         Projects/Tokenizer/Calculator.h
+        Cpp/GameEngine.cpp
+        Main.cpp
+        Cpp/Render/Window.cpp
+        Cpp/Render/Window.h
+        Cpp/Render/Geometry/Mesh.cpp
+        Cpp/Render/Geometry/Mesh.h
 )
 #add_subdirectory("${CMAKE_SOURCE_DIR}/Render")
 
@@ -94,7 +100,7 @@ set_target_properties(glfw PROPERTIES
         IMPORTED_LOCATION "${GLFW_LIB}"
 )
 
-target_link_libraries(C
+target_link_libraries(C-Project
         glfw
         opengl32     # OpenGL (needed by GLFW)
         gdi32        # Windows GDI

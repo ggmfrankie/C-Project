@@ -4,6 +4,9 @@
 
 #ifndef C_ENGINE_H
 #define C_ENGINE_H
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include <pthread.h>
 #include "GUI/GuiElement.h"
 
@@ -19,5 +22,7 @@ Vec2i getWindowSize();
 Font* getFont();
 double graphingFunction(double x);
 
-
+#ifdef __cplusplus
+    }
+#endif
 #endif //C_ENGINE_H

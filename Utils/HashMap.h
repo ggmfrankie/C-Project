@@ -9,7 +9,7 @@
 #include <string.h>
 #include <_bsd_types.h>
 
-#include "String.h"
+#include "CString.h"
 
 
 #define HASH_MAP(Name, Key, Value)\

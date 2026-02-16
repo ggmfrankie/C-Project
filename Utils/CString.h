@@ -1,5 +1,9 @@
-#ifndef STRING_H
-#define STRING_H
+#ifndef CSTRING_H
+#define CSTRING_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #include <stdbool.h>
 #include "ArrayList.h"
@@ -8,7 +12,7 @@
 typedef struct List_String List_String;
 typedef struct StringFunctions StringFunctions;
 
-typedef struct String {
+typedef struct CString {
     char* content;
     size_t length;
     size_t capacity;
@@ -24,7 +28,7 @@ typedef struct StringFunctions {
     String (*newReservedString)(size_t capacity);
     void (*fromInt)(char* content, size_t size, long long value);
 
-    void (*delete)(String* string);
+    void (*delete_)(String* string);
     void (*clear)(String* string);
     void (*recalculateLength)(String* string);
     void (*copyInto)(String* string, const char* content);
@@ -75,6 +79,8 @@ char str_getCharAt(const String* string, int index);
 
 extern StringFunctions Strings;
 
-
+#ifdef __cplusplus
+} // extern "C"
+#endif
 
 #endif

@@ -7,7 +7,7 @@
 #include <windows.h>
 #include <_bsd_types.h>
 
-#include "../../Utils/String.h"
+#include "../../Utils/CString.h"
 #include "../../Utils/FileIO.h"
 #include "../../Utils/HashMap.h"
 #include "../../Utils/TimeMeasurenments.h"
@@ -54,7 +54,7 @@ void namensliste_langsam() {
     List_String names = Strings.split(&nameList, "\n");
     names.size--;
 
-    Strings.delete(&nameList);
+    Strings.delete_(&nameList);
 
 
     NameCounterMap nameCounterMap = (NameCounterMap){

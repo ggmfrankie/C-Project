@@ -16,7 +16,7 @@ typedef struct LinkedList_##name{\
     void (*add)(struct LinkedList_##name* list, type data);\
     type* (*get)(struct LinkedList_##name* list, unsigned int index);\
     type* (*pop)(struct LinkedList_##name* list, unsigned int index);\
-    void (*delete)(struct LinkedList_##name* list, unsigned int index);\
+    void (*delete_)(struct LinkedList_##name* list, unsigned int index);\
 } LinkedList_##name;\
 \
 static inline Node_##name* createNode_##name(type data){\
@@ -98,7 +98,7 @@ static inline LinkedList_##name newList_##name(){\
         .add = addData_##name,\
         .get = getDataAt_##name,\
         .pop = pop_##name,\
-        .delete = delete_##name\
+        .delete_ = delete_##name\
     };\
 }
 

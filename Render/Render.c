@@ -73,27 +73,27 @@ void Renderer_init(Renderer *renderer) {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    initBatchedRendering();
+    //initBatchedRendering();
     loadDefaultQuadMesh();
 
     ComputeShader_createUniform(&renderer->computeShader, ("dataSize"));
     ComputeShader_createUniform(&renderer->computeShader, ("thickness"));
     ComputeShader_update(&renderer->computeShader, graphingFunction);
 
-    Shader_createUniform(&renderer->old_guiShader, "hasTexture");
-    Shader_createUniform(&renderer->old_guiShader, "width");
-    Shader_createUniform(&renderer->old_guiShader, "height");
-    Shader_createUniform(&renderer->old_guiShader, "screenWidth");
-    Shader_createUniform(&renderer->old_guiShader, "screenHeight");
-    Shader_createUniform(&renderer->old_guiShader, "positionObject");
-    Shader_createUniform(&renderer->old_guiShader, "texture_sampler");
-    Shader_createUniform(&renderer->old_guiShader, "color");
-    Shader_createUniform(&renderer->old_guiShader, "transparency");
-    Shader_createUniform(&renderer->old_guiShader, "brightness");
-
+    Shader_createUniform(&renderer->guiShader, "hasTexture");
+    Shader_createUniform(&renderer->guiShader, "width");
+    Shader_createUniform(&renderer->guiShader, "height");
     Shader_createUniform(&renderer->guiShader, "screenWidth");
     Shader_createUniform(&renderer->guiShader, "screenHeight");
-    Shader_createUniform(&renderer->guiShader, "atlasSampler");
+    Shader_createUniform(&renderer->guiShader, "positionObject");
+    Shader_createUniform(&renderer->guiShader, "texture_sampler");
+    Shader_createUniform(&renderer->guiShader, "color");
+    Shader_createUniform(&renderer->guiShader, "transparency");
+    Shader_createUniform(&renderer->guiShader, "brightness");
+
+    //Shader_createUniform(&renderer->batched_guiShader, "screenWidth");
+    //Shader_createUniform(&renderer->batched_guiShader, "screenHeight");
+    //Shader_createUniform(&renderer->batched_guiShader, "atlasSampler");
 
     Shader_createUniform(&renderer->textShader, "fontAtlas");
     Shader_createUniform(&renderer->textShader, "screenWidth");
@@ -111,9 +111,9 @@ void Renderer_render(const Renderer *renderer) {
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 #endif
 
-    Shaders.bind(&renderer->old_guiShader);
-    setUniform(&renderer->old_guiShader, ("screenWidth"), (float) renderer->screenWidth);
-    setUniform(&renderer->old_guiShader, ("screenHeight"), (float) renderer->screenHeight);
+    Shaders.bind(&renderer->guiShader);
+    setUniform(&renderer->guiShader, ("screenWidth"), (float) renderer->screenWidth);
+    setUniform(&renderer->guiShader, ("screenHeight"), (float) renderer->screenHeight);
 
     const Element* guiRoot = &renderer->guiRoot;
 
@@ -127,7 +127,7 @@ void Renderer_render(const Renderer *renderer) {
 
 void renderElementsRecursively(Element* element, const Renderer* renderer) {
     if (element == NULL || !element->flags.bits.isActive) return;
-    const Shader* shader = &renderer->old_guiShader;
+    const Shader* shader = &renderer->guiShader;
 
     setUniform(shader, "width", (float)element->actualWidth);
     setUniform(shader, "height", (float)element->actualHeight);
@@ -154,7 +154,7 @@ void renderElementsRecursively(Element* element, const Renderer* renderer) {
 
     if (element->textElement.hasText) {
         renderTextRetained(renderer, element);
-        Shaders.bind(&renderer->old_guiShader);
+        Shaders.bind(&renderer->guiShader);
     }
 
     for (int i = 0; i < element->childElements.size; i++) {
@@ -182,11 +182,11 @@ void Renderer_render2(const Renderer *renderer) {
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 #endif
 
-    Shaders.bind(&renderer->guiShader);
-    setUniform(&renderer->guiShader, ("screenWidth"), (float) renderer->screenWidth);
-    setUniform(&renderer->guiShader, ("screenHeight"), (float) renderer->screenHeight);
+    Shaders.bind(&renderer->batched_guiShader);
+    setUniform(&renderer->batched_guiShader, ("screenWidth"), (float) renderer->screenWidth);
+    setUniform(&renderer->batched_guiShader, ("screenHeight"), (float) renderer->screenHeight);
 
-    setUniform(&renderer->guiShader, "atlasSampler", 0);
+    setUniform(&renderer->batched_guiShader, "atlasSampler", 0);
 
     const Element* guiRoot = &renderer->guiRoot;
 
@@ -238,7 +238,7 @@ void accumulateMeshes(Element *element, const Renderer *renderer, GuiVertex *ver
 }
 
 static GraphicsData graphicsData;
-
+[[todo]]
 void initBatchedRendering() {
 
     glGenVertexArrays(1, &graphicsData.VAO);
@@ -273,7 +273,7 @@ void initBatchedRendering() {
              NULL,
              GL_DYNAMIC_DRAW);
 }
-
+[[todo]]
 void renderBatchedQuads(const GLuint atlasId, const GuiVertex *vertices, const int length) {
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, atlasId);
@@ -380,11 +380,9 @@ inline bool isMousePressed(GLFWwindow* window, const int mouseButton) {
 
 Renderer newRenderer(const int width, const int height, const char* name, char *fontFile) {
     return (Renderer){
-        .old_guiShader = newShader("GuiVertexShader.vert", "GuiFragmentShader.frag"),
-        .guiShader = newShader("GuiRender.vert", "GuiRender.frag"),
+        .guiShader = newShader("GuiVertexShader.vert", "GuiFragmentShader.frag"),
+        .batched_guiShader = newShader("GuiRender.vert", "GuiRender.frag"),
         .textShader = newShader("TextRender.vert", "TextRender.frag"),
-        .otherShaders = (OtherShaders){0, {}},
-        .computeShader = 0,
         .window = initWindow(width, height, name),
         .render = Renderer_render,
         .screenWidth = width,
@@ -407,4 +405,5 @@ void loadDefaultQuadMesh() {
 void Renderer_destroy(const Renderer *renderer) {
     glfwDestroyWindow(renderer->window);
 }
+
 

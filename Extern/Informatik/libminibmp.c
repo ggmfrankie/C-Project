@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include "../../Utils/String.h"
+#include "../../Utils/CString.h"
 
 
 #include "libminibmp.h"
@@ -64,7 +64,7 @@ void save_BMP(char * name, const bmp *image)
     fwrite(image, HEADERSIZE, 1, f);
     fwrite(image->img, image->SizeImage, 1, f);
     fclose(f);
-    Strings.delete(&fullPath);
+    Strings.delete_(&fullPath);
 }
 
 

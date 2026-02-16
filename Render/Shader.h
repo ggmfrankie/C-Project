@@ -6,7 +6,7 @@
 #define C_SHADER_H
 #include "../Utils/Map.h"
 #include "../Utils/HashMap.h"
-#include "../Utils/String.h"
+#include "../Utils/CString.h"
 #include "../Utils/Vector.h"
 #include "glad/gl.h"
 

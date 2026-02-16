@@ -4,7 +4,7 @@
 
 #ifndef C_FILEIO_H
 #define C_FILEIO_H
-#include "String.h"
+#include "CString.h"
 
 String readFile(const String *fileName);
 void writeFile(const String *fileName, const String *content);

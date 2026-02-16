@@ -4,7 +4,7 @@
 
 #ifndef C_STRINGBUILDER_H
 #define C_STRINGBUILDER_H
-#include "String.h"
+#include "CString.h"
 
 typedef struct StringBuilder {
     char* content;

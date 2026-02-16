@@ -6,7 +6,7 @@
 #define C_GUIELEMENTDATA_H
 #include <pthread.h>
 #include <stdbool.h>
-#include "../../Utils/String.h"
+#include "../../Utils/CString.h"
 
 typedef struct {
     float min;

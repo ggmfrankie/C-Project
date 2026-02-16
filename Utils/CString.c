@@ -1,5 +1,5 @@
 
-#include "String.h"
+#include "CString.h"
 
 #include <string.h>
 
@@ -8,7 +8,7 @@
 StringFunctions Strings = {
     .charAt = str_getCharAt,
     .combine = str_combine,
-    .delete = str_delete,
+    .delete_ = str_delete,
     .clear = str_clear,
     .equals = str_equals,
     .println = str_println,

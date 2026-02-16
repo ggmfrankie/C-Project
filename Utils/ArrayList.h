@@ -5,6 +5,10 @@
 #ifndef C_ARRAYLIST_H
 #define C_ARRAYLIST_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -33,7 +37,7 @@ static inline void name##_ListAdd(List_##name *list, type value) { \
         name##_error();\
     } \
     if (list->size >= list->capacity) { \
-        type *tmp = realloc(list->content, list->capacity * 2 * sizeof(type) + 1); \
+        type *tmp = (type*)realloc(list->content, list->capacity * 2 * sizeof(type) + 1); \
         if (!tmp) name##_error(); \
         list->content = tmp; \
         list->capacity *= 2; \
@@ -73,7 +77,7 @@ static inline void name##_iterator(List_##name *list, void (*foo)(type *content)
 }\
 \
 static inline type* name##_getContent(List_##name *list){\
-    type* newContent = malloc(list->size * sizeof(type));\
+    type* newContent = (type*)malloc(list->size * sizeof(type));\
     for (int i = 0; i < list->size; i++){\
         newContent[i] = list->content[i];\
     }\
@@ -81,7 +85,7 @@ static inline type* name##_getContent(List_##name *list){\
 }\
 \
 static inline List_##name name##_newList(int capacity) {\
-    type* content = calloc(capacity, sizeof(type));\
+    type* content = (type*)calloc(capacity, sizeof(type));\
     if (!content) name##_error(); \
     return (List_##name){\
         .content = content,\
@@ -104,5 +108,7 @@ type variable = List.content[i];\
 x;\
 }}
 
-
+#ifdef __cplusplus
+} // extern "C"
+#endif
 #endif // C_ARRAYLIST_H

@@ -12,7 +12,7 @@
 #include "GuiElement.h"
 #include "../Render.h"
 #include "../../Utils/DataStructures.h"
-#include "../../Utils/String.h"
+#include "../../Utils/CString.h"
 #define FONT_ATLAS_SIZE 2048
 #define FONT_SIZE 32.0f
 
@@ -42,7 +42,7 @@ Font loadFontAtlas(char* file) {
         printf("Failed to read font file\n");
     }
     fclose(f);
-    Strings.delete(&completePath);
+    Strings.delete_(&completePath);
 
     Font font = {};
 

@@ -6,7 +6,7 @@
 
 #include <string.h>
 
-#include "String.h"
+#include "CString.h"
 
 String readFile(const String *fileName) {
 

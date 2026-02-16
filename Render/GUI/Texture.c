@@ -3,7 +3,7 @@
 //
 
 #include "../GUI/Texture.h"
-#include "../../Utils/String.h"
+#include "../../Utils/CString.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
 #include <stb/stb_rect_pack.h>
@@ -60,8 +60,8 @@ void f_loadTextures(GLuint *atlasId, const int atlasWidth, const int atlasHeight
 
         index++;
 
-        Strings.delete(&fileNameString);
-        Strings.delete(&fullPath);
+        Strings.delete_(&fileNameString);
+        Strings.delete_(&fullPath);
         file = va_arg(args, const char*);
     }
     va_end(args);
@@ -128,7 +128,7 @@ Simple_Texture *loadTextureFromPng(char *fileName) {
 
     unsigned char* data = stbi_load(fullPath.content, &width, &height, &channels, 0);
 
-    Strings.delete(&fullPath);
+    Strings.delete_(&fullPath);
     if (!data) {
         printf("Failed to load image\n");
         exit(-3) ;

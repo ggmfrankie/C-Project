@@ -7,7 +7,7 @@
 #include <math.h>
 
 #include "Shader.h"
-#include "../Utils/String.h"
+#include "../Utils/CString.h"
 #include "../Utils/DataStructures.h"
 #include "../Utils/Vector.h"
 
@@ -35,7 +35,7 @@ static GLuint createGraphingShader(const String *fileName, const int programId) 
         printf("Graphing Shader Compile Error:\n%s\n", infoLog);
     }
 
-    Strings.delete(&shaderSource);
+    Strings.delete_(&shaderSource);
     return shaderId;
 }
 

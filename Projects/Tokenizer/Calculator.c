@@ -60,15 +60,16 @@ typedef enum {
     expr
 } ArgumentType;
 
-typedef struct {
-    ArgumentType t_arg1;
-    void* arg1;
-
-    ArgumentType t_arg2;
-    void* arg2;
+typedef struct s_Operation{
+    bool hasArgs;
+    double arg1;
+    double arg2;
 
     OperatorType type;
     int weight;
+
+    struct s_Operation* parentLeft;
+    struct s_Operation* parentRight;
 } Operation;
 
 static void processChar(char c);
@@ -77,6 +78,7 @@ static OperatorType getOperatorType(char c);
 static double parseTokens();
 
 static Token token[512];
+static TokenizerState tokenizerState = braceOpen;
 static int length = -1;
 
 static void printTokens();
@@ -84,33 +86,50 @@ static void printTokens();
 void runParser() {
 
     do {
+        tokenizerState = braceOpen;
         char input[512] = {};
         length = -1;
         memset(token, 0, sizeof(token));
         printf("Enter an expression:");
         scanf("%512s", input);
-        fflush(stdin);
 
         for (int i = 0; i <= strlen(input); i++ ) {
             procChar(input[i]);
         }
         length++;
-        printTokens();
-        printf("= %lf\n", parseTokens());
+        //printTokens();
+        //printf("= %lf\n", parseTokens());
     } while (1);
 }
 
-double evaluateOperations(Operation* op) {
-    double arg1 = op->t_arg1 == expr ? evaluateOperations(op->arg1) : *(double*)op->arg1;
-    double arg2 = op->t_arg2 == expr ? evaluateOperations(op->arg2) : *(double*)op->arg2;
-    switch (op->type) {
-        case t_add: return (arg1 + arg2);
-        case t_sub: return (arg1 - arg2);
-        case t_mul: return (arg1 * arg2);
-        case t_div: return (arg1 / arg2);
-            default: return 0;
+double evaluate(OperatorType c, double a, double b) {
+    switch (c) {
+        case t_add: return (a + b);
+        case t_sub: return (a - b);
+        case t_mul: return (a * b);
+        case t_div: return (a / b);
+        default: return 0;
     }
 }
+
+double evaluateOperations(Operation* op) {
+    double result = evaluate(op->type, op->arg1, op->arg2);
+    if (op->parentLeft && !op->parentRight) {
+        op->parentLeft->arg2 = result;
+    } else if (op->parentRight && !op->parentLeft) {
+        op->parentRight->arg1 = result;
+    } else if (op->parentLeft) {
+        Operation *op1 = op->parentLeft;
+        Operation *op2 = op->parentRight;
+        if (op1->weight >= op2->weight) {
+            op1->parentRight = op2;
+        } else {
+
+        }
+    }
+}
+
+/*
 
 static double parseTokens() {
     static int weights[] = {5, 10, 15, 20};
@@ -140,39 +159,52 @@ static double parseTokens() {
 
     for (int i = 0; i < length; i++) {
         Token t = token[i];
-        if (t.tokenType == t_num || t.tokenType == t_decNum) {
-            if (t.tokenType == t_num) {
-                numbers[numberIndex] = strtol(t.content, NULL, 0);
-            } else {
-                numbers[numberIndex] = strtod(t.content, NULL);
-            }
-            Operation* op2 = &operations[numberIndex];
-            if (numberIndex == 0) {
-                op2->arg1 = &numbers[numberIndex];
-            } else {
-                Operation* op1 = &operations[numberIndex - 1];
-                if (op1->weight >= op2->weight) {
-                    op1->arg2 = &numbers[numberIndex];
-                    op1->t_arg2 = num;
-                    op2->arg1 = &op1;
-                    op2->t_arg1 = expr;
-                } else {
-                    op2->arg1 = &numbers[numberIndex];
-                    op2->t_arg1 = num;
-                    op1->arg2 = &op2;
-                    op1->t_arg2 = expr;
-                }
-            }
-            numberIndex++;
+        if (!(t.tokenType == t_num || t.tokenType == t_decNum)) continue;
+        if (t.tokenType == t_num) {
+            numbers[numberIndex] = (double)strtol(t.content, NULL, 0);
+        } else {
+            numbers[numberIndex] = strtod(t.content, NULL);
         }
+
+        if (numberIndex == 0) {
+            operations[numberIndex].arg1 = &numbers[numberIndex];
+            operations[numberIndex].t_arg1 = num;
+        } else if (numberIndex == opIndex) {
+            operations[numberIndex-1].arg2 = &numbers[numberIndex];
+            operations[numberIndex-1].t_arg2 = num;
+        }
+        else {
+            Operation* op2 = &operations[numberIndex];
+            Operation* op1 = &operations[numberIndex - 1];
+            if (op1->weight >= op2->weight) {
+                op1->arg2 = &numbers[numberIndex];
+                op1->t_arg2 = num;
+                op2->arg1 = op1;
+                op1->parentLeft = op2;
+                op2->t_arg1 = expr;
+            } else {
+                op2->arg1 = &numbers[numberIndex];
+                op2->t_arg1 = num;
+                op1->arg2 = op2;
+                op2->parentRight = op1;
+                op1->t_arg2 = expr;
+            }
+        }
+        numberIndex++;
+
     }
 
-    int lowest = 10000;
-    for (int i = 0; i < opIndex; i++) {
-        if (operations[i].weight < lowest) lowest = i;
+    int lowest = operations[0].weight;
+    int lowestIndex = 0;
+    for (int i = 1; i < opIndex; i++) {
+        if (operations[i].weight <= lowest) {
+            lowestIndex = i;
+            lowest = operations[i].weight;
+        }
     }
-    return evaluateOperations(&operations[lowest]);
+    return evaluateOperations(&operations[lowestIndex]);
 }
+*/
 
 static void printTokens() {
     static char* mapping[] = {"operatorToken", "numberToken", "decNumberToken", "braceOpenToken", "braceCloseToken"};
@@ -316,7 +348,7 @@ static bool wasAny(TokenizerState state) {
 
 
 static void procChar(char c) {
-    static TokenizerState state = braceOpen;
+
     static Transition transitions[] = {
         {wasBrace, isDigit, number, newNum},
         {wasNeg, isDigit, number, newNegNum},
@@ -341,9 +373,9 @@ static void procChar(char c) {
     };
 
     for (int i = 0; i < sizeof(transitions) / sizeof(Transition); i++) {
-        if (transitions[i].prevState && transitions[i].event && transitions[i].prevState(state) && transitions[i].event(c)) {
+        if (transitions[i].prevState && transitions[i].event && transitions[i].prevState(tokenizerState) && transitions[i].event(c)) {
             if (transitions[i].actionFun) transitions[i].actionFun(c);
-            if (transitions[i].nextState != invalid) state = transitions[i].nextState;
+            if (transitions[i].nextState != invalid) tokenizerState = transitions[i].nextState;
             break;
         }
     }

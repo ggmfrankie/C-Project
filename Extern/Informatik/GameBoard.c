@@ -6,7 +6,7 @@
 
 #include <bemapiset.h>
 #include <stdio.h>
-#include "../../Utils/String.h"
+#include "../../Utils/CString.h"
 #include "../../Utils/DataStructures.h"
 #pragma GCC diagnostic ignored "-Wsign-compare"
 
