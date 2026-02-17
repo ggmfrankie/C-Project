@@ -4,10 +4,11 @@
 
 #include "Cpp/GameEngine.h"
 
-/*
+#define GAME
+#ifdef GAME
 int main() {
-    GameEngine gameEngine = GameEngine();
+    auto gameEngine = GameEngine();
     gameEngine.init();
     gameEngine.loop();
 }
-*/
+#endif

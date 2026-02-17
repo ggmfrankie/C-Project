@@ -4,26 +4,27 @@
 
 #include "GameEngine.h"
 
-GameEngine::GameEngine(): window("My Window", 800, 600) {
+GameEngine::GameEngine(): screen("My Window", 800, 600) {}
 
-}
-GameEngine::~GameEngine() {
-
+void GameEngine::addObject(Obj::Object&& obj) {
+    screen.addObject(std::move(obj));
 }
 
 void GameEngine::loop() {
 
-    while(!glfwWindowShouldClose(window.getWindowHandle()))
+    while(!glfwWindowShouldClose(screen.getWindowHandle()))
     {
         processInput();
-        glfwSwapBuffers(window.getWindowHandle());
+        screen.render();
+        glfwSwapBuffers(screen.getWindowHandle());
         glfwPollEvents();
     }
     glfwTerminate();
 }
 
 void GameEngine::init() {
-    window.init();
+    screen.addObject(Obj::Object());
+    screen.init();
 }
 
 void GameEngine::processInput() {

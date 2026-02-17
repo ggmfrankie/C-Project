@@ -28,7 +28,7 @@ void mainFun() {
 }
 
 
-//#define WINADAPT
+#define WINADAPT
 #ifndef WINADAPT
 int main(){
     SetConsoleOutputCP(CP_UTF8);

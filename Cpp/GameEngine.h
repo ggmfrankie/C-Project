@@ -4,19 +4,22 @@
 
 #ifndef C_GAMEENGINE_H
 #define C_GAMEENGINE_H
-#include "Render/Window.h"
+#include "Render/Screen.h"
 
 class GameEngine {
 public:
     GameEngine();
-    ~GameEngine();
+    ~GameEngine() = default;
+
+    void addObject(Obj::Object &&obj);
+
     void loop();
     void init();
 
     void processInput();
 
 private:
-    Window window;
+    Render::Screen screen;
 
 };
 

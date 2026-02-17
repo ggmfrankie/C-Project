@@ -85,10 +85,31 @@ add_executable(C-Project
         Projects/Tokenizer/Calculator.h
         Cpp/GameEngine.cpp
         Main.cpp
-        Cpp/Render/Window.cpp
-        Cpp/Render/Window.h
-        Cpp/Render/Geometry/Mesh.cpp
-        Cpp/Render/Geometry/Mesh.h
+        Cpp/Render/Screen.cpp
+        Cpp/Render/Screen.h
+        Cpp/Render/Objects/Geometry/Mesh.cpp
+        Cpp/Render/Objects/Geometry/Mesh.h
+        Cpp/Utils/Math/Vector.cpp
+        Cpp/Utils/Math/Vector.h
+        Cpp/Render/Shader/Shader.cpp
+        Cpp/Render/Shader/Shader.h
+        Render/CRenderInterface.h
+        Cpp/Utils/FileIO.cpp
+        Cpp/Utils/FileIO.h
+        Cpp/Render/Objects/Object.cpp
+        Cpp/Render/Objects/Object.h
+        Cpp/Render/Objects/Primitives/Cube.cpp
+        Cpp/Render/Objects/Primitives/Cube.h
+        Cpp/Utils/Math/Matrix.cpp
+        Cpp/Utils/Math/Matrix.h
+        Cpp/Render/Transformation/Transformation.cpp
+        Cpp/Render/Transformation/Transformation.h
+        Cpp/Render/Transformation/Camera.cpp
+        Cpp/Render/Transformation/Camera.h
+        Cpp/Render/Objects/Geometry/Texture.cpp
+        Cpp/Render/Objects/Geometry/Texture.h
+        Cpp/Render/Objects/Geometry/Material.cpp
+        Cpp/Render/Objects/Geometry/Material.h
 )
 #add_subdirectory("${CMAKE_SOURCE_DIR}/Render")
 
