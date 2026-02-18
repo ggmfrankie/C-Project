@@ -4,12 +4,17 @@
 
 #include "Object.h"
 
+#include "Loader/ObjLoader.h"
+
 namespace Obj {
     Object::Object() {
         meshes.emplace_back();
     }
-    Object::Object(const std::string& textureFile) {
-        meshes.emplace_back(textureFile);
+
+    Object::Object(const std::string& objFile) {
+        auto obj = Loader::OBJLoader::OBJObject(objFile);
+        obj.load();
+        std::cout << obj << "\n";
     }
 
     Object::~Object() = default;

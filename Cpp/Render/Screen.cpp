@@ -43,11 +43,12 @@ namespace Render{
         }
         glViewport(0, 0, width, height);
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        glfwSwapInterval(1);
 
         glfwSetFramebufferSizeCallback(windowHandle, framebufferSizeCallback);
         shader.init();
         shader.link();
-        for (auto object: objects) {
+        for (auto& object: objects) {
             puts("init Objects");
             object.init();
         }
@@ -55,10 +56,12 @@ namespace Render{
 
     void Screen::render() const {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glDisable(GL_CULL_FACE);
         shader.bind();
         for (auto& obj : objects) {
             obj.render();
         }
+        glfwSwapBuffers(windowHandle);
         Shader::unbind();
     }
 

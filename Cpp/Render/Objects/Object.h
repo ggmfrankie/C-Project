@@ -14,7 +14,7 @@ namespace Obj {
 
         explicit Object();
 
-        explicit Object(const std::string &textureFile);
+        explicit Object(const std::string &objFile);
 
         ~Object();
 

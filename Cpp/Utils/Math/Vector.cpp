@@ -26,9 +26,9 @@ namespace Math {
         return {v.x*x , v.y*y , v.z*z};
     }
 
-
-    Vector2f::Vector2f() {
-        x = y = 0;
+    Vector2f::Vector2f(const float x, const float y) {
+        this->x = x;
+        this->y = y;
     }
 }
 

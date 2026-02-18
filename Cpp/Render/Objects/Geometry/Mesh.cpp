@@ -4,7 +4,7 @@
 
 #include "../Geometry/Mesh.h"
 namespace Obj::Geometry {
-    Mesh::Mesh(const std::string &texture) : texture(texture), VBOs(), material(){
+    Mesh::Mesh(const std::string &texture) : texture(texture), material(){
         vertices.reserve(64);
         normals.reserve(64);
         texCoords.reserve(64);
@@ -16,22 +16,28 @@ namespace Obj::Geometry {
             {-0.5f, 0.5f, 0.0f}
         };
 
-        unsigned int indis[] = {
-            0, 1, 3,
-            1, 2, 3
+        Math::Vector2f tex[] = {
+            {0.0f, 0.0f},
+            {0.5f, 0.5f},
+            {0.5f, 0.5f},
+            {0.5f, 1.0f}
         };
 
+
+        unsigned int indis[] = {
+            0, 3, 1,
+            1, 3, 2
+        };
+
+
         vertices.insert(vertices.end(), std::begin(verts), std::end(verts));
+        texCoords.insert(texCoords.end(), std::begin(tex), std::end(tex));
         indices.insert(indices.end(), std::begin(indis), std::end(indis));
-        VAO = 0;
-        EBO = 0;
     }
 
     Mesh::Mesh(const std::vector<Math::Vector3f> &v, const std::vector<GLuint> &i) : texture(), material(), VBOs(){
         vertices = v;
         indices = i;
-        VAO = 0;
-        EBO = 0;
     }
 
     Mesh::Mesh(): VBOs() {
@@ -49,16 +55,23 @@ namespace Obj::Geometry {
             {-0.5f, 0.5f, 0.0f}
         };
 
+
         unsigned int indis[] = {
-            0, 1, 3,
-            1, 2, 3
+            0, 3, 1,
+            1, 3, 2
+        };
+
+
+        Math::Vector2f tex[] = {
+            {0.0f, 0.0f},
+            {0.5f, 0.5f},
+            {0.5f, 0.5f},
+            {0.5f, 1.0f}
         };
 
         vertices.insert(vertices.end(), std::begin(verts), std::end(verts));
+        texCoords.insert(texCoords.end(), std::begin(tex), std::end(tex));
         indices.insert(indices.end(), std::begin(indis), std::end(indis));
-
-        VAO = 0;
-        EBO = 0;
     }
 
     Mesh::~Mesh() {

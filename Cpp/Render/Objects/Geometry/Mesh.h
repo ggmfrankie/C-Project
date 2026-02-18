@@ -29,13 +29,13 @@ namespace Obj::Geometry {
     private:
         bool initialized = false;
 
-        GLuint VAO;
-        GLuint EBO;
+        GLuint VAO = 0;
+        GLuint EBO = 0;
 
         Texture texture;
         Material material;
 
-        std::array<GLuint, 3> VBOs;
+        std::array<GLuint, 3> VBOs{};
         std::vector<Math::Vector3f> vertices;
         std::vector<Math::Vector3f> normals;
         std::vector<Math::Vector2f> texCoords;

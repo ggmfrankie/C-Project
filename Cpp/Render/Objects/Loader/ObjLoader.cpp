@@ -1,0 +1,107 @@
+//
+// Created by ertls on 18.02.2026.
+//
+
+#include "ObjLoader.h"
+#include <cstring>
+#include "../../../Utils/FileIO.h"
+#include <filesystem>
+#include <unordered_map>
+#include <charconv>
+
+using std::string;
+using std::string_view;
+using std::vector;
+
+
+namespace Obj::Loader::OBJLoader {
+
+    OBJObject::OBJObject(const std::string &fileName) {
+        namespace fs = std::filesystem;
+
+        const auto filePath = fs::path("../Resources/Objects") / fileName;
+        folderPath = filePath.parent_path().string() + "/";
+
+        objFile = Utils::FileIO::readFile(filePath.string());
+    }
+
+    void OBJObject::load() {
+        lines = Utils::split(objFile, '\n') | std::views::filter([](auto s){return !s.empty() && !s.starts_with("#"); }) | Utils::to_vector;
+
+        materialLib = getMaterialLib();
+
+        vertices = convertToVec3f(getLinesWith("v "));
+
+        textureLines = getLinesWith("vt ");
+        normalsLines = getLinesWith("vn ");
+        facesLines = getLinesWith("f ");
+
+        std::unordered_map<Face::IdxGroup, int, Face::IdxGroupHash> map;
+
+        for (auto face: facesLines) {
+            face.remove_prefix(strlen("f "));
+            faces.emplace_back(face);
+
+            for (int i = 0; auto idxGroup: faces.back().getIdxGroups()) {
+                if (map.contains(idxGroup)) {
+                    indices.push_back(map.at(idxGroup));
+                } else {
+                    vertices.push_back()
+                    indices.push_back(i);
+                }
+                i++;
+            }
+        }
+    }
+
+    [[nodiscard]] vector<string_view> OBJObject::getLinesWith(const string_view &token) const {
+        vector<string_view> output;
+
+        for (auto& line: lines) {
+            if (line.starts_with(token)) {
+                auto newLine = line;
+                newLine.remove_prefix(strlen(token.data()));
+                output.push_back(newLine);
+            }
+        }
+        return output;
+    }
+
+    [[nodiscard]] string_view OBJObject::getMaterialLib() const {
+
+        for (auto& line: lines) {
+            if (line.starts_with("mtllib ")) {
+                auto material = line;
+                material.remove_prefix(strlen("mtllib "));
+                return material;
+            }
+        }
+        return {};
+    }
+
+    vector<Math::Vector3f> OBJObject::convertToVec3f(const vector<string_view>& lineList) {
+        vector<Math::Vector3f> output;
+        for (auto& line: lineList) {
+            auto numberStrings = Utils::split(line, ' ');
+            float nums[3] = {};
+            for (int i = 0; auto numberString: numberStrings) {
+                nums[i++] = std::stof(string(numberString));
+            }
+            output.emplace_back(nums[0], nums[1], nums[2]);
+        }
+        return output;
+    }
+
+
+
+    std::ostream& operator<<(std::ostream& os, const OBJObject& o) {
+        os << "OBJObject:\n";
+        os << "  Material lib: " << o.materialLib << "\n";
+        os << "  Vertices:     " << o.vertexLines.size() << "\n";
+        os << "  Texcoords:    " << o.textureLines.size() << "\n";
+        os << "  Normals:      " << o.normalsLines.size() << "\n";
+        os << "  Faces:        " << o.facesLines.size() << "\n";
+        return os;
+    }
+} // Loader
+// Obj

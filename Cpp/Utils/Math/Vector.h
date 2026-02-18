@@ -8,6 +8,7 @@
 namespace Math {
     class Vector3f {
     public:
+        Vector3f(){x = y = z = 0;}
         Vector3f(float x, float y, float z);
         Vector3f operator+(const Vector3f& v) const;
         Vector3f operator-(const Vector3f& v) const;
@@ -22,7 +23,7 @@ namespace Math {
 
     class Vector2f {
     public:
-        Vector2f();
+        Vector2f(float x, float y);
         float x;
         float y;
     };

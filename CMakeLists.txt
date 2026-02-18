@@ -4,6 +4,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -march=native -lpthread")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -march=native -lpthread")
 
 set(CMAKE_C_STANDARD 11)
+set(CMAKE_CXX_STANDARD 23)
 
 include_directories("${CMAKE_SOURCE_DIR}/Dependencies/include")
 
@@ -110,6 +111,10 @@ add_executable(C-Project
         Cpp/Render/Objects/Geometry/Texture.h
         Cpp/Render/Objects/Geometry/Material.cpp
         Cpp/Render/Objects/Geometry/Material.h
+        Cpp/Render/Objects/Loader/ObjLoader.cpp
+        Cpp/Render/Objects/Loader/ObjLoader.h
+        Cpp/Utils/Utils.cpp
+        Cpp/Utils/Utils.h
 )
 #add_subdirectory("${CMAKE_SOURCE_DIR}/Render")
 

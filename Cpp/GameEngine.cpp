@@ -16,14 +16,13 @@ void GameEngine::loop() {
     {
         processInput();
         screen.render();
-        glfwSwapBuffers(screen.getWindowHandle());
         glfwPollEvents();
     }
     glfwTerminate();
 }
 
 void GameEngine::init() {
-    screen.addObject(Obj::Object());
+    screen.addObject(Obj::Object("grass_block/grass_block.obj"));
     screen.init();
 }
 
