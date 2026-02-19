@@ -8,13 +8,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#define forEach(List, type, variable, x)\
-{\
-for (int i = 0; i < List->size; ++i) {\
-    type variable = List->content[i];\
-    x;\
-}}
-
 Personal createPersonal() {
     Personal personal = {};
 
@@ -63,9 +56,6 @@ void printPerson(Personal* personal) {
 
 float durchschnittsGehalt(const List_Personal* listPersonal) {
     int total = 0;
-    forEach(listPersonal, const Personal, personal,
-        total += personal.wage
-    );
     return (float) total / (float) listPersonal->size;
 }
 

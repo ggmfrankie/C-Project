@@ -12,7 +12,7 @@
 #include "../../../Utils/Math/Vector.h"
 #include "glad/gl.h"
 
-namespace Obj::Geometry {
+namespace Obj {
     class Mesh {
     public:
         explicit Mesh(const std::string &texture);
@@ -20,6 +20,16 @@ namespace Obj::Geometry {
         Mesh(const std::vector<Math::Vector3f> &v, const std::vector<GLuint> &i);
 
         Mesh();
+
+        Mesh(std::vector<Math::Vector3f> &&vertices, std::vector<Math::Vector2f> &&uvs,
+             std::vector<Math::Vector3f> &&normals,
+             std::vector<GLuint> &&indices, Texture &&texture);
+
+        Mesh(std::vector<Math::Vector3f> &&vertices, std::vector<Math::Vector2f> &&uvs,
+             std::vector<Math::Vector3f> &&normals,
+             std::vector<GLuint> &&indices);
+
+        Mesh(Mesh &&other) noexcept;
 
         ~Mesh();
 
@@ -32,14 +42,14 @@ namespace Obj::Geometry {
         GLuint VAO = 0;
         GLuint EBO = 0;
 
-        Texture texture;
-        Material material;
+        Texture texture{};
+        Material material{};
 
         std::array<GLuint, 3> VBOs{};
-        std::vector<Math::Vector3f> vertices;
-        std::vector<Math::Vector3f> normals;
-        std::vector<Math::Vector2f> texCoords;
-        std::vector<GLuint> indices;
+        std::vector<Math::Vector3f> vertices{};
+        std::vector<Math::Vector3f> normals{};
+        std::vector<Math::Vector2f> uvs{};
+        std::vector<GLuint> indices{};
     };
 }
 

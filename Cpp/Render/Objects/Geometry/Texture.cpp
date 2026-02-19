@@ -7,7 +7,7 @@
 #include "glad/gl.h"
 #include "stb/stb_image.h"
 
-namespace Obj::Geometry {
+namespace Obj {
     Texture::Texture(const std::string &file) {
         data = loadTexture(file);
         textureId = 0;
@@ -19,6 +19,13 @@ namespace Obj::Geometry {
         width = 0;
         height = 0;
         channels = 0;
+    }
+
+    Texture::Texture(Texture &&other) noexcept: textureId(other.textureId), data(other.data), width(other.width), height(other.height), channels(other.channels) {
+        other.channels = 0;
+        other.width = 0;
+        other.height = 0;
+        other.textureId = 0;
     }
 
 

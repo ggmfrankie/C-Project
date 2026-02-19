@@ -11,10 +11,9 @@
 namespace Obj {
     class Object {
         public:
-
-        explicit Object();
-
         explicit Object(const std::string &objFile);
+
+        Object(Object &&other) noexcept ;
 
         ~Object();
 
@@ -23,7 +22,7 @@ namespace Obj {
         void render() const;
         private:
         bool initialized = false;
-        std::vector<Geometry::Mesh> meshes;
+        std::vector<Mesh> meshes{};
     };
 } // Core
 

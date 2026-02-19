@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 4.0)
 project(MixedProject LANGUAGES C CXX)
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -march=native -lpthread")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -march=native -lpthread")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -march=native -pthread")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -march=native -pthread")
 
 set(CMAKE_C_STANDARD 11)
-set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD 20)
 
 include_directories("${CMAKE_SOURCE_DIR}/Dependencies/include")
 
@@ -99,8 +99,6 @@ add_executable(C-Project
         Cpp/Utils/FileIO.h
         Cpp/Render/Objects/Object.cpp
         Cpp/Render/Objects/Object.h
-        Cpp/Render/Objects/Primitives/Cube.cpp
-        Cpp/Render/Objects/Primitives/Cube.h
         Cpp/Utils/Math/Matrix.cpp
         Cpp/Utils/Math/Matrix.h
         Cpp/Render/Transformation/Transformation.cpp
@@ -125,6 +123,8 @@ add_library(glfw STATIC IMPORTED)
 set_target_properties(glfw PROPERTIES
         IMPORTED_LOCATION "${GLFW_LIB}"
 )
+
+
 
 target_link_libraries(C-Project
         glfw

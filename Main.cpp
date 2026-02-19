@@ -2,6 +2,8 @@
 // Created by ertls on 16.02.2026.
 //
 
+#include <iostream>
+
 #include "Cpp/GameEngine.h"
 
 #define GAME

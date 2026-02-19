@@ -5,7 +5,7 @@
 #ifndef MIXEDPROJECT_MATERIAL_H
 #define MIXEDPROJECT_MATERIAL_H
 
-namespace Obj::Geometry {
+namespace Obj {
     class Material {
         public:
         Material();

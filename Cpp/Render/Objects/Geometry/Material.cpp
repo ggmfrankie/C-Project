@@ -4,7 +4,7 @@
 
 #include "Material.h"
 
-namespace Obj::Geometry {
+namespace Obj {
     Material::Material() = default;
 
     void Material::init() {

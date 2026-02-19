@@ -7,15 +7,14 @@
 #include "Loader/ObjLoader.h"
 
 namespace Obj {
-    Object::Object() {
-        meshes.emplace_back();
-    }
 
     Object::Object(const std::string& objFile) {
-        auto obj = Loader::OBJLoader::OBJObject(objFile);
+        auto obj = OBJLoader::OBJObject(objFile);
         obj.load();
-        std::cout << obj << "\n";
+        meshes.push_back(obj.getMesh());
     }
+
+    Object::Object(Object&& other)  noexcept: meshes(std::move(other.meshes)) {}
 
     Object::~Object() = default;
 

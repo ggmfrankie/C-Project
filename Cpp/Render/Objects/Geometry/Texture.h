@@ -8,12 +8,13 @@
 
 #include "glad/gl.h"
 
-namespace Obj::Geometry {
+namespace Obj {
     class Texture {
         public:
         explicit Texture(const std::string &file);
 
         Texture();
+        Texture(Texture&& other) noexcept ;
 
         unsigned char *loadTexture(const std::string &file);
 

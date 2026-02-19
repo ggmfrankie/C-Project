@@ -8,14 +8,17 @@
 
 namespace Utils {
 
+    using std::vector, std::string_view, std::ranges::distance;
 
-    std::vector<std::string_view> split(std::string_view s, char delim) {
-        std::vector<std::string_view> out;
+    vector<string_view> split(string_view s, char delim) {
+        vector<string_view> out;
 
         for (auto&& part : s | std::views::split(delim)) {
-            auto sv = std::string_view(part.begin(), std::ranges::distance(part));
+            auto sv = string_view(part.begin(), distance(part));
             out.push_back(sv);
         }
         return out;
     }
+
+    float getFloat(char* start, size_t length) {}
 }

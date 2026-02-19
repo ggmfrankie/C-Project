@@ -3,11 +3,13 @@
 //
 
 #include "../Geometry/Mesh.h"
-namespace Obj::Geometry {
-    Mesh::Mesh(const std::string &texture) : texture(texture), material(){
+namespace Obj {
+    using std::string, std::vector;
+
+    Mesh::Mesh(const string &texture) : texture(texture), material(){
         vertices.reserve(64);
         normals.reserve(64);
-        texCoords.reserve(64);
+        uvs.reserve(64);
         indices.reserve(64);
         Math::Vector3f verts[] = {
             {0.5f, 0.5f, 0.0f},
@@ -29,9 +31,8 @@ namespace Obj::Geometry {
             1, 3, 2
         };
 
-
         vertices.insert(vertices.end(), std::begin(verts), std::end(verts));
-        texCoords.insert(texCoords.end(), std::begin(tex), std::end(tex));
+        uvs.insert(uvs.end(), std::begin(tex), std::end(tex));
         indices.insert(indices.end(), std::begin(indis), std::end(indis));
     }
 
@@ -43,7 +44,7 @@ namespace Obj::Geometry {
     Mesh::Mesh(): VBOs() {
         vertices.reserve(64);
         normals.reserve(64);
-        texCoords.reserve(64);
+        uvs.reserve(64);
         indices.reserve(64);
 
         puts("creating default mesh");
@@ -70,8 +71,50 @@ namespace Obj::Geometry {
         };
 
         vertices.insert(vertices.end(), std::begin(verts), std::end(verts));
-        texCoords.insert(texCoords.end(), std::begin(tex), std::end(tex));
+        uvs.insert(uvs.end(), std::begin(tex), std::end(tex));
         indices.insert(indices.end(), std::begin(indis), std::end(indis));
+    }
+
+    Mesh::Mesh(std::vector<Math::Vector3f>&& vertices,
+                   std::vector<Math::Vector2f>&& uvs,
+                   std::vector<Math::Vector3f>&& normals,
+                   std::vector<GLuint>&& indices,
+                   Texture&& texture)
+            : texture(std::move(texture)),
+              vertices(std::move(vertices)),
+              normals(std::move(normals)),
+              uvs(std::move(uvs)),
+              indices(std::move(indices))
+    {}
+
+    Mesh::Mesh(std::vector<Math::Vector3f>&& vertices,
+                   std::vector<Math::Vector2f>&& uvs,
+                   std::vector<Math::Vector3f>&& normals,
+                   std::vector<GLuint>&& indices)
+            : texture(),
+              vertices(std::move(vertices)),
+              normals(std::move(normals)),
+              uvs(std::move(uvs)),
+              indices(std::move(indices))
+    {}
+
+
+    Mesh::Mesh(Mesh&& other) noexcept
+        : initialized(other.initialized),
+          VAO(other.VAO),
+          EBO(other.EBO),
+          texture(std::move(other.texture)),
+          material(other.material),
+          VBOs(other.VBOs),
+          vertices(std::move(other.vertices)),
+          normals(std::move(other.normals)),
+          uvs(std::move(other.uvs)),
+          indices(std::move(other.indices))
+    {
+        other.initialized = false;
+        other.VAO = 0;
+        other.EBO = 0;
+        other.VBOs = {0,0,0};
     }
 
     Mesh::~Mesh() {
@@ -92,7 +135,7 @@ namespace Obj::Geometry {
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
 
         glBindBuffer(GL_ARRAY_BUFFER, VBOs[2]);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * texCoords.size() * 2, texCoords.data(), GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * uvs.size() * 2, uvs.data(), GL_STATIC_DRAW);
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
 
         glGenBuffers(1, &EBO);
@@ -104,6 +147,10 @@ namespace Obj::Geometry {
         glEnableVertexAttribArray(1);
         glEnableVertexAttribArray(2);
 
+        vertices = {};
+        uvs = {};
+        normals = {};
+        indices = {};
 
         initialized = true;
         texture.init();

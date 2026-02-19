@@ -9,8 +9,9 @@
 
 #include "../../../Utils/Math/Matrix.h"
 #include "../../../Utils/Math/Vector.h"
+#include "../Geometry/Mesh.h"
 
-namespace Obj::Loader::OBJLoader {
+namespace Obj::OBJLoader {
 
     class OBJObject {
     public:
@@ -25,7 +26,6 @@ namespace Obj::Loader::OBJLoader {
                 int v = 0;
                 int vt = 0;
                 int vn = 0;
-
 
                 bool operator==(const IdxGroup& other) const noexcept {
                     return v == other.v && vt == other.vt && vn == other.vn;
@@ -45,48 +45,60 @@ namespace Obj::Loader::OBJLoader {
 
             explicit Face(const std::string_view &faceLine) {
                 for (const auto& vertexLine = Utils::split(faceLine, ' '); const auto& vertex: vertexLine) {
-                    auto indices = Utils::split(vertex, '/');
-                    int vert = std::stoi(std::string(indices[0]));
-                    int uv = indices[1].empty() ? 0 : std::stoi(std::string(indices[1]));
-                    int norm = indices[2].empty() ? 0 : std::stoi(std::string(indices[2]));
-                    idxGroups.emplace_back(vert, uv, norm);
+                    auto faceIndices = Utils::split(vertex, '/');
+                    int faceVert = 0;
+                    try {
+                         faceVert = std::stoi(std::string(faceIndices[0]));
+                    } catch (const std::exception&) {
+                        std::cout << "invalid string caught: " <<faceIndices[0] << "\n";
+                        std::cout << faceLine << "\n";
+                        std::cout << vertex << "\n";
+                    }
+
+                    int faceUv = faceIndices[1].empty() ? 0 : std::stoi(std::string(faceIndices[1]));
+                    int faceNorm = faceIndices[2].empty() ? 0 : std::stoi(std::string(faceIndices[2]));
+                    idxGroups.emplace_back(faceVert, faceUv, faceNorm);
                 }
             }
 
             private:
-            std::vector<IdxGroup> idxGroups;
+            std::vector<IdxGroup> idxGroups{};
 
         public:
             [[nodiscard]] const std::vector<IdxGroup>& getIdxGroups() const { return idxGroups; }
         };
 
-        std::string folderPath;
+        std::string folderPath{};
 
-        std::string objFile;
-        std::string materialFile;
-        std::string textureName;
-        std::string_view materialLib;
+        std::string objFile{};
+        std::string materialFile{};
+        std::string textureName{};
+        std::string_view materialLib{};
 
-        std::vector<std::string_view> lines;
-        std::vector<std::string_view> vertexLines;
-        std::vector<std::string_view> textureLines;
-        std::vector<std::string_view> normalsLines;
-        std::vector<std::string_view> facesLines;
+        std::vector<std::string_view> lines{};
 
-        std::vector<Face> faces;
-        std::vector<Math::Vector3f> vertices;
-        std::vector<Math::Vector3f> normals;
-        std::vector<Math::Vector2f> uv;
-        std::vector<int> indices;
+        std::vector<Face> faces{};
+        std::vector<Math::Vector3f> allVertices{};
+        std::vector<Math::Vector3f> allNormals{};
+        std::vector<Math::Vector2f> allUv{};
+
+        std::vector<Math::Vector3f> glVertices{};
+        std::vector<Math::Vector3f> glNormals{};
+        std::vector<Math::Vector2f> glUv{};
+
+        std::vector<GLuint> indices{};
 
         [[nodiscard]] std::vector<std::string_view> getLinesWith(const std::string_view &token) const;
 
         [[nodiscard]] std::string_view getMaterialLib() const;
 
-        static std::vector<Math::Vector3f> convertToVec3f(const std::vector<std::string_view> &lineList);
+        static auto convertToVec3f(const std::vector<std::string_view> &lineList);
+
+        static auto convertToVec2f(const std::vector<std::string_view> &lineList);
 
     public:
         friend std::ostream& operator<<(std::ostream& os, const OBJObject& o);
+        Mesh getMesh();
     };
 
 }

@@ -32,8 +32,8 @@ void pointerFun() {
     printf("%p -> %08x\n", pi, *pi);
 
     puts("Doing some bad stuff");
-    ps = &i; //expects 2 bytes
-    pc = &i; //expects 1 byte
+    //ps = &i; //expects 2 bytes
+    //pc = &i; //expects 1 byte
 
     puts("casting");
     ps = (short*)&i; //expects 2 bytes
