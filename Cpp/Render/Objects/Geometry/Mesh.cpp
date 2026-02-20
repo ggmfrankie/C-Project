@@ -3,78 +3,10 @@
 //
 
 #include "../Geometry/Mesh.h"
+#include "../../Cpp/Utils/Math/Vector.h"
+
 namespace Obj {
     using std::string, std::vector;
-
-    Mesh::Mesh(const string &texture) : texture(texture), material(){
-        vertices.reserve(64);
-        normals.reserve(64);
-        uvs.reserve(64);
-        indices.reserve(64);
-        Math::Vector3f verts[] = {
-            {0.5f, 0.5f, 0.0f},
-            {0.5f, -0.5f, 0.0f},
-            {-0.5f, -0.5f, 0.0f},
-            {-0.5f, 0.5f, 0.0f}
-        };
-
-        Math::Vector2f tex[] = {
-            {0.0f, 0.0f},
-            {0.5f, 0.5f},
-            {0.5f, 0.5f},
-            {0.5f, 1.0f}
-        };
-
-
-        unsigned int indis[] = {
-            0, 3, 1,
-            1, 3, 2
-        };
-
-        vertices.insert(vertices.end(), std::begin(verts), std::end(verts));
-        uvs.insert(uvs.end(), std::begin(tex), std::end(tex));
-        indices.insert(indices.end(), std::begin(indis), std::end(indis));
-    }
-
-    Mesh::Mesh(const std::vector<Math::Vector3f> &v, const std::vector<GLuint> &i) : texture(), material(), VBOs(){
-        vertices = v;
-        indices = i;
-    }
-
-    Mesh::Mesh(): VBOs() {
-        vertices.reserve(64);
-        normals.reserve(64);
-        uvs.reserve(64);
-        indices.reserve(64);
-
-        puts("creating default mesh");
-
-        Math::Vector3f verts[] = {
-            {0.5f, 0.5f, 0.0f},
-            {0.5f, -0.5f, 0.0f},
-            {-0.5f, -0.5f, 0.0f},
-            {-0.5f, 0.5f, 0.0f}
-        };
-
-
-        unsigned int indis[] = {
-            0, 3, 1,
-            1, 3, 2
-        };
-
-
-        Math::Vector2f tex[] = {
-            {0.0f, 0.0f},
-            {0.5f, 0.5f},
-            {0.5f, 0.5f},
-            {0.5f, 1.0f}
-        };
-
-        vertices.insert(vertices.end(), std::begin(verts), std::end(verts));
-        uvs.insert(uvs.end(), std::begin(tex), std::end(tex));
-        indices.insert(indices.end(), std::begin(indis), std::end(indis));
-    }
-
     Mesh::Mesh(std::vector<Math::Vector3f>&& vertices,
                    std::vector<Math::Vector2f>&& uvs,
                    std::vector<Math::Vector3f>&& normals,
@@ -109,19 +41,19 @@ namespace Obj {
           vertices(std::move(other.vertices)),
           normals(std::move(other.normals)),
           uvs(std::move(other.uvs)),
-          indices(std::move(other.indices))
-    {
+          indices(std::move(other.indices)) {
+
         other.initialized = false;
         other.VAO = 0;
         other.EBO = 0;
-        other.VBOs = {0,0,0};
+        other.VBOs = {0, 0, 0};
     }
 
     Mesh::~Mesh() {
         if (initialized) glDeleteVertexArrays(1, &VAO);
     }
 
-    void Mesh::init() {
+    void Mesh::init(Render::Shader* s) {
         glGenVertexArrays(1, &VAO);
         glBindVertexArray(VAO);
         glGenBuffers(3, VBOs.data());
@@ -150,17 +82,67 @@ namespace Obj {
         vertices = {};
         uvs = {};
         normals = {};
-        indices = {};
+
+        shader = s;
+
+        puts("init mesh");
+
+        if (texture.hasData()) texture.init();
+        if (material.hasData()) material.init();
 
         initialized = true;
-        texture.init();
-        material.init();
     }
 
     void Mesh::render() const {
+        shader->setUniform("textureSampler", 0);
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture.id());
+
         glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, nullptr);
+        glDrawElements(GL_TRIANGLES, static_cast<int>(indices.size()), GL_UNSIGNED_INT, nullptr);
         glBindVertexArray(0);
+    }
+
+    bool Mesh::hasTexture() const {
+        return texture.hasData();
+    }
+
+    bool Mesh::hasMaterial() const {
+        return material.hasData();
+    }
+
+    Mesh Mesh::getDummyMesh() {
+        vector<Math::Vector3f> vertices = {
+            {0.5f, 0.5f, 0.0f},
+            {0.5f, -0.5f, 0.0f},
+            {-0.5f, -0.5f, 0.0f},
+            {-0.5f, 0.5f, 0.0f}
+        };
+
+        vector<Math::Vector3f> normals = {
+            {0.5f, 0.5f, 0.0f},
+            {0.5f, -0.5f, 0.0f},
+            {-0.5f, -0.5f, 0.0f},
+            {-0.5f, 0.5f, 0.0f}
+        };
+
+        vector<GLuint> indis = {
+            0, 3, 1,
+            1, 3, 2
+        };
+
+        vector<Math::Vector2f> tex = {
+            {1.0f, 1.0f},
+            {1.0f, 0.0f},
+            {0.0f, 0.0f},
+            {0.0f, 1.0f}
+        };
+
+        Texture texture("grass_block/grass_block.png");
+        puts("load dummy Mesh");
+
+        return {std::move(vertices), std::move(tex), std::move(normals), std::move(indis), std::move(texture)};
     }
 }
 

@@ -6,23 +6,50 @@
 #define MIXEDPROJECT_OBJECT_H
 #include <vector>
 
+#include "../../Utils/Math/Quaternion.h"
+#include "../../Utils/Math/Matrix.h"
 #include "Geometry/Mesh.h"
+#include "../Shader/Shader.h"
+
+
 
 namespace Obj {
     class Object {
         public:
         explicit Object(const std::string &objFile);
 
+        Object();
+
         Object(Object &&other) noexcept ;
 
         ~Object();
 
-        void init();
+        void init(Render::Shader *s);
 
-        void render() const;
-        private:
+        void render();
+
+        void rotateBy(float pitch, float yaw, float roll);
+
+        void moveBy(float dx, float dy, float dz);
+
+        void moveTo(float x, float y, float z);
+
+        static Object getDummyObject();
+
+    private:
+        void reload();
+        Math::Matrix4f getModelMatrix() const;
+
+        Math::Quaternion rotation = Math::Quaternion::Identity();
         bool initialized = false;
+        float scale = 1.0f;
+
+        Math::Matrix4f model = Math::Matrix4f::Identity();
+        bool dirty = true;
+
+        Math::Vector3f position{0,0,0};
         std::vector<Mesh> meshes{};
+        Render::Shader* shader = nullptr;
     };
 } // Core
 

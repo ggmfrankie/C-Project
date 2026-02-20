@@ -6,21 +6,17 @@
 #define MIXEDPROJECT_MESH_H
 #include <vector>
 #include <array>
+#include <memory>
 
 #include "Material.h"
 #include "Texture.h"
 #include "../../../Utils/Math/Vector.h"
 #include "glad/gl.h"
+#include "../../Shader/Shader.h"
 
 namespace Obj {
     class Mesh {
     public:
-        explicit Mesh(const std::string &texture);
-
-        Mesh(const std::vector<Math::Vector3f> &v, const std::vector<GLuint> &i);
-
-        Mesh();
-
         Mesh(std::vector<Math::Vector3f> &&vertices, std::vector<Math::Vector2f> &&uvs,
              std::vector<Math::Vector3f> &&normals,
              std::vector<GLuint> &&indices, Texture &&texture);
@@ -33,9 +29,16 @@ namespace Obj {
 
         ~Mesh();
 
-        void init();
+        void init(Render::Shader *);
 
         void render() const;
+
+        [[nodiscard]] bool hasTexture() const;
+
+        [[nodiscard]] bool hasMaterial() const;
+
+        static Mesh getDummyMesh();
+
     private:
         bool initialized = false;
 
@@ -50,6 +53,8 @@ namespace Obj {
         std::vector<Math::Vector3f> normals{};
         std::vector<Math::Vector2f> uvs{};
         std::vector<GLuint> indices{};
+
+        Render::Shader* shader = nullptr;
     };
 }
 

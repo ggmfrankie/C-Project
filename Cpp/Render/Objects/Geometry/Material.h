@@ -11,6 +11,8 @@ namespace Obj {
         Material();
         ~Material() = default;
         void init();
+
+        bool hasData() const;
     };
 } // Geometry
 

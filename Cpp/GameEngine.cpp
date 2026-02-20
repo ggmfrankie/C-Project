@@ -4,6 +4,8 @@
 
 #include "GameEngine.h"
 
+#include "Render/Objects/Loader/ObjLoader.h"
+
 GameEngine::GameEngine(): screen("My Window", 800, 600) {}
 
 void GameEngine::addObject(Obj::Object&& obj) {
@@ -22,7 +24,7 @@ void GameEngine::loop() {
 }
 
 void GameEngine::init() {
-    screen.addObject(Obj::Object("grass_block/grass_block.obj"));
+    screen.addObject(Obj::Object::getDummyObject());
     screen.init();
 }
 

@@ -8,13 +8,26 @@
 namespace Math {
     class Vector3f {
     public:
-        Vector3f(){x = y = z = 0;}
-        Vector3f(float x, float y, float z);
-        Vector3f operator+(const Vector3f& v) const;
-        Vector3f operator-(const Vector3f& v) const;
-        Vector3f operator*(float factor) const;
+        constexpr Vector3f(const float x, const float y, const float z) {
+            this->x = x;
+            this->y = y;
+            this->z = z;
+        }
 
-        [[nodiscard]] Vector3f dot(const Vector3f &v) const;
+        constexpr Vector3f operator+(const Vector3f& v) const {
+            return {v.x + x, v.y + y, v.z + z};
+        }
+
+        constexpr Vector3f operator-(const Vector3f& v) const {
+            return {x-v.x, y-v.y, z-v.z};
+        }
+        constexpr Vector3f operator*(const float factor) const {
+            return {x * factor, y * factor, z * factor};
+        }
+
+        Vector3f dot(const Vector3f& v) const {
+            return {v.x*x , v.y*y , v.z*z};
+        }
 
         float x;
         float y;
@@ -23,7 +36,10 @@ namespace Math {
 
     class Vector2f {
     public:
-        Vector2f(float x, float y);
+        constexpr Vector2f(const float x, const float y) {
+            this->x = x;
+            this->y = y;
+        }
         float x;
         float y;
     };

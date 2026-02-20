@@ -99,7 +99,6 @@ add_executable(C-Project
         Cpp/Utils/FileIO.h
         Cpp/Render/Objects/Object.cpp
         Cpp/Render/Objects/Object.h
-        Cpp/Utils/Math/Matrix.cpp
         Cpp/Utils/Math/Matrix.h
         Cpp/Render/Transformation/Transformation.cpp
         Cpp/Render/Transformation/Transformation.h
@@ -113,6 +112,7 @@ add_executable(C-Project
         Cpp/Render/Objects/Loader/ObjLoader.h
         Cpp/Utils/Utils.cpp
         Cpp/Utils/Utils.h
+        Cpp/Utils/Math/Quaternion.h
 )
 #add_subdirectory("${CMAKE_SOURCE_DIR}/Render")
 

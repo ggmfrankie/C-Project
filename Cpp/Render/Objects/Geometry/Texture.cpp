@@ -4,6 +4,8 @@
 
 #include "Texture.h"
 
+#include <iostream>
+
 #include "glad/gl.h"
 #include "stb/stb_image.h"
 
@@ -28,15 +30,18 @@ namespace Obj {
         other.textureId = 0;
     }
 
+    bool Texture::hasData() const noexcept {
+        return data != nullptr;
+    }
 
     unsigned char *Texture::loadTexture(const std::string &file) {
 
-        const std::string path = "../Resources/Textures/" + file;
+        const std::string path = "../Resources/Objects/" + file;
 
         unsigned char* pixels = stbi_load(path.c_str(), &width, &height, &channels, 0);
 
         if (!pixels) {
-            printf("Failed to load image\n");
+            std::cout << "Failed to load texture" << path << "\n";
             exit(-3) ;
         }
         return pixels;
@@ -59,6 +64,10 @@ namespace Obj {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         stbi_image_free(data);
+        puts("init texture");
     }
 
+    GLuint Texture::id() const {
+        return textureId;
+    }
 } // Geometry

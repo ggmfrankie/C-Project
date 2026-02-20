@@ -16,15 +16,18 @@ namespace Obj {
         Texture();
         Texture(Texture&& other) noexcept ;
 
+        bool hasData() const noexcept;
+
         unsigned char *loadTexture(const std::string &file);
 
         void init();
+        GLuint id() const;
 
         ~Texture() = default;
 
         private:
         std::string name;
-        GLuint textureId{};
+        GLuint textureId = 0;
 
         unsigned char* data;
         int width{}, height{}, channels{};

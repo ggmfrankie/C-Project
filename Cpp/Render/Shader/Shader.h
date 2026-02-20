@@ -5,8 +5,14 @@
 #ifndef MIXEDPROJECT_SHADER_H
 #define MIXEDPROJECT_SHADER_H
 #include <string>
+#include <unordered_map>
 
+#include "../../Utils/Math/Matrix.h"
 #include "glad/gl.h"
+
+namespace Math {
+    class Vector3f;
+}
 
 namespace Render{
     class Shader {
@@ -27,16 +33,29 @@ namespace Render{
 
         ~Shader();
 
+        void setUniform(const std::string &name, float value) const;
+
+        void setUniform(const std::string &name, int value) const;
+
+        void setUniform(const std::string &name, const  Math::Vector3f& value) const;
+
+        void setUniform(const std::string &name, const Math::Matrix4f &value) const;
+
+        void createUniform(const std::string &name);
+
+        GLint getUniformLocation(const std::string &name) const;
+
         void init();
 
         void link() const;
 
     private:
-        std::string vertPath;
-        std::string fragPath;
-        GLuint programId;
-        GLuint vertexId;
-        GLuint fragmentId;
+        std::string vertPath{};
+        std::string fragPath{};
+        std::unordered_map <std::string, GLint> uniformLocationMap{};
+        GLuint programId = 0;
+        GLuint vertexId = 0;
+        GLuint fragmentId = 0;
     };
 }
 

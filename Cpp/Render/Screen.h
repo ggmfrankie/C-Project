@@ -20,7 +20,7 @@ namespace Render{
 
         void init();
 
-        void render() const;
+        void render();
 
         void addObject(Obj::Object &&object);
 
@@ -28,7 +28,7 @@ namespace Render{
 
     private:
         static void framebufferSizeCallback(GLFWwindow *window, int width, int height);
-
+        void createShaderUniforms();
         GLFWwindow* windowHandle;
         int width, height;
         std::string name;

@@ -18,6 +18,11 @@ namespace Render{
         glfwTerminate();
     }
 
+    void Screen::createShaderUniforms() {
+        shader.createUniform("textureSampler");
+        shader.createUniform("transform");
+    }
+
     void Screen::init() {
         if (!glfwInit()) {
             puts("Failed to initialize GLFW");
@@ -48,25 +53,29 @@ namespace Render{
         glfwSetFramebufferSizeCallback(windowHandle, framebufferSizeCallback);
         shader.init();
         shader.link();
+
+        createShaderUniforms();
+
         for (auto& object: objects) {
             puts("init Objects");
-            object.init();
+            object.init(&shader);
         }
     }
 
-    void Screen::render() const {
+    void Screen::render() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glDisable(GL_CULL_FACE);
         shader.bind();
         for (auto& obj : objects) {
             obj.render();
+            obj.rotateBy(1,1,0);
+            //obj.moveBy(0.002,0,0);
         }
         glfwSwapBuffers(windowHandle);
-        Shader::unbind();
     }
 
     void Screen::addObject(Obj::Object&& object) {
-        objects.emplace_back(std::move(object));
+        objects.push_back(std::move(object));
     }
 
     GLFWwindow* Screen::getWindowHandle() const {
