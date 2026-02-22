@@ -17,28 +17,36 @@ namespace Obj {
     }
     Object::Object() = default;
 
-    Object::Object(Object&& other)  noexcept: meshes(std::move(other.meshes)) {}
+    Object::Object(Object&& other)  noexcept:
+      rotation(other.rotation),
+      initialized(other.initialized),
+      scale(other.scale),
+      model(other.model),
+      dirty(other.dirty),
+      position(other.position),
+      meshes(std::move(other.meshes)),
+      shader(other.shader)
+    {}
 
     Object::~Object() = default;
 
     void Object::init(Render::Shader* s) {
         shader = s;
         initialized = true;
+        dirty = true;
         model = getModelMatrix();
         for (auto& mesh : meshes) {
             mesh.init(shader);
         }
     }
 
-    void Object::render(){
-        if (dirty) reload();
-        shader->setUniform("transform", model);
+    void Object::render() const {
         for (auto& mesh : meshes) {
             mesh.render();
         }
     }
 
-    void Object::rotateBy(const float pitch, const float yaw, const float roll) {
+    void Object::rotateBy(const float pitch, const float yaw=0, const float roll=0) {
 
         const float p = Matrix4f::toRad(pitch);
         const float y = Matrix4f::toRad(yaw);
@@ -67,17 +75,15 @@ namespace Obj {
     Object Object::getDummyObject() {
         Object dummy{};
         dummy.meshes.push_back(Mesh::getDummyMesh());
-        dummy.rotateBy(30, 30, 30);
         return dummy;
     }
 
-    void Object::reload() {
-        model = getModelMatrix();
-        dirty = false;
-    }
-
-    Matrix4f Object::getModelMatrix() const {
-        return Matrix4f::Translation(position) * Matrix4f(rotation.toMatrix()) * Matrix4f::Scale(scale);
+    Matrix4f Object::getModelMatrix() {
+        if (dirty) {
+            dirty = false;
+            return model = Matrix4f::Translation(position) * Matrix4f(rotation.toMatrix()) * Matrix4f::Scale(scale);
+        }
+        return model;
     }
 
 

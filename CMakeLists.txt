@@ -3,8 +3,8 @@ project(MixedProject LANGUAGES C CXX)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -march=native -pthread")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -march=native -pthread")
 
-set(CMAKE_C_STANDARD 11)
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_C_STANDARD 17)
+set(CMAKE_CXX_STANDARD 23)
 
 include_directories("${CMAKE_SOURCE_DIR}/Dependencies/include")
 
@@ -90,7 +90,6 @@ add_executable(C-Project
         Cpp/Render/Screen.h
         Cpp/Render/Objects/Geometry/Mesh.cpp
         Cpp/Render/Objects/Geometry/Mesh.h
-        Cpp/Utils/Math/Vector.cpp
         Cpp/Utils/Math/Vector.h
         Cpp/Render/Shader/Shader.cpp
         Cpp/Render/Shader/Shader.h
@@ -100,8 +99,6 @@ add_executable(C-Project
         Cpp/Render/Objects/Object.cpp
         Cpp/Render/Objects/Object.h
         Cpp/Utils/Math/Matrix.h
-        Cpp/Render/Transformation/Transformation.cpp
-        Cpp/Render/Transformation/Transformation.h
         Cpp/Render/Transformation/Camera.cpp
         Cpp/Render/Transformation/Camera.h
         Cpp/Render/Objects/Geometry/Texture.cpp

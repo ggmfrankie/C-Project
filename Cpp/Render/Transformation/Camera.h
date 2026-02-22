@@ -15,11 +15,12 @@ namespace Render {
         void update();
         void moveRotation(float dx, float dy, float dz);
         void movePosition(float x, float y, float z);
+
         private:
 
-        Math::Matrix4f viewMatrix;
-        Math::Vector3f pos;
-        Math::Vector3f rotation;
+        Math::Matrix4f viewMatrix{};
+        Math::Vector3f pos{};
+        Math::Vector3f rotation{};
     };
 } // Render
 

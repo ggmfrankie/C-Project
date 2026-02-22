@@ -24,7 +24,9 @@ void GameEngine::loop() {
 }
 
 void GameEngine::init() {
-    screen.addObject(Obj::Object::getDummyObject());
+    auto obj = Obj::Object::getDummyObject();
+    obj.moveBy(0,0, -50);
+    screen.addObject(std::move(obj));
     screen.init();
 }
 

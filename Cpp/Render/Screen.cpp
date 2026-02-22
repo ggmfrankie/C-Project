@@ -20,7 +20,8 @@ namespace Render{
 
     void Screen::createShaderUniforms() {
         shader.createUniform("textureSampler");
-        shader.createUniform("transform");
+        shader.createUniform("modelViewMatrix");
+        shader.createUniform("projectionMatrix");
     }
 
     void Screen::init() {
@@ -48,6 +49,7 @@ namespace Render{
         }
         glViewport(0, 0, width, height);
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        glEnable(GL_DEPTH_TEST);
         glfwSwapInterval(1);
 
         glfwSetFramebufferSizeCallback(windowHandle, framebufferSizeCallback);
@@ -57,7 +59,7 @@ namespace Render{
         createShaderUniforms();
 
         for (auto& object: objects) {
-            puts("init Objects");
+            object.getModelMatrix();
             object.init(&shader);
         }
     }
@@ -65,11 +67,16 @@ namespace Render{
     void Screen::render() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glDisable(GL_CULL_FACE);
+
         shader.bind();
         for (auto& obj : objects) {
+
+            shader.setUniform("modelViewMatrix", obj.getModelMatrix());
+            shader.setUniform("projectionMatrix", Math::Matrix4f::Perspective(90.0, static_cast<float>(width)/static_cast<float>(height), 0.01f, 100.0f));
+            //shader.setUniform("projectionMatrix", Math::Matrix4f::Identity());
             obj.render();
-            obj.rotateBy(1,1,0);
-            //obj.moveBy(0.002,0,0);
+            obj.rotateBy(0,1,0);
+            obj.moveBy(0.0,0.0,0.01);
         }
         glfwSwapBuffers(windowHandle);
     }

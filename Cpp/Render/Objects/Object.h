@@ -26,7 +26,7 @@ namespace Obj {
 
         void init(Render::Shader *s);
 
-        void render();
+        void render() const;
 
         void rotateBy(float pitch, float yaw, float roll);
 
@@ -36,10 +36,9 @@ namespace Obj {
 
         static Object getDummyObject();
 
-    private:
-        void reload();
-        Math::Matrix4f getModelMatrix() const;
+        Math::Matrix4f getModelMatrix();
 
+    private:
         Math::Quaternion rotation = Math::Quaternion::Identity();
         bool initialized = false;
         float scale = 1.0f;

@@ -22,7 +22,7 @@ namespace Math {
         static constexpr auto toRad(const float degree){return degree * (static_cast<float>(std::numbers::pi) / 180);};
 
         static constexpr Matrix4f Identity() noexcept {
-            Matrix4f I;
+            Matrix4f I{};
             I.m = {
                     1,0,0,0,
                     0,1,0,0,
@@ -33,7 +33,7 @@ namespace Math {
         }
 
         static constexpr Matrix4f Scale(const float scale) noexcept {
-            Matrix4f M;
+            Matrix4f M{};
             M.m = {
                     scale,0,0,0,
                     0,scale,0,0,
@@ -44,24 +44,24 @@ namespace Math {
         }
 
         static constexpr Matrix4f Translation(const float x, const float y, const float z) noexcept {
-            Matrix4f M;
+            Matrix4f M{};
             M.m = {
-                    1,0,0,x,
-                    0,1,0,y,
-                    0,0,1,z,
-                    0,0,0,1
+                1,0,0,0,
+                0,1,0,0,
+                0,0,1,0,
+                x,y,z,1
             };
             return M;
         }
 
 
         static constexpr Matrix4f Translation(const Vector3f pos) noexcept {
-            Matrix4f M;
+            Matrix4f M{};
             M.m = {
-                1,0,0,pos.x,
-                0,1,0,pos.y,
-                0,0,1,pos.z,
-                0,0,0,1
+                1,0,0,0,
+                0,1,0,0,
+                0,0,1,0,
+                pos.x,pos.y,pos.z,1
         };
             return M;
         }
@@ -69,7 +69,7 @@ namespace Math {
         static constexpr Matrix4f RotationX(const float degrees) noexcept {
             using std::cos, std::sin;
             const auto rad = toRad(degrees);
-            Matrix4f I;
+            Matrix4f I{};
             I.m = {
                 1,0,0,0,
                 0, cos(rad), -sin(rad), 0,
@@ -82,7 +82,7 @@ namespace Math {
         static constexpr Matrix4f RotationY(const float degrees) noexcept {
             using std::cos, std::sin;
             const auto rad = toRad(degrees);
-            Matrix4f I;
+            Matrix4f I{};
             I.m = {
                 cos(rad), 0, sin(rad), 0,
                 0, 1, 0, 0,
@@ -94,8 +94,8 @@ namespace Math {
 
         static constexpr Matrix4f RotationZ(const float degrees) noexcept {
             using std::cos, std::sin;
-            const auto rad = toRad(degrees);
-            Matrix4f I;
+            const float rad = toRad(degrees);
+            Matrix4f I{};
             I.m = {
                 cos(rad), -sin(rad), 0, 0,
                 sin(rad),  cos(rad), 0, 0,
@@ -105,30 +105,45 @@ namespace Math {
             return I;
         }
 
-        std::array<float, 16> getData() const {
+        static constexpr Matrix4f Perspective(const float fovD, const float aspect, const float zNear, const float zFar) {
+            using std::tan;
+            const float fov = toRad(fovD);
+            const float f = 1.0f / tan(fov / 2.0f);
+
+            Matrix4f I{};
+            I.m = {
+                f / aspect, 0, 0, 0,
+                0, f, 0, 0,
+                0, 0, (zFar + zNear) / (zNear - zFar), -1,
+                0, 0, (2 * zFar * zNear) / (zNear - zFar), 0
+            };
+            return I;
+        }
+
+        [[nodiscard]] std::array<float, 16> getData() const {
             return m;
         }
 
-        const float *getDataPtr() const noexcept {
+        [[nodiscard]] const float *getDataPtr() const noexcept {
             return m.data();
         }
 
         friend constexpr Matrix4f operator+(const Matrix4f& a, const Matrix4f& b) noexcept {
-            Matrix4f r;
+            Matrix4f r{};
             for (std::size_t i = 0; i < 16; ++i)
                 r.m[i] = a.m[i] + b.m[i];
             return r;
         }
 
         friend constexpr Matrix4f operator-(const Matrix4f& a, const Matrix4f& b) noexcept {
-            Matrix4f r;
+            Matrix4f r{};
             for (std::size_t i = 0; i < 16; ++i)
                 r.m[i] = a.m[i] - b.m[i];
             return r;
         }
 
         friend constexpr Matrix4f operator*(const Matrix4f& a, const float s) noexcept {
-            Matrix4f r;
+            Matrix4f r{};
             for (std::size_t i = 0; i < 16; ++i)
                 r.m[i] = a.m[i] * s;
             return r;
@@ -158,7 +173,7 @@ namespace Math {
             return m[col * 4 + row];
         }
 
-        constexpr float at(const std::size_t col, const std::size_t row) const noexcept {
+        [[nodiscard]] constexpr float at(const std::size_t col, const std::size_t row) const noexcept {
             return m[col * 4 + row];
         }
 
