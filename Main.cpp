@@ -6,7 +6,7 @@
 
 #include "Cpp/GameEngine.h"
 
-#define GAME
+//#define GAME
 #ifdef GAME
 int main() {
     auto gameEngine = GameEngine();

@@ -14,6 +14,9 @@ namespace Render {
         ~Camera() = default;
         void update();
         void moveRotation(float dx, float dy, float dz);
+
+        void lookAt();
+
         void movePosition(float x, float y, float z);
 
         private:

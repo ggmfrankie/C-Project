@@ -21,6 +21,7 @@ Vec2i getMousePos();
 Vec2i getWindowSize();
 Font* getFont();
 double graphingFunction(double x);
+void* workerThread(void* args);
 
 #ifdef __cplusplus
     }

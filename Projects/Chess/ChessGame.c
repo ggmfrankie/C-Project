@@ -89,7 +89,7 @@ static pthread_t multiplayerListener;
 
 static PieceColor turn = -1;
 
-static Simple_Texture* pieceTextures[13] = {};
+static Texture* pieceTextures[13] = {};
 
 static void chess_loadTextures();
 
@@ -551,7 +551,7 @@ static void closeProgram(void* nix) {
     exit(69);
 }
 
-static Simple_Texture* getTextureForPiece(ChessPiece piece) {
+static Texture* getTextureForPiece(ChessPiece piece) {
     piece = boardDirection ? -piece : piece;
     if (piece < 0) piece = -piece + 6;
     return pieceTextures[piece];

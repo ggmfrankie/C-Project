@@ -11,6 +11,7 @@
 #include "../Render.h"
 #include "../Engine.h"
 #include "GuiElementData.h"
+#include "../../../../../../Programme/CLion 2025.2.3/bin/mingw/x86_64-w64-mingw32/include/assert.h"
 
 
 Element elementArray[1024];
@@ -18,11 +19,13 @@ List_Element g_Elements = (List_Element){.content = elementArray, .capacity = 10
 Hashmap_Element g_Hashmap = {};
 
 void initElements() {
+    printf("Address of elementList: %p\n", &g_Elements);
     g_Hashmap = newHashmap_Element(512);
 }
 
-Element newElement(const Mesh mesh, const Vec2i pos, const int width, const int height, Simple_Texture* texture) {
-    return (Element){
+Element* newElement(const Mesh mesh, const Vec2i pos, const int width, const int height, Texture* texture) {
+    g_Elements.content[g_Elements.size] = (Element){};
+    g_Elements.content[g_Elements.size] = (Element){
         .name = NULL,
         .Mesh = mesh,
         .onClick = NULL,
@@ -37,7 +40,7 @@ Element newElement(const Mesh mesh, const Vec2i pos, const int width, const int 
         .simpleTexture = texture,
         .color = (Vec3f){0.0f, 0.0f, 0.0f},
         .defaultColor = (Vec3f){0.0f, 0.0f, 0.0f},
-        .textElement = (TextElement){.charQuads = Character_newList(16)},
+        .textElement = (TextElement){.charQuads = Character_newList(16), .forceResize = false, .hasText = false, .pos = {}, .text = NULL, .textColor = {}, .textScale = 1.0f, .width = 0},
         .parentElement = NULL,
         .childElements = ChildElements_newList(8),
         .padding = (Padding){0,0,0,0},
@@ -47,7 +50,16 @@ Element newElement(const Mesh mesh, const Vec2i pos, const int width, const int 
         .elementData = NULL,
         .positionMode = POS_FIT,
         .brightness = 1.0f,
+        .guiMesh = {},
+        .layoutDirection = 0,
+        .onUpdate = NULL,
+        .reset = NULL,
+        .texture = {},
+        .transparency = 0,
+        .type = 0,
+        .whileSelected = NULL
     };
+    return &g_Elements.content[g_Elements.size++];
 }
 
 Element* f_addChildElements(Element* parent, ...) {
@@ -163,7 +175,7 @@ Element *guiAddElement(
     const Vec2i pos,
     const int width,
     const int height,
-    Simple_Texture *tex,
+    Texture *tex,
     const Vec3f color,
     const Padding padding,
     const int childGap,
@@ -188,8 +200,8 @@ Element *guiAddElement(
     char *texture
 )
 {
-    Element_ListAdd(list, newElement(mesh, pos, width, height, tex));
-    Element* lastElement = Element_ListGetLast(list);
+    assert(list == &g_Elements);
+    Element* lastElement = newElement(mesh, pos, width, height, tex);
     if (mouseOver) {
         lastElement->isMouseOver = mouseOver;
         if (hover) lastElement->onHover = hover;
@@ -253,7 +265,7 @@ Element *guiAddSimpleRectangle_Texture(
     const Vec2i pos,
     const int width,
     const int height,
-    Simple_Texture *tex
+    Texture *tex
 )
 {
     Element* element = guiAddElement(&g_Elements, NULL, quadMesh, pos, width, height, tex, (Vec3f){0.6f, 0.6f, 0.6f}, (Padding){10, 10, 10, 10}, 10, NULL, NULL, NULL, (Task){NULL, NULL}, NULL, false, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false, 0.0f,NULL);
@@ -275,7 +287,7 @@ Element *guiAddSimpleButton_Texture(
     const Vec2i pos,
     const int width,
     const int height,
-    Simple_Texture *tex,
+    Texture *tex,
     const Task task,
     const char *text
 )

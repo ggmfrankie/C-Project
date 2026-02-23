@@ -15,16 +15,16 @@ typedef struct {
     u_char *pixels;
 } RawTexture;
 
-ARRAY_LIST(Texture, Simple_Texture)
+ARRAY_LIST(Texture, Texture)
 
 static GLuint uploadTextureToGPU(int width, int height, int channels, const unsigned char* pixels);
 
-static Simple_Texture textureArray[256];
+static Texture textureArray[256];
 static Hashmap_AtlasTextures textureMap;
 static List_Texture g_Textures = (List_Texture){.content = textureArray, .capacity = 256, .size = 0};
 
-Simple_Texture newTexture(const int width, const int height, const GLuint textureId) {
-    return (Simple_Texture){
+Texture newTexture(const int width, const int height, const GLuint textureId) {
+    return (Texture){
         .width = width,
         .height = height,
         .textureId = textureId
@@ -77,7 +77,7 @@ void f_loadTextures(GLuint *atlasId, const int atlasWidth, const int atlasHeight
     *atlasId = uploadTextureToGPU(atlasWidth, atlasHeight, 4, atlas);
 
     for (int i = 0; i < index; i++) {
-        Hashmap_AtlasTextures_add(&textureMap, names[i], (Texture){
+        Hashmap_AtlasTextures_add(&textureMap, names[i], (Atlas_Texture){
             .uv0 = {(float)rects[i].x/(float)atlasWidth, (float)rects[i].y/(float)atlasHeight},
             .uv1 = {(float)(rects[i].x + rects[i].w)/(float)atlasWidth, (float)(rects[i].y + rects[i].h)/(float)atlasHeight}
         });
@@ -90,7 +90,7 @@ void f_loadTextures(GLuint *atlasId, const int atlasWidth, const int atlasHeight
     free(nodes);
 }
 
-Simple_Texture *newEmptyTexture(const int width, const int height) {
+Texture *newEmptyTexture(const int width, const int height) {
     GLuint tex;
     glGenTextures(1, &tex);
     glBindTexture(GL_TEXTURE_2D, tex);
@@ -114,12 +114,12 @@ Simple_Texture *newEmptyTexture(const int width, const int height) {
     glBindTexture(GL_TEXTURE_2D, 0);
 
 
-    Texture_ListAdd(&g_Textures, (Simple_Texture){.width = width, .height = height, .textureId = tex});
+    Texture_ListAdd(&g_Textures, (Texture){.width = width, .height = height, .textureId = tex});
 
     return Texture_ListGetLast(&g_Textures);
 }
 
-Simple_Texture *loadTextureFromPng(char *fileName) {
+Texture *loadTextureFromPng(char *fileName) {
     const String fileNameString = stringOf(fileName);
     const String defaultPath = stringOf("../Resources/Textures/");
     String fullPath = Strings.combine(&defaultPath, &fileNameString);
@@ -136,17 +136,17 @@ Simple_Texture *loadTextureFromPng(char *fileName) {
     const GLuint texture = uploadTextureToGPU(width, height, channels, data);
 
     stbi_image_free(data);
-    Texture_ListAdd(&g_Textures, (Simple_Texture){.width = width, .height = height, .textureId = texture});
+    Texture_ListAdd(&g_Textures, (Texture){.width = width, .height = height, .textureId = texture});
 
     return Texture_ListGetLast(&g_Textures);
 }
 
-Texture getTexture(const char* name) {
+Atlas_Texture getTexture(const char* name) {
     if (name == NULL) {
         puts("Error loading texture: no name provided");
-        return (Texture){};
+        return (Atlas_Texture){};
     }
-    const Texture* texture = Hashmap_AtlasTextures_get(&textureMap, name);
+    const Atlas_Texture* texture = Hashmap_AtlasTextures_get(&textureMap, name);
     return *texture;
 }
 

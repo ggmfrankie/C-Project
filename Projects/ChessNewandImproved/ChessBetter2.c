@@ -86,7 +86,7 @@ typedef struct {
 
 
 Board chess_board = {};
-Simple_Texture* chess_pieceTextures[13] = {};
+Texture* chess_pieceTextures[13] = {};
 
 Color chess_getPieceColor(ChessPiece piece) {
 
@@ -362,7 +362,7 @@ static Element* createChessSquares(ElementSettings es) {
 void chess_createChessBoard(Element* element) {
     Element* board = addChildrenAsGridWithGenerator(
                  (ElementSettings){
-                     .color = 0.5f, 0.0f, 0.3f,
+                     .color = {0.5f, 0.0f, 0.3f},
                      .width = 400,
                      .height = 400,
                  },
@@ -379,7 +379,8 @@ void chess_createChessBoard(Element* element) {
             .draggable = true,
             .pos = {200, 200},
             .color = COLOR_DARKYELLOW,
-            .padding = 10, 10, 10, 10,}
+            .padding = {10, 10, 10, 10},
+        }
             ),
             createElement((ElementSettings){
                 .text = "Chess",

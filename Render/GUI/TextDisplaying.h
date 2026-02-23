@@ -16,7 +16,7 @@ struct TextElement;
 typedef struct TextElement TextElement;
 
 typedef struct {
-    Simple_Texture fontAtlas;
+    Texture fontAtlas;
     stbtt_packedchar glyphs[96];
     float fontSize;
     int maxCharHeight;

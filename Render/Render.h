@@ -36,7 +36,7 @@ typedef struct Renderer {
     bool (*defaultClick)(Renderer *renderer);
     void (*render)(const Renderer *renderer);
 
-    Element guiRoot;
+    Element* guiRoot;
     OtherShaders otherShaders;
 } Renderer;
 

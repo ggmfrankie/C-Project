@@ -5,10 +5,6 @@
 #ifndef C_ARRAYLIST_H
 #define C_ARRAYLIST_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -101,14 +97,6 @@ static inline List_##name name##_newList(int capacity) {\
     }; \
 }
 
-#define forEach(List, type, variable, x)\
-{\
-for (int i = 0; i < List.size; ++i) {\
-type variable = List.content[i];\
-x;\
-}}
 
-#ifdef __cplusplus
-} // extern "C"
-#endif
+
 #endif // C_ARRAYLIST_H

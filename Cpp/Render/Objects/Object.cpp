@@ -13,11 +13,12 @@ namespace Obj {
     Object::Object(const std::string& objFile) {
         auto obj = OBJLoader::OBJObject(objFile);
         obj.load();
-        meshes.push_back(obj.getMesh());
+        meshes.add(obj.getMesh());
     }
+
     Object::Object() = default;
 
-    Object::Object(Object&& other)  noexcept:
+    Object::Object(Object&& other) noexcept:
       rotation(other.rotation),
       initialized(other.initialized),
       scale(other.scale),
@@ -34,7 +35,7 @@ namespace Obj {
         shader = s;
         initialized = true;
         dirty = true;
-        model = getModelMatrix();
+        getModelMatrix();
         for (auto& mesh : meshes) {
             mesh.init(shader);
         }
@@ -46,7 +47,7 @@ namespace Obj {
         }
     }
 
-    void Object::rotateBy(const float pitch, const float yaw=0, const float roll=0) {
+    void Object::rotateBy(const float pitch, const float yaw, const float roll) {
 
         const float p = Matrix4f::toRad(pitch);
         const float y = Matrix4f::toRad(yaw);
@@ -74,7 +75,7 @@ namespace Obj {
 
     Object Object::getDummyObject() {
         Object dummy{};
-        dummy.meshes.push_back(Mesh::getDummyMesh());
+        dummy.meshes << Mesh::getDummyMesh();
         return dummy;
     }
 

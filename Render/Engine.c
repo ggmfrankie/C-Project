@@ -29,11 +29,28 @@ static bool updateStateRecursively(Element *element, Renderer *renderer);
 static void charCallback(GLFWwindow*, unsigned int codepoint);
 static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
-void startEngine(void (*generateGUI)(Element* guiRoot)) {
+void threadExecute() {
+    do {
+        const Task t = popTask();
+        t.func(t.userdata);
+    } while (1);
+}
 
+void* workerThreadInit(void* args) {
+    pthread_mutex_lock(&guiMutex);
+    while (!guiInitialized) {
+        pthread_cond_wait(&guiInitCond, &guiMutex);
+    }
+    pthread_mutex_unlock(&guiMutex);
+    threadExecute();
+    return NULL;
+}
+
+void startEngine(void (*generateGUI)(Element* guiRoot)) {
+    pthread_t workerThreadID;
     g_Renderer = newRenderer(1024, 1024, "Chess Game", "ARIAL.TTF");
 
-    Simple_Texture* graphTexture = newEmptyTexture(WIDTH, HEIGHT);
+    Texture* graphTexture = newEmptyTexture(WIDTH, HEIGHT);
     g_Renderer.computeShader = newComputeShader(NULL, 1024);
     g_Renderer.computeShader.texture = graphTexture;
     g_Renderer.computeShader.thickness = 2;
@@ -48,13 +65,16 @@ void startEngine(void (*generateGUI)(Element* guiRoot)) {
     glfwSetCharCallback(g_Renderer.window, charCallback);
     glfwSetKeyCallback(g_Renderer.window, keyCallback);
 
-    loadTextures(&g_Renderer.atlasId, 1024, 1024, "Pointer Schematic.png");
+    //loadTextures(&g_Renderer.atlasId, 1024, 1024, "Pointer Schematic.png");
 
-    generateGUI(&g_Renderer.guiRoot);
+    generateGUI(g_Renderer.guiRoot);
 
     guiInitialized = true;
     pthread_cond_broadcast(&guiInitCond);
     pthread_mutex_unlock(&guiMutex);
+
+    //pthread_create(&workerThreadID, NULL, workerThreadInit, NULL);
+
 
     int num = 0;
     while (!glfwWindowShouldClose(g_Renderer.window)) {
@@ -66,7 +86,7 @@ void startEngine(void (*generateGUI)(Element* guiRoot)) {
 
             const u_int64 updateLayoutTimeStart = now_ns();
 
-        updateLayout(&g_Renderer.guiRoot, (Vec2i){0, 0}, (Vec2i){0, 0}, &g_Renderer.font);
+        updateLayout(g_Renderer.guiRoot, (Vec2i){0, 0}, (Vec2i){0, 0}, &g_Renderer.font);
 
             const u_int64 updateLayoutTime = now_ns() - updateLayoutTimeStart;
 
@@ -130,11 +150,11 @@ static bool dragElement(const Renderer *renderer) {
 }
 
 static void updateState(Renderer *renderer) {
-    renderer->guiRoot.width = renderer->screenWidth;
-    renderer->guiRoot.height = renderer->screenHeight;
+    renderer->guiRoot->width = renderer->screenWidth;
+    renderer->guiRoot->height = renderer->screenHeight;
 
     dragElement(renderer);
-    const bool consumed = updateStateRecursively(&renderer->guiRoot, renderer);
+    const bool consumed = updateStateRecursively(renderer->guiRoot, renderer);
 
     if (click(renderer->window, GLFW_MOUSE_BUTTON_LEFT) && !consumed) focusedElement = NULL;
     if (focusedElement && focusedElement->whileSelected) focusedElement->whileSelected(focusedElement);

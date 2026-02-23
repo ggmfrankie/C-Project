@@ -6,6 +6,7 @@
 #define MIXEDPROJECT_OBJECT_H
 #include <vector>
 
+#include "../../Utils/ggmLib/ArrayList.h"
 #include "../../Utils/Math/Quaternion.h"
 #include "../../Utils/Math/Matrix.h"
 #include "Geometry/Mesh.h"
@@ -47,7 +48,7 @@ namespace Obj {
         bool dirty = true;
 
         Math::Vector3f position{0,0,0};
-        std::vector<Mesh> meshes{};
+        ggm::ArrayList<Mesh, 1> meshes{};
         Render::Shader* shader = nullptr;
     };
 } // Core

@@ -112,8 +112,8 @@ typedef struct Element {
 
     Mesh Mesh;
     GuiMesh guiMesh;
-    Simple_Texture* simpleTexture;
-    Texture texture;
+    Texture* simpleTexture;
+    Atlas_Texture texture;
     Vec3f color;
     Vec3f defaultColor;
 
@@ -149,7 +149,7 @@ typedef struct {
     LayoutDirection layoutDirection;
     int width;
     int height;
-    Simple_Texture* old_texture;
+    Texture* old_texture;
     char* texture;
     Vec3f color;
     float transparency;
@@ -177,7 +177,7 @@ typedef struct {
 
 void initElements();
 
-Element newElement(Mesh mesh, Vec2i pos, int width, int height, Simple_Texture* texture);
+Element* newElement(Mesh mesh, Vec2i pos, int width, int height, Texture* texture);
 Element* f_addChildElements(Element* parent, ...);
 
 Element* addChildrenAsGrid(ElementSettings parentData, ElementSettings es, int numX, int numY);
@@ -209,7 +209,7 @@ Element *guiAddElement(
     Vec2i pos,
     int width,
     int height,
-    Simple_Texture *tex,
+    Texture *tex,
     Vec3f color,
     Padding padding,
     int childGap,
@@ -233,7 +233,7 @@ Element *guiAddSimpleRectangle_Texture(
     Vec2i pos,
     int width,
     int height,
-    Simple_Texture *tex
+    Texture *tex
 );
 
 Element *guiAddSimpleRectangle_Color(
@@ -247,7 +247,7 @@ Element *guiAddSimpleButton_Texture(
     Vec2i pos,
     int width,
     int height,
-    Simple_Texture *tex,
+    Texture *tex,
     Task task,
     const char *text
 );

@@ -160,6 +160,7 @@ namespace Math {
             for (std::size_t col = 0; col < 4; ++col) {
                 for (std::size_t row = 0; row < 4; ++row) {
                     float sum = 0.0f;
+                    #pragma omp simd reduction(+:sum)
                     for (std::size_t k = 0; k < 4; ++k) {
                         sum += A.m[k * 4 + row] * B.m[col * 4 + k];
                     }

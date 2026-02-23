@@ -65,9 +65,6 @@ void namensliste_langsam() {
 
 
     const u_int64 startNs = now_ns();
-    forEach(names, const String, name,
-        addOrIncrement(&nameCounterMap, name.content);
-    )
     bubbleSort(&nameCounterMap);
     const u_int64 time = now_ns() - startNs;
 
@@ -154,14 +151,7 @@ void namensliste_schnell() {
     names.size--;
 
     const u_int64 startNs = now_ns();
-    forEach(names, const String, content,
-        int* count = Hashmap_NameCounter_get(&nameCounter, content.content);
-        if (count) {
-            (*count)++;
-        } else {
-            Hashmap_NameCounter_add(&nameCounter, content.content, 1);
-        }
-    )
+
     const u_int64 time = now_ns() - startNs;
 
     for (int i = 0; i < nameCounter.capacity; i++) {

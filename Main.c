@@ -16,39 +16,14 @@
 #include "Projects/Chess/ChessGame.h"
 #include "Projects/ChessNewandImproved/ChessBetter2.h"
 #include "Projects/Tokenizer/Calculator.h"
-
-void* workerThread(void* args);
-
-void mainFun() {
-
-    do {
-        const Task t = popTask();
-        t.func(t.userdata);
-    } while (1);
-}
-
-
-#define WINADAPT
+//#define WINADAPT
 #ifndef WINADAPT
 int main(){
     SetConsoleOutputCP(CP_UTF8);
-    pthread_t workerThreadID;
-    //chess_run ();
-    pthread_create(&workerThreadID, NULL, workerThread, NULL);
     startEngine(chess_createChessBoard);
     //startEngine(generateTestGUI);
     //startEngine(createChessGUI);
     return 0;
 }
 #endif
-
-void* workerThread(void* args) {
-    pthread_mutex_lock(&guiMutex);
-    while (!guiInitialized) {
-        pthread_cond_wait(&guiInitCond, &guiMutex);
-    }
-    pthread_mutex_unlock(&guiMutex);
-    mainFun();
-    return NULL;
-}
 

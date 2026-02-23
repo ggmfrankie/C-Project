@@ -10,14 +10,14 @@
 
 void generateTestGUI(Element *guiRoot) {
 
-    Simple_Texture* blackButton = loadTextureFromPng("GrayBox.png");
-    Simple_Texture* pointerSchematic = loadTextureFromPng("Pointer Schematic.png");
+    Texture* blackButton = loadTextureFromPng("GrayBox.png");
+    Texture* pointerSchematic = loadTextureFromPng("Pointer Schematic.png");
 
     const Task changeButtonTextTask = {.func = changeElementText, .userdata = THIS_ELEMENT};
     const Task nameShenanigans = {.func = namensliste_Aufgabe, .userdata = NULL};
 
     Font font = loadFontAtlas("ARIAL.TTF");
-    Simple_Texture tex = font.fontAtlas;
+    Texture tex = font.fontAtlas;
 
     addChildElements(guiRoot,
         addChildElements(guiAddSimpleRectangle_Color((Vec2i){300, 100}, 230, pointerSchematic->height, (Vec3f){0.0f, 0.0f, 0.0f}),

@@ -32,7 +32,7 @@ void initBatchedRendering();
 void accumulateMeshes(Element *element, const Renderer *renderer, GuiVertex *vertices, int *index, Element **textElements, int *
                       numTextElements);
 
-Element createRootElement();
+Element* createRootElement();
 
 GLFWwindow* initWindow(const int width, const int height, const char* name) {
     if (!glfwInit()) {
@@ -115,7 +115,7 @@ void Renderer_render(const Renderer *renderer) {
     setUniform(&renderer->guiShader, ("screenWidth"), (float) renderer->screenWidth);
     setUniform(&renderer->guiShader, ("screenHeight"), (float) renderer->screenHeight);
 
-    const Element* guiRoot = &renderer->guiRoot;
+    const Element* guiRoot = renderer->guiRoot;
 
     for (int i = 0; i < guiRoot->childElements.size; i++) {
         renderElementsRecursively(guiRoot->childElements.content[i], renderer);
@@ -188,7 +188,7 @@ void Renderer_render2(const Renderer *renderer) {
 
     setUniform(&renderer->batched_guiShader, "atlasSampler", 0);
 
-    const Element* guiRoot = &renderer->guiRoot;
+    const Element* guiRoot = renderer->guiRoot;
 
     for (int i = 0; i < guiRoot->childElements.size; i++) {
         accumulateMeshes(guiRoot->childElements.content[i],
@@ -394,8 +394,8 @@ Renderer newRenderer(const int width, const int height, const char* name, char *
     };
 }
 
-Element createRootElement() {
-    return newElement((Mesh){}, (Vec2i){0}, 0, 0, NULL);
+Element* createRootElement() {
+    return newElement((Mesh){}, (Vec2i){}, 0, 0, NULL);
 }
 
 void loadDefaultQuadMesh() {
