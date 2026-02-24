@@ -14,7 +14,11 @@ namespace Math {
             this->z = z;
         }
 
-        Vector3f();
+        Vector3f() = default;
+
+        constexpr Vector3f operator-() const noexcept {
+            return {-x, -y, -z};
+        }
 
         constexpr Vector3f operator+(const Vector3f& v) const {
             return {v.x + x, v.y + y, v.z + z};

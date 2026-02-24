@@ -8,7 +8,7 @@
 #include <cstdlib>
 #include <iostream>
 
-#include "ggmdef.h"
+#include "../Math/ggmdef.h"
 
 namespace ggm {
     template <typename T, num::u64 InlineCapacity>

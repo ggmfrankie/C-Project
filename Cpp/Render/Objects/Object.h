@@ -6,7 +6,7 @@
 #define MIXEDPROJECT_OBJECT_H
 #include <vector>
 
-#include "../../Utils/ggmLib/ArrayList.h"
+#include "../../Utils/DataStorage/ArrayList.h"
 #include "../../Utils/Math/Quaternion.h"
 #include "../../Utils/Math/Matrix.h"
 #include "Geometry/Mesh.h"

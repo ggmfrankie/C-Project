@@ -19,6 +19,9 @@ namespace Obj::OBJLoader {
 
         void load();
 
+        friend std::ostream& operator<<(std::ostream& os, const OBJObject& o);
+        Mesh getMesh();
+
     private:
         class Face {
         public:
@@ -44,20 +47,33 @@ namespace Obj::OBJLoader {
             };
 
             explicit Face(const std::string_view &faceLine) {
-                for (const auto& vertexLine = Utils::split(faceLine, ' '); const auto& vertex: vertexLine) {
-                    auto faceIndices = Utils::split(vertex, '/');
-                    int faceVert = 0;
-                    try {
-                         faceVert = std::stoi(std::string(faceIndices[0]));
-                    } catch (const std::exception&) {
-                        std::cout << "invalid string caught: " <<faceIndices[0] << "\n";
-                        std::cout << faceLine << "\n";
-                        std::cout << vertex << "\n";
+                for (const auto& token:  Utils::split(faceLine, ' ')) {
+                    if (token.empty()) continue;
+
+                    auto faceIndices = Utils::split(token, '/');
+                    int v = -1;
+                    int vt = -1;
+                    int vn = -1;
+
+                    if (!faceIndices[0].empty()) {
+                        auto& s = faceIndices[0];
+                        std::from_chars(s.data(), s.data() + s.size(), v);
+                        v -= 1;
                     }
 
-                    int faceUv = faceIndices[1].empty() ? 0 : std::stoi(std::string(faceIndices[1]));
-                    int faceNorm = faceIndices[2].empty() ? 0 : std::stoi(std::string(faceIndices[2]));
-                    idxGroups.emplace_back(faceVert, faceUv, faceNorm);
+                    if (faceIndices.size() > 1 && !faceIndices[1].empty()) {
+                        auto& s = faceIndices[1];
+                        std::from_chars(s.data(), s.data() + s.size(), vt);
+                        vt -= 1;
+                    }
+
+                    if (faceIndices.size() > 2 && !faceIndices[2].empty()) {
+                        auto& s = faceIndices[2];
+                        std::from_chars(s.data(), s.data() + s.size(), vn);
+                        vn -= 1;
+                    }
+
+                    idxGroups.emplace_back(v, vt, vn);
                 }
             }
 
@@ -68,25 +84,25 @@ namespace Obj::OBJLoader {
             [[nodiscard]] const std::vector<IdxGroup>& getIdxGroups() const { return idxGroups; }
         };
 
-        std::string folderPath{};
+        std::string m_folderPath{};
 
-        std::string objFile{};
-        std::string materialFile{};
-        std::string textureName{};
-        std::string_view materialLib{};
+        std::string m_objFile{};
+        std::string m_materialFile{};
+        std::string m_textureName{};
+        std::string_view m_materialLib{};
 
-        std::vector<std::string_view> lines{};
+        std::vector<std::string_view> m_lines{};
 
-        std::vector<Face> faces{};
-        std::vector<Math::Vector3f> allVertices{};
-        std::vector<Math::Vector3f> allNormals{};
-        std::vector<Math::Vector2f> allUv{};
+        std::vector<Face> m_faces{};
+        std::vector<Math::Vector3f> m_allVertices{};
+        std::vector<Math::Vector3f> m_allNormals{};
+        std::vector<Math::Vector2f> m_allUv{};
 
-        std::vector<Math::Vector3f> glVertices{};
-        std::vector<Math::Vector3f> glNormals{};
-        std::vector<Math::Vector2f> glUv{};
+        std::vector<Math::Vector3f> m_glVertices{};
+        std::vector<Math::Vector3f> m_glNormals{};
+        std::vector<Math::Vector2f> m_glUv{};
 
-        std::vector<GLuint> indices{};
+        std::vector<GLuint> m_indices{};
 
         [[nodiscard]] std::vector<std::string_view> getLinesWith(const std::string_view &token) const;
 
@@ -96,9 +112,10 @@ namespace Obj::OBJLoader {
 
         static auto convertToVec2f(const std::vector<std::string_view> &lineList);
 
-    public:
-        friend std::ostream& operator<<(std::ostream& os, const OBJObject& o);
-        Mesh getMesh();
+        void loadMeshData();
+
+        std::string_view loadMaterial();
+
     };
 
 }

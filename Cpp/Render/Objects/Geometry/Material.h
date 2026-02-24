@@ -12,7 +12,7 @@ namespace Obj {
         ~Material() = default;
         void init();
 
-        bool hasData() const;
+        [[nodiscard]] bool hasData() const;
     };
 } // Geometry
 

@@ -139,7 +139,7 @@ namespace Obj {
             {0.0f, 1.0f}
         };
 
-        Texture texture("grass_block/grass_block.png");
+        Texture texture("../Resources/Objects/grass_block/grass_block.png");
         puts("load dummy Mesh");
 
         return {std::move(vertices), std::move(tex), std::move(normals), std::move(indis), std::move(texture)};

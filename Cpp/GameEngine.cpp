@@ -25,8 +25,11 @@ void GameEngine::loop() {
 
 void GameEngine::init() {
     auto obj = Obj::Object::getDummyObject();
-    obj.moveBy(0,0, -50);
+    obj.moveBy(0,0, -30);
+    auto obj2 = Obj::Object("grass_block/grass_block.obj");
+    obj2.moveBy(0,0, -20);
     screen.addObject(std::move(obj));
+    screen.addObject(std::move(obj2));
     screen.init();
 }
 

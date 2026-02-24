@@ -26,6 +26,8 @@ namespace Utils {
     };
 
     inline constexpr to_vector_fn to_vector;
+
+    double getDouble(const char *start, size_t length);
 }
 
 #endif //MIXEDPROJECT_UTILS_H

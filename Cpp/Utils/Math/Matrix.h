@@ -105,6 +105,10 @@ namespace Math {
             return I;
         }
 
+        static constexpr Matrix4f Rotation(const Vector3f rot) noexcept {
+            return Matrix4f(Quaternion::fromEuler(rot).toMatrix());
+        }
+
         static constexpr Matrix4f Perspective(const float fovD, const float aspect, const float zNear, const float zFar) {
             using std::tan;
             const float fov = toRad(fovD);
@@ -177,8 +181,6 @@ namespace Math {
         [[nodiscard]] constexpr float at(const std::size_t col, const std::size_t row) const noexcept {
             return m[col * 4 + row];
         }
-
-
 
         ~Matrix4f() = default;
 

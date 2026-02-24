@@ -12,6 +12,8 @@
 #include "Objects/Object.h"
 #include "Objects/Geometry/Mesh.h"
 #include "Shader/Shader.h"
+#include "Transformation/Camera.h"
+
 namespace Render{
     class Screen {
     public:
@@ -32,6 +34,8 @@ namespace Render{
         GLFWwindow* windowHandle;
         int width, height;
         std::string name;
+
+        Camera camera;
 
         Shader shader;
 

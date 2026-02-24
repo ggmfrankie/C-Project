@@ -110,8 +110,8 @@ add_executable(C-Project
         Cpp/Utils/Utils.cpp
         Cpp/Utils/Utils.h
         Cpp/Utils/Math/Quaternion.h
-        Cpp/Utils/ggmLib/ArrayList.h
-        Cpp/Utils/ggmLib/ggmDef.h
+        Cpp/Utils/DataStorage/ArrayList.h
+        Cpp/Utils/Math/ggmdef.h
 )
 #add_subdirectory("${CMAKE_SOURCE_DIR}/Render")
 

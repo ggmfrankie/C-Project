@@ -71,12 +71,24 @@ namespace Render{
         shader.bind();
         for (auto& obj : objects) {
 
-            shader.setUniform("modelViewMatrix", obj.getModelMatrix());
-            shader.setUniform("projectionMatrix", Math::Matrix4f::Perspective(90.0, static_cast<float>(width)/static_cast<float>(height), 0.01f, 100.0f));
-            //shader.setUniform("projectionMatrix", Math::Matrix4f::Identity());
+            Math::Matrix4f model      = obj.getModelMatrix();
+            Math::Matrix4f view       = camera.getViewMatrix();
+            Math::Matrix4f modelView  = view * model;
+
+            shader.setUniform("modelViewMatrix", modelView);
+            shader.setUniform("projectionMatrix",
+                              Math::Matrix4f::Perspective(
+                                  90.0,
+                                  static_cast<float>(width) / static_cast<float>(height),
+                                  0.01f,
+                                  100.0f
+                                  )
+                             );
             obj.render();
-            obj.rotateBy(0,1,0);
-            obj.moveBy(0.0,0.0,0.01);
+            obj.rotateBy(1,1,1);
+            //obj.moveBy(0.0,0.0,0.05);
+            camera.moveBy(0,0.0,0);
+            camera.rotateBy(0.02,0.0,0.02);
         }
         glfwSwapBuffers(windowHandle);
     }

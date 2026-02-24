@@ -9,21 +9,25 @@
 
 namespace Render {
     class Camera {
-        public:
-        Camera();
+    public:
+        Camera() = default;
         ~Camera() = default;
-        void update();
+        //void update();
         void moveRotation(float dx, float dy, float dz);
 
         void lookAt();
 
-        void movePosition(float x, float y, float z);
+        void moveBy(float offsetX, float offsetY, float offsetZ);
 
-        private:
+        void rotateBy(float dPitch, float dRoll, float dYaw);
 
-        Math::Matrix4f viewMatrix{};
-        Math::Vector3f pos{};
-        Math::Vector3f rotation{};
+        Math::Matrix4f getViewMatrix() const;
+
+        //void movePosition(float x, float y, float z);
+
+    private:
+        Math::Vector3f m_pos{};
+        Math::Vector3f m_rotation{};
     };
 } // Render
 

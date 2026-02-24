@@ -10,10 +10,13 @@
 
 namespace Obj {
     class Texture {
-        public:
+    public:
         explicit Texture(const std::string &file);
 
         Texture();
+
+        Texture(const Texture &other);
+
         Texture(Texture&& other) noexcept ;
 
         bool hasData() const noexcept;
@@ -25,12 +28,14 @@ namespace Obj {
 
         ~Texture() = default;
 
-        private:
-        std::string name;
-        GLuint textureId = 0;
+        Texture& operator=(Texture&&) noexcept = default;
 
-        unsigned char* data;
-        int width{}, height{}, channels{};
+    private:
+        std::string m_name;
+        GLuint m_textureId = 0;
+
+        unsigned char* m_data;
+        int m_width{}, m_height{}, m_channels{};
     };
 } // Geometry
 

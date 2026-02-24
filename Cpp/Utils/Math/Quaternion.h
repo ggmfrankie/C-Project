@@ -8,6 +8,8 @@
 #include <cmath>
 #include <array>
 
+#include "Vector.h"
+
 namespace Math {
 
 struct Quaternion {
@@ -59,6 +61,10 @@ struct Quaternion {
         q.y = cr * sp * cy + sr * cp * sy;
         q.z = cr * cp * sy - sr * sp * cy;
         return q;
+    }
+
+    static Quaternion fromEuler(const Vector3f& v) {
+        return fromEuler(v.x, v.y, v.z);
     }
 
     // -------------------------
