@@ -58,12 +58,17 @@ namespace Math {
 
     class Vector2f {
     public:
+        constexpr Vector2f() = default;
         constexpr Vector2f(const float x, const float y) {
             this->x = x;
             this->y = y;
         }
         float x;
         float y;
+
+        constexpr Vector2f operator-(const Vector2f& v) const {
+            return {x-v.x, y-v.y};
+        }
     };
 }
 

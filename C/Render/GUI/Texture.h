@@ -4,7 +4,7 @@
 
 #ifndef C_TEXTURE_H
 #define C_TEXTURE_H
-#include "glad/gl.h"
+#include "../../../Dependencies/include/glad/gl.h"
 #include "../../Utils/CString.h"
 #include "../../Utils/Vector.h"
 #include "../../Utils/HashMap.h"

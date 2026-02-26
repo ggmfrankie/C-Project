@@ -6,7 +6,7 @@
 #define C_TEXTELEMENT_H
 
 #include "Texture.h"
-#include "stb/stb_truetype.h"
+#include "../../../Dependencies/include/stb/stb_truetype.h"
 #include "../../Utils/Vector.h"
 struct Element;
 typedef struct Element Element;

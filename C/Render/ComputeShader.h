@@ -6,7 +6,7 @@
 #define C_GRAPHINGSHADER_H
 #include "Shader.h"
 #include "GUI/Texture.h"
-#include "glad/gl.h"
+#include "../../Dependencies/include/glad/gl.h"
 
 typedef struct ComputeShader {
     GLuint SSBO;

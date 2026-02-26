@@ -8,7 +8,7 @@
 #include "../Utils/HashMap.h"
 #include "../Utils/CString.h"
 #include "../Utils/Vector.h"
-#include "glad/gl.h"
+#include "../../Dependencies/include/glad/gl.h"
 
 HASH_MAP(Uniforms, char*, GLint)
 

@@ -36,7 +36,10 @@ namespace Obj::OBJLoader {
         m_allNormals.reserve(m_objFile.size());
     }
 
-    auto OBJObject::convertToVec3f(const vector<string_view>& lineList) {
+
+    std::vector<Math::Vector3f>
+    OBJObject::convertToVec3f(const std::vector<std::string_view>& lineList)
+    {
         vector<Math::Vector3f> output;
         output.reserve(lineList.size());
         for (auto& line: lineList) {
@@ -44,7 +47,7 @@ namespace Obj::OBJLoader {
             float nums[3] = {};
             for (int i = 0; auto numberString: numberStrings) {
                 try {
-                    nums[i++] = Utils::getDouble(numberString.data(), numberString.size());
+                    nums[i++] = static_cast<float>(Utils::getDouble(numberString.data(), numberString.size()));
                 } catch (...) {
                     cout << "invalid string caught: " << numberString << "\n";
                 }
@@ -54,7 +57,7 @@ namespace Obj::OBJLoader {
         return output;
     }
 
-    auto OBJObject::convertToVec2f(const vector<string_view>& lineList) {
+    std::vector<Math::Vector2f> OBJObject::convertToVec2f(const vector<string_view>& lineList) {
         vector<Math::Vector2f> output;
         output.reserve(lineList.size());
         for (auto& line: lineList) {
@@ -62,7 +65,7 @@ namespace Obj::OBJLoader {
             float nums[2] = {};
             for (int i = 0; auto numberString: numberStrings) {
                 try {
-                    nums[i++] = Utils::getDouble(numberString.data(), numberString.size());
+                    nums[i++] = static_cast<float>(Utils::getDouble(numberString.data(), numberString.size()));
                 } catch (...) {
                     cout << "invalid string caught: " << numberString << "\n";
                 }
@@ -82,17 +85,22 @@ namespace Obj::OBJLoader {
         m_materialLib = getMaterialLib();
 
         loadMeshData();
-        m_textureName = loadMaterial();
+        loadMaterial();
     }
 
     void OBJObject::loadMeshData() {
-        std::unordered_map<Face::IdxGroup, int, Face::IdxGroupHash> map{};
+        std::unordered_map<IdxGroup, int, IdxGroupHash> map{};
         map.reserve(m_allVertices.size()*2);
         int i = 0;
         for (auto& face: getLinesWith("f ")) {
-            m_faces.emplace_back(face);
+            auto idxGroups = loadIdxGroups(face);
 
-            for (auto& idxGroup: m_faces.back().getIdxGroups()) {
+            for (int numVerts = 0; auto& idxGroup: idxGroups) {
+                if (numVerts > 3) {
+                    m_indices.push_back(i-numVerts);
+                    m_indices.push_back(i-1);
+                }
+
                 if (auto it = map.find(idxGroup); it != map.end()) {
                     m_indices.push_back(it->second);
                 } else {
@@ -108,13 +116,46 @@ namespace Obj::OBJLoader {
                     m_indices.push_back(i);
                     i++;
                 }
+                numVerts++;
             }
         }
     }
 
-    std::string_view OBJObject::loadMaterial() {
-        string_view textureFile = {};
-        if (m_materialLib.empty()) return {};
+    std::vector<OBJObject::IdxGroup> OBJObject::loadIdxGroups(const std::string_view &faceLine) {
+        vector<IdxGroup> output;
+        for (const auto& token:  Utils::split(faceLine, ' ')) {
+            if (token.empty()) continue;
+
+            auto faceIndices = Utils::split(token, '/');
+            int v = -1;
+            int vt = -1;
+            int vn = -1;
+
+            if (!faceIndices[0].empty()) {
+                auto& s = faceIndices[0];
+                std::from_chars(s.data(), s.data() + s.size(), v);
+                v -= 1;
+            }
+
+            if (faceIndices.size() > 1 && !faceIndices[1].empty()) {
+                auto& s = faceIndices[1];
+                std::from_chars(s.data(), s.data() + s.size(), vt);
+                vt -= 1;
+            }
+
+            if (faceIndices.size() > 2 && !faceIndices[2].empty()) {
+                auto& s = faceIndices[2];
+                std::from_chars(s.data(), s.data() + s.size(), vn);
+                vn -= 1;
+            }
+
+            output.emplace_back(v, vt, vn);
+        }
+        return output;
+    }
+
+    void OBJObject::loadMaterial() {
+        if (m_materialLib.empty()) return;
 
         const auto fullPath = m_folderPath + std::string(m_materialLib);
         const auto s = Utils::FileIO::readFile(fullPath);
@@ -123,15 +164,14 @@ namespace Obj::OBJLoader {
             auto& line: _lines) {
             if (line.empty()) continue;
             if (line.starts_with("map_Kd ")) {
-                textureFile = line;
-                textureFile.remove_prefix(strlen("map_Kd "));
+                m_textureName = line;
+                m_textureName.erase(0, strlen("map_Kd "));
+                break;
             }
-            }
-        return textureFile;
+        }
     }
 
     Mesh OBJObject::getMesh() {
-        cout << m_folderPath << std::endl;
         return {std::move(m_glVertices), std::move(m_glUv), std::move(m_glNormals), std::move(m_indices), Texture(m_folderPath + m_textureName)};
     }
 

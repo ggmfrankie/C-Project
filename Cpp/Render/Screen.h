@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 
+#include "IO/Input.h"
 #include "Objects/Object.h"
 #include "Objects/Geometry/Mesh.h"
 #include "Shader/Shader.h"
@@ -26,10 +27,17 @@ namespace Render{
 
         void addObject(Obj::Object &&object);
 
+        Camera &getCamera();
+
+        std::vector<Obj::Object> &getObjectList();
+
         [[nodiscard]] GLFWwindow *getWindowHandle() const;
 
     private:
         static void framebufferSizeCallback(GLFWwindow *window, int width, int height);
+
+
+
         void createShaderUniforms();
         GLFWwindow* windowHandle;
         int width, height;

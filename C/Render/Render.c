@@ -1,7 +1,7 @@
 //
 // Created by Stefan on 10.10.2025.
 //
-#include "glad/gl.h"
+#include "../../Dependencies/include/glad/gl.h"
 #include "Render.h"
 
 #include <bemapiset.h>
@@ -10,7 +10,7 @@
 #include "Engine.h"
 #include "../Utils/Vector.h"
 #include "GUI/CallbackFunctions.h"
-#include <stb/stb_truetype.h>
+#include <../../Dependencies/include/stb/stb_truetype.h>
 
 
 #define MAX_GUI_VERTICES 16384

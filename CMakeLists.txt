@@ -9,81 +9,81 @@ set(CMAKE_CXX_STANDARD 23)
 include_directories("${CMAKE_SOURCE_DIR}/Dependencies/include")
 
 add_executable(C-Project
-        Utils/GenericLinkedList.h
+        C/Utils/GenericLinkedList.h
         Main.c
-        Utils/CString.c
-        Utils/CString.h
-        Render/Render.c
-        Render/Render.h
-        Render/GUI/Mesh.c
-        Render/GUI/Mesh.h
-        Utils/ArrayList.h
-        Render/gl.c
-        Render/Engine.c
-        Render/Engine.h
-        Utils/Vector.c
-        Utils/Vector.h
-        Utils/DataStructures.h
-        Render/Shader.c
-        Render/Shader.h
-        Utils/HashMap.h
-        Utils/Map.h
-        Utils/FileIO.c
-        Utils/FileIO.h
-        Utils/StringBuilder.c
-        Utils/StringBuilder.h
-        Render/GUI/GuiElement.c
-        Render/GUI/GuiElement.h
-        Utils/SimpleArray.h
-        Render/ComputeShader.c
-        Render/ComputeShader.h
-        Render/GUI/Texture.c
-        Render/GUI/Texture.h
-        Extern/Informatik/Spannungsteiler_A3.c
-        Extern/Informatik/Spannungsteiler_A3.h
-        Extern/Informatik/DrunkenBishop.c
-        Extern/Informatik/DrunkenBishop.h
-        Utils/Matrix.h
-        Extern/Informatik/GameBoard.c
-        Extern/Informatik/GameBoard.h
-        Utils/Makros.h
-        Utils/TimeMeasurenments.c
-        Utils/TimeMeasurenments.h
-        Render/GUI/CallbackFunctions.h
-        Render/GUI/CallbackFunctions.c
+        C/Utils/CString.c
+        C/Utils/CString.h
+        C/Render/Render.c
+        C/Render/Render.h
+        C/Render/GUI/Mesh.c
+        C/Render/GUI/Mesh.h
+        C/Utils/ArrayList.h
+        C/Render/gl.c
+        C/Render/Engine.c
+        C/Render/Engine.h
+        C/Utils/Vector.c
+        C/Utils/Vector.h
+        C/Utils/DataStructures.h
+        C/Render/Shader.c
+        C/Render/Shader.h
+        C/Utils/HashMap.h
+        C/Utils/Map.h
+        C/Utils/FileIO.c
+        C/Utils/FileIO.h
+        C/Utils/StringBuilder.c
+        C/Utils/StringBuilder.h
+        C/Render/GUI/GuiElement.c
+        C/Render/GUI/GuiElement.h
+        C/Utils/SimpleArray.h
+        C/Render/ComputeShader.c
+        C/Render/ComputeShader.h
+        C/Render/GUI/Texture.c
+        C/Render/GUI/Texture.h
+        C/Extern/Informatik/Spannungsteiler_A3.c
+        C/Extern/Informatik/Spannungsteiler_A3.h
+        C/Extern/Informatik/DrunkenBishop.c
+        C/Extern/Informatik/DrunkenBishop.h
+        C/Utils/Matrix.h
+        C/Extern/Informatik/GameBoard.c
+        C/Extern/Informatik/GameBoard.h
+        C/Utils/Makros.h
+        C/Utils/TimeMeasurenments.c
+        C/Utils/TimeMeasurenments.h
+        C/Render/GUI/CallbackFunctions.h
+        C/Render/GUI/CallbackFunctions.c
         Dependencies/include/stb/stb_image.h
-        Extern/Informatik/Geldautomat.c
-        Render/GUI/TextDisplaying.c
-        Render/GUI/TextDisplaying.h
+        C/Extern/Informatik/Geldautomat.c
+        C/Render/GUI/TextDisplaying.c
+        C/Render/GUI/TextDisplaying.h
         Dependencies/include/stb/stb_truetype.h
         Dependencies/include/stb/stb_truetype.h
         Dependencies/include/stb/stb_rect_pack.h
-        Extern/Informatik/PointerFun.c
-        Extern/Informatik/Namensliste.c
-        Extern/Informatik/Personalverwaltung.c
-        Render/GUI/Tasks.c
-        Render/GUI/Tasks.h
-        Extern/Informatik/MonteCarlo.c
-        Extern/Informatik/MonteCarlo.h
-        Extern/Informatik/libminibmp.c
-        Utils/MemoryArena.c
-        Render/GUI/GuiElementData.c
-        Render/GUI/GuiElementData.h
-        Extern/Libraries/WinAdapt.c
-        Extern/Libraries/WinAdapt.h
-        Extern/Informatik/TowersOfHanoi.c
-        Extern/Informatik/TowersOfHanoi.h
-        Projects/Chess/ChessGame.c
-        Projects/Chess/ChessGame.h
-        Utils/Network.c
-        Utils/Network.h
-        Utils/UtilityFun.c
-        Utils/UtilityFun.h
-        Projects/Test/TestGUI.c
-        Projects/ChessNewandImproved/ChessBetter2.c
-        Projects/ChessNewandImproved/ChessBetter2.c
-        Projects/Tokenizer/Calculator.c
-        Projects/Tokenizer/Calculator.h
+        C/Extern/Informatik/PointerFun.c
+        C/Extern/Informatik/Namensliste.c
+        C/Extern/Informatik/Personalverwaltung.c
+        C/Render/GUI/Tasks.c
+        C/Render/GUI/Tasks.h
+        C/Extern/Informatik/MonteCarlo.c
+        C/Extern/Informatik/MonteCarlo.h
+        C/Extern/Informatik/libminibmp.c
+        C/Utils/MemoryArena.c
+        C/Render/GUI/GuiElementData.c
+        C/Render/GUI/GuiElementData.h
+        C/Extern/Libraries/WinAdapt.c
+        C/Extern/Libraries/WinAdapt.h
+        C/Extern/Informatik/TowersOfHanoi.c
+        C/Extern/Informatik/TowersOfHanoi.h
+        C/Projects/Chess/ChessGame.c
+        C/Projects/Chess/ChessGame.h
+        C/Utils/Network.c
+        C/Utils/Network.h
+        C/Utils/UtilityFun.c
+        C/Utils/UtilityFun.h
+        C/Projects/Test/TestGUI.c
+        C/Projects/ChessNewandImproved/ChessBetter2.c
+        C/Projects/ChessNewandImproved/ChessBetter2.c
+        C/Projects/Tokenizer/Calculator.c
+        C/Projects/Tokenizer/Calculator.h
         Cpp/GameEngine.cpp
         Main.cpp
         Cpp/Render/Screen.cpp
@@ -93,7 +93,7 @@ add_executable(C-Project
         Cpp/Utils/Math/Vector.h
         Cpp/Render/Shader/Shader.cpp
         Cpp/Render/Shader/Shader.h
-        Render/CRenderInterface.h
+        C/Render/CRenderInterface.h
         Cpp/Utils/FileIO.cpp
         Cpp/Utils/FileIO.h
         Cpp/Render/Objects/Object.cpp
@@ -112,6 +112,11 @@ add_executable(C-Project
         Cpp/Utils/Math/Quaternion.h
         Cpp/Utils/DataStorage/ArrayList.h
         Cpp/Utils/Math/ggmdef.h
+        Cpp/Games/IGame.h
+        Cpp/Render/IO/Input.cpp
+        Cpp/Render/IO/Input.h
+        Cpp/Games/BaseGame.cpp
+        Cpp/Games/BaseGame.h
 )
 #add_subdirectory("${CMAKE_SOURCE_DIR}/Render")
 

@@ -88,7 +88,7 @@ namespace Render{
             obj.rotateBy(1,1,1);
             //obj.moveBy(0.0,0.0,0.05);
             camera.moveBy(0,0.0,0);
-            camera.rotateBy(0.02,0.0,0.02);
+            //camera.rotateBy(0.02,0.0,0.02);
         }
         glfwSwapBuffers(windowHandle);
     }
@@ -104,6 +104,14 @@ namespace Render{
     void Screen::framebufferSizeCallback(GLFWwindow* window, int width, int height)
     {
         glViewport(0, 0, width, height);
+    }
+
+    Camera& Screen::getCamera() {
+        return camera;
+    }
+
+    std::vector<Obj::Object>& Screen::getObjectList() {
+        return objects;
     }
 }
 

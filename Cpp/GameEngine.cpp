@@ -4,35 +4,30 @@
 
 #include "GameEngine.h"
 
+#include "Games/IGame.h"
 #include "Render/Objects/Loader/ObjLoader.h"
 
-GameEngine::GameEngine(): screen("My Window", 800, 600) {}
-
-void GameEngine::addObject(Obj::Object&& obj) {
-    screen.addObject(std::move(obj));
+GameEngine::GameEngine(Render::IGame& game) : game(game), screen("My Window", 800, 600) {
 }
 
 void GameEngine::loop() {
 
     while(!glfwWindowShouldClose(screen.getWindowHandle()))
     {
-        processInput();
-        screen.render();
         glfwPollEvents();
+        update();
+        screen.render();
     }
     glfwTerminate();
 }
 
 void GameEngine::init() {
-    auto obj = Obj::Object::getDummyObject();
-    obj.moveBy(0,0, -30);
-    auto obj2 = Obj::Object("grass_block/grass_block.obj");
-    obj2.moveBy(0,0, -20);
-    screen.addObject(std::move(obj));
-    screen.addObject(std::move(obj2));
+    game.passState({input, screen.getCamera(), screen.getObjectList()});
+    game.onInit();
     screen.init();
+    input.init(screen.getWindowHandle());
 }
 
-void GameEngine::processInput() {
-
+void GameEngine::update() {
+    game.onUpdate(0.0);
 }

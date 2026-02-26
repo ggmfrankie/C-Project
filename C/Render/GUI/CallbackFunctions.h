@@ -5,7 +5,7 @@
 #ifndef C_CALLBACKFUNCTIONS_H
 #define C_CALLBACKFUNCTIONS_H
 #include "GuiElement.h"
-#include "GLFW/glfw3.h"
+#include "../../../Dependencies/include/GLFW/glfw3.h"
 
 bool dragFun(Element *element, const Renderer *renderer);
 bool runTaskFun(Element *element, Renderer *renderer);

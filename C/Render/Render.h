@@ -13,7 +13,7 @@ extern "C" {
 #include "ComputeShader.h"
 #include "GUI/GuiElement.h"
 #include "Shader.h"
-#include "GLFW/glfw3.h"
+#include "../../Dependencies/include/GLFW/glfw3.h"
 #include "GUI/TextDisplaying.h"
 #include "GUI/Texture.h"
 
