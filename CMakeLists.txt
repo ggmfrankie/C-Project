@@ -3,7 +3,7 @@ project(MixedProject LANGUAGES C CXX)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -march=native -pthread")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -march=native -pthread")
 
-set(CMAKE_C_STANDARD 17)
+set(CMAKE_C_STANDARD 23)
 set(CMAKE_CXX_STANDARD 23)
 
 include_directories("${CMAKE_SOURCE_DIR}/Dependencies/include")

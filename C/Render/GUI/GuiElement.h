@@ -72,7 +72,7 @@ typedef enum {
     t_textField
 } ElementType;
 
-struct Flags {
+typedef struct {
     bool isActive: 1;
     bool autoFit: 1;
     bool fixedWidth: 1;
@@ -82,11 +82,6 @@ struct Flags {
     bool wantGrowHorizontal: 1;
     bool wantGrowVertical: 1;
     bool hasTexture: 1;
-};
-
-typedef union {
-    u_int64 data;
-    struct Flags bits;
 } ElementFlags;
 
 ARRAY_LIST(ChildElements, Element*)

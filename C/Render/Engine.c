@@ -114,13 +114,13 @@ void startEngine(void (*generateGUI)(Element* guiRoot)) {
     glfwTerminate();
 }
 
-static Element* focusedElement = NULL;
-static Element* mouseCapturedElement = NULL;
+static Element* focusedElement = nullptr;
+static Element* mouseCapturedElement = nullptr;
 static bool dragging = false;
 
 static bool dragElement(const Renderer *renderer) {
     if (!mouseCapturedElement) return false;
-    if (!mouseCapturedElement->flags.bits.draggable) return false;
+    if (!mouseCapturedElement->flags.draggable) return false;
 
     Element* element = mouseCapturedElement;
     static Vec2i offset;
@@ -129,7 +129,7 @@ static bool dragElement(const Renderer *renderer) {
 
     if (!isMouseDown) {
         dragging = false;
-        mouseCapturedElement = NULL;
+        mouseCapturedElement = nullptr;
         return false;
     }
 
@@ -161,7 +161,7 @@ static void updateState(Renderer *renderer) {
 }
 
 static bool updateStateRecursively(Element *element, Renderer *renderer) {
-    if (element == NULL || !element->flags.bits.isActive) return false;
+    if (element == NULL || !element->flags.isActive) return false;
     if (element->onUpdate) element->onUpdate(element);
 
     for (int i = (int)element->childElements.size-1; i >=0 ; i--) {

@@ -126,7 +126,7 @@ void Renderer_render(const Renderer *renderer) {
 }
 
 void renderElementsRecursively(Element* element, const Renderer* renderer) {
-    if (element == NULL || !element->flags.bits.isActive) return;
+    if (element == NULL || !element->flags.isActive) return;
     const Shader* shader = &renderer->guiShader;
 
     setUniform(shader, "width", (float)element->actualWidth);
@@ -223,7 +223,7 @@ GuiVertex getUpdatedVertex(const GuiVertex *vertex, int width, int height, Vec2i
 }
 
 void accumulateMeshes(Element *element, const Renderer *renderer, GuiVertex *vertices, int *index, Element **textElements, int *numTextElements) {
-    if (element == NULL || !element->flags.bits.isActive) return;
+    if (element == NULL || !element->flags.isActive) return;
 
     if (element->textElement.hasText) textElements[(*numTextElements)++] = element;
 
@@ -285,7 +285,7 @@ void renderBatchedQuads(const GLuint atlasId, const GuiVertex *vertices, const i
 }
 
 Vec2i updateLayout(Element* element, const Vec2i parentCursor, const Vec2i parentPos, const Font* font) {
-    if (!element || !element->flags.bits.isActive) return (Vec2i){0,0};
+    if (!element || !element->flags.isActive) return (Vec2i){0,0};
     if (element->reset) element->reset(element);
 
     if (element->positionMode == POS_FIT) {
@@ -322,12 +322,12 @@ Vec2i updateLayout(Element* element, const Vec2i parentCursor, const Vec2i paren
 
         Vec2i childDimensions = updateLayout(child, cursor, element->worldPos, font);
 
-        if (element->flags.bits.fixedHeight && cursor.y + childDimensions.y > element->height) {
+        if (element->flags.fixedHeight && cursor.y + childDimensions.y > element->height) {
             cursor.y = padding.up;
             cursor.x = extendRight + element->childGap;
             childDimensions = updateLayout(child, cursor, element->worldPos, font);
         }
-        if (element->flags.bits.fixedWidth && cursor.x + childDimensions.x > element->width) {
+        if (element->flags.fixedWidth && cursor.x + childDimensions.x > element->width) {
             cursor.y = extendDown + element->childGap;
             cursor.x = padding.left;
             childDimensions = updateLayout(child, cursor, element->worldPos, font);
@@ -344,7 +344,7 @@ Vec2i updateLayout(Element* element, const Vec2i parentCursor, const Vec2i paren
             else if (layoutDirection == L_right) cursor.x = extendRight + element->childGap;
         }
 
-        if (child->flags.bits.wantGrowHorizontal || child->flags.bits.wantGrowVertical) elements[numGrowingElements++] = child;
+        if (child->flags.wantGrowHorizontal || child->flags.wantGrowVertical) elements[numGrowingElements++] = child;
     }
 
     element->actualWidth = max(element->actualWidth, extendRight + padding.right);
@@ -353,8 +353,8 @@ Vec2i updateLayout(Element* element, const Vec2i parentCursor, const Vec2i paren
     //TODO fix
     for (int i = 0; i < numGrowingElements; i++) {
         Element* child = elements[i];
-        if (child->flags.bits.wantGrowHorizontal) child->actualWidth = element->actualWidth - padding.left - padding.right;
-        if (child->flags.bits.wantGrowVertical) child->actualHeight = element->actualHeight - padding.up - padding.down;
+        if (child->flags.wantGrowHorizontal) child->actualWidth = element->actualWidth - padding.left - padding.right;
+        if (child->flags.wantGrowVertical) child->actualHeight = element->actualHeight - padding.up - padding.down;
     }
 
     return (Vec2i){element->actualWidth, element->actualHeight};
@@ -363,13 +363,13 @@ Vec2i updateLayout(Element* element, const Vec2i parentCursor, const Vec2i paren
 void resizeCallback(GLFWwindow *window, const int width, const int height) {
     glViewport(0, 0, width, height);
 
-    Renderer *renderer = (Renderer *)glfwGetWindowUserPointer(window);
+    const auto renderer = (Renderer *)glfwGetWindowUserPointer(window);
     renderer->screenWidth = width;
     renderer->screenHeight = height;
 }
 
 void cursorPositionCallback(GLFWwindow* window, const double xPos, const double yPos) {
-    Renderer *renderer = (Renderer *)glfwGetWindowUserPointer(window);
+    const auto renderer = (Renderer *)glfwGetWindowUserPointer(window);
     renderer->mousePos.x = (int)xPos;
     renderer->mousePos.y = (int)yPos;
 }
@@ -389,13 +389,13 @@ Renderer newRenderer(const int width, const int height, const char* name, char *
         .screenHeight = height,
         .font = loadFontAtlas(fontFile),
         .basicQuadMesh = Mesh_loadSimpleQuad(),
-        .defaultClick = NULL,
+        .defaultClick = nullptr,
         .guiRoot = createRootElement()
     };
 }
 
 Element* createRootElement() {
-    return newElement((Mesh){}, (Vec2i){}, 0, 0, NULL);
+    return newElement((Mesh){}, (Vec2i){}, 0, 0, nullptr);
 }
 
 void loadDefaultQuadMesh() {

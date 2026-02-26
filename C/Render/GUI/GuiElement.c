@@ -11,11 +11,10 @@
 #include "../Render.h"
 #include "../Engine.h"
 #include "GuiElementData.h"
-#include "../../../../../../Programme/CLion 2025.2.3/bin/mingw/x86_64-w64-mingw32/include/assert.h"
 
 
 Element elementArray[1024];
-List_Element g_Elements = (List_Element){.content = elementArray, .capacity = 1024, .size = 0};
+auto g_Elements = (List_Element){.content = elementArray, .capacity = 1024, .size = 0};
 Hashmap_Element g_Hashmap = {};
 
 void initElements() {
@@ -26,11 +25,11 @@ void initElements() {
 Element* newElement(const Mesh mesh, const Vec2i pos, const int width, const int height, Texture* texture) {
     g_Elements.content[g_Elements.size] = (Element){};
     g_Elements.content[g_Elements.size] = (Element){
-        .name = NULL,
+        .name = nullptr,
         .Mesh = mesh,
-        .onClick = NULL,
-        .onHover = NULL,
-        .isMouseOver = NULL,
+        .onClick = nullptr,
+        .onHover = nullptr,
+        .isMouseOver = nullptr,
         .pos = pos,
         .worldPos = pos,
         .width = width,
@@ -41,23 +40,23 @@ Element* newElement(const Mesh mesh, const Vec2i pos, const int width, const int
         .color = (Vec3f){0.0f, 0.0f, 0.0f},
         .defaultColor = (Vec3f){0.0f, 0.0f, 0.0f},
         .textElement = (TextElement){.charQuads = Character_newList(16), .forceResize = false, .hasText = false, .pos = {}, .text = NULL, .textColor = {}, .textScale = 1.0f, .width = 0},
-        .parentElement = NULL,
+        .parentElement = nullptr,
         .childElements = ChildElements_newList(8),
         .padding = (Padding){0,0,0,0},
-        .flags = {.bits = {.isActive = true, .autoFit = true, .needsDeletion = true}},
-        .task = (Task){NULL, NULL},
+        .flags = {.isActive = true, .autoFit = true, .needsDeletion = true},
+        .task = (Task){nullptr, nullptr},
         .childGap = 0,
         .elementData = NULL,
         .positionMode = POS_FIT,
         .brightness = 1.0f,
         .guiMesh = {},
         .layoutDirection = 0,
-        .onUpdate = NULL,
-        .reset = NULL,
+        .onUpdate = nullptr,
+        .reset = nullptr,
         .texture = {},
         .transparency = 0,
         .type = 0,
-        .whileSelected = NULL
+        .whileSelected = nullptr
     };
     return &g_Elements.content[g_Elements.size++];
 }
@@ -115,7 +114,7 @@ void setText_int(Element* element, const int i) {
 
 void setVisible(Element* element, const bool b) {
     pthread_mutex_lock(&guiMutex);
-    element->flags.bits.isActive = b;
+    element->flags.isActive = b;
     pthread_mutex_unlock(&guiMutex);
 }
 
@@ -143,7 +142,7 @@ void buildQuadMesh(Element* element) {
 
     for (int i = 0; i < 6; i++) {
         gm->vertices[i] = (GuiVertex){
-            .hasTexture = element->flags.bits.hasTexture,
+            .hasTexture = element->flags.hasTexture,
             .brightness = 1.0f,
             .color = (Vec4f){element->color.x, element->color.y, element->color.z, 1.0f},
         };
@@ -200,7 +199,6 @@ Element *guiAddElement(
     char *texture
 )
 {
-    assert(list == &g_Elements);
     Element* lastElement = newElement(mesh, pos, width, height, tex);
     if (mouseOver) {
         lastElement->isMouseOver = mouseOver;
@@ -222,15 +220,15 @@ Element *guiAddElement(
     lastElement->reset = defaultReset;
     lastElement->elementData = elementData;
     lastElement->layoutDirection = layoutDirection;
-    lastElement->flags.bits.fixedWidth = fixedWidth;
-    lastElement->flags.bits.fixedHeight = fixedHeight;
+    lastElement->flags.fixedWidth = fixedWidth;
+    lastElement->flags.fixedHeight = fixedHeight;
     lastElement->whileSelected = whileSelected;
-    lastElement->flags.bits.draggable = draggable;
+    lastElement->flags.draggable = draggable;
     lastElement->onUpdate = onUpdate;
-    lastElement->flags.bits.wantGrowHorizontal = wantGrowHorizontal;
-    lastElement->flags.bits.wantGrowVertical = wantGrowVertical;
+    lastElement->flags.wantGrowHorizontal = wantGrowHorizontal;
+    lastElement->flags.wantGrowVertical = wantGrowVertical;
     lastElement->transparency = transparency;
-    lastElement->flags.bits.hasTexture = false;
+    lastElement->flags.hasTexture = false;
 
     if (texture) {
         lastElement->texture = getTexture(texture);
@@ -268,7 +266,7 @@ Element *guiAddSimpleRectangle_Texture(
     Texture *tex
 )
 {
-    Element* element = guiAddElement(&g_Elements, NULL, quadMesh, pos, width, height, tex, (Vec3f){0.6f, 0.6f, 0.6f}, (Padding){10, 10, 10, 10}, 10, NULL, NULL, NULL, (Task){NULL, NULL}, NULL, false, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false, 0.0f,NULL);
+    Element* element = guiAddElement(&g_Elements, nullptr, quadMesh, pos, width, height, tex, (Vec3f){0.6f, 0.6f, 0.6f}, (Padding){10, 10, 10, 10}, 10, NULL, NULL, NULL, (Task){NULL, NULL}, NULL, false, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false, 0.0f,NULL);
     return element;
 }
 
@@ -279,7 +277,7 @@ Element *guiAddSimpleRectangle_Color(
     const Vec3f color
 )
 {
-    Element* element = guiAddElement(&g_Elements, NULL, quadMesh, pos, width, height, NULL, color, (Padding){10, 10, 10, 10}, 10, NULL, NULL, NULL, (Task){NULL, NULL}, NULL, false, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false, 0.0f,NULL);
+    Element* element = guiAddElement(&g_Elements, nullptr, quadMesh, pos, width, height, nullptr, color, (Padding){10, 10, 10, 10}, 10, NULL, NULL, NULL, (Task){NULL, NULL}, NULL, false, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false, 0.0f,NULL);
     return element;
 }
 
@@ -292,7 +290,7 @@ Element *guiAddSimpleButton_Texture(
     const char *text
 )
 {
-    Element* element = guiAddElement(&g_Elements, NULL, quadMesh, pos, width, height, tex, (Vec3f){0.6f, 0.6f, 0.6f}, (Padding){10, 10, 10, 10}, 10, isSelected_Quad, hoverAndDragFun, runTaskFun, task, text, true, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false, 0.0f,NULL);
+    Element* element = guiAddElement(&g_Elements, nullptr, quadMesh, pos, width, height, tex, (Vec3f){0.6f, 0.6f, 0.6f}, (Padding){10, 10, 10, 10}, 10, isSelected_Quad, hoverAndDragFun, runTaskFun, task, text, true, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false, 0.0f,NULL);
     return element;
 }
 
@@ -305,7 +303,7 @@ Element *guiAddSimpleButton_Color(
     const char *text
 )
 {
-    Element* element = guiAddElement(&g_Elements, NULL, quadMesh, pos, width, height, NULL, color, (Padding){10, 10, 10, 10}, 10, isSelected_Quad, hoverAndDragFun, runTaskFun, task, text, true, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false, 0.0f,NULL);
+    Element* element = guiAddElement(&g_Elements, nullptr, quadMesh, pos, width, height, nullptr, color, (Padding){10, 10, 10, 10}, 10, isSelected_Quad, hoverAndDragFun, runTaskFun, task, text, true, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false, 0.0f,NULL);
     return element;
 }
 
@@ -318,11 +316,11 @@ Element *guiAddSimpleSlider(
     SliderData* sliderData
 )
 {
-    Element* element = guiAddElement(&g_Elements, NULL, quadMesh, pos, width, height, NULL, colorBackground, (Padding){10, 10, 10, 10}, 10, isSelected_Quad, hoverAndDragFun, NULL, (Task){}, NULL, true, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false, 0.0f,NULL);
+    Element* element = guiAddElement(&g_Elements, nullptr, quadMesh, pos, width, height, nullptr, colorBackground, (Padding){10, 10, 10, 10}, 10, isSelected_Quad, hoverAndDragFun, NULL, (Task){}, NULL, true, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false, 0.0f,NULL);
     Vec2i sliderPos = {};
     sliderPos.x = width/2;
     sliderPos.y = 0;
-    Element* sliderElement = guiAddElement(&g_Elements, NULL, quadMesh, sliderPos, width, height, NULL, colorSlider, (Padding){10, 10, 10, 10}, 10, isSelected_Quad, hoverAndDragFun, sliderCallbackFun, (Task){}, NULL, true, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false, 0.0f,NULL);
+    Element* sliderElement = guiAddElement(&g_Elements, nullptr, quadMesh, sliderPos, width, height, nullptr, colorSlider, (Padding){10, 10, 10, 10}, 10, isSelected_Quad, hoverAndDragFun, sliderCallbackFun, (Task){}, NULL, true, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false, 0.0f,NULL);
     element->childElements.add(&element->childElements, sliderElement);
     element->elementData = sliderData;
     return element;
@@ -375,7 +373,7 @@ Element *createElement(const ElementSettings es) {
                          es.onUpdate,
                          es.wantGrowHorizontal,
                          es.wantGrowVertical,
-                         es.transparency,NULL
+                         es.transparency,nullptr
     );
 }
 

@@ -5,7 +5,7 @@
 #include "Utils.h"
 
 #include "Math/ggmdef.h"
-#include <math.h>
+#include <cmath>
 
 namespace Utils {
 

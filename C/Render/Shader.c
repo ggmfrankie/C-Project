@@ -97,7 +97,7 @@ int createFragmentShader(const String *fileName, const int programId) {
 }
 
 String readShaderFile(const String *fileName) {
-    const String defaultShaderPath = stringOf("../Shader/");
+    const String defaultShaderPath = stringOf("../C/Shader/");
     String completePath = Strings.combine(&defaultShaderPath, fileName);
     const String shaderSource = readFile(&completePath);
     Strings.delete_(&completePath);

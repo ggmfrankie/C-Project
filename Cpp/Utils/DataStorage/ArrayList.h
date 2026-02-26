@@ -191,16 +191,6 @@ namespace Render {
 
         const_reverse_iterator crbegin() const noexcept { return const_reverse_iterator(end()); }
         const_reverse_iterator crend()   const noexcept { return const_reverse_iterator(begin()); }
-
-
-        std::span<T> span() noexcept {
-            return std::span<T>(data, size);
-        }
-
-        std::span<const T> span() const noexcept {
-            return std::span<const T>(data, size);
-        }
-
     };
 } // ggm
 

@@ -22,8 +22,8 @@ namespace Obj::OBJLoader {
     OBJObject::OBJObject(const std::string &fileName) {
         namespace fs = std::filesystem;
 
-        const auto filePath = fs::path("../Resources/Objects") / fileName;
-        m_folderPath = filePath.parent_path().string() + "/";
+        const auto filePath = fs::path("..\\Resources\\Objects") / fileName;
+        m_folderPath = filePath.parent_path().string() + "\\";
 
         m_objFile = Utils::FileIO::readFile(filePath.string());
 
@@ -49,7 +49,7 @@ namespace Obj::OBJLoader {
                 try {
                     nums[i++] = static_cast<float>(Utils::getDouble(numberString.data(), numberString.size()));
                 } catch (...) {
-                    cout << "invalid string caught: " << numberString << "\n";
+                    std::cout << "invalid string caught: " << numberString << "\n";
                 }
             }
             output.emplace_back(nums[0], nums[1], nums[2]);
@@ -67,7 +67,7 @@ namespace Obj::OBJLoader {
                 try {
                     nums[i++] = static_cast<float>(Utils::getDouble(numberString.data(), numberString.size()));
                 } catch (...) {
-                    cout << "invalid string caught: " << numberString << "\n";
+                    std::cout << "invalid string caught: " << numberString << "\n";
                 }
             }
             output.emplace_back(nums[0], nums[1]);
@@ -77,6 +77,10 @@ namespace Obj::OBJLoader {
 
     void OBJObject::load() {
         m_lines = Utils::split(m_objFile, '\n') | std::views::filter([](auto s){return !s.empty() && !s.starts_with("#"); }) | Utils::to_vector;
+
+        for (auto& line : m_lines) {
+            if (!line.empty() && line.back() == '\r') line.remove_suffix(1);
+        }
 
         m_allVertices = convertToVec3f(getLinesWith("v "));
         m_allUv = convertToVec2f(getLinesWith("vt "));
@@ -156,16 +160,18 @@ namespace Obj::OBJLoader {
 
     void OBJObject::loadMaterial() {
         if (m_materialLib.empty()) return;
-
+        std::cout << std::filesystem::current_path() << '\n';
         const auto fullPath = m_folderPath + std::string(m_materialLib);
         const auto s = Utils::FileIO::readFile(fullPath);
 
-        for (const auto _lines = Utils::split(s, '\n');
+        for (auto _lines = Utils::split(s, '\n');
             auto& line: _lines) {
             if (line.empty()) continue;
+            if (line.back() == '\r') line.remove_suffix(1);
             if (line.starts_with("map_Kd ")) {
                 m_textureName = line;
                 m_textureName.erase(0, strlen("map_Kd "));
+
                 break;
             }
         }

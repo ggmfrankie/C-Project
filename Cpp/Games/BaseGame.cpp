@@ -13,11 +13,14 @@ namespace Render {
     void BaseGame::onInit() {
         auto obj = Obj::Object::getDummyObject();
         obj.moveBy(0,0, -30);
-        auto obj2 = Obj::Object("grass_block/grass_block.obj");
+        auto obj2 = Obj::Object("grass_block\\grass_block.obj");
         obj2.moveBy(0,0, -20);
+
+        auto obj3 = Obj::Object("ground_plane\\ground_plane.obj");
 
         objects->push_back(std::move(obj));
         objects->push_back(std::move(obj2));
+        objects->push_back(std::move(obj3));
     }
 
     void BaseGame::onUpdate(float deltaTime) {

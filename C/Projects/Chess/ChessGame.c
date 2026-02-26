@@ -98,7 +98,7 @@ static void createChessBoard(Element* root);
 static void createEndScreen(Element* root);
 static void setUpPieces();
 static void setUpPiecesForTest();
-static void switchSides();
+static void switchSides(void*);
 static void syncGui();
 static Vec2i getPosition(const Element* element);
 
@@ -121,7 +121,7 @@ static void chessCheckedMark(int row, int column, int pieceRow, int pieceCol, Pi
 static void runMarking(ChessPiece piece, int row, int column, MarkType type);
 
 static void runMarkAllPieces(PieceColor color, MarkType type);
-static void unmarkAll();
+static void unmarkAll(PieceColor color, int row, int column, MarkType type);
 
 static void markPawn(const PieceColor color, const int row, const int column, const MarkType type) {
     if (type == attack) {
@@ -219,7 +219,7 @@ static void markKing(const PieceColor color, const int row, const int column, co
         chessCheckedMark(row+1, column-1, row, column, color);
         chessCheckedMark(row-1, column+1, row, column, color);
 
-        unmarkAll();
+        unmarkAll(0,0,0,0);
     } else {
         markDefend(row+1, column, row, column, color);
         markDefend(row-1, column, row, column, color);
@@ -241,7 +241,7 @@ static void runMarkAllPieces(const PieceColor color, const MarkType type) {
     }
 }
 
-static void unmarkAll() {
+static void unmarkAll(const PieceColor color, const int row, const int column, const MarkType type) {
     for (int i = 0; i < 8; i++) {
         for (int ii = 0; ii < 8; ii++) {
             if (board[i][ii].isMarked) board[i][ii].isMarked--;
@@ -332,7 +332,7 @@ static void sendMove(const ChessMove *move) {
     sendData(gameSocket, move, sizeof(ChessMove));
 }
 
-static void* receiveMoves() {
+static void* receiveMoves(void*) {
     ChessMove receivedMove;
     receiveData(gameSocket, &receivedMove, sizeof(ChessMove));
     return NULL;
@@ -341,13 +341,13 @@ static void* receiveMoves() {
 static void hostGame() {
     isMultiplayer = true;
     gameSocket = createServerSocket(CHESS_PORT);
-    pthread_create(&multiplayerListener, NULL, receiveMoves, NULL);
+    pthread_create(&multiplayerListener, nullptr, receiveMoves, NULL);
 }
 
 static void joinGame(const char* ip) {
     isMultiplayer = true;
     gameSocket = createClientSocket(ip, CHESS_PORT);
-    pthread_create(&multiplayerListener, NULL, receiveMoves, NULL);
+    pthread_create(&multiplayerListener, nullptr, receiveMoves, NULL);
 }
 
 static void startChessGameTask(void* nix) {
@@ -438,7 +438,7 @@ static void onSquareClicked2(void* el) {
         applyMove(&move);
         sendMove(&move);
     } else {
-        unmarkAll();
+        unmarkAll(0,0,0,0);
         if (sig(board[pos.y][pos.x].piece) == turn) {
             runMarking(board[pos.y][pos.x].piece, pos.y, pos.x, attack);
             selectedPiecePos = pos;
@@ -479,7 +479,7 @@ static bool applyMove(const ChessMove* move) {
     board[pos.y][pos.x].piece = board[selectedPiecePos.y][selectedPiecePos.x].piece;
     board[selectedPiecePos.y][selectedPiecePos.x].piece = empty;
     turn *= -1;
-    unmarkAll();
+    unmarkAll(0,0,0,0);
     if (isCheckmate(turn)) {
         showWinnerScreen(boardDirection ? turn : -turn);
         isGameOver = true;
@@ -497,7 +497,7 @@ static bool isKingAttacked(const PieceColor color) {
                 if (board[i][ii].isMarked) {
                     isKingAttacked = true;
                 }
-                unmarkAll();
+                unmarkAll(0,0,0,0);
                 return isKingAttacked;
             }
         }
@@ -518,7 +518,7 @@ static bool isCheckmate(const PieceColor color) {
         }
     }
     End:
-    unmarkAll();
+    unmarkAll(0,0,0,0);
     return checkmate;
 }
 
@@ -534,7 +534,7 @@ static void resetBoard(void* nix) {
     turnPosCanCastle = true;
     turnNegCanCastle = true;
     setUpPieces();
-    unmarkAll();
+    unmarkAll(0,0,0,0);
     setVisible(getElement("end screen"), false);
     syncGui();
 }
@@ -557,16 +557,16 @@ static Texture* getTextureForPiece(ChessPiece piece) {
     return pieceTextures[piece];
 }
 
-static void switchSides() {
+static void switchSides(void*) {
     boardDirection = !boardDirection;
     turn = -turn;
     resetBoard(NULL);
 }
 
-static void flipBoard() {
+static void flipBoard(void*) {
     boardDirection = !boardDirection;
     turn = -turn;
-    unmarkAll();
+    unmarkAll(0,0,0,0);
     for (int i = 0; i < 4; i++) {
         for (int ii = 0; ii < 8; ii++) {
             const ChessPiece temp = -board[i][ii].piece;
@@ -792,7 +792,7 @@ static void createChessBoard(Element* root) {
         )
     );
     Element* chessBoard = getElement("game board");;
-    chessBoard->flags.bits.isActive = false;
+    chessBoard->flags.isActive = false;
 }
 
 static void createStartScreen(Element* root) {
@@ -874,5 +874,5 @@ static void createEndScreen(Element* root) {
         )
     );
     Element* endScreen = getElement("end screen");
-    endScreen->flags.bits.isActive = false;
+    endScreen->flags.isActive = false;
 }
