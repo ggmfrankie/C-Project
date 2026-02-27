@@ -7,26 +7,27 @@
 #include "../../Utils/Utils.h"
 
 namespace Render {
-    void Camera::moveRotation(const float dx, const float dy, const float dz) {
-        m_rotation.x += dx;
-        m_rotation.y += dy;
-        m_rotation.z += dz;
-    }
-
     void Camera::lookAt() {
 
     }
 
     void Camera::moveBy(const float offsetX, const float offsetY, const float offsetZ) {
-        if ( offsetZ != 0 ) {
-            m_pos.x += std::sin(Math::Matrix4f::toRad(m_rotation.y)) * -1.0f * offsetZ;
-            m_pos.z += std::cos(Math::Matrix4f::toRad(m_rotation.y)) * offsetZ;
-        }
-        if ( offsetX != 0) {
-            m_pos.x += std::sin(Math::Matrix4f::toRad(m_rotation.y - 90)) * -1.0f * offsetX;
-            m_pos.z += std::cos(Math::Matrix4f::toRad(m_rotation.y - 90)) * offsetX;
-        }
+
+        const float yawRad = Math::Matrix4f::toRad(m_rotation.z);
+
+        // Forward (XZ) consistent with view R = Ry(-yaw) * Rx(-pitch): forward is -Z at yaw=0
+        const float fx =  std::sin(yawRad);
+        const float fz = -std::cos(yawRad);
+
+        // Right (XZ)
+        const float rx =  std::cos(yawRad);
+        const float rz =  std::sin(yawRad);
+
+        // Apply movement in camera-aligned horizontal axes
+        m_pos.x += rx * offsetX + fx * offsetZ; // strafe + forward
+        m_pos.z += rz * offsetX + fz * offsetZ;
         m_pos.y += offsetY;
+
     }
 
     void Camera::rotateBy(const float dPitch, const float dRoll, const float dYaw) {
@@ -37,8 +38,13 @@ namespace Render {
 
     Math::Matrix4f Camera::getViewMatrix() const {
         using namespace Math;
-        return Matrix4f::Rotation(-m_rotation) * Matrix4f::Translation(-m_pos);
+
+        const float pitchDeg = m_rotation.x;
+        const float yawDeg   = m_rotation.z;
+
+        // View is inverse rotation, hence the negatives:
+        const Matrix4f R = Matrix4f::RotationX(-pitchDeg) * Matrix4f::RotationY(-yawDeg);
+        return R * Matrix4f::Translation(-m_pos);
+
     }
-
-
 } // Render

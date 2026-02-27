@@ -51,7 +51,7 @@ void startEngine(void (*generateGUI)(Element* guiRoot)) {
     g_Renderer = newRenderer(1024, 1024, "Chess Game", "ARIAL.TTF");
 
     Texture* graphTexture = newEmptyTexture(WIDTH, HEIGHT);
-    g_Renderer.computeShader = newComputeShader(NULL, 1024);
+    g_Renderer.computeShader = newComputeShader(nullptr, 1024);
     g_Renderer.computeShader.texture = graphTexture;
     g_Renderer.computeShader.thickness = 2;
 
@@ -73,7 +73,7 @@ void startEngine(void (*generateGUI)(Element* guiRoot)) {
     pthread_cond_broadcast(&guiInitCond);
     pthread_mutex_unlock(&guiMutex);
 
-    //pthread_create(&workerThreadID, NULL, workerThreadInit, NULL);
+    pthread_create(&workerThreadID, nullptr, workerThreadInit, NULL);
 
 
     int num = 0;
@@ -156,7 +156,7 @@ static void updateState(Renderer *renderer) {
     dragElement(renderer);
     const bool consumed = updateStateRecursively(renderer->guiRoot, renderer);
 
-    if (click(renderer->window, GLFW_MOUSE_BUTTON_LEFT) && !consumed) focusedElement = NULL;
+    if (click(renderer->window, GLFW_MOUSE_BUTTON_LEFT) && !consumed) focusedElement = nullptr;
     if (focusedElement && focusedElement->whileSelected) focusedElement->whileSelected(focusedElement);
 }
 
@@ -186,7 +186,6 @@ static void charCallback(GLFWwindow* window, const unsigned int codepoint) {
     if (focusedElement->type == t_textField) {
         TextFieldData* tfd = focusedElement->elementData;
         if (codepoint < 128) {
-            puts("here");
             str_appendCharAt(&tfd->text, (char) codepoint, tfd->cursor.byteIndex++);
 
             setText_noLock(focusedElement, tfd->text.content);

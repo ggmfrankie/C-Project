@@ -55,7 +55,7 @@ namespace Render {
 
         [[nodiscard]] bool wasKeyReleased(int key) const;
 
-        Math::Vector2f getDisplaceVec() const;
+        [[nodiscard]] Math::Vector2f getDisplaceVec();
     };
 } // Render
 

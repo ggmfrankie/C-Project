@@ -106,7 +106,12 @@ namespace Math {
         }
 
         static constexpr Matrix4f Rotation(const Vector3f rot) noexcept {
-            return Matrix4f(Quaternion::fromEuler(rot).toMatrix());
+            return Matrix4f(Quaternion::fromEuler(
+                toRad(rot.x),
+                toRad(rot.y),
+                toRad(rot.z)
+            )
+            .toMatrix());
         }
 
         static constexpr Matrix4f Perspective(const float fovD, const float aspect, const float zNear, const float zFar) {

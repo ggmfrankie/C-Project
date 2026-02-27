@@ -126,7 +126,7 @@ void Renderer_render(const Renderer *renderer) {
 }
 
 void renderElementsRecursively(Element* element, const Renderer* renderer) {
-    if (element == NULL || !element->flags.isActive) return;
+    if (element == nullptr || !element->flags.isActive) return;
     const Shader* shader = &renderer->guiShader;
 
     setUniform(shader, "width", (float)element->actualWidth);

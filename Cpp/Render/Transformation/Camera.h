@@ -12,8 +12,6 @@ namespace Render {
     public:
         Camera() = default;
         ~Camera() = default;
-        //void update();
-        void moveRotation(float dx, float dy, float dz);
 
         void lookAt();
 
@@ -21,7 +19,7 @@ namespace Render {
 
         void rotateBy(float dPitch, float dRoll, float dYaw);
 
-        Math::Matrix4f getViewMatrix() const;
+        [[nodiscard]] Math::Matrix4f getViewMatrix() const;
 
         //void movePosition(float x, float y, float z);
 

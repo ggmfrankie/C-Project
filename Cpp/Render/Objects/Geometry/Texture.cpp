@@ -29,7 +29,6 @@ namespace Obj {
         m_width = other.m_width;
         m_height = other.m_height;
         m_channels = other.m_channels;
-
     }
 
     Texture::Texture(Texture &&other) noexcept: m_textureId(other.m_textureId), m_data(other.m_data), m_width(other.m_width), m_height(other.m_height), m_channels(other.m_channels) {
@@ -48,7 +47,7 @@ namespace Obj {
         unsigned char* pixels = stbi_load(file.c_str(), &m_width, &m_height, &m_channels, 0);
         stbi_set_flip_vertically_on_load(false);
         if (!pixels) {
-            std::cout << "Failed to load texture" << file << "\n";
+            std::cerr << "Failed to load texture" << file << "\n";
             exit(-3) ;
         }
         return pixels;
@@ -71,7 +70,6 @@ namespace Obj {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         stbi_image_free(m_data);
-        puts("init texture");
     }
 
     GLuint Texture::id() const {

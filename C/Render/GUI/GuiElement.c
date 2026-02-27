@@ -23,7 +23,6 @@ void initElements() {
 }
 
 Element* newElement(const Mesh mesh, const Vec2i pos, const int width, const int height, Texture* texture) {
-    g_Elements.content[g_Elements.size] = (Element){};
     g_Elements.content[g_Elements.size] = (Element){
         .name = nullptr,
         .Mesh = mesh,

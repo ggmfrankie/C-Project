@@ -46,7 +46,7 @@ void Renderer_render(const Renderer *renderer);
 void Renderer_destroy(const Renderer *renderer);
 Vec2i updateLayout(Element* element, Vec2i parentCursor, Vec2i parentPos, const Font* font);
 bool isMousePressed(GLFWwindow* window, int mouseButton);
-GLFWwindow* initWindow(const int width, const int height, const char* name);
+GLFWwindow* initWindow(int width, int height, const char* name);
 
 #ifdef __cplusplus
 } // extern "C"

@@ -4,6 +4,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -march=native -pthread")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -march=native -pthread")
 
 set(CMAKE_C_STANDARD 23)
+set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD 23)
 
 include_directories("${CMAKE_SOURCE_DIR}/Dependencies/include")
@@ -117,6 +118,8 @@ add_executable(C-Project
         Cpp/Render/IO/Input.h
         Cpp/Games/BaseGame.cpp
         Cpp/Games/BaseGame.h
+        C/Utils/CArrayList.c
+        C/Utils/CArrayList.h
 )
 #add_subdirectory("${CMAKE_SOURCE_DIR}/Render")
 

@@ -20,9 +20,10 @@
 #ifndef WINADAPT
 int main(){
     SetConsoleOutputCP(CP_UTF8);
-    startEngine(chess_createChessBoard);
+    //startEngine(chess_createChessBoard);
     //startEngine(generateTestGUI);
-    //startEngine(createChessGUI);
+    startEngine(createChessGUI);
+
     return 0;
 }
 #endif

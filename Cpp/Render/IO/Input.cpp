@@ -42,12 +42,12 @@ namespace Render {
 
     void Input::setMousePos(const float x, const float y) {
 
-        float xOffset = m_currMousePos.x - x;
-        float yOffset = m_currMousePos.y - y;
+        float xOffset = x - m_currMousePos.x;
+        float yOffset = y - m_currMousePos.y;
 
         m_currMousePos = {x, y};
 
-        m_displaceVec = { xOffset, yOffset };
+        m_displaceVec = { yOffset, xOffset };
     }
 
     void Input::setLastChar(const GLuint c) {
@@ -69,7 +69,6 @@ namespace Render {
         else if (mode == GLFW_REPEAT) {
             keysDown[key] = true;
         }
-
     }
 
     void Input::setEntered(const bool entered) {
@@ -89,8 +88,10 @@ namespace Render {
         return keysReleased[key];
     }
 
-    Math::Vector2f Input::getDisplaceVec() const {
-        return m_displaceVec;
+    Math::Vector2f Input::getDisplaceVec() {
+        const auto vec = m_displaceVec;
+        m_displaceVec = {};
+        return vec;
     }
 
 } // Render

@@ -25,7 +25,7 @@ namespace Render {
         std::vector<Obj::Object>* objects = nullptr;
 
         static constexpr float CAMERA_POS_STEP = 0.03f;
-        static constexpr float MOUSE_SENSITIVITY = 0.0005f;
+        static constexpr float MOUSE_SENSITIVITY = 0.05f;
     };
 } // Render
 

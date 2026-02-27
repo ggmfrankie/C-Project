@@ -81,14 +81,12 @@ namespace Render{
                                   90.0,
                                   static_cast<float>(width) / static_cast<float>(height),
                                   0.01f,
-                                  100.0f
+                                  1000.0f
                                   )
                              );
             obj.render();
-            obj.rotateBy(1,1,1);
-            //obj.moveBy(0.0,0.0,0.05);
-            camera.moveBy(0,0.0,0);
-            //camera.rotateBy(0.02,0.0,0.02);
+            //obj.rotateBy(1,1,1);
+
         }
         glfwSwapBuffers(windowHandle);
     }

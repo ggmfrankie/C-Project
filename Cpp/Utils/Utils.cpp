@@ -6,17 +6,24 @@
 
 #include "Math/ggmdef.h"
 #include <cmath>
+#include <iostream>
 
 namespace Utils {
 
     using std::vector, std::string_view, std::ranges::distance;
 
     vector<string_view> split(string_view s, char delim) {
-        vector<string_view> out;
+        vector<string_view> out{};
+        out.reserve(s.size());
 
         for (auto&& part : s | std::views::split(delim)) {
-            auto sv = string_view(part.begin(), distance(part));
-            out.push_back(sv);
+            if (distance(part) != 0) {
+                auto sv = string_view(part.begin(), distance(part));
+
+                std::cout << sv << std::endl;
+                out.push_back(sv);
+            }
+
         }
         return out;
     }
