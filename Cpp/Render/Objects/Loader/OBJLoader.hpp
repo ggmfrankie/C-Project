@@ -4,12 +4,12 @@
 
 #ifndef MIXEDPROJECT_OBJLOADER_H
 #define MIXEDPROJECT_OBJLOADER_H
-#include "../../../Utils/Utils.h"
+#include "../../../Utils/Utils.hpp"
 #include <iostream>
 
-#include "../../../Utils/Math/Matrix.h"
-#include "../../../Utils/Math/Vector.h"
-#include "../Geometry/Mesh.h"
+#include "../../../Utils/Math/Matrix.hpp"
+#include "../../../Utils/Math/Vector.hpp"
+#include "../Geometry/Mesh.hpp"
 
 namespace Obj::OBJLoader {
 

@@ -2,10 +2,13 @@
 // Created by ertls on 16.02.2026.
 //
 
-#include "Screen.h"
+#include "Screen.hpp"
 #include <iostream>
 #include <utility>
 #include <glad/gl.h>
+
+#include "../../C/GuiInterface.h"
+
 namespace Render{
     Screen::Screen(std::string  windowName, const int width, const int height) : name(std::move(windowName)), shader("MainShader.vert", "MainShader.frag") {
         this->width = width;
@@ -53,6 +56,7 @@ namespace Render{
         glfwSwapInterval(1);
 
         glfwSetFramebufferSizeCallback(windowHandle, framebufferSizeCallback);
+
         shader.init();
         shader.link();
 
@@ -66,6 +70,7 @@ namespace Render{
 
     void Screen::render() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glEnable(GL_DEPTH_TEST);
         glDisable(GL_CULL_FACE);
 
         shader.bind();
@@ -88,6 +93,8 @@ namespace Render{
             //obj.rotateBy(1,1,1);
 
         }
+        gui_update();
+        gui_render();
         glfwSwapBuffers(windowHandle);
     }
 
@@ -99,13 +106,22 @@ namespace Render{
         return windowHandle;
     }
 
-    void Screen::framebufferSizeCallback(GLFWwindow* window, int width, int height)
+    void Screen::framebufferSizeCallback(GLFWwindow* window, const int width, const int height)
     {
         glViewport(0, 0, width, height);
+        gui_resizeCallback(window, width, height);
     }
 
     Camera& Screen::getCamera() {
         return camera;
+    }
+
+    int Screen::getWidth() const {
+        return width;
+    }
+
+    int Screen::getHeight() const {
+        return height;
     }
 
     std::vector<Obj::Object>& Screen::getObjectList() {

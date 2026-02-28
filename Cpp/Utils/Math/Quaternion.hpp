@@ -8,7 +8,7 @@
 #include <cmath>
 #include <array>
 
-#include "Vector.h"
+#include "Vector.hpp"
 
 namespace Math {
 

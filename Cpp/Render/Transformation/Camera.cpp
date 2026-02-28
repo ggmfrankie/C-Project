@@ -2,9 +2,9 @@
 // Created by ertls on 17.02.2026.
 //
 
-#include "Camera.h"
+#include "Camera.hpp"
 
-#include "../../Utils/Utils.h"
+#include "../../Utils/Utils.hpp"
 
 namespace Render {
     void Camera::lookAt() {

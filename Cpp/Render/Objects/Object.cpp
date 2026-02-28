@@ -2,9 +2,9 @@
 // Created by ertls on 17.02.2026.
 //
 
-#include "Object.h"
+#include "Object.hpp"
 
-#include "Loader/ObjLoader.h"
+#include "Loader/OBJLoader.hpp"
 
 
 namespace Obj {

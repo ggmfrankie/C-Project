@@ -2,9 +2,9 @@
 // Created by ertls on 18.02.2026.
 //
 
-#include "Utils.h"
+#include "Utils.hpp"
 
-#include "Math/ggmdef.h"
+#include "Math/ggmdef.hpp"
 #include <cmath>
 #include <iostream>
 
@@ -19,8 +19,6 @@ namespace Utils {
         for (auto&& part : s | std::views::split(delim)) {
             if (distance(part) != 0) {
                 auto sv = string_view(part.begin(), distance(part));
-
-                std::cout << sv << std::endl;
                 out.push_back(sv);
             }
 

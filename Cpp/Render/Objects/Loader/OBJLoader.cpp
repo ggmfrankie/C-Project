@@ -2,14 +2,14 @@
 // Created by ertls on 18.02.2026.
 //
 
-#include "ObjLoader.h"
+#include "OBJLoader.hpp"
 #include <cstring>
-#include "../../../Utils/FileIO.h"
+#include "../../../Utils/FileIO.hpp"
 #include <filesystem>
 #include <unordered_map>
 #include <charconv>
 
-#include "../Geometry/Mesh.h"
+#include "../Geometry/Mesh.hpp"
 
 using std::string;
 using std::string_view;

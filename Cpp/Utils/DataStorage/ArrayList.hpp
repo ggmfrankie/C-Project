@@ -8,7 +8,7 @@
 #include <cstdlib>
 #include <iostream>
 
-#include "../Math/ggmdef.h"
+#include "../Math/ggmdef.hpp"
 
 namespace Render {
     template <typename T, num::u64 InlineCapacity>

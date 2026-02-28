@@ -8,11 +8,11 @@
 #include <array>
 #include <memory>
 
-#include "Material.h"
-#include "Texture.h"
-#include "../../../Utils/Math/Vector.h"
+#include "Material.hpp"
+#include "Texture.hpp"
+#include "../../../Utils/Math/Vector.hpp"
 #include "glad/gl.h"
-#include "../../Shader/Shader.h"
+#include "../../Shader/Shader.hpp"
 
 namespace Obj {
     class Mesh {

@@ -2,8 +2,8 @@
 // Created by ertls on 16.02.2026.
 //
 
-#include "../Geometry/Mesh.h"
-#include "../../Cpp/Utils/Math/Vector.h"
+#include "../Geometry/Mesh.hpp"
+#include "../../Cpp/Utils/Math/Vector.hpp"
 
 namespace Obj {
     using std::string, std::vector;

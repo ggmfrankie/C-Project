@@ -2,7 +2,7 @@
 // Created by ertls on 17.02.2026.
 //
 
-#include "FileIO.h"
+#include "FileIO.hpp"
 
 #include <fstream>
 #include <stdexcept>

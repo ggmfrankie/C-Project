@@ -4,8 +4,8 @@
 
 #ifndef MIXEDPROJECT_CAMERA_H
 #define MIXEDPROJECT_CAMERA_H
-#include "../../Utils/Math/Matrix.h"
-#include "../../Utils/Math/Vector.h"
+#include "../../Utils/Math/Matrix.hpp"
+#include "../../Utils/Math/Vector.hpp"
 
 namespace Render {
     class Camera {

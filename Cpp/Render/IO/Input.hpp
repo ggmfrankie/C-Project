@@ -4,14 +4,14 @@
 
 #ifndef MIXEDPROJECT_MOUSEINPUT_H
 #define MIXEDPROJECT_MOUSEINPUT_H
-#include "../../Utils/Math/Matrix.h"
+#include "../../Utils/Math/Matrix.hpp"
 #include "glad/gl.h"
 #include "GLFW/glfw3.h"
 
 namespace Render {
 
     class Input {
-        static constexpr int KEY_COUNT = 512;
+        static constexpr int KEY_COUNT = 348;
 
         Math::Vector2f m_prevMousePos{};
         Math::Vector2f m_currMousePos{};
@@ -56,6 +56,8 @@ namespace Render {
         [[nodiscard]] bool wasKeyReleased(int key) const;
 
         [[nodiscard]] Math::Vector2f getDisplaceVec();
+
+        void endFrame();
     };
 } // Render
 

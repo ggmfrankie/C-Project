@@ -6,10 +6,11 @@
 #define MIXEDPROJECT_GAMEINTERFACE_H
 #include <vector>
 
-#include "../Render/IO/Input.h"
-#include "../Render/Objects/Object.h"
-#include "../Render/Objects/Loader/ObjLoader.h"
-#include "../Render/Transformation/Camera.h"
+#include "../Render/IO/Input.hpp"
+#include "../Render/Objects/Object.hpp"
+#include "../Render/Objects/Loader/OBJLoader.hpp"
+#include "../Render/Transformation/Camera.hpp"
+#include "Render/Screen.hpp"
 
 
 namespace Render {
@@ -17,14 +18,16 @@ namespace Render {
     struct EngineContext {
         Input& input;
         Camera& camera;
-        std::vector<Obj::Object>& objects;
+        Screen& screen;
     };
 
     class IGame {
     public:
         virtual ~IGame() = default;
 
-        virtual void onInit() = 0;
+        virtual void preInit() = 0;
+
+        virtual void postInit() = 0;
 
         virtual void onShutdown() = 0;
 

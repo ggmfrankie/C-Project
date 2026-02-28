@@ -10,8 +10,6 @@ extern "C" {
 #include <pthread.h>
 #include "GUI/GuiElement.h"
 
-
-
 extern pthread_mutex_t guiMutex;
 extern pthread_cond_t  guiInitCond;
 extern bool guiInitialized;

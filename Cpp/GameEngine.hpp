@@ -4,9 +4,9 @@
 
 #ifndef C_GAMEENGINE_H
 #define C_GAMEENGINE_H
-#include "Games/IGame.h"
-#include "Render/Screen.h"
-#include "Render/IO/Input.h"
+#include "Games/IGame.hpp"
+#include "Render/Screen.hpp"
+#include "Render/IO/Input.hpp"
 
 class GameEngine {
 public:

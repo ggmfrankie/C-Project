@@ -13,6 +13,7 @@
 #include <../../Dependencies/include/stb/stb_truetype.h>
 
 
+
 #define MAX_GUI_VERTICES 16384
 
 typedef struct {
@@ -23,8 +24,6 @@ typedef struct {
 Mesh quadMesh;
 
 void loadDefaultQuadMesh();
-void resizeCallback(GLFWwindow *window, int width, int height);
-void cursorPositionCallback(GLFWwindow* window, double xPos, double yPos);
 void renderElementsRecursively(Element* element, const Renderer* renderer);
 void renderBatchedQuads(GLuint atlasId, const GuiVertex *vertices, int length);
 void initBatchedRendering();
@@ -36,7 +35,7 @@ Element* createRootElement();
 
 GLFWwindow* initWindow(const int width, const int height, const char* name) {
     if (!glfwInit()) {
-        return NULL;
+        return nullptr;
     }
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -45,10 +44,10 @@ GLFWwindow* initWindow(const int width, const int height, const char* name) {
 
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 
-    GLFWwindow* window = glfwCreateWindow(width, height, name, NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(width, height, name, nullptr, nullptr);
     if (!window) {
         glfwTerminate();
-        return NULL;
+        return nullptr;
     }
 
     glfwMakeContextCurrent(window);
@@ -63,22 +62,14 @@ GLFWwindow* initWindow(const int width, const int height, const char* name) {
     return window;
 }
 
-void Renderer_init(Renderer *renderer) {
-    glfwSetWindowUserPointer(renderer->window, renderer);
-
-    const GLFWframebuffersizefun callbackFun = resizeCallback;
-    glfwSetFramebufferSizeCallback(renderer->window, callbackFun);
-    glfwSetCursorPosCallback(renderer->window, cursorPositionCallback);
-
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+void GUIRenderer_init(Renderer *renderer) {
 
     //initBatchedRendering();
     loadDefaultQuadMesh();
 
-    ComputeShader_createUniform(&renderer->computeShader, ("dataSize"));
-    ComputeShader_createUniform(&renderer->computeShader, ("thickness"));
-    ComputeShader_update(&renderer->computeShader, graphingFunction);
+    //ComputeShader_createUniform(&renderer->computeShader, ("dataSize"));
+    //ComputeShader_createUniform(&renderer->computeShader, ("thickness"));
+    //ComputeShader_update(&renderer->computeShader, graphingFunction);
 
     Shader_createUniform(&renderer->guiShader, "hasTexture");
     Shader_createUniform(&renderer->guiShader, "width");
@@ -122,6 +113,28 @@ void Renderer_render(const Renderer *renderer) {
     }
 
     glfwSwapBuffers(renderer->window);
+    Shaders.unbind();
+}
+
+void GUI_render(const Renderer *renderer) {
+    glDisable(GL_DEPTH_TEST);  // GUI is in screen-space, depth irrelevant
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+#ifdef DEBUG
+    glDisable(GL_CULL_FACE);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+#endif
+
+    Shaders.bind(&renderer->guiShader);
+    setUniform(&renderer->guiShader, ("screenWidth"), (float) renderer->screenWidth);
+    setUniform(&renderer->guiShader, ("screenHeight"), (float) renderer->screenHeight);
+
+    const Element* guiRoot = renderer->guiRoot;
+
+    for (int i = 0; i < guiRoot->childElements.size; i++) {
+        renderElementsRecursively(guiRoot->childElements.content[i], renderer);
+    }
+
     Shaders.unbind();
 }
 
@@ -360,20 +373,6 @@ Vec2i updateLayout(Element* element, const Vec2i parentCursor, const Vec2i paren
     return (Vec2i){element->actualWidth, element->actualHeight};
 }
 
-void resizeCallback(GLFWwindow *window, const int width, const int height) {
-    glViewport(0, 0, width, height);
-
-    const auto renderer = (Renderer *)glfwGetWindowUserPointer(window);
-    renderer->screenWidth = width;
-    renderer->screenHeight = height;
-}
-
-void cursorPositionCallback(GLFWwindow* window, const double xPos, const double yPos) {
-    const auto renderer = (Renderer *)glfwGetWindowUserPointer(window);
-    renderer->mousePos.x = (int)xPos;
-    renderer->mousePos.y = (int)yPos;
-}
-
 inline bool isMousePressed(GLFWwindow* window, const int mouseButton) {
     return glfwGetMouseButton(window, mouseButton) == GLFW_PRESS;
 }
@@ -384,6 +383,22 @@ Renderer newRenderer(const int width, const int height, const char* name, char *
         .batched_guiShader = newShader("GuiRender.vert", "GuiRender.frag"),
         .textShader = newShader("TextRender.vert", "TextRender.frag"),
         .window = initWindow(width, height, name),
+        .render = Renderer_render,
+        .screenWidth = width,
+        .screenHeight = height,
+        .font = loadFontAtlas(fontFile),
+        .basicQuadMesh = Mesh_loadSimpleQuad(),
+        .defaultClick = nullptr,
+        .guiRoot = createRootElement()
+    };
+}
+
+Renderer newGUIRenderer(GLFWwindow* window, const int width, const int height, char *fontFile) {
+    return (Renderer){
+        .guiShader = newShader("GuiVertexShader.vert", "GuiFragmentShader.frag"),
+        .batched_guiShader = newShader("GuiRender.vert", "GuiRender.frag"),
+        .textShader = newShader("TextRender.vert", "TextRender.frag"),
+        .window = window,
         .render = Renderer_render,
         .screenWidth = width,
         .screenHeight = height,

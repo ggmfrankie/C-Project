@@ -2,14 +2,14 @@
 // Created by ertls on 17.02.2026.
 //
 
-#include "Shader.h"
+#include "Shader.hpp"
 
 #include <iostream>
 #include <utility>
 
-#include "../../Utils/FileIO.h"
-#include "../../Utils/Math/Matrix.h"
-#include "../../Utils/Math/Vector.h"
+#include "../../Utils/FileIO.hpp"
+#include "../../Utils/Math/Matrix.hpp"
+#include "../../Utils/Math/Vector.hpp"
 #include "glad/gl.h"
 
 namespace Render {

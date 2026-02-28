@@ -1,8 +1,8 @@
 //
 // Created by ertls on 16.02.2026.
 //
-#include "Cpp/GameEngine.h"
-#include "Cpp/Games/BaseGame.h"
+#include "Cpp/GameEngine.hpp"
+#include "Cpp/Games/BaseGame/BaseGame.hpp"
 
 #define GAME
 #ifdef GAME

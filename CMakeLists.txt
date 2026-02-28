@@ -7,9 +7,13 @@ set(CMAKE_C_STANDARD 23)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD 23)
 
-include_directories("${CMAKE_SOURCE_DIR}/Dependencies/include")
+include_directories(
+        "${CMAKE_SOURCE_DIR}/Dependencies/include"
+        "${CMAKE_SOURCE_DIR}/C"
+        "${CMAKE_SOURCE_DIR}/Cpp"
+)
 
-add_executable(C-Project
+add_library(GUI STATIC
         C/Utils/GenericLinkedList.h
         Main.c
         C/Utils/CString.c
@@ -52,13 +56,9 @@ add_executable(C-Project
         C/Utils/TimeMeasurenments.h
         C/Render/GUI/CallbackFunctions.h
         C/Render/GUI/CallbackFunctions.c
-        Dependencies/include/stb/stb_image.h
         C/Extern/Informatik/Geldautomat.c
         C/Render/GUI/TextDisplaying.c
         C/Render/GUI/TextDisplaying.h
-        Dependencies/include/stb/stb_truetype.h
-        Dependencies/include/stb/stb_truetype.h
-        Dependencies/include/stb/stb_rect_pack.h
         C/Extern/Informatik/PointerFun.c
         C/Extern/Informatik/Namensliste.c
         C/Extern/Informatik/Personalverwaltung.c
@@ -85,41 +85,59 @@ add_executable(C-Project
         C/Projects/ChessNewandImproved/ChessBetter2.c
         C/Projects/Tokenizer/Calculator.c
         C/Projects/Tokenizer/Calculator.h
+        C/Render/CRenderInterface.h
+        C/Utils/CArrayList.c
+        C/Utils/CArrayList.h
+
+        Cpp/Games/BaseGame/GameGui.c
+)
+
+set_target_properties(GUI PROPERTIES LINKER_LANGUAGE C)
+
+add_executable(C-Project
+        Dependencies/include/stb/stb_image.h
+
+        Dependencies/include/stb/stb_truetype.h
+        Dependencies/include/stb/stb_truetype.h
+        Dependencies/include/stb/stb_rect_pack.h
+
         Cpp/GameEngine.cpp
         Main.cpp
         Cpp/Render/Screen.cpp
-        Cpp/Render/Screen.h
+        Cpp/Render/Screen.hpp
         Cpp/Render/Objects/Geometry/Mesh.cpp
-        Cpp/Render/Objects/Geometry/Mesh.h
-        Cpp/Utils/Math/Vector.h
+        Cpp/Render/Objects/Geometry/Mesh.hpp
+        Cpp/Utils/Math/Vector.hpp
         Cpp/Render/Shader/Shader.cpp
-        Cpp/Render/Shader/Shader.h
-        C/Render/CRenderInterface.h
+        Cpp/Render/Shader/Shader.hpp
         Cpp/Utils/FileIO.cpp
-        Cpp/Utils/FileIO.h
+        Cpp/Utils/FileIO.hpp
         Cpp/Render/Objects/Object.cpp
-        Cpp/Render/Objects/Object.h
-        Cpp/Utils/Math/Matrix.h
+        Cpp/Render/Objects/Object.hpp
+        Cpp/Utils/Math/Matrix.hpp
         Cpp/Render/Transformation/Camera.cpp
-        Cpp/Render/Transformation/Camera.h
+        Cpp/Render/Transformation/Camera.hpp
         Cpp/Render/Objects/Geometry/Texture.cpp
-        Cpp/Render/Objects/Geometry/Texture.h
+        Cpp/Render/Objects/Geometry/Texture.hpp
         Cpp/Render/Objects/Geometry/Material.cpp
-        Cpp/Render/Objects/Geometry/Material.h
+        Cpp/Render/Objects/Geometry/Material.hpp
         Cpp/Render/Objects/Loader/ObjLoader.cpp
-        Cpp/Render/Objects/Loader/ObjLoader.h
+        Cpp/Render/Objects/Loader/ObjLoader.hpp
         Cpp/Utils/Utils.cpp
-        Cpp/Utils/Utils.h
-        Cpp/Utils/Math/Quaternion.h
-        Cpp/Utils/DataStorage/ArrayList.h
-        Cpp/Utils/Math/ggmdef.h
-        Cpp/Games/IGame.h
+        Cpp/Utils/Utils.hpp
+        Cpp/Utils/Math/Quaternion.hpp
+        Cpp/Utils/DataStorage/ArrayList.hpp
+        Cpp/Utils/Math/ggmdef.hpp
+        Cpp/Games/IGame.hpp
         Cpp/Render/IO/Input.cpp
-        Cpp/Render/IO/Input.h
-        Cpp/Games/BaseGame.cpp
-        Cpp/Games/BaseGame.h
-        C/Utils/CArrayList.c
-        C/Utils/CArrayList.h
+        Cpp/Render/IO/Input.hpp
+        Cpp/Games/BaseGame/BaseGame.cpp
+        Cpp/Games/BaseGame/BaseGame.hpp
+
+        Cpp/Games/BaseGame/GameGui.h
+        C/GuiInterface.h
+        C/GuiInterface.h
+
 )
 #add_subdirectory("${CMAKE_SOURCE_DIR}/Render")
 
@@ -131,8 +149,6 @@ set_target_properties(glfw PROPERTIES
         IMPORTED_LOCATION "${GLFW_LIB}"
 )
 
-
-
 target_link_libraries(C-Project
         glfw
         opengl32     # OpenGL (needed by GLFW)
@@ -140,4 +156,5 @@ target_link_libraries(C-Project
         user32       # Window and input handling
         kernel32     # Core Windows functions
         ws2_32
+        GUI
 )

@@ -2,7 +2,7 @@
 // Created by ertls on 17.02.2026.
 //
 
-#include "Material.h"
+#include "Material.hpp"
 
 #include <cstdio>
 

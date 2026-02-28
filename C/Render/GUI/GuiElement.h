@@ -187,6 +187,7 @@ void setText(Element* element, const char* text);
 void setText_noLock(Element* element, const char* text);
 void setText_int(Element* element, int i);
 void setVisible(Element* element, bool b);
+void toggleVisible(Element* element);
 void setColor(Element* element, Vec3f color);
 Element* getElement(const char* name);
 

@@ -15,8 +15,12 @@
 #include "../Utils/TimeMeasurenments.h"
 #include "GUI/GuiElementData.h"
 
+#include "../GuiInterface.h"
+
 #define WIDTH 4096
 #define HEIGHT 600
+
+#define SELF_HOSTED
 
 
 pthread_mutex_t guiMutex = PTHREAD_MUTEX_INITIALIZER;
@@ -26,8 +30,6 @@ Renderer g_Renderer;
 
 static void updateState(Renderer *renderer);
 static bool updateStateRecursively(Element *element, Renderer *renderer);
-static void charCallback(GLFWwindow*, unsigned int codepoint);
-static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 void threadExecute() {
     do {
@@ -46,8 +48,35 @@ void* workerThreadInit(void* args) {
     return NULL;
 }
 
+void gui_init(GLFWwindow* window, const int width, const int height, void (*generateGUI)(Element* guiRoot)) {
+    g_Renderer = newGUIRenderer(window, width, height, "ARIAL.TTF");
+    GUIRenderer_init(&g_Renderer);
+    initElements();
+
+    generateGUI(g_Renderer.guiRoot);
+}
+
+void gui_update() {
+    updateLayout(g_Renderer.guiRoot, (Vec2i){0, 0}, (Vec2i){0, 0}, &g_Renderer.font);
+    updateState(&g_Renderer);
+}
+
+void gui_render() {
+    GUI_render(&g_Renderer);
+}
+
+void gui_setVisible(const char* name, const bool b) {
+    setVisible(getElement(name), b);
+}
+
+void gui_toggleVisible(const char* name) {
+    toggleVisible(getElement(name));
+}
+
 void startEngine(void (*generateGUI)(Element* guiRoot)) {
     pthread_t workerThreadID;
+
+
     g_Renderer = newRenderer(1024, 1024, "Chess Game", "ARIAL.TTF");
 
     Texture* graphTexture = newEmptyTexture(WIDTH, HEIGHT);
@@ -59,11 +88,18 @@ void startEngine(void (*generateGUI)(Element* guiRoot)) {
     g_Renderer.computeShader.endX = 5.0f;
 
     //initSockets();
-    Renderer_init(&g_Renderer);
+    GUIRenderer_init(&g_Renderer);
+
+    glfwSetFramebufferSizeCallback(g_Renderer.window, gui_resizeCallback);
+    glfwSetCursorPosCallback(g_Renderer.window, gui_cursorPositionCallback);
+
     initElements();
 
-    glfwSetCharCallback(g_Renderer.window, charCallback);
-    glfwSetKeyCallback(g_Renderer.window, keyCallback);
+    glfwSetCharCallback(g_Renderer.window, gui_charCallback);
+    glfwSetKeyCallback(g_Renderer.window, gui_keyCallback);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     //loadTextures(&g_Renderer.atlasId, 1024, 1024, "Pointer Schematic.png");
 
@@ -180,7 +216,7 @@ static bool updateStateRecursively(Element *element, Renderer *renderer) {
     return false;
 }
 
-static void charCallback(GLFWwindow* window, const unsigned int codepoint) {
+void gui_charCallback(GLFWwindow* window, const unsigned int codepoint) {
     if (focusedElement == NULL || focusedElement->type == t_defaultElement) return;
 
     if (focusedElement->type == t_textField) {
@@ -193,7 +229,7 @@ static void charCallback(GLFWwindow* window, const unsigned int codepoint) {
     }
 }
 
-static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+void gui_keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     if (focusedElement == NULL || focusedElement->type == t_defaultElement) return;
 
     if (focusedElement->type == t_textField) {
@@ -213,6 +249,17 @@ static void keyCallback(GLFWwindow* window, int key, int scancode, int action, i
 
         }
     }
+}
+
+void gui_resizeCallback(GLFWwindow *window, const int width, const int height) {
+    glViewport(0, 0, width, height);
+    g_Renderer.screenWidth = width;
+    g_Renderer.screenHeight = height;
+}
+
+void gui_cursorPositionCallback(GLFWwindow* window, const double xPos, const double yPos) {
+    g_Renderer.mousePos.x = (int)xPos;
+    g_Renderer.mousePos.y = (int)yPos;
 }
 
 Vec2i getMousePos() {

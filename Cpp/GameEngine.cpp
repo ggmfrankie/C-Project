@@ -2,10 +2,9 @@
 // Created by ertls on 16.02.2026.
 //
 
-#include "GameEngine.h"
+#include "GameEngine.hpp"
 
-#include "Games/IGame.h"
-#include "Render/Objects/Loader/ObjLoader.h"
+#include "Games/IGame.hpp"
 
 GameEngine::GameEngine(Render::IGame& game) : game(game), screen("My Window", 800, 600) {
 }
@@ -17,15 +16,17 @@ void GameEngine::loop() {
         glfwPollEvents();
         update();
         screen.render();
+        input.endFrame();
     }
     glfwTerminate();
 }
 
 void GameEngine::init() {
-    game.passState({input, screen.getCamera(), screen.getObjectList()});
-    game.onInit();
+    game.passState({input, screen.getCamera(), screen});
+    game.preInit();
     screen.init();
     input.init(screen.getWindowHandle());
+    game.postInit();
 }
 
 void GameEngine::update() {

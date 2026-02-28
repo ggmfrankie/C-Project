@@ -18,7 +18,6 @@ auto g_Elements = (List_Element){.content = elementArray, .capacity = 1024, .siz
 Hashmap_Element g_Hashmap = {};
 
 void initElements() {
-    printf("Address of elementList: %p\n", &g_Elements);
     g_Hashmap = newHashmap_Element(512);
 }
 
@@ -114,6 +113,12 @@ void setText_int(Element* element, const int i) {
 void setVisible(Element* element, const bool b) {
     pthread_mutex_lock(&guiMutex);
     element->flags.isActive = b;
+    pthread_mutex_unlock(&guiMutex);
+}
+
+void toggleVisible(Element* element) {
+    pthread_mutex_lock(&guiMutex);
+    element->flags.isActive = !element->flags.isActive;
     pthread_mutex_unlock(&guiMutex);
 }
 

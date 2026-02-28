@@ -6,11 +6,11 @@
 #define MIXEDPROJECT_OBJECT_H
 #include <vector>
 
-#include "../../Utils/DataStorage/ArrayList.h"
-#include "../../Utils/Math/Quaternion.h"
-#include "../../Utils/Math/Matrix.h"
-#include "Geometry/Mesh.h"
-#include "../Shader/Shader.h"
+#include "../../Utils/DataStorage/ArrayList.hpp"
+#include "../../Utils/Math/Quaternion.hpp"
+#include "../../Utils/Math/Matrix.hpp"
+#include "Geometry/Mesh.hpp"
+#include "../Shader/Shader.hpp"
 
 
 

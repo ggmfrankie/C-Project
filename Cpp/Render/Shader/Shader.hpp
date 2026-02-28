@@ -7,7 +7,7 @@
 #include <string>
 #include <unordered_map>
 
-#include "../../Utils/Math/Matrix.h"
+#include "../../Utils/Math/Matrix.hpp"
 #include "glad/gl.h"
 
 namespace Math {

@@ -2,7 +2,7 @@
 // Created by ertls on 17.02.2026.
 //
 
-#include "Texture.h"
+#include "Texture.hpp"
 
 #include <iostream>
 

@@ -8,8 +8,8 @@
 #include <cmath>
 #include <numbers>
 
-#include "Quaternion.h"
-#include "Vector.h"
+#include "Quaternion.hpp"
+#include "Vector.hpp"
 
 namespace Math {
     class Matrix4f {
