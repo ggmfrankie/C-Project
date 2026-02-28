@@ -4,7 +4,9 @@
 
 #include "Screen.hpp"
 #include <iostream>
+#include <ranges>
 #include <utility>
+#include <algorithm>
 #include <glad/gl.h>
 
 #include "../../C/GuiInterface.h"
@@ -74,6 +76,7 @@ namespace Render{
         glDisable(GL_CULL_FACE);
 
         shader.bind();
+
         for (auto& obj : objects) {
 
             Math::Matrix4f model      = obj.getModelMatrix();
@@ -91,8 +94,8 @@ namespace Render{
                              );
             obj.render();
             //obj.rotateBy(1,1,1);
-
         }
+
         gui_update();
         gui_render();
         glfwSwapBuffers(windowHandle);

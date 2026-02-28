@@ -3,6 +3,8 @@
 //
 
 #include "Object.hpp"
+#include <algorithm>
+#include <execution>
 
 #include "Loader/OBJLoader.hpp"
 
@@ -13,7 +15,7 @@ namespace Obj {
     Object::Object(const std::string& objFile) {
         auto obj = OBJLoader::OBJObject(objFile);
         obj.load();
-        meshes.add(obj.getMesh());
+        meshes << (obj.getMesh());
     }
 
     Object::Object() = default;

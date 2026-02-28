@@ -16,7 +16,7 @@
 #include "C/Projects/Chess/ChessGame.h"
 #include "C/Projects/ChessNewandImproved/ChessBetter2.h"
 #include "C/Projects/Tokenizer/Calculator.h"
-#define WINADAPT
+//#define WINADAPT
 #ifndef WINADAPT
 int main(){
     SetConsoleOutputCP(CP_UTF8);
