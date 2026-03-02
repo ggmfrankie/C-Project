@@ -141,29 +141,31 @@ void GUI_render(const Renderer *renderer) {
 void renderElementsRecursively(Element* element, const Renderer* renderer) {
     if (element == nullptr || !element->flags.isActive) return;
     const Shader* shader = &renderer->guiShader;
+    if (!element->flags.invisible) {
 
-    setUniform(shader, "width", (float)element->actualWidth);
-    setUniform(shader, "height", (float)element->actualHeight);
-    setUniform(shader, "transparency", (float)1-element->transparency);
-    setUniform(shader, "brightness", (float)element->brightness);
+        setUniform(shader, "width", (float)element->actualWidth);
+        setUniform(shader, "height", (float)element->actualHeight);
+        setUniform(shader, "transparency", (float)1-element->transparency);
+        setUniform(shader, "brightness", (float)element->brightness);
 
-    setUniform(shader, "hasTexture", element->simpleTexture != NULL);
+        setUniform(shader, "hasTexture", element->simpleTexture != NULL);
 
-    setUniform(shader, "positionObject", toVec2f(element->worldPos));
+        setUniform(shader, "positionObject", toVec2f(element->worldPos));
 
-    setUniform(shader, "texture_sampler", 0);
+        setUniform(shader, "texture_sampler", 0);
 
-    setUniform(shader, "color", element->color);
+        setUniform(shader, "color", element->color);
 
-    glActiveTexture(GL_TEXTURE0);
+        glActiveTexture(GL_TEXTURE0);
 
-    if (element->simpleTexture != NULL) {
-        glBindTexture(GL_TEXTURE_2D, element->simpleTexture->textureId);
-    } else {
-        glBindTexture(GL_TEXTURE_2D, 0);
+        if (element->simpleTexture != NULL) {
+            glBindTexture(GL_TEXTURE_2D, element->simpleTexture->textureId);
+        } else {
+            glBindTexture(GL_TEXTURE_2D, 0);
+        }
+
+        Mesh_render(&element->Mesh);
     }
-
-    Mesh_render(&element->Mesh);
 
     if (element->textElement.hasText) {
         renderTextRetained(renderer, element);

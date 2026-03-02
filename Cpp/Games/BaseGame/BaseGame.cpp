@@ -28,7 +28,6 @@ namespace Render {
         screen->addObject(std::move(obj));
         screen->addObject(std::move(obj2));
         screen->addObject(std::move(obj3));
-
     }
 
     void BaseGame::postInit() {

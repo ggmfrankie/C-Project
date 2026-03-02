@@ -36,8 +36,3 @@ Task popTask() {
     pthread_mutex_unlock(&taskMutex);
     return t;
 }
-
-void changeElementText(void* userdata) {
-    Element* element = userdata;
-    setText(element, "New Text here");
-}

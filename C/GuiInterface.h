@@ -4,7 +4,6 @@
 
 #ifndef MIXEDPROJECT_GUIINTERFACE_H
 #define MIXEDPROJECT_GUIINTERFACE_H
-#include "GLFW/glfw3.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -32,6 +31,8 @@ struct Element;
 
     void gui_setVisible(const char* name, bool b);
     void gui_toggleVisible(const char* name);
+    void gui_setText(const char* name, const char* text);
+    void gui_setColor(const char* name, float r, float g, float b);
 
 #ifdef __cplusplus
 }

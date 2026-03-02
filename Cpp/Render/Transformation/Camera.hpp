@@ -19,6 +19,11 @@ namespace Render {
 
         void rotateBy(float dPitch, float dRoll, float dYaw);
 
+        [[nodiscard]] float getFOV() const { return m_FOV;}
+        [[nodiscard]] float* getFOVptr() { return &m_FOV;}
+
+        void setFOV(const float FOV) { m_FOV = FOV; }
+
         [[nodiscard]] Math::Matrix4f getViewMatrix() const;
 
         //void movePosition(float x, float y, float z);
@@ -26,6 +31,8 @@ namespace Render {
     private:
         Math::Vector3f m_pos{};
         Math::Vector3f m_rotation{};
+
+        float m_FOV = 90.0f;
     };
 } // Render
 

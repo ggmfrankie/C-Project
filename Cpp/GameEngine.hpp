@@ -4,6 +4,9 @@
 
 #ifndef C_GAMEENGINE_H
 #define C_GAMEENGINE_H
+#include <queue>
+
+#include "Engine/Task.hpp"
 #include "Games/IGame.hpp"
 #include "Render/Screen.hpp"
 #include "Render/IO/Input.hpp"
@@ -20,10 +23,23 @@ public:
 
     void update();
 
+    void pushTask(const Engine::Task &t);
+
+    void processTasks();
+
+    Render::Screen &getScreen();
+
+    static GameEngine &New(Render::IGame &game);
+
+    static GameEngine &Get();
+
 private:
+    static GameEngine* engineInstance;
     Render::IGame& game;
     Render::Screen screen;
     Render::Input input;
+
+    std::deque<Engine::Task> tasks{};
 };
 
 

@@ -86,14 +86,13 @@ namespace Render{
             shader.setUniform("modelViewMatrix", modelView);
             shader.setUniform("projectionMatrix",
                               Math::Matrix4f::Perspective(
-                                  90.0,
+                                  camera.getFOV(),
                                   static_cast<float>(width) / static_cast<float>(height),
                                   0.01f,
                                   1000.0f
                                   )
                              );
             obj.render();
-            //obj.rotateBy(1,1,1);
         }
 
         gui_update();

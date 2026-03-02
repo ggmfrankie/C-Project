@@ -75,6 +75,7 @@ typedef enum {
 typedef struct {
     bool isActive: 1;
     bool autoFit: 1;
+    bool invisible: 1;
     bool fixedWidth: 1;
     bool fixedHeight: 1;
     bool draggable: 1;
@@ -159,6 +160,7 @@ typedef struct {
     Padding padding;
     int childGap;
     bool autoFit;
+    bool invisible;
     bool notSelectable;
     bool draggable;
     bool fixedWidth;
@@ -222,7 +224,7 @@ Element *guiAddElement(
     bool fixedWidth,
     bool fixedHeight,
     void (*whileSelected)(Element *element), bool draggable, void (*onUpdate)(Element *element), bool wantGrowHorizontal, bool
-    wantGrowVertical, float transparency, char *texture
+    wantGrowVertical, float transparency, char *texture, bool invisible
 );
 
 Element *guiAddSimpleRectangle_Texture(

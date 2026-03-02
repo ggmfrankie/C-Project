@@ -13,22 +13,21 @@ void generateTestGUI(Element *guiRoot) {
     Texture* blackButton = loadTextureFromPng("GrayBox.png");
     Texture* pointerSchematic = loadTextureFromPng("Pointer Schematic.png");
 
-    const Task changeButtonTextTask = {.func = changeElementText, .userdata = THIS_ELEMENT};
     const Task nameShenanigans = {.func = namensliste_Aufgabe, .userdata = NULL};
 
     Font font = loadFontAtlas("ARIAL.TTF");
     Texture tex = font.fontAtlas;
 
-    addChildElements(guiRoot,
-        addChildElements(guiAddSimpleRectangle_Color((Vec2i){300, 100}, 230, pointerSchematic->height, (Vec3f){0.0f, 0.0f, 0.0f}),
-            guiAddSimpleRectangle_Texture(fitMode, 230, pointerSchematic->height, blackButton),
-            guiAddSimpleButton_Color(fitMode, 100, 100, (Vec3f){0.2f, 0.2f, 0.3f}, changeButtonTextTask,  "Hello World and all others too")
-            ,guiAddSimpleButton_Texture(fitMode, 100, 100, pointerSchematic, nameShenanigans,  "Run the namensliste Test")
-            ,guiAddSimpleButton_Color(fitMode, 100, 100, (Vec3f){0.9f, 0.2f, 0.3f}, changeButtonTextTask,  "Hello World and all others too")
-            ,guiAddSimpleButton_Color(fitMode, 100, 100, (Vec3f){0.9f, 0.2f, 0.3f}, changeButtonTextTask,  "Hello World and all others too")
-            ,guiAddSimpleButton_Color(fitMode, 100, 100, (Vec3f){0.9f, 0.2f, 0.3f}, changeButtonTextTask,  "Hello World and all others too")
-        )
-    );
+    // addChildElements(guiRoot,
+    //     addChildElements(guiAddSimpleRectangle_Color((Vec2i){300, 100}, 230, pointerSchematic->height, (Vec3f){0.0f, 0.0f, 0.0f}),
+    //         guiAddSimpleRectangle_Texture(fitMode, 230, pointerSchematic->height, blackButton),
+    //         guiAddSimpleButton_Color(fitMode, 100, 100, (Vec3f){0.2f, 0.2f, 0.3f}, changeButtonTextTask,  "Hello World and all others too")
+    //         ,guiAddSimpleButton_Texture(fitMode, 100, 100, pointerSchematic, nameShenanigans,  "Run the namensliste Test")
+    //         ,guiAddSimpleButton_Color(fitMode, 100, 100, (Vec3f){0.9f, 0.2f, 0.3f}, changeButtonTextTask,  "Hello World and all others too")
+    //         ,guiAddSimpleButton_Color(fitMode, 100, 100, (Vec3f){0.9f, 0.2f, 0.3f}, changeButtonTextTask,  "Hello World and all others too")
+    //         ,guiAddSimpleButton_Color(fitMode, 100, 100, (Vec3f){0.9f, 0.2f, 0.3f}, changeButtonTextTask,  "Hello World and all others too")
+    //     )
+    // );
 
     addChildElements(guiRoot,
         addChildElements(

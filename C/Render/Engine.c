@@ -16,6 +16,7 @@
 #include "GUI/GuiElementData.h"
 
 #include "../GuiInterface.h"
+#include "GUI/Update.h"
 
 #define WIDTH 4096
 #define HEIGHT 600
@@ -25,11 +26,14 @@
 
 pthread_mutex_t guiMutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t  guiInitCond = PTHREAD_COND_INITIALIZER;
+pthread_t workerThreadID;
+
 bool guiInitialized = false;
 Renderer g_Renderer;
 
 static void updateState(Renderer *renderer);
 static bool updateStateRecursively(Element *element, Renderer *renderer);
+static bool dragElement(const Renderer *renderer);
 
 void threadExecute() {
     do {
@@ -50,14 +54,23 @@ void* workerThreadInit(void* args) {
 
 void gui_init(GLFWwindow* window, const int width, const int height, void (*generateGUI)(Element* guiRoot)) {
     g_Renderer = newGUIRenderer(window, width, height, "ARIAL.TTF");
+
     GUIRenderer_init(&g_Renderer);
     initElements();
 
     generateGUI(g_Renderer.guiRoot);
+
+    guiInitialized = true;
+    pthread_cond_broadcast(&guiInitCond);
+    pthread_mutex_unlock(&guiMutex);
+
+    pthread_create(&workerThreadID, nullptr, workerThreadInit, NULL);
 }
 
 void gui_update() {
+    dragElement(&g_Renderer);
     updateLayout(g_Renderer.guiRoot, (Vec2i){0, 0}, (Vec2i){0, 0}, &g_Renderer.font);
+    gui_popUpdate();
     updateState(&g_Renderer);
 }
 
@@ -73,10 +86,15 @@ void gui_toggleVisible(const char* name) {
     toggleVisible(getElement(name));
 }
 
+void gui_setText(const char* name, const char* text) {
+    setText(getElement(name), text);
+}
+
+void gui_setColor(const char* name, const float r, const float g, const float b) {
+    setColor(getElement(name), (Vec3f){r, g, b});
+}
+
 void startEngine(void (*generateGUI)(Element* guiRoot)) {
-    pthread_t workerThreadID;
-
-
     g_Renderer = newRenderer(1024, 1024, "Chess Game", "ARIAL.TTF");
 
     Texture* graphTexture = newEmptyTexture(WIDTH, HEIGHT);
@@ -121,6 +139,7 @@ void startEngine(void (*generateGUI)(Element* guiRoot)) {
             const u_int64 pollEventsTime = now_ns() - startTime;
 
             const u_int64 updateLayoutTimeStart = now_ns();
+        dragElement(&g_Renderer);
 
         updateLayout(g_Renderer.guiRoot, (Vec2i){0, 0}, (Vec2i){0, 0}, &g_Renderer.font);
 
@@ -189,7 +208,6 @@ static void updateState(Renderer *renderer) {
     renderer->guiRoot->width = renderer->screenWidth;
     renderer->guiRoot->height = renderer->screenHeight;
 
-    dragElement(renderer);
     const bool consumed = updateStateRecursively(renderer->guiRoot, renderer);
 
     if (click(renderer->window, GLFW_MOUSE_BUTTON_LEFT) && !consumed) focusedElement = nullptr;

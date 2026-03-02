@@ -90,6 +90,8 @@ add_library(GUI STATIC
         C/Utils/CArrayList.h
 
         Cpp/Games/BaseGame/GameGui.c
+        C/Render/GUI/Update.c
+        C/Render/GUI/Update.h
 )
 
 set_target_properties(GUI PROPERTIES LINKER_LANGUAGE C)
@@ -137,6 +139,10 @@ add_executable(C-Project
         Cpp/Games/BaseGame/GameGui.h
         C/GuiInterface.h
         C/GuiInterface.h
+        Cpp/Engine/Task.cpp
+        Cpp/Engine/Task.hpp
+        Cpp/Games/BaseGame/GuiTasks.hpp
+        Cpp/Games/BaseGame/GuiTasks.cpp
 
 )
 #add_subdirectory("${CMAKE_SOURCE_DIR}/Render")

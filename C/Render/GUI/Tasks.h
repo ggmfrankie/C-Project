@@ -29,6 +29,4 @@ extern int taskTail;
 
 void pushTask(GuiTask gt, void* data);
 Task popTask();
-
-void changeElementText(void* userdata);
 #endif //C_TASKS_H

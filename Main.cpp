@@ -4,11 +4,11 @@
 #include "Cpp/GameEngine.hpp"
 #include "Cpp/Games/BaseGame/BaseGame.hpp"
 
-//#define GAME
+#define GAME
 #ifdef GAME
 int main() {
     auto game = Render::BaseGame();
-    auto gameEngine = GameEngine(game);
+    GameEngine& gameEngine = GameEngine::New(game);
     gameEngine.init();
     gameEngine.loop();
 
