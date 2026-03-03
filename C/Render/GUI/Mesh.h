@@ -29,7 +29,7 @@ typedef struct Mesh {
 ARRAY_LIST(Mesh, Mesh)
 
 Mesh Mesh_loadSimpleQuad();
-Mesh newMesh(const MeshData *meshData);
+Mesh newMesh(MeshData meshData);
 void Mesh_render(const Mesh *mesh);
 
 #endif //C_MESH_H
