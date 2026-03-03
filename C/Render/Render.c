@@ -64,27 +64,16 @@ GLFWwindow* initWindow(const int width, const int height, const char* name) {
 
 void GUIRenderer_init(Renderer *renderer) {
 
-    //initBatchedRendering();
+    initBatchedRendering();
     loadDefaultQuadMesh();
 
     //ComputeShader_createUniform(&renderer->computeShader, ("dataSize"));
     //ComputeShader_createUniform(&renderer->computeShader, ("thickness"));
     //ComputeShader_update(&renderer->computeShader, graphingFunction);
 
-    Shader_createUniform(&renderer->guiShader, "hasTexture");
-    Shader_createUniform(&renderer->guiShader, "width");
-    Shader_createUniform(&renderer->guiShader, "height");
-    Shader_createUniform(&renderer->guiShader, "screenWidth");
-    Shader_createUniform(&renderer->guiShader, "screenHeight");
-    Shader_createUniform(&renderer->guiShader, "positionObject");
-    Shader_createUniform(&renderer->guiShader, "texture_sampler");
-    Shader_createUniform(&renderer->guiShader, "color");
-    Shader_createUniform(&renderer->guiShader, "transparency");
-    Shader_createUniform(&renderer->guiShader, "brightness");
-
-    //Shader_createUniform(&renderer->batched_guiShader, "screenWidth");
-    //Shader_createUniform(&renderer->batched_guiShader, "screenHeight");
-    //Shader_createUniform(&renderer->batched_guiShader, "atlasSampler");
+    Shader_createUniform(&renderer->batched_guiShader, "screenWidth");
+    Shader_createUniform(&renderer->batched_guiShader, "screenHeight");
+    Shader_createUniform(&renderer->batched_guiShader, "atlasSampler");
 
     Shader_createUniform(&renderer->textShader, "fontAtlas");
     Shader_createUniform(&renderer->textShader, "screenWidth");
@@ -92,104 +81,17 @@ void GUIRenderer_init(Renderer *renderer) {
     Shader_createUniform(&renderer->textShader, "color");
 }
 
-void Renderer_render(const Renderer *renderer) {
-    ComputeShader_run(&renderer->computeShader);
-
-    glClear(GL_COLOR_BUFFER_BIT);
-    //#define DEBUG
-#ifdef DEBUG
-    glDisable(GL_CULL_FACE);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-#endif
-
-    Shaders.bind(&renderer->guiShader);
-    setUniform(&renderer->guiShader, ("screenWidth"), (float) renderer->screenWidth);
-    setUniform(&renderer->guiShader, ("screenHeight"), (float) renderer->screenHeight);
-
-    const Element* guiRoot = renderer->guiRoot;
-
-    for (int i = 0; i < guiRoot->childElements.size; i++) {
-        renderElementsRecursively(guiRoot->childElements.content[i], renderer);
-    }
-
-    glfwSwapBuffers(renderer->window);
-    Shaders.unbind();
-}
-
-void GUI_render(const Renderer *renderer) {
-    glDisable(GL_DEPTH_TEST);  // GUI is in screen-space, depth irrelevant
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-#ifdef DEBUG
-    glDisable(GL_CULL_FACE);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-#endif
-
-    Shaders.bind(&renderer->guiShader);
-    setUniform(&renderer->guiShader, ("screenWidth"), (float) renderer->screenWidth);
-    setUniform(&renderer->guiShader, ("screenHeight"), (float) renderer->screenHeight);
-
-    const Element* guiRoot = renderer->guiRoot;
-
-    for (int i = 0; i < guiRoot->childElements.size; i++) {
-        renderElementsRecursively(guiRoot->childElements.content[i], renderer);
-    }
-
-    Shaders.unbind();
-}
-
-void renderElementsRecursively(Element* element, const Renderer* renderer) {
-    if (element == nullptr || !element->flags.isActive) return;
-    const Shader* shader = &renderer->guiShader;
-    if (!element->flags.invisible) {
-
-        setUniform(shader, "width", (float)element->actualWidth);
-        setUniform(shader, "height", (float)element->actualHeight);
-        setUniform(shader, "transparency", (float)1-element->transparency);
-        setUniform(shader, "brightness", (float)element->brightness);
-
-        setUniform(shader, "hasTexture", element->simpleTexture != NULL);
-
-        setUniform(shader, "positionObject", toVec2f(element->worldPos));
-
-        setUniform(shader, "texture_sampler", 0);
-
-        setUniform(shader, "color", element->color);
-
-        glActiveTexture(GL_TEXTURE0);
-
-        if (element->simpleTexture != NULL) {
-            glBindTexture(GL_TEXTURE_2D, element->simpleTexture->textureId);
-        } else {
-            glBindTexture(GL_TEXTURE_2D, 0);
-        }
-
-        Mesh_render(&element->Mesh);
-    }
-
-    if (element->textElement.hasText) {
-        renderTextRetained(renderer, element);
-        Shaders.bind(&renderer->guiShader);
-    }
-
-    for (int i = 0; i < element->childElements.size; i++) {
-        Element* childElement = element->childElements.content[i];
-        renderElementsRecursively(childElement, renderer);
-    }
-}
-
 void Renderer_render2(const Renderer *renderer) {
-    ComputeShader_run(&renderer->computeShader);
     static GuiVertex vertices[MAX_GUI_VERTICES];
     int numVertices = 0;
 
     Element* textElements[1024];
     int numTextElements = 0;
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+    glClear(GL_COLOR_BUFFER_BIT);
 
     glDisable(GL_DEPTH_TEST);
-    glDepthMask(GL_FALSE);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     //#define DEBUG
 #ifdef DEBUG
@@ -220,21 +122,41 @@ void Renderer_render2(const Renderer *renderer) {
         renderTextRetained(renderer, textElements[i]);
     }
 
-    glfwSwapBuffers(renderer->window);
     Shaders.unbind();
 }
 
-GuiVertex getUpdatedVertex(const GuiVertex *vertex, int width, int height, Vec2i pos) {
-    return (GuiVertex){
-        .hasTexture = vertex->hasTexture,
-        .color = vertex->color,
-        .brightness = vertex->brightness,
-        .pos = {
-            vertex->pos.x * (float) width + (float) pos.x,
-            vertex->pos.y * (float) height + (float) pos.y
-        },
-        .uv = vertex->uv
-    };
+void getMeshFromElement(Element* element, GuiVertex *vertices, int *index) {
+    int id = *index;
+    for (int i = 0; i < 6; i++) {
+        gm->vertices[i] = (GuiVertex){
+            .hasTexture = element->flags.hasTexture,
+            .brightness = element->brightness,
+            .color = (Vec4f){element->color.x, element->color.y, element->color.z, 1.0f},
+        };
+    }
+
+
+    vertices[id].pos = toVec2f(element->worldPos);
+    vertices[id].uv = element->texture.uv0;
+    id++;
+
+    vertices[id].pos = (Vec2f){0.0f, 1.0f};
+    vertices[id].uv = (Vec2f){element->texture.uv0.x, element->texture.uv1.y};
+    id++;
+
+    vertices[id].pos = (Vec2f){1.0f, 0.0f};
+    vertices[id].uv = (Vec2f){element->texture.uv1.x, element->texture.uv0.y};
+    id++;
+
+    vertices[id].pos = (Vec2f){1.0f, 0.0f};
+    vertices[id].uv = (Vec2f){element->texture.uv1.x, element->texture.uv0.y};
+    id++;
+
+    vertices[4].pos = (Vec2f){0.0f, 1.0f};
+    vertices[4].uv = (Vec2f){element->texture.uv0.x, element->texture.uv1.y};
+
+    vertices[5].pos = (Vec2f){1.0f, 1.0f};
+    vertices[5].uv = (Vec2f){element->texture.uv1.x, element->texture.uv1.y};
 }
 
 void accumulateMeshes(Element *element, const Renderer *renderer, GuiVertex *vertices, int *index, Element **textElements, int *numTextElements) {
@@ -385,7 +307,6 @@ Renderer newRenderer(const int width, const int height, const char* name, char *
         .batched_guiShader = newShader("GuiRender.vert", "GuiRender.frag"),
         .textShader = newShader("TextRender.vert", "TextRender.frag"),
         .window = initWindow(width, height, name),
-        .render = Renderer_render,
         .screenWidth = width,
         .screenHeight = height,
         .font = loadFontAtlas(fontFile),
@@ -401,7 +322,6 @@ Renderer newGUIRenderer(GLFWwindow* window, const int width, const int height, c
         .batched_guiShader = newShader("GuiRender.vert", "GuiRender.frag"),
         .textShader = newShader("TextRender.vert", "TextRender.frag"),
         .window = window,
-        .render = Renderer_render,
         .screenWidth = width,
         .screenHeight = height,
         .font = loadFontAtlas(fontFile),
@@ -416,7 +336,8 @@ Element* createRootElement() {
 }
 
 void loadDefaultQuadMesh() {
-    quadMesh = Mesh_loadSimpleQuad();
+    //quadMesh = Mesh_loadSimpleQuad();
+    quadMesh = Mesh_loadRoundedCornerMesh2(0.1f);
 }
 
 void Renderer_destroy(const Renderer *renderer) {

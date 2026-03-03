@@ -16,5 +16,5 @@ void main() {
     } else {
         fragColor = vec4(outColor.rgb, outColor.a);
     }
-    //fragColor = vec4(0.3, 0.7, 0.9, 1.0);
+    fragColor *= 1-outBrightness;
 }

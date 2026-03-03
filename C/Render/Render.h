@@ -34,7 +34,6 @@ typedef struct Renderer {
     Hashmap_AtlasTextures textures;
     Mesh basicQuadMesh;
     bool (*defaultClick)(Renderer *renderer);
-    void (*render)(const Renderer *renderer);
 
     Element* guiRoot;
     OtherShaders otherShaders;
@@ -43,8 +42,9 @@ typedef struct Renderer {
 Renderer newRenderer(int width, int height, const char* name, char *fontFile);
 Renderer newGUIRenderer(GLFWwindow* window, int width, int height, char *fontFile);
 void GUIRenderer_init(Renderer *renderer);
-void Renderer_render(const Renderer *renderer);
-void GUI_render(const Renderer *renderer);
+
+void Renderer_render2(const Renderer *renderer);
+
 void Renderer_destroy(const Renderer *renderer);
 Vec2i updateLayout(Element* element, Vec2i parentCursor, Vec2i parentPos, const Font* font);
 bool isMousePressed(GLFWwindow* window, int mouseButton);

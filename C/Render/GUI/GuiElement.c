@@ -21,20 +21,16 @@ void initElements() {
     g_Hashmap = newHashmap_Element(512);
 }
 
-Element* newElement(const Mesh mesh, const Vec2i pos, const int width, const int height, Texture* texture) {
+Element* newElement(const Mesh mesh, const Vec2i pos, const int width, const int height) {
     g_Elements.content[g_Elements.size] = (Element){
         .name = nullptr,
-        .Mesh = mesh,
         .onClick = nullptr,
         .onHover = nullptr,
         .isMouseOver = nullptr,
         .pos = pos,
         .worldPos = pos,
-        .width = width,
-        .height = height,
         .actualWidth = width,
         .actualHeight = height,
-        .simpleTexture = texture,
         .color = (Vec3f){0.0f, 0.0f, 0.0f},
         .defaultColor = (Vec3f){0.0f, 0.0f, 0.0f},
         .textElement = (TextElement){.charQuads = Character_newList(16), .forceResize = false, .hasText = false, .pos = {}, .text = NULL, .textColor = {}, .textScale = 1.0f, .width = 0},
@@ -94,6 +90,7 @@ void setText(Element* element, const char* text) {
     Strings.copyInto(&element->textElement.text, text);
     element->textElement.hasText = true;
     reloadTextQuads(getFont(), element);
+    rebuildQuadMesh(element);
     pthread_mutex_unlock(&guiMutex);
 }
 
@@ -101,6 +98,7 @@ void setText_noLock(Element* element, const char* text) {
     Strings.copyInto(&element->textElement.text, text);
     element->textElement.hasText = true;
     reloadTextQuads(getFont(), element);
+    rebuildQuadMesh(element);
 }
 
 void setText_int(Element* element, const int i) {
@@ -108,23 +106,27 @@ void setText_int(Element* element, const int i) {
     Strings.fromInt(tempText, 512, i);
 
     setText(element, tempText);
+    rebuildQuadMesh(element);
 }
 
 void setVisible(Element* element, const bool b) {
     pthread_mutex_lock(&guiMutex);
     element->flags.isActive = b;
+    rebuildQuadMesh(element);
     pthread_mutex_unlock(&guiMutex);
 }
 
 void toggleVisible(Element* element) {
     pthread_mutex_lock(&guiMutex);
     element->flags.isActive = !element->flags.isActive;
+    rebuildQuadMesh(element);
     pthread_mutex_unlock(&guiMutex);
 }
 
 void setColor(Element* element, const Vec3f color) {
     pthread_mutex_lock(&guiMutex);
     element->color = color;
+    rebuildQuadMesh(element);
     pthread_mutex_unlock(&guiMutex);
 }
 
@@ -140,14 +142,14 @@ bool isSelected_Quad(const Element *element, const Vec2i mousePos) {
     return false;
 }
 
-void buildQuadMesh(Element* element) {
+void rebuildQuadMesh(Element* element) {
     GuiMesh *gm = &element->guiMesh;
     gm->length = 6;
 
     for (int i = 0; i < 6; i++) {
         gm->vertices[i] = (GuiVertex){
             .hasTexture = element->flags.hasTexture,
-            .brightness = 1.0f,
+            .brightness = element->brightness,
             .color = (Vec4f){element->color.x, element->color.y, element->color.z, 1.0f},
         };
     }
@@ -239,7 +241,7 @@ Element *guiAddElement(
         lastElement->texture = getTexture(texture);
     }
 
-    buildQuadMesh(lastElement);
+    rebuildQuadMesh(lastElement);
 
     if (notSelectable) lastElement->isMouseOver = NULL;
 

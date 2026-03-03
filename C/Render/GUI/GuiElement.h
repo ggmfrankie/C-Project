@@ -94,21 +94,17 @@ typedef struct Element {
 
     Vec2i pos;
     Vec2i worldPos;
+
     float transparency;
     float brightness;
 
     PositionMode positionMode;
     LayoutDirection layoutDirection;
 
-    int width;
-    int height;
-
     int actualWidth;
     int actualHeight;
 
-    Mesh Mesh;
     GuiMesh guiMesh;
-    Texture* simpleTexture;
     Atlas_Texture texture;
     Vec3f color;
     Vec3f defaultColor;
@@ -173,8 +169,9 @@ typedef struct {
 } ElementSettings;
 
 void initElements();
+void rebuildQuadMesh(Element* element);
 
-Element* newElement(Mesh mesh, Vec2i pos, int width, int height, Texture* texture);
+Element* newElement(Mesh mesh, Vec2i pos, int width, int height);
 Element* f_addChildElements(Element* parent, ...);
 
 Element* addChildrenAsGrid(ElementSettings parentData, ElementSettings es, int numX, int numY);

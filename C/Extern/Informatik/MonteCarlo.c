@@ -5,12 +5,10 @@
 #include "MonteCarlo.h"
 
 #include <bemapiset.h>
-#include <stdbool.h>
 #include <math.h>
 #include <time.h>
 
 #include "libminibmp.h"
-#include "../../Utils/Makros.h"
 #include "../../Utils/Vector.h"
 
 

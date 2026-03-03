@@ -75,7 +75,7 @@ void gui_update() {
 }
 
 void gui_render() {
-    GUI_render(&g_Renderer);
+    Renderer_render2(&g_Renderer);
 }
 
 void gui_setVisible(const char* name, const bool b) {
@@ -154,7 +154,7 @@ void startEngine(void (*generateGUI)(Element* guiRoot)) {
             const u_int64 renderTimeStart = now_ns();
 
         pthread_mutex_lock(&guiMutex);
-        g_Renderer.render(&g_Renderer);
+        Renderer_render2(&g_Renderer);
         pthread_mutex_unlock(&guiMutex);
 
             const u_int64 renderTime = now_ns() - renderTimeStart;

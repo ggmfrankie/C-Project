@@ -18,18 +18,18 @@ typedef struct MeshData {
 
 typedef struct Mesh {
     unsigned int vaoId;
-    unsigned int* vboId;
+    unsigned int vboId[3];
     int vboCount;
     unsigned int eboId;
     int indexCount;
     int patchIndices[16];
-    void (*render)(const struct Mesh *mesh);
 } Mesh;
 
 ARRAY_LIST(Mesh, Mesh)
 
 Mesh Mesh_loadSimpleQuad();
-Mesh newMesh(const MeshData *meshData);
+Mesh Mesh_loadRoundedCornerMesh2(float r);
+Mesh newMesh(MeshData meshData);
 void Mesh_render(const Mesh *mesh);
 
 #endif //C_MESH_H

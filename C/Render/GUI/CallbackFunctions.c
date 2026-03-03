@@ -91,19 +91,19 @@ bool sliderCallbackFun(Element *element, Renderer *renderer) {
 }
 
 bool textFieldCallbackFun(Element *element, Renderer *renderer) {
-    TextFieldData* data = (TextFieldData*)(element->elementData);
+    TextFieldData* data = element->elementData;
     if (Strings.isEmpty(&data->text)) return false;
 
     List_Character* charQuads = &element->textElement.charQuads;
     Vec2i mousePos = getMousePos();
 
-    Vec2f relMousPos = {(float)(mousePos.x - element->pos.x), (float)(mousePos.y - element->pos.y)};
+    Vec2f relMousePos = {(float)(mousePos.x - element->pos.x), (float)(mousePos.y - element->pos.y)};
     mousePos.x -= element->pos.x;
     mousePos.y -= element->pos.y;
     int i = 0;
     for (; i < charQuads->size; i++) {
         Character* currentChar = &charQuads->content[i];
-        if (relMousPos.x < currentChar->pos.x + currentChar->width/2) {
+        if (relMousePos.x < currentChar->pos.x + currentChar->width/2) {
             data->cursor.byteIndex = i;
             return true;
         }
