@@ -101,6 +101,8 @@ typedef struct Element {
     PositionMode positionMode;
     LayoutDirection layoutDirection;
 
+    int width;
+    int height;
     int actualWidth;
     int actualHeight;
 
@@ -171,7 +173,7 @@ typedef struct {
 void initElements();
 void rebuildQuadMesh(Element* element);
 
-Element* newElement(Mesh mesh, Vec2i pos, int width, int height);
+Element* newElement(Mesh mesh, Vec2i pos, int width, int heigh);
 Element* f_addChildElements(Element* parent, ...);
 
 Element* addChildrenAsGrid(ElementSettings parentData, ElementSettings es, int numX, int numY);
