@@ -12,10 +12,7 @@
 #include "../../Utils/Vector.h"
 #include "../GUI/CallbackFunctions.h"
 
-#define MAX_GUI_VERTICES 16384
-
-Mesh quadMesh;
-void accumulateMeshes(Element *element, const Renderer *renderer, GuiVertex *vertices, int *index);
+void accumulateMeshes(Element *element, const Renderer *renderer, GuiVertex *vertices, int *vt, int *indices, int *id);
 
 Element* createRootElement();
 
@@ -56,18 +53,14 @@ void GUIRenderer_init(Renderer *renderer) {
     Shader_createUniform(&renderer->batched_guiShader, "screenWidth");
     Shader_createUniform(&renderer->batched_guiShader, "screenHeight");
     Shader_createUniform(&renderer->batched_guiShader, "atlasSampler");
-
-    Shader_createUniform(&renderer->textShader, "fontAtlas");
-    Shader_createUniform(&renderer->textShader, "screenWidth");
-    Shader_createUniform(&renderer->textShader, "screenHeight");
-    Shader_createUniform(&renderer->textShader, "color");
 }
 
 void Renderer_render2(const Renderer *renderer) {
     static GuiVertex vertices[MAX_GUI_VERTICES];
     int numVertices = 0;
+    static int indices[MAX_GUI_VERTICES];
+    int numIndices = 0;
 
-    int numTextElements = 0;
     glClear(GL_COLOR_BUFFER_BIT);
 
     glDisable(GL_DEPTH_TEST);
@@ -81,8 +74,11 @@ void Renderer_render2(const Renderer *renderer) {
 #endif
 
     Shaders.bind(&renderer->batched_guiShader);
-    setUniform(&renderer->batched_guiShader, ("screenWidth"), (float) renderer->screenWidth);
-    setUniform(&renderer->batched_guiShader, ("screenHeight"), (float) renderer->screenHeight);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, renderer->atlasId);
+
+    setUniform(&renderer->batched_guiShader, "screenWidth", (float) renderer->screenWidth);
+    setUniform(&renderer->batched_guiShader, "screenHeight", (float) renderer->screenHeight);
 
     setUniform(&renderer->batched_guiShader, "atlasSampler", 0);
 
@@ -92,21 +88,30 @@ void Renderer_render2(const Renderer *renderer) {
         accumulateMeshes(guiRoot->childElements.content[i],
                          renderer,
                          vertices,
-                         &numVertices
+                         &numVertices,
+                         indices,
+                         &numIndices
         );
     }
-    renderBatchedQuads(renderer->atlasId, vertices, numVertices);
+    uploadBatchedQuads(vertices, numVertices, indices, numIndices);
+    glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, nullptr);
+    glBindVertexArray(0);
+
     Shaders.unbind();
 }
 
-void accumulateMeshes(Element *element, const Renderer *renderer, GuiVertex *vertices, int *index) {
+void accumulateMeshes(Element *element, const Renderer *renderer, GuiVertex *vertices, int *vt, int *indices, int *id) {
     if (element == NULL || !element->flags.isActive) return;
 
-    element->generateMesh(element, vertices, index);
+    element->generateMesh(element, vertices, vt, indices, id);
+    uploadElementData(element);
+
+    accumulateTextQuads(element, vertices, vt, indices, id, &renderer->font);
+
 
     for (int i = 0; i < element->childElements.size; i++) {
         Element* childElement = element->childElements.content[i];
-        accumulateMeshes(childElement, renderer, vertices, index);
+        accumulateMeshes(childElement, renderer, vertices, vt, indices, id);
     }
 }
 
@@ -194,7 +199,6 @@ inline bool isMousePressed(GLFWwindow* window, const int mouseButton) {
 
 Renderer newGUIRenderer(GLFWwindow* window, const int width, const int height, char *fontFile) {
     return (Renderer){
-        .guiShader = newShader("GuiVertexShader.vert", "GuiFragmentShader.frag"),
         .batched_guiShader = newShader("GuiRender.vert", "GuiRender.frag"),
         .textShader = newShader("TextRender.vert", "TextRender.frag"),
         .window = window,
@@ -206,7 +210,7 @@ Renderer newGUIRenderer(GLFWwindow* window, const int width, const int height, c
 }
 
 Element* createRootElement() {
-    return newElement((Mesh){}, (Vec2i){}, 0, 0);
+    return newElement((Vec2i){}, 0, 0);
 }
 
 void Renderer_destroy(const Renderer *renderer) {

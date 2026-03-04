@@ -15,8 +15,21 @@ typedef struct {
     u_char *pixels;
 } RawTexture;
 
+ARRAY_LIST(Texture, Basic_Texture)
+
 static GLuint uploadTextureToGPU(int width, int height, int channels, const unsigned char* pixels);
+
+static Basic_Texture textureArray[256];
 static Hashmap_AtlasTextures textureMap;
+static List_Texture g_Textures = (List_Texture){.content = textureArray, .capacity = 256, .size = 0};
+
+Basic_Texture newTexture(const int width, const int height, const GLuint textureId) {
+    return (Basic_Texture){
+        .width = width,
+        .height = height,
+        .textureId = textureId
+    };
+}
 
 void f_loadTextures(GLuint *atlasId, const int atlasWidth, const int atlasHeight, char *first, ...) {
 
@@ -75,6 +88,57 @@ void f_loadTextures(GLuint *atlasId, const int atlasWidth, const int atlasHeight
     }
     free(atlas);
     free(nodes);
+}
+
+Basic_Texture *newEmptyTexture(const int width, const int height) {
+    GLuint tex;
+    glGenTextures(1, &tex);
+    glBindTexture(GL_TEXTURE_2D, tex);
+
+    glTexImage2D(
+        GL_TEXTURE_2D,
+        0,
+        GL_RGBA32F,
+        width,
+        height,
+        0,
+        GL_RGBA,
+        GL_FLOAT,
+        nullptr
+    );
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+
+    Texture_ListAdd(&g_Textures, (Basic_Texture){.width = width, .height = height, .textureId = tex});
+
+    return Texture_ListGetLast(&g_Textures);
+}
+
+Basic_Texture *loadTextureFromPng(char *fileName) {
+    const String fileNameString = stringOf(fileName);
+    const String defaultPath = stringOf("../Resources/Textures/");
+    String fullPath = Strings.combine(&defaultPath, &fileNameString);
+
+    int width, height, channels;
+
+    unsigned char* data = stbi_load(fullPath.content, &width, &height, &channels, 0);
+
+    Strings.delete_(&fullPath);
+    if (!data) {
+        printf("Failed to load image\n");
+        exit(-3) ;
+    }
+    const GLuint texture = uploadTextureToGPU(width, height, channels, data);
+
+    stbi_image_free(data);
+    Texture_ListAdd(&g_Textures, (Basic_Texture){.width = width, .height = height, .textureId = texture});
+
+    return Texture_ListGetLast(&g_Textures);
 }
 
 Texture getTexture(const char* name) {

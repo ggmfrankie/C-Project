@@ -17,11 +17,25 @@ typedef struct {
 } NinePatchData;
 
 typedef struct {
+    int width;
+    int height;
+    GLuint textureId;
+
+    NinePatchData npd;
+} Basic_Texture;
+
+typedef struct {
     Vec2f uv0;
     Vec2f uv1;
 } Texture;
 
 HASH_MAP(AtlasTextures, char*, Texture);
+
+Basic_Texture newTexture(int width, int height, GLuint textureId);
+
+Basic_Texture *newEmptyTexture(int width, int height);
+
+Basic_Texture *loadTextureFromPng(char *fileName);
 
 void f_loadTextures(GLuint *atlasId, int atlasWidth, int atlasHeight, char *first, ...);
 Texture getTexture(const char* name);

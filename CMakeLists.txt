@@ -93,6 +93,7 @@ add_library(GUI STATIC
         C/Render/GUI/Update.h
         C/Render/Drawing/Batcher.c
         C/Render/Drawing/Batcher.h
+        C/Render/Drawing/RenderTypes.h
 )
 
 set_target_properties(GUI PROPERTIES LINKER_LANGUAGE C)

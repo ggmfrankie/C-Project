@@ -4,9 +4,14 @@
 
 #ifndef MIXEDPROJECT_BATCHER_H
 #define MIXEDPROJECT_BATCHER_H
-#include "Render/GUI/GuiElement.h"
+typedef struct Element Element;
+#include "RenderTypes.h"
+
+#define MAX_GUI_VERTICES 16384
+#define MAX_GUI_INDICES 16384
 
 void initBatchedRendering();
-void renderBatchedQuads(GLuint atlasId, const GuiVertex *vertices, int length);
+void uploadBatchedQuads(const GuiVertex *vertices, int vt, const int* indices, int id);
+void uploadElementData(Element* element);
 
 #endif //MIXEDPROJECT_BATCHER_H

@@ -4,19 +4,13 @@
 //
 // Created by ertls on 04.03.2026.
 //
+
 typedef struct {
     GLuint VAO;
     GLuint VBO;
+    GLuint EBO;
     GLuint SSBO;
 } GraphicsData;
-
-typedef struct {
-    float brightness;
-    Vec2f pos;
-    Vec4f color;
-    Texture texture;
-    char _padding[20];
-} InstanceData;
 
 struct asd {
     InstanceData instanceData;
@@ -29,25 +23,40 @@ static GraphicsData graphicsData;
 void initBatchedRendering() {
 
     glGenVertexArrays(1, &graphicsData.VAO);
-    glGenBuffers(1, &graphicsData.VBO);
-
     glBindVertexArray(graphicsData.VAO);
 
+    glGenBuffers(1, &graphicsData.VBO);
     glBindBuffer(GL_ARRAY_BUFFER, graphicsData.VBO);
+    glBufferData(GL_ARRAY_BUFFER,
+                 MAX_GUI_VERTICES * sizeof(GuiVertex),
+                 nullptr,
+                 GL_DYNAMIC_DRAW);
 
-    glEnableVertexAttribArray(0); //pos
+    glGenBuffers(1, &graphicsData.EBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, graphicsData.EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+                 MAX_GUI_INDICES * sizeof(uint32_t),
+                 nullptr,
+                 GL_DYNAMIC_DRAW);
+
+    // pos (location = 0)
+    glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE,
                           sizeof(GuiVertex), (void*)offsetof(GuiVertex, pos));
-
-    glEnableVertexAttribArray(1); //uv
+    // uv (location = 1)
+    glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE,
                           sizeof(GuiVertex), (void*)offsetof(GuiVertex, uv));
+    // ID (location = 2) - integer attribute!
+    glEnableVertexAttribArray(2);
+    glVertexAttribIPointer(2, 1, GL_INT,
+                           sizeof(GuiVertex), (void*)offsetof(GuiVertex, ID));
+    // texID (location = 3) - integer attribute!
+    glEnableVertexAttribArray(3);
+    glVertexAttribIPointer(3, 1, GL_INT,
+                           sizeof(GuiVertex), (void*)offsetof(GuiVertex, texID));
 
-    glBufferData(GL_ARRAY_BUFFER,
-             MAX_GUI_VERTICES * sizeof(GuiVertex),
-             nullptr,
-             GL_DYNAMIC_DRAW);
-
+    glBindVertexArray(0);
 
 
     glGenBuffers(1, &graphicsData.SSBO);
@@ -57,14 +66,13 @@ void initBatchedRendering() {
 
 }
 
-void renderBatchedQuads(const GLuint atlasId, const GuiVertex *vertices, const int length) {
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, atlasId);
+void uploadBatchedQuads(const GuiVertex *vertices, const int vt, const int* indices, const int id) {
     glBindVertexArray(graphicsData.VAO);
     glBindBuffer(GL_ARRAY_BUFFER, graphicsData.VBO);
-    glBufferSubData(GL_ARRAY_BUFFER, 0,sizeof(GuiVertex) * length, vertices);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GuiVertex) * vt, vertices);
 
-    glDrawArrays(GL_TRIANGLES, 0, length);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, graphicsData.EBO);
+    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, sizeof(uint32_t) * id, indices);
 }
 
 static InstanceData instanceFromElement(const Element* e) {
@@ -82,7 +90,7 @@ static size_t ssboOffsetBytes(int index) {
 
 void uploadElementData(Element* element) {
     if (!element) return;
-    int id = element->instanceIndex;
+    int id = element->ID;
     if (id < 0 || id >= MAX_GUI_INSTANCES) return;
 
     InstanceData data = instanceFromElement(element);

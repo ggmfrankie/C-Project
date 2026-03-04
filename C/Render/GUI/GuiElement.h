@@ -20,12 +20,6 @@ typedef Renderer Renderer;
 struct Element;
 typedef Element Element;
 
-typedef struct {
-    Vec2f pos;
-    Vec2f uv;
-
-} GuiVertex;
-
 typedef struct TextElement {
     Vec2f pos;
     float width;
@@ -101,14 +95,14 @@ typedef struct Element {
         Vec3f defaultColor;
     } visuals;
 
-    int instanceIndex;
+    int ID;
 
     PositionMode positionMode;
     LayoutDirection layoutDirection;
 
     TextElement textElement;
 
-    void (*generateMesh)(Element* element, GuiVertex *vertices, int *index);
+    void (*generateMesh)(Element* element, GuiVertex *vertices, int *vt, int *indices, int *id);
 
     struct {
         bool (*isMouseOver)(const Element* element, Vec2i mousePos);
@@ -170,7 +164,7 @@ typedef struct {
 void initElements();
 void rebuildQuadMesh(Element* element);
 
-Element* newElement(Mesh mesh, Vec2i pos, int width, int heigh);
+Element* newElement(Vec2i pos, int width, int heigh);
 Element* f_addChildElements(Element* parent, ...);
 
 Element* addChildrenAsGrid(ElementSettings parentData, ElementSettings es, int numX, int numY);
@@ -199,7 +193,6 @@ bool isSelected_Quad(const Element *element, Vec2i mousePos);
 Element *guiAddElement(
     List_Element *list,
     char *name,
-    Mesh mesh,
     Vec2i pos,
     int width,
     int height,

@@ -61,7 +61,7 @@ Element* newElement(const Mesh mesh, const Vec2i pos, const int width, const int
 
         .type = 0,
 
-        .instanceIndex = (int)g_Elements.size,
+        .ID = (int)g_Elements.size,
         .generateMesh = Mesh_loadRoundedCornerMesh2,
     };
     return &g_Elements.content[g_Elements.size++];

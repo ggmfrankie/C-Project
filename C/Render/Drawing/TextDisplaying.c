@@ -9,7 +9,6 @@
 #define STB_TRUETYPE_IMPLEMENTATION
 #include <minwindef.h>
 #include <stb/stb_truetype.h>
-#include "../GUI/GuiElement.h"
 #include "Render.h"
 #include "../../Utils/DataStructures.h"
 #include "../../Utils/CString.h"
@@ -19,11 +18,6 @@
 #define MAX_TEXT_VERTICES 16384
 
 void measureFont(Font *font);
-
-typedef struct {
-    float x, y;     // position
-    float u, v;     // UVs
-} Vertex;
 
 Font loadFontAtlas(char* file) {
     const String fileName = stringOf(file);
@@ -81,35 +75,11 @@ Font loadFontAtlas(char* file) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    font.fontAtlas = (Texture){
+    font.fontAtlas = (Basic_Texture){
         .width = FONT_ATLAS_SIZE,
         .height = FONT_ATLAS_SIZE,
         .textureId = tex
     };
-
-    GLuint textVAO;
-    GLuint textVBO;
-    glGenVertexArrays(1, &textVAO);
-    glGenBuffers(1, &textVBO);
-
-    glBindVertexArray(textVAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, textVBO);
-    glEnableVertexAttribArray(0); // position
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE,
-                          sizeof(Vertex), (void*)offsetof(Vertex, x));
-
-    glEnableVertexAttribArray(1); // UV
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE,
-                          sizeof(Vertex), (void*)offsetof(Vertex, u));
-
-    glBufferData(GL_ARRAY_BUFFER,
-             MAX_TEXT_VERTICES * sizeof(Vertex),
-             NULL,
-             GL_DYNAMIC_DRAW);
-
-    font.textVAO = textVAO;
-    font.textVBO = textVBO;
 
     measureFont(&font);
 
@@ -119,54 +89,40 @@ Font loadFontAtlas(char* file) {
     return font;
 }
 
-static void drawTextBatched(const Renderer* renderer, const Vertex* vertices, const int num) {
-    glBindTexture(GL_TEXTURE_2D, renderer->font.fontAtlas.textureId);
-    glBindVertexArray(renderer->font.textVAO);
+void accumulateTextQuads(const Element *element, GuiVertex *vertices, int *vt, int *indices, int *id, const Font *font) {
+    const List_Character* charQuads = &element->textElement.charQuads;
+    if (charQuads->size == 0) return;
 
-    glBindBuffer(GL_ARRAY_BUFFER, renderer->font.textVBO);
-    glBufferSubData(GL_ARRAY_BUFFER, 0,sizeof(Vertex) * num, vertices);
+    const float xOffset = (float)element->padding.left;
+    const float yOffset = (float)font->maxCharHeight * element->textElement.textScale + (float)element->padding.up;
 
-    glDrawArrays(GL_TRIANGLES, 0, num);
-}
+    const int ID = element->ID;
 
-void renderTextRetained(const Renderer* renderer, const Element* element) {
-    const TextElement *textElement = &element->textElement;
-    if (textElement->text.length == 0) return;
+    for (int i = 0; i < charQuads->size; i++) {
+        constexpr int texID = 1;
+        const Character* c = &charQuads->content[i];
 
-    Shaders.bind(&renderer->textShader);
-
-    Vertex vertices[textElement->charQuads.size * 6];
-
-    Vec3f color = {};
-
-    setUniform(&renderer->textShader, "fontAtlas", 0);
-    setUniform(&renderer->textShader, ("screenWidth"), (float) renderer->screenWidth);
-    setUniform(&renderer->textShader, ("screenHeight"), (float) renderer->screenHeight);
-    setUniform(&renderer->textShader, "color", color);
-
-    int v = 0;
-    for (int i = 0; i < textElement->charQuads.size; i++) {
-        const Character* c = &textElement->charQuads.content[i];
-
-        const float x = c->pos.x + (float) element->worldPos.x + element->padding.left;
-        const float y = c->pos.y + (float) element->worldPos.y + renderer->font.maxCharHeight * element->textElement.textScale + element->padding.up;
+        const float x = c->pos.x + xOffset;
+        const float y = c->pos.y + yOffset;
         const float w = c->width;
         const float h = c->height;
 
         const Vec2f uv0 = c->texPosStart;
         const Vec2f uv1 = c->texPosEnd;
 
-        vertices[v++] = (Vertex){x, y, uv0.x, uv0.y};
-        vertices[v++] = (Vertex){x+w, y, uv1.x, uv0.y};
-        vertices[v++] = (Vertex){x+w, y+h, uv1.x, uv1.y};
+        const int v0 = *vt;
+        vertices[*vt] = (GuiVertex){ {x,   y},   uv0, ID, texID}; (*vt)++;
+        vertices[*vt] = (GuiVertex){ {x+w, y},   uv1, ID, texID}; (*vt)++;
+        vertices[*vt] = (GuiVertex){ {x+w, y+h}, uv1, ID, texID }; (*vt)++;
+        vertices[*vt] = (GuiVertex){ {x,   y+h}, uv1, ID, texID }; (*vt)++;
 
-        vertices[v++] = (Vertex){x, y, uv0.x, uv0.y};
-        vertices[v++] = (Vertex){x+w, y+h, uv1.x, uv1.y};
-        vertices[v++] = (Vertex){x, y+h, uv0.x, uv1.y};
+        const int v1 = v0 + 1;
+        const int v2 = v0 + 2;
+        const int v3 = v0 + 3;
+
+        indices[(*id)++] = v0; indices[(*id)++] = v1; indices[(*id)++] = v2;
+        indices[(*id)++] = v0; indices[(*id)++] = v2; indices[(*id)++] = v3;
     }
-
-    drawTextBatched(renderer, vertices, v);
-    Shaders.unbind();
 }
 
 Vec2i measureElementText(const Font *font, const TextElement* textElement) {
