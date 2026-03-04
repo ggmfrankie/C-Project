@@ -1,68 +1,52 @@
 //
 // Created by Stefan on 10.10.2025.
 //
-#include "../GUI/Mesh.h"
+#include "Mesh.h"
 
 #include <string.h>
 #include <math.h>
 
 #include <bemapiset.h>
 #include "glad/gl.h"
+#include "Render/GUI/GuiElement.h"
 #include "Utils/Vector.h"
 
 void deleteMeshData(MeshData *meshData);
 inline float deg2rad(const float d) { return d * (M_PI / 180.0f); }
 
-Mesh newMesh(MeshData meshData) {
-    unsigned int VAO;
-    unsigned int VBOs[3];
-    unsigned int EBO;
 
-    glGenVertexArrays(1, &VAO);
-    glBindVertexArray(VAO);
+void getMeshFromElement(Element* element, GuiVertex *vertices, int *index) {
+    int id = *index;
+    for (int i = 0; i < 6; i++) {
+        gm->vertices[i] = (GuiVertex){
+            .hasTexture = element->flags.hasTexture,
+            .brightness = element->brightness,
+            .color = (Vec4f){element->color.x, element->color.y, element->color.z, 1.0f},
+        };
+    }
 
-    glGenBuffers(3, VBOs);
 
-    glBindBuffer(GL_ARRAY_BUFFER, VBOs[0]);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * meshData.vertexCount * 3, meshData.vertices, GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    vertices[id].pos = toVec2f(element->worldPos);
+    vertices[id].uv = element->texture.uv0;
+    id++;
 
-    glBindBuffer(GL_ARRAY_BUFFER, VBOs[1]);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * meshData.vertexCount * 3, meshData.normals, GL_STATIC_DRAW);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    vertices[id].pos = (Vec2f){0.0f, 1.0f};
+    vertices[id].uv = (Vec2f){element->texture.uv0.x, element->texture.uv1.y};
+    id++;
 
-    glBindBuffer(GL_ARRAY_BUFFER, VBOs[2]);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * meshData.vertexCount * 2, meshData.texCoords, GL_STATIC_DRAW);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+    vertices[id].pos = (Vec2f){1.0f, 0.0f};
+    vertices[id].uv = (Vec2f){element->texture.uv1.x, element->texture.uv0.y};
+    id++;
 
-    glGenBuffers(1, &EBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * meshData.indexCount, meshData.indices, GL_STATIC_DRAW);
+    vertices[id].pos = (Vec2f){1.0f, 0.0f};
+    vertices[id].uv = (Vec2f){element->texture.uv1.x, element->texture.uv0.y};
+    id++;
 
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
-    glEnableVertexAttribArray(2);
+    vertices[4].pos = (Vec2f){0.0f, 1.0f};
+    vertices[4].uv = (Vec2f){element->texture.uv0.x, element->texture.uv1.y};
 
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-
-    deleteMeshData(&meshData);
-
-    return (Mesh){
-        .indexCount = (int) meshData.indexCount,
-        .vaoId = VAO,
-        .vboId[0] = VBOs[0],
-        .vboId[1] = VBOs[1],
-        .vboId[2] = VBOs[2],
-        .eboId = EBO,
-        .vboCount = 3,
-    };
-}
-
-void Mesh_render(const Mesh *mesh) {
-    glBindVertexArray(mesh->vaoId);
-    glDrawElements(GL_TRIANGLES, mesh->indexCount, GL_UNSIGNED_INT, (void*)0);
-    glBindVertexArray(0);
+    vertices[5].pos = (Vec2f){1.0f, 1.0f};
+    vertices[5].uv = (Vec2f){element->texture.uv1.x, element->texture.uv1.y};
 }
 
 Mesh Mesh_loadSimpleQuad() {
@@ -167,7 +151,8 @@ void Mesh_connectFans(struct ArcInfo* a1, struct ArcInfo* a2, int* indices, int*
     indices[(*id)++] = a1->corner;
 }
 
-Mesh Mesh_loadRoundedCornerMesh2(const float r) {
+Mesh Mesh_loadRoundedCornerMesh2(Element* element) {
+
     const float radius = min(r, 0.5f);
     constexpr float r90 = (float)M_PI * 0.5f;
     constexpr int numTriangles = 12;
@@ -191,7 +176,7 @@ Mesh Mesh_loadRoundedCornerMesh2(const float r) {
     );
 
     auto tr = Mesh_triangulate(
-        (Vec3f){1-radius, radius},
+        (Vec3f){width-radius, radius},
         radius,
         vertices,
         &vert,
@@ -203,7 +188,7 @@ Mesh Mesh_loadRoundedCornerMesh2(const float r) {
     );
 
     auto br = Mesh_triangulate(
-        (Vec3f){1-radius, 1-radius},
+        (Vec3f){width-radius, height-radius},
         radius,
         vertices,
         &vert,
@@ -215,7 +200,7 @@ Mesh Mesh_loadRoundedCornerMesh2(const float r) {
     );
 
     auto bl = Mesh_triangulate(
-        (Vec3f){radius, 1-radius},
+        (Vec3f){radius, height-radius},
         radius,
         vertices,
         &vert,

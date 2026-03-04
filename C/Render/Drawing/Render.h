@@ -10,12 +10,12 @@
 extern "C" {
 #endif
 
-#include "ComputeShader.h"
-#include "GUI/GuiElement.h"
-#include "Shader.h"
-#include "../../Dependencies/include/GLFW/glfw3.h"
-#include "GUI/TextDisplaying.h"
-#include "GUI/Texture.h"
+#include "../ComputeShader.h"
+#include "../GUI/GuiElement.h"
+#include "../Shader.h"
+#include "../../../Dependencies/include/GLFW/glfw3.h"
+#include "TextDisplaying.h"
+#include "../GUI/Texture.h"
 
 extern Mesh quadMesh;
 

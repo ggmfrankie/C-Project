@@ -8,7 +8,7 @@
 #include <stdarg.h>
 
 #include "CallbackFunctions.h"
-#include "../Render.h"
+#include "../Drawing/Render.h"
 #include "../Engine.h"
 #include "GuiElementData.h"
 
@@ -24,15 +24,27 @@ void initElements() {
 Element* newElement(const Mesh mesh, const Vec2i pos, const int width, const int height) {
     g_Elements.content[g_Elements.size] = (Element){
         .name = nullptr,
-        .onClick = nullptr,
-        .onHover = nullptr,
-        .isMouseOver = nullptr,
-        .pos = pos,
-        .worldPos = pos,
-        .actualWidth = width,
-        .actualHeight = height,
-        .color = (Vec3f){0.0f, 0.0f, 0.0f},
-        .defaultColor = (Vec3f){0.0f, 0.0f, 0.0f},
+
+
+        .dims = {
+            .height = height,
+            .pos = pos,
+            .worldPos = pos,
+            .actualWidth = width,
+        },
+        .callbacks = {
+            .onClick = nullptr,
+            .onHover = nullptr,
+            .isMouseOver = nullptr,
+            .onUpdate = nullptr,
+            .reset = nullptr,
+            .whileSelected = nullptr,
+        },
+        .visuals = {
+            .brightness = 1.0f,
+            .texture = {},
+            .transparency = 0,
+        },
         .textElement = (TextElement){.charQuads = Character_newList(16), .forceResize = false, .hasText = false, .pos = {}, .text = NULL, .textColor = {}, .textScale = 1.0f, .width = 0},
         .parentElement = nullptr,
         .childElements = ChildElements_newList(8),
@@ -42,15 +54,15 @@ Element* newElement(const Mesh mesh, const Vec2i pos, const int width, const int
         .childGap = 0,
         .elementData = NULL,
         .positionMode = POS_FIT,
-        .brightness = 1.0f,
-        .guiMesh = {},
+
         .layoutDirection = 0,
-        .onUpdate = nullptr,
-        .reset = nullptr,
-        .texture = {},
-        .transparency = 0,
+
+
+
         .type = 0,
-        .whileSelected = nullptr
+
+        .instanceIndex = (int)g_Elements.size,
+        .generateMesh = Mesh_loadRoundedCornerMesh2,
     };
     return &g_Elements.content[g_Elements.size++];
 }
@@ -74,15 +86,15 @@ Element* f_addChildElements(Element* parent, ...) {
 }
 
 void setOnClickCallback(Element* element, bool (*onClick)(Element* element, Renderer* renderer)) {
-    element->onClick = onClick;
+    element->callbacks.onClick = onClick;
 }
 
 void setOnHoverCallback(Element* element, bool (*onHover)(Element* element, Renderer* renderer)) {
-    element->onHover = onHover;
+    element->callbacks.onHover = onHover;
 }
 
 void setBoundingBox(Element* element, bool (*isMouseOver)(const Element *element, Vec2i mousePos)) {
-    element->isMouseOver = isMouseOver;
+    element->callbacks.isMouseOver = isMouseOver;
 }
 
 void setText(Element* element, const char* text) {
@@ -125,7 +137,7 @@ void toggleVisible(Element* element) {
 
 void setColor(Element* element, const Vec3f color) {
     pthread_mutex_lock(&guiMutex);
-    element->color = color;
+    element->color = (Vec4f){color.x, color.y, color.z, 1.0f};
     rebuildQuadMesh(element);
     pthread_mutex_unlock(&guiMutex);
 }
@@ -140,37 +152,6 @@ bool isSelected_Quad(const Element *element, const Vec2i mousePos) {
         return true;
     }
     return false;
-}
-
-void rebuildQuadMesh(Element* element) {
-    GuiMesh *gm = &element->guiMesh;
-    gm->length = 6;
-
-    for (int i = 0; i < 6; i++) {
-        gm->vertices[i] = (GuiVertex){
-            .hasTexture = element->flags.hasTexture,
-            .brightness = element->brightness,
-            .color = (Vec4f){element->color.x, element->color.y, element->color.z, 1.0f},
-        };
-    }
-
-    gm->vertices[0].pos = (Vec2f){0.0f, 0.0f};
-    gm->vertices[0].uv = element->texture.uv0;
-
-    gm->vertices[1].pos = (Vec2f){0.0f, 1.0f};
-    gm->vertices[1].uv = (Vec2f){element->texture.uv0.x, element->texture.uv1.y};
-
-    gm->vertices[2].pos = (Vec2f){1.0f, 0.0f};
-    gm->vertices[2].uv = (Vec2f){element->texture.uv1.x, element->texture.uv0.y};
-
-    gm->vertices[3].pos = (Vec2f){1.0f, 0.0f};
-    gm->vertices[3].uv = (Vec2f){element->texture.uv1.x, element->texture.uv0.y};
-
-    gm->vertices[4].pos = (Vec2f){0.0f, 1.0f};
-    gm->vertices[4].uv = (Vec2f){element->texture.uv0.x, element->texture.uv1.y};
-
-    gm->vertices[5].pos = (Vec2f){1.0f, 1.0f};
-    gm->vertices[5].uv = (Vec2f){element->texture.uv1.x, element->texture.uv1.y};
 }
 
 Element *guiAddElement(
@@ -205,7 +186,7 @@ Element *guiAddElement(
     char *texture, bool invisible
 )
 {
-    Element* lastElement = newElement(mesh, pos, width, height, tex);
+    Element* lastElement = newElement(mesh, pos, width, height);
     if (mouseOver) {
         lastElement->isMouseOver = mouseOver;
         if (hover) lastElement->onHover = hover;
@@ -213,11 +194,11 @@ Element *guiAddElement(
             lastElement->onClick = click;
             if (task.func) {
                 lastElement->task = task;
-                if (task.userdata == NULL) lastElement->task.userdata = lastElement;
+                if (task.userdata == nullptr) lastElement->task.userdata = lastElement;
             }
         }
     }
-    lastElement->color = color;
+    lastElement->color = (Vec4f){color.x, color.y, color.z, 1.0f};
     lastElement->defaultColor = color;
     lastElement->padding = padding;
     lastElement->name = name;
@@ -243,7 +224,7 @@ Element *guiAddElement(
 
     rebuildQuadMesh(lastElement);
 
-    if (notSelectable) lastElement->isMouseOver = NULL;
+    if (notSelectable) lastElement->isMouseOver = nullptr;
 
     if (name) {
         Hashmap_Element_add(&g_Hashmap, name, lastElement);

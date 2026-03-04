@@ -7,9 +7,9 @@
 #include <stdbool.h>
 
 
-#include "Mesh.h"
+#include "../Drawing/Mesh.h"
 #include "Tasks.h"
-#include "TextDisplaying.h"
+#include "../Drawing/TextDisplaying.h"
 #include "../GUI/Texture.h"
 #include "../../Utils/SimpleArray.h"
 #include "../../Utils/HashMap.h"
@@ -24,18 +24,7 @@ typedef struct {
     Vec2f pos;
     Vec2f uv;
 
-    Vec4f color;
-    float brightness;
-
-    bool hasTexture;
-
 } GuiVertex;
-
-typedef struct {
-    GuiVertex vertices[32];
-    int length;
-    bool needUpdate;
-} GuiMesh;
 
 typedef struct TextElement {
     Vec2f pos;
@@ -92,35 +81,43 @@ typedef struct Element {
     ElementType type;
     ElementFlags flags;
 
-    Vec2i pos;
-    Vec2i worldPos;
+    struct {
+        Vec2i pos;
+        Vec2i worldPos;
 
-    float transparency;
-    float brightness;
+        int width;
+        int height;
+        int actualWidth;
+        int actualHeight;
+
+        int cornerRadius;
+    } dims;
+
+    struct {
+        float transparency;
+        float brightness;
+        Texture texture;
+        Vec4f color;
+        Vec3f defaultColor;
+    } visuals;
+
+    int instanceIndex;
 
     PositionMode positionMode;
     LayoutDirection layoutDirection;
 
-    int width;
-    int height;
-    int actualWidth;
-    int actualHeight;
-
-    GuiMesh guiMesh;
-    Atlas_Texture texture;
-    Vec3f color;
-    Vec3f defaultColor;
-
-    //Text display
     TextElement textElement;
 
-    //Interaction
-    bool (*isMouseOver)(const Element* element, Vec2i mousePos);
-    bool (*onClick)(Element* element, Renderer *renderer);
-    bool (*onHover)(Element* element, Renderer *renderer);
-    void (*whileSelected)(Element* element);
-    void (*onUpdate)(Element* element);
-    void (*reset)(Element* element);
+    void (*generateMesh)(Element* element, GuiVertex *vertices, int *index);
+
+    struct {
+        bool (*isMouseOver)(const Element* element, Vec2i mousePos);
+        bool (*onClick)(Element* element, Renderer *renderer);
+        bool (*onHover)(Element* element, Renderer *renderer);
+        void (*whileSelected)(Element* element);
+        void (*onUpdate)(Element* element);
+        void (*reset)(Element* element);
+    } callbacks;
 
     Task task;
     Element* parentElement;

@@ -18,12 +18,12 @@ add_library(GUI STATIC
         Main.c
         C/Utils/CString.c
         C/Utils/CString.h
-        C/Render/Render.c
-        C/Render/Render.h
-        C/Render/GUI/Mesh.c
-        C/Render/GUI/Mesh.h
+        C/Render/Drawing/Render.c
+        C/Render/Drawing/Render.h
+        C/Render/Drawing/Mesh.c
+        C/Render/Drawing/Mesh.h
         C/Utils/ArrayList.h
-        C/Render/gl.c
+        C/Render/Drawing/gl.c
         C/Render/Engine.c
         C/Render/Engine.h
         C/Utils/Vector.c
@@ -57,8 +57,8 @@ add_library(GUI STATIC
         C/Render/GUI/CallbackFunctions.h
         C/Render/GUI/CallbackFunctions.c
         C/Extern/Informatik/Geldautomat.c
-        C/Render/GUI/TextDisplaying.c
-        C/Render/GUI/TextDisplaying.h
+        C/Render/Drawing/TextDisplaying.c
+        C/Render/Drawing/TextDisplaying.h
         C/Extern/Informatik/PointerFun.c
         C/Extern/Informatik/Namensliste.c
         C/Extern/Informatik/Personalverwaltung.c
@@ -85,13 +85,14 @@ add_library(GUI STATIC
         C/Projects/ChessNewandImproved/ChessBetter2.c
         C/Projects/Tokenizer/Calculator.c
         C/Projects/Tokenizer/Calculator.h
-        C/Render/CRenderInterface.h
         C/Utils/CArrayList.c
         C/Utils/CArrayList.h
 
         Cpp/Games/BaseGame/GameGui.c
         C/Render/GUI/Update.c
         C/Render/GUI/Update.h
+        C/Render/Drawing/Batcher.c
+        C/Render/Drawing/Batcher.h
 )
 
 set_target_properties(GUI PROPERTIES LINKER_LANGUAGE C)

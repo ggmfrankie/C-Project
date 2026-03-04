@@ -9,8 +9,8 @@
 #define STB_TRUETYPE_IMPLEMENTATION
 #include <minwindef.h>
 #include <stb/stb_truetype.h>
-#include "GuiElement.h"
-#include "../Render.h"
+#include "../GUI/GuiElement.h"
+#include "Render.h"
 #include "../../Utils/DataStructures.h"
 #include "../../Utils/CString.h"
 #define FONT_ATLAS_SIZE 2048

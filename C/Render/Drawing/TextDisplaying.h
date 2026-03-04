@@ -5,7 +5,7 @@
 #ifndef C_TEXTELEMENT_H
 #define C_TEXTELEMENT_H
 
-#include "Texture.h"
+#include "../GUI/Texture.h"
 #include "../../../Dependencies/include/stb/stb_truetype.h"
 #include "../../Utils/Vector.h"
 struct Element;

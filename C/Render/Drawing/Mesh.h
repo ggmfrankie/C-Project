@@ -6,6 +6,7 @@
 #define C_MESH_H
 #include "../../Utils/ArrayList.h"
 #include "../../Utils/SimpleArray.h"
+#include "Render/GUI/GuiElement.h"
 
 typedef struct MeshData {
     float* vertices;
@@ -28,7 +29,7 @@ typedef struct Mesh {
 ARRAY_LIST(Mesh, Mesh)
 
 Mesh Mesh_loadSimpleQuad();
-Mesh Mesh_loadRoundedCornerMesh2(float r);
+Mesh Mesh_loadRoundedCornerMesh2(Element* element);
 Mesh newMesh(MeshData meshData);
 void Mesh_render(const Mesh *mesh);
 
