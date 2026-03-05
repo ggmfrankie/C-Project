@@ -23,6 +23,7 @@ struct Element;
     void gui_update();
     void gui_render();
 
+    void gui_addTextures(const char* name);
 
     void gui_charCallback(GLFWwindow*, unsigned int codepoint);
     void gui_keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
@@ -33,6 +34,8 @@ struct Element;
     void gui_toggleVisible(const char* name);
     void gui_setText(const char* name, const char* text);
     void gui_setColor(const char* name, float r, float g, float b);
+    void gui_resetColor(const char* name);
+    void gui_setCornerRadius(const char* name, int radius);
 
 #ifdef __cplusplus
 }

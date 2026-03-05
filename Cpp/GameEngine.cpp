@@ -17,13 +17,16 @@ void GameEngine::loop() {
     int i = 0;
     while(!glfwWindowShouldClose(screen.getWindowHandle()))
     {
-        auto lastTime = glfwGetTime();
+        const auto lastTime = glfwGetTime();
+
         glfwPollEvents();
         processTasks();
         update();
+
         screen.render();
         input.endFrame();
-        auto currentTime = glfwGetTime() - lastTime;
+
+        const auto currentTime = glfwGetTime() - lastTime;
 
         if (i > 100) {
             gui_setText("fps display", std::to_string(1.0/currentTime).c_str());

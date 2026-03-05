@@ -13,16 +13,16 @@ layout(binding = 1) uniform sampler2D glyphSampler;
 
 void main() {
     vec4 base;
-    if (f_HasTexture == 1){
+    if (f_AtlasIndex == 0){
 
-        if (f_AtlasIndex == 0) {
+        if (f_HasTexture == 1) {
             base = texture(guiSampler, f_UV);
         } else {
-            base = texture(glyphSampler, f_UV);
+            base = f_Color;
         }
 
     } else {
-        base = f_Color;
+        base = vec4(f_Color.rgb, texture(glyphSampler, f_UV).a);
     }
-    fragColor = (1.0 - f_Brightness) * base;
+    fragColor = f_Brightness * base;
 }

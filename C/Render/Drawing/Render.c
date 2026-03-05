@@ -55,6 +55,25 @@ void GUIRenderer_init(Renderer *renderer) {
     Shader_createUniform(&renderer->batched_guiShader, "screenHeight");
 }
 
+
+void beginScissor(const Element* e, int screenHeight) {
+    glEnable(GL_SCISSOR_TEST);
+
+    int x = e->dims.worldPos.x;
+    int y = screenHeight - (e->dims.worldPos.y + e->dims.actualHeight);
+    int w = e->dims.actualWidth;
+    int h = e->dims.actualHeight;
+
+    glScissor(x, y, w, h);
+}
+
+
+void endScissor() {
+    glDisable(GL_SCISSOR_TEST);
+}
+
+
+
 void Renderer_render2(const Renderer *renderer) {
     static GuiVertex vertices[MAX_GUI_VERTICES];
     int numVertices = 0;
@@ -72,6 +91,7 @@ void Renderer_render2(const Renderer *renderer) {
 #endif
 
     Shaders.bind(&renderer->batched_guiShader);
+    glEnable(GL_MULTISAMPLE);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, renderer->atlasId);
 
@@ -95,23 +115,26 @@ void Renderer_render2(const Renderer *renderer) {
     uploadBatchedQuads(vertices, numVertices, indices, numIndices);
     glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, nullptr);
     glBindVertexArray(0);
-
+    glDisable(GL_MULTISAMPLE);
     Shaders.unbind();
 }
 
 void accumulateMeshes(Element *element, const Renderer *renderer, GuiVertex *vertices, int *vt, int *indices, int *id) {
     if (element == NULL || !element->flags.isActive) return;
 
-    element->generateMesh(element, vertices, vt, indices, id);
+    beginScissor(element, renderer->screenHeight);
+
+    if (!element->flags.invisible) {
+        element->generateMesh(element, vertices, vt, indices, id);
+    }
     uploadElementData(element);
-
     accumulateTextQuads(element, vertices, vt, indices, id, &renderer->font);
-
 
     for (int i = 0; i < element->childElements.size; i++) {
         Element* childElement = element->childElements.content[i];
         accumulateMeshes(childElement, renderer, vertices, vt, indices, id);
     }
+    endScissor();
 }
 
 Vec2i updateLayout(Element* element, const Vec2i parentCursor, const Vec2i parentPos, const Font* font) {

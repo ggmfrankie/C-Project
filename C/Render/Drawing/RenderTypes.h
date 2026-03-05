@@ -11,8 +11,7 @@ typedef struct {
     Vec2f uv;
     int ID;
     int texID;
-    int _pad0;
-    int _pad1;
+    char _pad[8];
 } GuiVertex;
 
 typedef struct {
@@ -20,6 +19,13 @@ typedef struct {
     int hasTexture;
     Vec2f worldPos;
     Vec4f color;
+    Vec3f textColor;
+    char _pad[4];
 } InstanceData;
+
+struct test {
+    GuiVertex v;
+    InstanceData a;
+};
 
 #endif //MIXEDPROJECT_RENDERTYPES_H

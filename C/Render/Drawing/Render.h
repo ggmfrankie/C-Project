@@ -25,6 +25,12 @@ typedef struct Renderer {
 
     Font font;
     GLuint atlasId;
+
+    struct {
+        char* textureNames[512];
+        int index;
+    } textureBuffer;
+
     Hashmap_AtlasTextures textures;
 
     Element* guiRoot;

@@ -45,6 +45,7 @@ typedef struct {
     bool hasText;
     bool forceResize;
     String text;
+
     Vec3f textColor;
     float textScale;
 

@@ -37,7 +37,7 @@ namespace Render{
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
+        glfwWindowHint(GLFW_SAMPLES, 4);
         glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 
         windowHandle = glfwCreateWindow(width, height, name.c_str(), nullptr, nullptr);
@@ -55,7 +55,7 @@ namespace Render{
         glViewport(0, 0, width, height);
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         glEnable(GL_DEPTH_TEST);
-        glfwSwapInterval(1);
+        //glfwSwapInterval(1);
 
         glfwSetFramebufferSizeCallback(windowHandle, framebufferSizeCallback);
 

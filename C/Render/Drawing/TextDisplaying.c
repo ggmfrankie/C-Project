@@ -107,14 +107,19 @@ void accumulateTextQuads(const Element *element, GuiVertex *vertices, int *vt, i
         const float w = c->width;
         const float h = c->height;
 
-        const Vec2f uv0 = c->texPosStart;
-        const Vec2f uv1 = c->texPosEnd;
+        Vec2f start = c->texPosStart;
+        Vec2f end = c->texPosEnd;
+
+        const Vec2f uv0 = start;
+        const Vec2f uv1 = (Vec2f){end.x, start.y};
+        const Vec2f uv2 = end;
+        const Vec2f uv3 = (Vec2f){start.x, end.y};
 
         const int v0 = *vt;
         vertices[*vt] = (GuiVertex){ {x,   y},   uv0, ID, texID}; (*vt)++;
         vertices[*vt] = (GuiVertex){ {x+w, y},   uv1, ID, texID}; (*vt)++;
-        vertices[*vt] = (GuiVertex){ {x+w, y+h}, uv1, ID, texID }; (*vt)++;
-        vertices[*vt] = (GuiVertex){ {x,   y+h}, uv1, ID, texID }; (*vt)++;
+        vertices[*vt] = (GuiVertex){ {x+w, y+h}, uv2, ID, texID }; (*vt)++;
+        vertices[*vt] = (GuiVertex){ {x,   y+h}, uv3, ID, texID }; (*vt)++;
 
         const int v1 = v0 + 1;
         const int v2 = v0 + 2;
@@ -150,7 +155,7 @@ Vec2i measureText(const Font *font, const String *text) {
                             &x,
                             &y,
                             &q,
-                            1);
+                            0);
 
         const float glyphHeight = (q.y1 - q.y0);
 
@@ -165,9 +170,8 @@ Vec2i measureText(const Font *font, const String *text) {
 
 void reloadTextQuads(const Font* font, Element *element) {
     TextElement *textElement = &element->textElement;
-    if (textElement->text.length == 0) return;
-
     Character_ListClear(&textElement->charQuads);
+    if (textElement->text.length == 0) return;
 
     const float textScale = textElement->textScale;
 
@@ -197,7 +201,7 @@ void reloadTextQuads(const Font* font, Element *element) {
                             &cursor.x,
                             &cursor.y,
                             &q,
-                            1);
+                            0);
 
         const float glyphWidth  = (q.x1 - q.x0) * textScale;
         const float glyphHeight = (q.y1 - q.y0) * textScale;

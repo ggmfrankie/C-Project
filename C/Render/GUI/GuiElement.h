@@ -117,8 +117,11 @@ typedef struct {
     Vec2i pos;
     PositionMode posMode;
     LayoutDirection layoutDirection;
+
+    int cornerRadius;
     int width;
     int height;
+
     Texture* old_texture;
     char* texture;
     Vec3f color;
@@ -197,45 +200,9 @@ Element *guiAddElement(
     bool fixedWidth,
     bool fixedHeight,
     void (*whileSelected)(Element *element), bool draggable, void (*onUpdate)(Element *element), bool wantGrowHorizontal, bool
-    wantGrowVertical, float transparency, char *texture, bool invisible
-);
-
-Element *guiAddSimpleRectangle_Texture(
-    Vec2i pos,
-    int width,
-    int height,
-    Texture *tex
-);
-
-Element *guiAddSimpleRectangle_Color(
-    Vec2i pos,
-    int width,
-    int height,
-    Vec3f color
-);
-
-Element *guiAddSimpleButton_Texture(
-    Vec2i pos,
-    int width,
-    int height,
-    Texture *tex,
-    Task task,
-    const char *text
-);
-
-Element *guiAddSimpleButton_Color(
-    Vec2i pos,
-    int width,
-    int height,
-    Vec3f color,
-    Task task,
-    const char *text
+    wantGrowVertical, float transparency, char *texture, bool invisible, int cornerRadius
 );
 
 Element *createElement(ElementSettings es);
 Element *createTextFieldElement( ElementSettings elementSettings);
-
-typedef struct Element_Functions {
- //TODO
-} Element_Functions;
 #endif //C_GUIELEMENT_H

@@ -78,9 +78,10 @@ void uploadBatchedQuads(const GuiVertex *vertices, const int vt, const int* indi
 static InstanceData instanceFromElement(const Element* e) {
     InstanceData out;
     out.brightness = e->visuals.brightness;
-    out.worldPos        = toVec2f(e->dims.worldPos);
+    out.worldPos   = toVec2f(e->dims.worldPos);
     out.color      = e->visuals.color;
     out.hasTexture = e->flags.hasTexture;
+    out.textColor  = e->textElement.textColor;
     return out;
 }
 

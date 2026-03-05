@@ -170,7 +170,8 @@ Element *guiAddElement(
     bool wantGrowVertical,
     float transparency,
     char *texture,
-    bool invisible
+    bool invisible,
+    int cornerRadius
 )
 {
     Element* lastElement = newElement(pos, width, height);
@@ -204,6 +205,8 @@ Element *guiAddElement(
     lastElement->visuals.transparency = transparency;
     lastElement->flags.hasTexture = false;
     lastElement->flags.invisible = invisible;
+    lastElement->visuals.brightness = 1.0f;
+    lastElement->dims.cornerRadius = cornerRadius;
 
     if (texture) {
         lastElement->visuals.texture = getTexture(texture);
@@ -220,7 +223,7 @@ Element *guiAddElement(
         t->hasText = true;
         t->charQuads = Character_newList(16);
         t->text = newReservedString(128),
-        t->textColor = (Vec3f){1.0f, 1.0f, 1.0f};
+        t->textColor = (Vec3f){.0f, .0f, .0f};
         t->forceResize = forceResize,
         t->pos = (Vec2f){};
         t->width = 0;
@@ -239,11 +242,11 @@ Element *guiAddSimpleSlider(
     SliderData* sliderData
 )
 {
-    Element* element = guiAddElement(&g_Elements, nullptr, pos, width, height, nullptr, colorBackground, (Padding){10, 10, 10, 10}, 10, isSelected_Quad, hoverAndDragFun, NULL, (Task){}, NULL, true, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false, 0.0f, NULL, true);
+    Element* element = guiAddElement(&g_Elements, nullptr, pos, width, height, nullptr, colorBackground, (Padding){10, 10, 10, 10}, 10, isSelected_Quad, hoverAndDragFun, NULL, (Task){}, NULL, true, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false, 0.0f, NULL, true, 0);
     Vec2i sliderPos = {};
     sliderPos.x = width/2;
     sliderPos.y = 0;
-    Element* sliderElement = guiAddElement(&g_Elements, nullptr, sliderPos, width, height, nullptr, colorSlider, (Padding){10, 10, 10, 10}, 10, isSelected_Quad, hoverAndDragFun, sliderCallbackFun, (Task){}, NULL, true, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false, 0.0f, NULL, true);
+    Element* sliderElement = guiAddElement(&g_Elements, nullptr, sliderPos, width, height, nullptr, colorSlider, (Padding){10, 10, 10, 10}, 10, isSelected_Quad, hoverAndDragFun, sliderCallbackFun, (Task){}, NULL, true, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false, 0.0f, NULL, true, 0);
     element->childElements.add(&element->childElements, sliderElement);
     element->elementData = sliderData;
     return element;
@@ -256,6 +259,7 @@ Element *createTextFieldElement(const ElementSettings elementSettings) {
         (ElementSettings){
             .width = elementSettings.width - elementSettings.padding.left - elementSettings.padding.right,
             .height = elementSettings.height - elementSettings.padding.up - elementSettings.padding.down,
+            .padding = {5,5,5,5},
             .elementData = textData,
             .color = v_mul(elementSettings.color, 0.8f),
             .onClick = textFieldCallbackFun,
@@ -297,7 +301,8 @@ Element *createElement(const ElementSettings es) {
                          es.wantGrowVertical,
                          es.transparency,
                          nullptr,
-                         es.invisible
+                         es.invisible,
+                         es.cornerRadius
     );
 }
 

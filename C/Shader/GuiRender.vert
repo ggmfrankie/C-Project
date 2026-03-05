@@ -11,6 +11,7 @@ struct InstanceData {
     int hasTexture;
     vec2 worldPos;
     vec4 color;
+    vec3 textColor;
 };
 
 layout(std430, binding = 0) buffer InstanceBuffer {
@@ -36,7 +37,12 @@ void main() {
     gl_Position = vec4(normPos, 0.0, 1.0);
 
     f_UV = uv;
-    f_Color = inst.color;
+    if (inAtlasIndex == 1){
+        f_Color = vec4(inst.textColor,1.0);
+    } else {
+        f_Color = inst.color;
+    }
+
     f_HasTexture = inst.hasTexture;
     f_Brightness = inst.brightness;
     f_AtlasIndex = inAtlasIndex;

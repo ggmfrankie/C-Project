@@ -31,6 +31,7 @@ namespace Render {
     }
 
     void BaseGame::postInit() {
+        gui_addTextures("GrayBox.png");
         gui_init(screen->getWindowHandle(), screen->getWidth(), screen->getHeight(), generateGUI);
     }
 

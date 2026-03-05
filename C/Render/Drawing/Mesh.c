@@ -145,6 +145,7 @@ void Mesh_loadRoundedCornerMesh2(const Element* element, GuiVertex *vertices, in
             uv0.x * (1.0f - uNorm) + uv1.x * uNorm,
             uv0.y * (1.0f - vNorm) + uv1.y * vNorm
         };
-
+        p->ID = element->ID;
+        p->texID = 0;
     }
 }

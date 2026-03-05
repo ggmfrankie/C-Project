@@ -64,6 +64,7 @@ void gui_init(GLFWwindow* window, const int width, const int height, void (*gene
     pthread_cond_broadcast(&guiInitCond);
     pthread_mutex_unlock(&guiMutex);
 
+
     pthread_create(&workerThreadID, nullptr, workerThreadInit, NULL);
 }
 
@@ -94,6 +95,19 @@ void gui_setColor(const char* name, const float r, const float g, const float b)
     setColor(getElement(name), (Vec3f){r, g, b});
 }
 
+void gui_resetColor(const char* name) {
+    auto e = getElement(name);
+    setColor(e, e->visuals.defaultColor);
+}
+
+void gui_setCornerRadius(const char* name, int radius) {
+    getElement(name)->dims.cornerRadius = radius;
+}
+
+void gui_addTextures(const char* name) {
+    loadTextures(&g_Renderer.atlasId, 1024, 1024, name);
+}
+
 [[Todo]]
 void startEngine(void (*generateGUI)(Element* guiRoot)) {
     g_Renderer = newGUIRenderer(nullptr,1024, 1024, "ARIAL.TTF");
@@ -119,8 +133,6 @@ void startEngine(void (*generateGUI)(Element* guiRoot)) {
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    //loadTextures(&g_Renderer.atlasId, 1024, 1024, "Pointer Schematic.png");
 
     generateGUI(g_Renderer.guiRoot);
 
