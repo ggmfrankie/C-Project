@@ -11,12 +11,14 @@ typedef struct {
     Vec2f uv;
     int ID;
     int texID;
+    int _pad0;
+    int _pad1;
 } GuiVertex;
 
 typedef struct {
     float brightness;
     int hasTexture;
-    Vec2f pos;
+    Vec2f worldPos;
     Vec4f color;
 } InstanceData;
 

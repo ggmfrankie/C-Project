@@ -50,9 +50,9 @@ void GUIRenderer_init(Renderer *renderer) {
     //ComputeShader_createUniform(&renderer->computeShader, ("thickness"));
     //ComputeShader_update(&renderer->computeShader, graphingFunction);
 
+    initBatchedRendering();
     Shader_createUniform(&renderer->batched_guiShader, "screenWidth");
     Shader_createUniform(&renderer->batched_guiShader, "screenHeight");
-    Shader_createUniform(&renderer->batched_guiShader, "atlasSampler");
 }
 
 void Renderer_render2(const Renderer *renderer) {
@@ -60,8 +60,6 @@ void Renderer_render2(const Renderer *renderer) {
     int numVertices = 0;
     static int indices[MAX_GUI_VERTICES];
     int numIndices = 0;
-
-    glClear(GL_COLOR_BUFFER_BIT);
 
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
@@ -77,10 +75,11 @@ void Renderer_render2(const Renderer *renderer) {
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, renderer->atlasId);
 
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, renderer->font.fontAtlas.textureId);
+
     setUniform(&renderer->batched_guiShader, "screenWidth", (float) renderer->screenWidth);
     setUniform(&renderer->batched_guiShader, "screenHeight", (float) renderer->screenHeight);
-
-    setUniform(&renderer->batched_guiShader, "atlasSampler", 0);
 
     const Element* guiRoot = renderer->guiRoot;
 
@@ -117,8 +116,8 @@ void accumulateMeshes(Element *element, const Renderer *renderer, GuiVertex *ver
 
 Vec2i updateLayout(Element* element, const Vec2i parentCursor, const Vec2i parentPos, const Font* font) {
     if (!element || !element->flags.isActive) return (Vec2i){0,0};
-    const auto* cb = &element->callbacks;
-    auto* dims = &element->dims;
+    const auto cb = &element->callbacks;
+    const auto dims = &element->dims;
     if (cb->reset) cb->reset(element);
 
     if (element->positionMode == POS_FIT) {
@@ -200,7 +199,6 @@ inline bool isMousePressed(GLFWwindow* window, const int mouseButton) {
 Renderer newGUIRenderer(GLFWwindow* window, const int width, const int height, char *fontFile) {
     return (Renderer){
         .batched_guiShader = newShader("GuiRender.vert", "GuiRender.frag"),
-        .textShader = newShader("TextRender.vert", "TextRender.frag"),
         .window = window,
         .screenWidth = width,
         .screenHeight = height,

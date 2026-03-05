@@ -7,11 +7,9 @@
 #include <stdbool.h>
 
 
-#include "../Drawing/Mesh.h"
 #include "Tasks.h"
 #include "../Drawing/TextDisplaying.h"
 #include "../GUI/Texture.h"
-#include "../../Utils/SimpleArray.h"
 #include "../../Utils/HashMap.h"
 #include "../../Utils/Vector.h"
 
@@ -20,19 +18,7 @@ typedef Renderer Renderer;
 struct Element;
 typedef Element Element;
 
-typedef struct TextElement {
-    Vec2f pos;
-    float width;
-    bool hasText;
-    bool forceResize;
-    String text;
-    Vec3f textColor;
-    float textScale;
-
-    List_Character charQuads;
-} TextElement;
-
-typedef struct Padding {
+typedef struct {
     int left;
     int up;
     int right;
@@ -55,25 +41,24 @@ typedef enum {
     t_textField
 } ElementType;
 
-typedef struct {
-    bool isActive: 1;
-    bool autoFit: 1;
-    bool invisible: 1;
-    bool fixedWidth: 1;
-    bool fixedHeight: 1;
-    bool draggable: 1;
-    bool needsDeletion: 1;
-    bool wantGrowHorizontal: 1;
-    bool wantGrowVertical: 1;
-    bool hasTexture: 1;
-} ElementFlags;
-
 ARRAY_LIST(ChildElements, Element*)
 
 typedef struct Element {
     char* name;
     ElementType type;
-    ElementFlags flags;
+
+    struct {
+        bool isActive: 1;
+        bool autoFit: 1;
+        bool invisible: 1;
+        bool fixedWidth: 1;
+        bool fixedHeight: 1;
+        bool draggable: 1;
+        bool needsDeletion: 1;
+        bool wantGrowHorizontal: 1;
+        bool wantGrowVertical: 1;
+        bool hasTexture: 1;
+    } flags;
 
     struct {
         Vec2i pos;
@@ -100,9 +85,7 @@ typedef struct Element {
     PositionMode positionMode;
     LayoutDirection layoutDirection;
 
-    TextElement textElement;
-
-    void (*generateMesh)(Element* element, GuiVertex *vertices, int *vt, int *indices, int *id);
+    void (*generateMesh)(const Element* element, GuiVertex *vertices, int *vt, int *indices, int *id);
 
     struct {
         bool (*isMouseOver)(const Element* element, Vec2i mousePos);
@@ -113,10 +96,12 @@ typedef struct Element {
         void (*reset)(Element* element);
     } callbacks;
 
+    Padding padding;
+    TextElement textElement;
+
     Task task;
     Element* parentElement;
     List_ChildElements childElements;
-    Padding padding;
     int childGap;
 
     void* elementData;
@@ -162,7 +147,6 @@ typedef struct {
 } ElementSettings;
 
 void initElements();
-void rebuildQuadMesh(Element* element);
 
 Element* newElement(Vec2i pos, int width, int heigh);
 Element* f_addChildElements(Element* parent, ...);

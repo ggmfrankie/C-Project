@@ -14,8 +14,6 @@ struct Element;
 typedef struct Element Element;
 struct Renderer;
 typedef struct Renderer Renderer;
-struct TextElement;
-typedef struct TextElement TextElement;
 
 typedef struct {
     Basic_Texture fontAtlas;
@@ -40,6 +38,19 @@ typedef struct {
 } Character;
 
 ARRAY_LIST(Character, Character)
+
+typedef struct {
+    Vec2f pos;
+    float width;
+    bool hasText;
+    bool forceResize;
+    String text;
+    Vec3f textColor;
+    float textScale;
+
+    List_Character charQuads;
+
+} TextElement;
 
 Font loadFontAtlas(char* file);
 void reloadTextQuads(const Font* font, Element *element);

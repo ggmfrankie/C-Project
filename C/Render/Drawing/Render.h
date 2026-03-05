@@ -20,7 +20,6 @@ typedef struct Renderer {
     Vec2i mousePos;
 
     Shader batched_guiShader;
-    Shader textShader;
 
     ComputeShader computeShader;
 

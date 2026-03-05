@@ -78,25 +78,24 @@ void uploadBatchedQuads(const GuiVertex *vertices, const int vt, const int* indi
 static InstanceData instanceFromElement(const Element* e) {
     InstanceData out;
     out.brightness = e->visuals.brightness;
-    out.pos        = toVec2f(e->dims.pos);
+    out.worldPos        = toVec2f(e->dims.worldPos);
     out.color      = e->visuals.color;
-    out.texture    = e->visuals.texture;
+    out.hasTexture = e->flags.hasTexture;
     return out;
 }
 
-static size_t ssboOffsetBytes(int index) {
+static size_t ssboOffsetBytes(const int index) {
     return (size_t)index * sizeof(InstanceData);
 }
 
 void uploadElementData(Element* element) {
     if (!element) return;
-    int id = element->ID;
+    const int id = element->ID;
     if (id < 0 || id >= MAX_GUI_INSTANCES) return;
 
-    InstanceData data = instanceFromElement(element);
+    const InstanceData data = instanceFromElement(element);
 
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, graphicsData.SSBO);
-
 
     glBufferSubData(GL_SHADER_STORAGE_BUFFER,
         (GLintptr)ssboOffsetBytes(id),

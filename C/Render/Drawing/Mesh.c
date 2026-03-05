@@ -19,7 +19,7 @@ struct ArcInfo {
     int corner;
 };
 
-static struct ArcInfo Mesh_triangulate(Vec2f corner, float radius, GuiVertex *verts, int* vt, int* indices, int* id, float startAngle, float endAngle, int numTriangles) {
+static struct ArcInfo Mesh_triangulate(const Vec2f corner, const float radius, GuiVertex *verts, int* vt, int* indices, int* id, float startAngle, float endAngle, int numTriangles) {
     float radStep = (endAngle - startAngle)/(float)numTriangles;
     int cornerIndex = *vt;
 
@@ -69,6 +69,8 @@ void Mesh_loadRoundedCornerMesh2(const Element* element, GuiVertex *vertices, in
 
     constexpr float r90 = (float)M_PI * 0.5f;
     constexpr int numTriangles = 12;
+
+    int start = *vt;
 
     auto tl = Mesh_triangulate(
         (Vec2f){radius, radius},
@@ -130,14 +132,14 @@ void Mesh_loadRoundedCornerMesh2(const Element* element, GuiVertex *vertices, in
     indices[(*id)++] = bl.corner;
     indices[(*id)++] = br.corner;
 
-    Vec2f uv0 = element->visuals.texture.uv0;
-    Vec2f uv1 = element->visuals.texture.uv1;
+    const Vec2f uv0 = element->visuals.texture.uv0;
+    const Vec2f uv1 = element->visuals.texture.uv1;
 
-    for (int i = 0; i < *vt; i++) {
+    for (int i = start; i < *vt; i++) {
         GuiVertex* p = &vertices[i];
 
-        float uNorm = p->pos.x / width;
-        float vNorm = p->pos.y / height;
+        const float uNorm = p->pos.x / width;
+        const float vNorm = p->pos.y / height;
 
         p->uv = (Vec2f){
             uv0.x * (1.0f - uNorm) + uv1.x * uNorm,
