@@ -85,8 +85,6 @@ namespace Obj {
 
         shader = s;
 
-        puts("init mesh");
-
         if (texture.hasData()) texture.init();
         if (material.hasData()) material.init();
 
