@@ -42,6 +42,8 @@ void generateMainMenuGui(Element* guiRoot) {
     const Task changeFov70 = {Engine_changeFOV, &fov};
     const Task changeFov90 = {Engine_changeFOV, &fov2};
 
+    const Task runCommand = {Engine_runCommand};
+
     addChildElements(guiRoot,
         addChildElements(
             createElement((ElementSettings){
@@ -66,8 +68,9 @@ void generateMainMenuGui(Element* guiRoot) {
                 .height = 20,
                 .width = 100,
                 .color = {0.88f, 0.88f, 0.91f},
-                .cornerRadius = 10
-            }),
+                .cornerRadius = 10,
+                .task = runCommand
+            }, textField_runTask),
             createElement((ElementSettings){
                 .padding = {10,10,10,10},
                 .height = 20,

@@ -38,7 +38,7 @@ void GameEngine::loop() {
 }
 
 void GameEngine::init() {
-    game.passState({input, screen.getCamera(), screen});
+    game.passState({input, screen.getCamera(), screen, commandRegistry});
     game.preInit();
     screen.init();
     input.init(screen.getWindowHandle());
@@ -63,6 +63,10 @@ void GameEngine::processTasks() {
 
 Render::Screen& GameEngine::getScreen() {
     return screen;
+}
+
+Engine::CommandRegistry& GameEngine::getCommandRegistry() {
+    return commandRegistry;
 }
 
 GameEngine& GameEngine::New(Render::IGame& game) {

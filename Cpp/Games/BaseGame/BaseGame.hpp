@@ -27,6 +27,7 @@ namespace Render {
         Camera* camera = nullptr;
         Input* input = nullptr;
         Screen* screen = nullptr;
+        Engine::CommandRegistry* cRegistry = nullptr;
 
         bool guiMode = false;
 

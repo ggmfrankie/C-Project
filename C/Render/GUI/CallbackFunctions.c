@@ -11,6 +11,7 @@
 #include <windows.h>
 
 #include "../Engine.h"
+#include "Utils/DataStructures.h"
 
 bool dragFun(Element *element, const Renderer *renderer) {
     static Vec2i offset;
@@ -90,7 +91,9 @@ bool sliderCallbackFun(Element *element, Renderer *renderer) {
     return false;
 }
 
-bool textFieldCallbackFun(Element *element, Renderer *renderer) {
+bool textField_onClick(Element *element, Renderer *renderer) {
+    if(element->type != t_textField) return false;
+
     TextFieldData* data = element->elementData;
     if (Strings.isEmpty(&data->text)) return false;
 
@@ -109,6 +112,25 @@ bool textFieldCallbackFun(Element *element, Renderer *renderer) {
         }
     }
     data->cursor.byteIndex = i;
+    return true;
+}
+
+bool textField_runTask(Element *element, Renderer *renderer) {
+    if(element->type != t_textField) return false;
+    TextFieldData* data = element->elementData;
+    if (data->text.length == 0) return false;
+
+    char* newBuffer = malloc(data->text.length + 1);
+    memcpy(newBuffer, data->text.content, data->text.length);
+    newBuffer[data->text.length] = '\0';
+
+    str_clear(&data->text);
+    data->cursor.byteIndex = 0;
+    setText_noLock(element,"");
+
+    if (element->task.func && !element->task.isBlocked) {
+        pushTask(element->task.func, newBuffer);
+    }
     return true;
 }
 

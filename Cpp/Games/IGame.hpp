@@ -10,6 +10,7 @@
 #include "../Render/Objects/Object.hpp"
 #include "../Render/Objects/Loader/OBJLoader.hpp"
 #include "../Render/Transformation/Camera.hpp"
+#include "Engine/CommandRegistry.hpp"
 #include "Render/Screen.hpp"
 
 
@@ -19,6 +20,7 @@ namespace Render {
         Input& input;
         Camera& camera;
         Screen& screen;
+        Engine::CommandRegistry& commandRegistry;
     };
 
     class IGame {

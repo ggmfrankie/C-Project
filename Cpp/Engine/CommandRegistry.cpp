@@ -27,19 +27,6 @@ namespace Engine {
         argument
     };
 
-    enum class TokenType {
-        command,
-        argument,
-        textLiteral
-    };
-
-    struct Token {
-        TokenType type;
-        std::string_view value;
-
-        Token(const TokenType t, const std::string_view value) :type(t), value(value) {}
-    };
-
 
     struct Transition {
         variant<function<bool(State s)>, State> prevState;
@@ -68,19 +55,22 @@ namespace Engine {
         static auto state = State::start;
         static int begin = 0, end = 0;
 
-        static auto newCommandToken = [](vector<Token>& t, const string& s){if (end != begin) t.emplace_back(TokenType::command, string_view(s.data()+begin, end - begin)); begin = end;};
-        static auto newArgumentToken = [](vector<Token>& t, const string& s){if (end != begin) t.emplace_back(TokenType::argument, string_view(s.data()+begin, end - begin)); begin = end;};
-        static auto newTextLiteralToken = [](vector<Token>& t, const string& s){if (end != begin) t.emplace_back(TokenType::textLiteral, string_view(s.data()+begin, end - begin)); begin = end;};
+        static auto newCommandToken = [](vector<Token>& t, const string& s){if (end != begin) t.emplace_back(TokenType::command, string_view(s.data()+begin, end - begin)); begin = ++end;};
+        static auto newArgumentToken = [](vector<Token>& t, const string& s){if (end != begin) t.emplace_back(TokenType::argument, string_view(s.data()+begin, end - begin)); begin = ++end;};
+        static auto newTextLiteralToken = [](vector<Token>& t, const string& s){if (end != begin) t.emplace_back(TokenType::textLiteral, string_view(s.data()+begin, end - begin)); begin = ++end;};
 
+        static auto moveBeginAndEnd = [](vector<Token>& t, const string& s){begin++; end++;};
         static auto moveEnd = [](vector<Token>& t, const string& s){end++;};
 
         static auto anyState = [](State s){return true;};
         static auto anyChar = [](char c){return true;};
 
+        static auto isValidForArgs = [](char c){return isdigit(c) || isalpha(c) || c == '-';};
+
         static auto resetState = [](vector<Token>& t, const string& s){begin = end = 0;};
 
         static Transition transitions[] = {
-            {State::start, '/', State::command},
+            {State::start, '/', State::command, moveBeginAndEnd},
             {State::start, [](char c){return c != '/';}, State::plainText, moveEnd},
 
             {State::plainText, anyChar, State::plainText, moveEnd},
@@ -90,7 +80,7 @@ namespace Engine {
             {State::command, isspace, State::argument, newCommandToken},
             {State::command, '\n', State::command, newCommandToken},
 
-            {State::argument, [](char c){return !isspace(c); }, State::argument, moveEnd},
+            {State::argument, isValidForArgs, State::argument, moveEnd},
             {State::argument, isspace, State::argument, newArgumentToken},
             {State::argument, '\n', State::argument, newArgumentToken},
 
@@ -106,6 +96,28 @@ namespace Engine {
         }
     }
 
+    std::pair<std::string, std::vector<std::string>> extractCommandAndArgs(const std::vector<Token>& tokens) {
+        if (tokens.empty() || tokens[0].type != TokenType::command) {
+
+            throw std::runtime_error("No command found");
+        }
+
+        for (auto& token: tokens) {
+            std::cout << token.value << "\n";
+        }
+
+        std::string command = std::string(tokens[0].value);
+        std::vector<std::string> args;
+
+        for (size_t i = 1; i < tokens.size(); ++i) {
+            if (tokens[i].type == TokenType::argument) {
+                args.emplace_back(tokens[i].value);
+            }
+        }
+
+        return {command, args};
+    }
+
     vector<Token> tokenize(const string& command) {
         vector<Token> tokens{};
         tokens.reserve(100);
@@ -114,6 +126,7 @@ namespace Engine {
         }
         procChar('\n', tokens, command);
         procChar('\0', tokens, command);
+
         return tokens;
     }
 

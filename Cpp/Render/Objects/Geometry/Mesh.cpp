@@ -53,7 +53,7 @@ namespace Obj {
         if (initialized) glDeleteVertexArrays(1, &VAO);
     }
 
-    void Mesh::init(ggm::Shader* s) {
+    void Mesh::init(Render::Shader* s) {
         glGenVertexArrays(1, &VAO);
         glBindVertexArray(VAO);
         glGenBuffers(3, VBOs.data());

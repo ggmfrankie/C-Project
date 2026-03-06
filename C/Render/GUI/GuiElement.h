@@ -204,5 +204,5 @@ Element *guiAddElement(
 );
 
 Element *createElement(ElementSettings es);
-Element *createTextFieldElement( ElementSettings elementSettings);
+Element *createTextFieldElement( ElementSettings elementSettings, bool (*onEnterCallback)(Element* element, Renderer *renderer));
 #endif //C_GUIELEMENT_H

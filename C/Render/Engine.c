@@ -262,6 +262,10 @@ void gui_charCallback(GLFWwindow* window, const unsigned int codepoint) {
 
 void gui_keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     if (focusedElement == NULL || focusedElement->type == t_defaultElement) return;
+    if (key == GLFW_KEY_ESCAPE) {
+        focusedElement = nullptr;
+        return;
+    }
 
     if (focusedElement->type == t_textField) {
         if (action == GLFW_PRESS || action == GLFW_REPEAT)
@@ -277,7 +281,12 @@ void gui_keyCallback(GLFWwindow* window, int key, int scancode, int action, int 
             else if (key == GLFW_KEY_RIGHT && tfd->cursor.byteIndex < tfd->text.length) {
                 tfd->cursor.byteIndex++;
             }
-
+            else if (key == GLFW_KEY_ENTER) {
+                if (tfd->onEnterCallback) {
+                    tfd->onEnterCallback(focusedElement, &g_Renderer);
+                }
+                focusedElement = nullptr;
+            }
         }
     }
 }

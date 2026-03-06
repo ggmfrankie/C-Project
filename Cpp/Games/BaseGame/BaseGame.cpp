@@ -28,6 +28,27 @@ namespace Render {
         screen->addObject(std::move(obj));
         screen->addObject(std::move(obj2));
         screen->addObject(std::move(obj3));
+
+        cRegistry->registerCommand<
+            Engine::Arg<int>,
+            Engine::Arg<int>
+        >(
+            "add",
+            [](int a, int b) {
+                std::cout << a + b << std::endl;
+            }
+        );
+
+        cRegistry->registerCommand<
+            Engine::Arg<float>,
+            Engine::Arg<float>,
+            Engine::Arg<float>
+        >(
+            "tp",
+            [this](float a, float b, float c) {
+                camera->setPos({a,b,c});
+            }
+        );
     }
 
     void BaseGame::postInit() {
@@ -70,6 +91,7 @@ namespace Render {
         camera = &e.camera;
         input = &e.input;
         screen = &e.screen;
+        cRegistry = &e.commandRegistry;
     }
 
     void BaseGame::toggleCursorMode(GLFWwindow* window, const bool guiMode) {

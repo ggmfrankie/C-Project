@@ -171,7 +171,10 @@ Vec2i measureText(const Font *font, const String *text) {
 void reloadTextQuads(const Font* font, Element *element) {
     TextElement *textElement = &element->textElement;
     Character_ListClear(&textElement->charQuads);
-    if (textElement->text.length == 0) return;
+    if (textElement->text.length == 0) {
+        textElement->width = 10;
+        return;
+    }
 
     const float textScale = textElement->textScale;
 

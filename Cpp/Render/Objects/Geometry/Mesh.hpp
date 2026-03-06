@@ -29,7 +29,7 @@ namespace Obj {
 
         ~Mesh();
 
-        void init(ggm::Shader *);
+        void init(Render::Shader *);
 
         void render() const;
 
@@ -54,7 +54,7 @@ namespace Obj {
         std::vector<Math::Vector2f> uvs{};
         std::vector<GLuint> indices{};
 
-        ggm::Shader* shader = nullptr;
+        Render::Shader* shader = nullptr;
     };
 }
 

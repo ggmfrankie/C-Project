@@ -6,6 +6,7 @@
 #define C_GAMEENGINE_H
 #include <queue>
 
+#include "Engine/CommandRegistry.hpp"
 #include "Engine/Task.hpp"
 #include "Games/IGame.hpp"
 #include "Render/Screen.hpp"
@@ -28,6 +29,7 @@ public:
     void processTasks();
 
     Render::Screen &getScreen();
+    Engine::CommandRegistry &getCommandRegistry();
 
     static GameEngine &New(Render::IGame &game);
 
@@ -38,6 +40,7 @@ private:
     Render::IGame& game;
     Render::Screen screen;
     Render::Input input;
+    Engine::CommandRegistry commandRegistry;
 
     std::deque<Engine::Task> tasks{};
 };

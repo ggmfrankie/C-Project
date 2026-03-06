@@ -36,7 +36,7 @@ void generateTestGUI(Element *guiRoot) {
                 .height = 20,
                 .width = 100,
                 .color = {0.5, 1.0, 0.3}
-            }),
+            }, nullptr),
             addChildElements(
                 createElement((ElementSettings){
                     .width = 20,

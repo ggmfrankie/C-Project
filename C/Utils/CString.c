@@ -285,10 +285,8 @@ void str_delete(String* string){
 }
 
 void str_clear(String* string) {
-    string->content = NULL;
     string->length = 0;
-    string->capacity = 0;
-    string->isHeap = false;
+    string->content[0] = '\0';
 }
 
 void str_println(const String* string){

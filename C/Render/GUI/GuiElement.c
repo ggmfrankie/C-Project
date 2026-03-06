@@ -252,9 +252,10 @@ Element *guiAddSimpleSlider(
     return element;
 }
 
-Element *createTextFieldElement(const ElementSettings elementSettings) {
+Element *createTextFieldElement(const ElementSettings elementSettings, bool (*onEnterCallback)(Element* element, Renderer *renderer)) {
     Element* element = createElement(elementSettings);
     TextFieldData* textData = calloc(1, sizeof(TextFieldData));
+    textData->onEnterCallback = onEnterCallback;
     Element* textField = createElement(
         (ElementSettings){
             .width = elementSettings.width - elementSettings.padding.left - elementSettings.padding.right,
@@ -262,11 +263,13 @@ Element *createTextFieldElement(const ElementSettings elementSettings) {
             .padding = {5,5,5,5},
             .elementData = textData,
             .color = v_mul(elementSettings.color, 0.8f),
-            .onClick = textFieldCallbackFun,
-            .text = "hallo"
+            .onClick = textField_onClick,
+            .text = "",
+            .task = elementSettings.task,
         }
     );
     textField->type = t_textField;
+    element->type = t_textField;
     addChildElements(element, textField);
 
     return element;

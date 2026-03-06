@@ -11,6 +11,22 @@
 #include "Utils/DataStorage/ArrayList.hpp"
 
 namespace Engine {
+    enum class TokenType {
+        command,
+        argument,
+        textLiteral
+    };
+
+    struct Token {
+        TokenType type;
+        std::string_view value;
+
+        Token(const TokenType t, const std::string_view value) :type(t), value(value) {}
+    };
+
+    std::vector<Token> tokenize(const std::string& command);
+    std::pair<std::string, std::vector<std::string>> extractCommandAndArgs(const std::vector<Token>& tokens);
+
     template<typename T>
         struct Arg {using type = T;};
 
@@ -37,13 +53,10 @@ namespace Engine {
         }
     }
     class CommandRegistry {
-
         struct ICommand {
             virtual ~ICommand() = default;
             virtual void run(const std::vector<std::string>& rawArgs) = 0;
         };
-
-
 
         template<typename Func, typename... Args>
         class Command final : public ICommand {
@@ -68,17 +81,20 @@ namespace Engine {
         std::unordered_map<std::string, std::unique_ptr<ICommand>> commands;
 
     public:
-        template<typename Func, typename... Args>
+        template<typename... Args, typename Func>
         void registerCommand(const std::string& name, Func func) {
             using Cmd = Command<Func, Args...>;
             commands[name] = std::make_unique<Cmd>(func);
         }
 
-        void run(const std::string& name, const std::vector<std::string>& rawArgs) {
-            const auto it = commands.find(name);
+        void run(const std::string& input) {
+            const auto tokens = tokenize(input);
 
+            auto [command, rawArgs] = extractCommandAndArgs(tokens);
+
+            const auto it = commands.find(command);
             if (it == commands.end())
-                throw std::runtime_error("Unknown command: " + name);
+                throw std::runtime_error("Unknown command: " + command);
 
             it->second->run(rawArgs);
         }

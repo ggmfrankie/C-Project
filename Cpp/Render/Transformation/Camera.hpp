@@ -23,6 +23,7 @@ namespace Render {
         [[nodiscard]] float* getFOVptr() { return &m_FOV;}
 
         void setFOV(const float FOV) { m_FOV = FOV; }
+        void setPos(const Math::Vector3f v){ m_pos = v; }
 
         [[nodiscard]] Math::Matrix4f getViewMatrix() const;
 

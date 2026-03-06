@@ -20,6 +20,16 @@ extern "C" void update_setFovHighlight(void* data) {
     delete static_cast<float *>(data);
 }
 
+extern "C" void Engine_runCommand(void* commandString) {
+    std::string_view s = {static_cast<char *>(commandString)};
+    GameEngine::Get().pushTask(
+        Engine::Task( [s] {
+                GameEngine::Get().getCommandRegistry().run(std::string(s));
+            }
+        )
+    );
+    free(commandString);
+}
 
 extern "C" void Engine_changeFOV(void* FOV) {
     float fovValue = *static_cast<float*>(FOV);
