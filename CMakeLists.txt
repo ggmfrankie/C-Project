@@ -145,8 +145,8 @@ add_executable(C-Project
         Cpp/Engine/Task.hpp
         Cpp/Games/BaseGame/GuiTasks.hpp
         Cpp/Games/BaseGame/GuiTasks.cpp
-        Cpp/Engine/CommandParser.cpp
-        Cpp/Engine/CommandParser.hpp
+        Cpp/Engine/CommandRegistry.cpp
+        Cpp/Engine/CommandRegistry.hpp
 
 )
 #add_subdirectory("${CMAKE_SOURCE_DIR}/Render")

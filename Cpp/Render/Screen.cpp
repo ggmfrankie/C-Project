@@ -11,7 +11,7 @@
 
 #include "../../C/GuiInterface.h"
 
-namespace Render{
+namespace Render {
     Screen::Screen(std::string  windowName, const int width, const int height) : name(std::move(windowName)), shader("MainShader.vert", "MainShader.frag") {
         this->width = width;
         this->height = height;

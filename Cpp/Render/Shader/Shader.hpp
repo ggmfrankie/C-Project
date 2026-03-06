@@ -10,11 +10,7 @@
 #include "../../Utils/Math/Matrix.hpp"
 #include "glad/gl.h"
 
-namespace Math {
-    class Vector3f;
-}
-
-namespace Render{
+namespace Render {
     class Shader {
     public:
         explicit Shader(std::string  fileVert, std::string  fileFrag);

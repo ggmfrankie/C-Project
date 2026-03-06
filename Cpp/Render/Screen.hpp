@@ -15,7 +15,7 @@
 #include "Shader/Shader.hpp"
 #include "Transformation/Camera.hpp"
 
-namespace Render{
+namespace Render {
     class Screen {
     public:
         explicit Screen(std::string  windowName, int width, int height);

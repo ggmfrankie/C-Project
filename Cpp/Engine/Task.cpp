@@ -8,8 +8,5 @@ namespace Engine {
     void Task::execute() const {
         _fn_();
     }
-
-    Task::Task(std::function<void()> fn): _fn_(std::move(fn))
-    {}
-
+    Task::Task(std::function<void()> fn): _fn_(std::move(fn)){}
 } // Engine

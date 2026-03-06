@@ -48,7 +48,7 @@ namespace Obj {
         bool dirty = true;
 
         Math::Vector3f position{0,0,0};
-        Render::ArrayList<Mesh, 1> meshes{};
+        ggm::ArrayList<Mesh, 1> meshes{};
         Render::Shader* shader = nullptr;
     };
 } // Core

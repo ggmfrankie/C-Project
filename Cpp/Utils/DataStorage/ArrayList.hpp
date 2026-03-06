@@ -10,7 +10,7 @@
 
 #include "../Math/ggmdef.hpp"
 
-namespace Render {
+namespace ggm {
     template <typename T, num::u64 InlineCapacity>
     class ArrayList {
     public:
