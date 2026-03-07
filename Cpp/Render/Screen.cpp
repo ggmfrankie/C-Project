@@ -55,7 +55,7 @@ namespace Render {
         glViewport(0, 0, width, height);
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         glEnable(GL_DEPTH_TEST);
-        //glfwSwapInterval(1);
+        glfwSwapInterval(1);
 
         glfwSetFramebufferSizeCallback(windowHandle, framebufferSizeCallback);
 

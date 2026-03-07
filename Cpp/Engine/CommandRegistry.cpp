@@ -65,7 +65,7 @@ namespace Engine {
         static auto anyState = [](State s){return true;};
         static auto anyChar = [](char c){return true;};
 
-        static auto isValidForArgs = [](char c){return isdigit(c) || isalpha(c) || c == '-';};
+        static auto isValidForArgs = [](char c){return isdigit(c) || isalpha(c) || c == '-' || c == '.';};
 
         static auto resetState = [](vector<Token>& t, const string& s){begin = end = 0;};
 

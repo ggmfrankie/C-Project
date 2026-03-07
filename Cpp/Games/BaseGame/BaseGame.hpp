@@ -31,7 +31,7 @@ namespace Render {
 
         bool guiMode = false;
 
-        static constexpr float CAMERA_POS_STEP = 0.03f;
+        float CAMERA_POS_STEP = 0.03f;
         static constexpr float MOUSE_SENSITIVITY = 0.05f;
 
         static void toggleCursorMode(GLFWwindow *window, bool guiMode);

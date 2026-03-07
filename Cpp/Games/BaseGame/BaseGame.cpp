@@ -49,6 +49,30 @@ namespace Render {
                 camera->setPos({a,b,c});
             }
         );
+
+        cRegistry->registerCommand<
+            Engine::Arg<bool>
+        >(
+            "debug",
+            [](bool b) {
+                if (b) {
+                    glDisable(GL_CULL_FACE);
+                    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+                } else {
+                    glEnable(GL_CULL_FACE);
+                    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+                }
+            }
+        );
+
+        cRegistry->registerCommand<
+            Engine::Arg<float>
+        >(
+            "movespeed",
+            [this](float f) {
+                CAMERA_POS_STEP = f;
+            }
+        );
     }
 
     void BaseGame::postInit() {
