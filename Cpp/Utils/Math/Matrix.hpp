@@ -11,7 +11,7 @@
 #include "Quaternion.hpp"
 #include "Vector.hpp"
 
-namespace Math {
+namespace ggm {
     class Matrix4f {
         public:
         constexpr Matrix4f() = default;
@@ -177,6 +177,24 @@ namespace Math {
                 }
             }
             return R;
+        }
+
+
+        constexpr float& operator()(int row, int col) noexcept {
+            return m[col * 4 + row];
+        }
+
+        constexpr float operator()(int row, int col) const noexcept {
+            return m[col * 4 + row];
+        }
+
+        friend constexpr Vector4f operator*(const Matrix4f& A, const Vector4f& b) noexcept {
+            return {
+                A(0,0)*b.x + A(0,1)*b.y + A(0,2)*b.z + A(0,3)*b.w,
+                A(1,0)*b.x + A(1,1)*b.y + A(1,2)*b.z + A(1,3)*b.w,
+                A(2,0)*b.x + A(2,1)*b.y + A(2,2)*b.z + A(2,3)*b.w,
+                A(3,0)*b.x + A(3,1)*b.y + A(3,2)*b.z + A(3,3)*b.w
+            };
         }
 
         constexpr float& at(const std::size_t col, const std::size_t row) noexcept {

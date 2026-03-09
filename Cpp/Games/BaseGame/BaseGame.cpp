@@ -10,6 +10,8 @@
 #include "Render/Objects/Object.hpp"
 #include "Render/Objects/Loader/OBJLoader.hpp"
 #include "GuiInterface.h"
+#include "Render/Objects/Behaviors/TestBehavior.hpp"
+
 template<typename T>
 void toggle(T& x) {
     x = !x;
@@ -19,15 +21,27 @@ namespace Render {
     void BaseGame::preInit() {
         auto obj = Obj::Object::getDummyObject();
         obj.moveBy(0,0, -30);
+
         auto obj2 = Obj::Object("grass_block\\grass_block.obj");
         obj2.moveBy(0,0, -20);
 
         auto obj3 = Obj::Object("ground_plane\\ground_plane.obj");
         obj3.moveBy(0,-30, 0);
 
+        auto obj4 = Obj::PhysicsObject::GetDummyPhysicsObject();
+        obj4.rotateBy(90, 90, 90);
+        obj4.moveBy(-90,0,0);
+
+        auto obj5 = Obj::PhysicsObject::GetDummyPhysicsObject();
+        obj5.attachBehavior(new Obj::TestBehavior);
+        obj5.rotateBy(45, 45, 90);
+        obj5.moveBy(90,0,0);
+
         screen->addObject(std::move(obj));
         screen->addObject(std::move(obj2));
         screen->addObject(std::move(obj3));
+        screen->addObject(std::move(obj4));
+        screen->addObject(std::move(obj5));
 
         cRegistry->registerCommand<
             Engine::Arg<int>,
@@ -81,7 +95,7 @@ namespace Render {
     }
 
     void BaseGame::onUpdate(float deltaTime) {
-        Math::Vector3f cameraMovement{};
+        ggm::Vector3f cameraMovement{};
 
         if (input->isKeyDown(GLFW_KEY_W)) cameraMovement.z = 1;
         else if (input->isKeyDown(GLFW_KEY_S)) cameraMovement.z = -1;
@@ -92,14 +106,13 @@ namespace Render {
         if (input->isKeyDown(GLFW_KEY_LEFT_CONTROL)) cameraMovement.y = -1;
         else if (input->isKeyDown(GLFW_KEY_SPACE)) cameraMovement.y = 1;
 
-
         if (input->wasKeyPressed(GLFW_KEY_ESCAPE)) {
             gui_toggleVisible("Home Screen");
             toggle(guiMode);
             toggleCursorMode(screen->getWindowHandle(), guiMode);
         }
 
-        const Math::Vector2f camRot = input->getDisplaceVec();
+        const ggm::Vector2f camRot = input->getDisplaceVec();
 
         if (!guiMode) {
             camera->moveBy(cameraMovement.x * CAMERA_POS_STEP, cameraMovement.y * CAMERA_POS_STEP, cameraMovement.z* CAMERA_POS_STEP);

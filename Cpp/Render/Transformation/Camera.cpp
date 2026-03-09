@@ -13,7 +13,7 @@ namespace Render {
 
     void Camera::moveBy(const float offsetX, const float offsetY, const float offsetZ) {
 
-        const float yawRad = Math::Matrix4f::toRad(m_rotation.z);
+        const float yawRad = ggm::Matrix4f::toRad(m_rotation.z);
 
         // Forward (XZ) consistent with view R = Ry(-yaw) * Rx(-pitch): forward is -Z at yaw=0
         const float fx =  std::sin(yawRad);
@@ -36,8 +36,8 @@ namespace Render {
         m_rotation.z += dYaw;
     }
 
-    Math::Matrix4f Camera::getViewMatrix() const {
-        using namespace Math;
+    ggm::Matrix4f Camera::getViewMatrix() const {
+        using namespace ggm;
 
         const float pitchDeg = m_rotation.x;
         const float yawDeg   = m_rotation.z;

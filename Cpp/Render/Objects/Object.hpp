@@ -6,7 +6,7 @@
 #define MIXEDPROJECT_OBJECT_H
 #include <vector>
 
-#include "../../Utils/DataStorage/ArrayList.hpp"
+#include "../../Utils/DataStorage/InlineVector.hpp"
 #include "../../Utils/Math/Quaternion.hpp"
 #include "../../Utils/Math/Matrix.hpp"
 #include "Geometry/Mesh.hpp"
@@ -23,32 +23,30 @@ namespace Obj {
 
         Object(Object &&other) noexcept ;
 
-        ~Object();
+        virtual ~Object();
 
-        void init(Render::Shader *s);
+        virtual void init(Render::Shader *s);
 
         void render() const;
 
-        void rotateBy(float pitch, float yaw, float roll);
-
-        void moveBy(float dx, float dy, float dz);
-
-        void moveTo(float x, float y, float z);
+        virtual void rotateBy(float pitch, float yaw, float roll);
+        virtual void moveBy(float dx, float dy, float dz);
+        virtual void moveTo(float x, float y, float z);
 
         static Object getDummyObject();
 
-        Math::Matrix4f getModelMatrix();
+        ggm::Matrix4f& getModelMatrix();
 
     private:
-        Math::Quaternion rotation = Math::Quaternion::Identity();
+        ggm::Quaternion rotation = ggm::Quaternion::Identity();
         bool initialized = false;
         float scale = 1.0f;
 
-        Math::Matrix4f model = Math::Matrix4f::Identity();
+        ggm::Matrix4f model = ggm::Matrix4f::Identity();
         bool dirty = true;
 
-        Math::Vector3f position{0,0,0};
-        ggm::ArrayList<Mesh, 1> meshes{};
+        ggm::Vector3f position{0,0,0};
+        ggm::InlineVector<Mesh, 1> meshes{};
         Render::Shader* shader = nullptr;
     };
 } // Core

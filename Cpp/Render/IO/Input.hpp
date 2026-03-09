@@ -13,9 +13,9 @@ namespace Render {
     class Input {
         static constexpr int KEY_COUNT = 348;
 
-        Math::Vector2f m_prevMousePos{};
-        Math::Vector2f m_currMousePos{};
-        Math::Vector2f m_displaceVec{};
+        ggm::Vector2f m_prevMousePos{};
+        ggm::Vector2f m_currMousePos{};
+        ggm::Vector2f m_displaceVec{};
 
         bool m_inWindow = false;
 
@@ -48,14 +48,14 @@ namespace Render {
 
     public:
         void init(GLFWwindow *window);
-        Math::Vector2f getMousePos();
+        ggm::Vector2f getMousePos();
         [[nodiscard]] bool isKeyDown(int key) const;
 
         [[nodiscard]] bool wasKeyPressed(int key) const;
 
         [[nodiscard]] bool wasKeyReleased(int key) const;
 
-        [[nodiscard]] Math::Vector2f getDisplaceVec();
+        [[nodiscard]] ggm::Vector2f getDisplaceVec();
 
         void endFrame();
     };

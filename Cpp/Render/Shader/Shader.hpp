@@ -33,9 +33,9 @@ namespace Render {
 
         void setUniform(const std::string &name, int value) const;
 
-        void setUniform(const std::string &name, const  Math::Vector3f& value) const;
+        void setUniform(const std::string &name, const  ggm::Vector3f& value) const;
 
-        void setUniform(const std::string &name, const Math::Matrix4f &value) const;
+        void setUniform(const std::string &name, const ggm::Matrix4f &value) const;
 
         void createUniform(const std::string &name);
 

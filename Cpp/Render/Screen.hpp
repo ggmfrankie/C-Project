@@ -12,6 +12,7 @@
 #include "IO/Input.hpp"
 #include "Objects/Object.hpp"
 #include "Objects/Geometry/Mesh.hpp"
+#include "Objects/Physics/PhysicsObject.hpp"
 #include "Shader/Shader.hpp"
 #include "Transformation/Camera.hpp"
 
@@ -26,6 +27,8 @@ namespace Render {
         void render();
 
         void addObject(Obj::Object &&object);
+
+        void addObject(Obj::PhysicsObject &&object);
 
         Camera &getCamera();
 
@@ -50,6 +53,7 @@ namespace Render {
         Shader shader;
 
         std::vector<Obj::Object> objects;
+        std::vector<Obj::PhysicsObject> pObjects;
     };
 }
 

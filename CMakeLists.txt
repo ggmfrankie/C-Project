@@ -130,7 +130,7 @@ add_executable(C-Project
         Cpp/Utils/Utils.cpp
         Cpp/Utils/Utils.hpp
         Cpp/Utils/Math/Quaternion.hpp
-        Cpp/Utils/DataStorage/ArrayList.hpp
+        Cpp/Utils/DataStorage/InlineVector.hpp
         Cpp/Utils/Math/ggmdef.hpp
         Cpp/Games/IGame.hpp
         Cpp/Render/IO/Input.cpp
@@ -147,6 +147,13 @@ add_executable(C-Project
         Cpp/Games/BaseGame/GuiTasks.cpp
         Cpp/Engine/CommandRegistry.cpp
         Cpp/Engine/CommandRegistry.hpp
+        Cpp/Render/Objects/Physics/Collider.cpp
+        Cpp/Render/Objects/Physics/Collider.hpp
+        Cpp/Render/Objects/Physics/PhysicsObject.cpp
+        Cpp/Render/Objects/Physics/PhysicsObject.hpp
+        Cpp/Render/Objects/Behaviors/IBehavior.hpp
+        Cpp/Render/Objects/Behaviors/TestBeahvior.cpp
+        Cpp/Render/Objects/Behaviors/TestBehavior.hpp
 
 )
 #add_subdirectory("${CMAKE_SOURCE_DIR}/Render")

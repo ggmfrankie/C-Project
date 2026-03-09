@@ -32,11 +32,11 @@ namespace Render {
         glUniform1i(getUniformLocation(name), value);
     }
 
-    void Shader::setUniform(const string &name, const Math::Vector3f& value) const {
+    void Shader::setUniform(const string &name, const ggm::Vector3f& value) const {
         glUniform3f(getUniformLocation(name), value.x, value.y, value.z);
     }
 
-    void Shader::setUniform(const string &name, const Math::Matrix4f& value) const {
+    void Shader::setUniform(const string &name, const ggm::Matrix4f& value) const {
         glUniformMatrix4fv(getUniformLocation(name),1, false, value.getDataPtr());
     }
 
@@ -116,7 +116,7 @@ namespace Render {
     }
 
     std::string Shader::readShaderFile(const std::string& fileName) {
-        return Utils::FileIO::readFile("../Cpp/Render/Shader/GlslShader/" + fileName);
+        return ggm::FileIO::readFile("../Cpp/Render/Shader/GlslShader/" + fileName);
     }
 
     GLuint Shader::createShader(const GLchar *code, const int shaderType) const {

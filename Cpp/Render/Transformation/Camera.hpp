@@ -23,15 +23,15 @@ namespace Render {
         [[nodiscard]] float* getFOVptr() { return &m_FOV;}
 
         void setFOV(const float FOV) { m_FOV = FOV; }
-        void setPos(const Math::Vector3f v){ m_pos = v; }
+        void setPos(const ggm::Vector3f v){ m_pos = v; }
 
-        [[nodiscard]] Math::Matrix4f getViewMatrix() const;
+        [[nodiscard]] ggm::Matrix4f getViewMatrix() const;
 
         //void movePosition(float x, float y, float z);
 
     private:
-        Math::Vector3f m_pos{};
-        Math::Vector3f m_rotation{};
+        ggm::Vector3f m_pos{};
+        ggm::Vector3f m_rotation{};
 
         float m_FOV = 90.0f;
     };

@@ -10,7 +10,7 @@
 
 #include "Vector.hpp"
 
-namespace Math {
+namespace ggm {
 
 struct Quaternion {
     float w, x, y, z;

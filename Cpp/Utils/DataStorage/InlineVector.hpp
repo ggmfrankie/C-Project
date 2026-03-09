@@ -12,9 +12,9 @@
 
 namespace ggm {
     template <typename T, num::u64 InlineCapacity>
-    class ArrayList {
+    class InlineVector {
     public:
-        explicit ArrayList(num::u64 capacity = InlineCapacity) {
+        explicit InlineVector(num::u64 capacity = InlineCapacity) {
             if (capacity <= InlineCapacity) {
                 data = inlinePtr();
                 this->capacity = InlineCapacity;
@@ -27,7 +27,7 @@ namespace ggm {
             size = 0;
         }
 
-        ArrayList(ArrayList&& other)  noexcept {
+        InlineVector(InlineVector&& other)  noexcept {
             if (other.isHeap) {
                 data = other.data;
                 other.isHeap = false;
@@ -48,7 +48,7 @@ namespace ggm {
             other.size = 0;
         }
 
-        ArrayList(const ArrayList& other) {
+        InlineVector(const InlineVector& other) {
             if (other.isHeap) {
                 data = static_cast<T *>(operator new(other.capacity * sizeof(T)));
                 isHeap = true;
@@ -63,7 +63,7 @@ namespace ggm {
             size = other.size;
         }
 
-        ~ArrayList() {
+        ~InlineVector() {
             for (num::u64 i = 0; i < size; ++i)
                 std::destroy_at(&data[i]);
             if (isHeap) operator delete(data);
@@ -88,7 +88,7 @@ namespace ggm {
         }
 
         template <class U>
-        ArrayList& operator<<(U&& thing) {
+        InlineVector& operator<<(U&& thing) {
             add(std::forward<U>(thing));
             return *this;
         }

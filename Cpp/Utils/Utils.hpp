@@ -8,7 +8,7 @@
 #include <vector>
 #include <ranges>
 
-namespace Utils {
+namespace ggm {
     std::vector<std::string_view> split(std::string_view s, char delim);
 
     struct to_vector_fn {

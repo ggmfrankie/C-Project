@@ -15,6 +15,8 @@ namespace Render {
     Screen::Screen(std::string  windowName, const int width, const int height) : name(std::move(windowName)), shader("MainShader.vert", "MainShader.frag") {
         this->width = width;
         this->height = height;
+        objects.reserve(16);
+        pObjects.reserve(16);
         windowHandle = nullptr;
     }
 
@@ -79,13 +81,13 @@ namespace Render {
 
         for (auto& obj : objects) {
 
-            Math::Matrix4f model      = obj.getModelMatrix();
-            Math::Matrix4f view       = camera.getViewMatrix();
-            Math::Matrix4f modelView  = view * model;
+            ggm::Matrix4f model      = obj.getModelMatrix();
+            ggm::Matrix4f view       = camera.getViewMatrix();
+            ggm::Matrix4f modelView  = view * model;
 
             shader.setUniform("modelViewMatrix", modelView);
             shader.setUniform("projectionMatrix",
-                              Math::Matrix4f::Perspective(
+                              ggm::Matrix4f::Perspective(
                                   camera.getFOV(),
                                   static_cast<float>(width) / static_cast<float>(height),
                                   0.01f,
@@ -102,6 +104,10 @@ namespace Render {
 
     void Screen::addObject(Obj::Object&& object) {
         objects.push_back(std::move(object));
+    }
+
+    void Screen::addObject(Obj::PhysicsObject&& object) {
+        pObjects.push_back(std::move(object));
     }
 
     GLFWwindow* Screen::getWindowHandle() const {

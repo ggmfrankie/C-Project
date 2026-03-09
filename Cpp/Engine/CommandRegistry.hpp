@@ -8,7 +8,7 @@
 #include <variant>
 
 #include "Task.hpp"
-#include "Utils/DataStorage/ArrayList.hpp"
+#include "Utils/DataStorage/InlineVector.hpp"
 
 namespace Engine {
     enum class TokenType {

@@ -10,7 +10,7 @@
 
 
 namespace Obj {
-    using Math::Matrix4f;
+    using ggm::Matrix4f;
 
     Object::Object(const std::string& objFile) {
         auto obj = OBJLoader::OBJObject(objFile);
@@ -55,7 +55,7 @@ namespace Obj {
         const float y = Matrix4f::toRad(yaw);
         const float r = Matrix4f::toRad(roll);
 
-        const auto dq = Math::Quaternion::fromEuler(p, y, r);
+        const auto dq = ggm::Quaternion::fromEuler(p, y, r);
         rotation = (rotation * dq).normalized();
 
         dirty = true;
@@ -81,13 +81,11 @@ namespace Obj {
         return dummy;
     }
 
-    Matrix4f Object::getModelMatrix() {
+    Matrix4f& Object::getModelMatrix() {
         if (dirty) {
             dirty = false;
             return model = Matrix4f::Translation(position) * Matrix4f(rotation.toMatrix()) * Matrix4f::Scale(scale);
         }
         return model;
     }
-
-
 } // Core
