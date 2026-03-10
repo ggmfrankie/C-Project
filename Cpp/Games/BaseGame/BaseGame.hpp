@@ -16,7 +16,7 @@ namespace Render {
         void preInit() override;
         void postInit() override;
 
-        void onUpdate(float deltaTime) override;
+        void onUpdate(double deltaTime) override;
         void onShutdown() override;
 
         void passState(EngineContext &&e) override;

@@ -12,7 +12,9 @@
 #include "../../C/GuiInterface.h"
 
 namespace Render {
-    Screen::Screen(std::string  windowName, const int width, const int height) : name(std::move(windowName)), shader("MainShader.vert", "MainShader.frag") {
+    Screen::Screen(std::string  windowName, const int width, const int height) :
+    name(std::move(windowName)),
+    shader("MainShader.vert", "MainShader.frag") {
         this->width = width;
         this->height = height;
         objects.reserve(16);
@@ -64,9 +66,16 @@ namespace Render {
         shader.init();
         shader.link();
 
+        input.init(windowHandle);
+
         createShaderUniforms();
 
         for (auto& object: objects) {
+            object.getModelMatrix();
+            object.init(&shader);
+        }
+
+        for (auto& object: pObjects) {
             object.getModelMatrix();
             object.init(&shader);
         }
@@ -79,14 +88,7 @@ namespace Render {
 
         shader.bind();
 
-        for (auto& obj : objects) {
-
-            ggm::Matrix4f model      = obj.getModelMatrix();
-            ggm::Matrix4f view       = camera.getViewMatrix();
-            ggm::Matrix4f modelView  = view * model;
-
-            shader.setUniform("modelViewMatrix", modelView);
-            shader.setUniform("projectionMatrix",
+        shader.setUniform("projectionMatrix",
                               ggm::Matrix4f::Perspective(
                                   camera.getFOV(),
                                   static_cast<float>(width) / static_cast<float>(height),
@@ -94,10 +96,28 @@ namespace Render {
                                   1000.0f
                                   )
                              );
+
+        const ggm::Matrix4f view = camera.getViewMatrix();
+
+        for (auto& obj : objects) {
+
+            ggm::Matrix4f model      = obj.getModelMatrix();
+            ggm::Matrix4f modelView  = view * model;
+
+            shader.setUniform("modelViewMatrix", modelView);
+
             obj.render();
         }
 
-        gui_update();
+        for (auto& obj: pObjects) {
+            ggm::Matrix4f model      = obj.getModelMatrix();
+            ggm::Matrix4f modelView  = view * model;
+
+            shader.setUniform("modelViewMatrix", modelView);
+
+            obj.render();
+        }
+
         gui_render();
         glfwSwapBuffers(windowHandle);
     }
@@ -112,6 +132,14 @@ namespace Render {
 
     GLFWwindow* Screen::getWindowHandle() const {
         return windowHandle;
+    }
+
+    Input& Screen::getInput() {
+        return input;
+    }
+
+    void Screen::endFrame() {
+        input.endFrame();
     }
 
     void Screen::framebufferSizeCallback(GLFWwindow* window, const int width, const int height)
@@ -134,6 +162,16 @@ namespace Render {
 
     std::vector<Obj::Object>& Screen::getObjectList() {
         return objects;
+    }
+
+    void Screen::update(const double dt) {
+        for (auto& a : pObjects) {
+            for (auto& b : pObjects) {
+                if (a != b && a.collidesWith(b)) a.onCollision(b);
+            }
+            a.onUpdate(dt, input);
+        }
+        gui_update();
     }
 }
 

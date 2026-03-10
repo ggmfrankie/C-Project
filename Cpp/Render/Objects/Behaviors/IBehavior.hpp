@@ -16,7 +16,7 @@ namespace Obj {
     public:
         virtual ~IBehavior() = default;
         virtual void onCollision(PhysicsObject& self, PhysicsObject& other) = 0;
-        virtual void onUpdate(PhysicsObject& self, float dt, Render::Input& input) = 0;
+        virtual void onUpdate(PhysicsObject& self, double dt, Render::Input& input) = 0;
     };
 } // Obj
 

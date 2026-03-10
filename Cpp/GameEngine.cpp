@@ -15,38 +15,41 @@ GameEngine::GameEngine(Render::IGame& game) : game(game), screen("My Window", 80
 void GameEngine::loop() {
 
     int i = 0;
+    double lastFrameTime = glfwGetTime();
     while(!glfwWindowShouldClose(screen.getWindowHandle()))
     {
-        const auto lastTime = glfwGetTime();
+        const auto frameStart = glfwGetTime();
 
         glfwPollEvents();
         processTasks();
-        update();
+
+        game.onUpdate(glfwGetTime() - lastFrameTime);
+        screen.update(glfwGetTime() - lastFrameTime);
 
         screen.render();
-        input.endFrame();
 
-        const auto currentTime = glfwGetTime() - lastTime;
+        const auto currentTime = glfwGetTime() - frameStart;
 
         if (i > 100) {
             gui_setText("fps display", std::to_string(1.0/currentTime).c_str());
             i = 0;
         }
         i++;
+        lastFrameTime = frameStart;
+        screen.endFrame();
     }
     glfwTerminate();
 }
 
 void GameEngine::init() {
-    game.passState({input, screen.getCamera(), screen, commandRegistry});
+    game.passState({screen.getInput(), screen.getCamera(), screen, commandRegistry});
     game.preInit();
     screen.init();
-    input.init(screen.getWindowHandle());
     game.postInit();
 }
 
 void GameEngine::update() {
-    game.onUpdate(0.0);
+
 }
 
 void GameEngine::pushTask(const Engine::Task& t) {

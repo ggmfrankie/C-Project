@@ -45,6 +45,5 @@ namespace Render {
         // View is inverse rotation, hence the negatives:
         const Matrix4f R = Matrix4f::RotationX(-pitchDeg) * Matrix4f::RotationY(-yawDeg);
         return R * Matrix4f::Translation(-m_pos);
-
     }
 } // Render

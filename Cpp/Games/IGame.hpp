@@ -33,9 +33,9 @@ namespace Render {
 
         virtual void onShutdown() = 0;
 
-        virtual void onUpdate(float deltaTime) = 0;
+        virtual void onUpdate(double deltaTime) = 0;
 
-        virtual void passState(EngineContext&& e);
+        virtual void passState(EngineContext&& e) = 0;
     };
 
 

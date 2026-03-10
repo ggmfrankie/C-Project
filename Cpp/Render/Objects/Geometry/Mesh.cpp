@@ -49,6 +49,19 @@ namespace Obj {
         other.VBOs = {0, 0, 0};
     }
 
+    Mesh::Mesh(const Mesh &other) noexcept:
+    initialized(other.initialized),
+          VAO(other.VAO),
+          EBO(other.EBO),
+          texture(other.texture),
+          material(other.material),
+          VBOs(other.VBOs),
+          vertices(other.vertices),
+          normals(other.normals),
+          uvs(other.uvs),
+          indices(other.indices) {
+    }
+
     Mesh::~Mesh() {
         if (initialized) glDeleteVertexArrays(1, &VAO);
     }

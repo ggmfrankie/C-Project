@@ -10,7 +10,7 @@ namespace Obj {
         TestBehavior() = default;
 
         void onCollision(PhysicsObject& self, PhysicsObject& other) override;
-        void onUpdate(PhysicsObject& self, float dt, Render::Input& input) override;
+        void onUpdate(PhysicsObject& self, double dt, Render::Input& input) override;
     };
 } // Obj
 

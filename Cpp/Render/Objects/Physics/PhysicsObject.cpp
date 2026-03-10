@@ -13,6 +13,14 @@ namespace Obj {
         }
     }
 
+    PhysicsObject::PhysicsObject(PhysicsObject &&other) noexcept : Object(std::move(other)),
+        m_colliders(std::move(other.m_colliders)),
+        m_behavior(other.m_behavior) {
+
+        other.m_behavior = nullptr;
+        other.m_colliders.clear();
+    }
+
     PhysicsObject::~PhysicsObject() {
         delete m_behavior;
     }
@@ -29,6 +37,16 @@ namespace Obj {
             }
         }
         return false;
+    }
+
+    void PhysicsObject::onCollision(PhysicsObject& other) {
+        if (!m_behavior) return;
+        m_behavior->onCollision(*this, other);
+    }
+
+    void PhysicsObject::onUpdate(double dt, Render::Input& input) {
+        if (!m_behavior) return;
+        m_behavior->onUpdate(*this, dt, input);
     }
 
     void PhysicsObject::updateColliders() {
@@ -59,8 +77,12 @@ namespace Obj {
         m_behavior = behavior;
     }
 
+    bool PhysicsObject::operator==(const PhysicsObject &physics_object) const {
+        return uuid == physics_object.uuid;
+    }
+
     PhysicsObject PhysicsObject::GetDummyPhysicsObject() {
-        return {"grass_block\\grass_block.obj", {Collider({0,0,0}, 0.5, 0.5, 0.5, {0, 0, 0})}};
+        return {"grass_block\\grass_block.obj", {Collider({0,0,0}, 1, 1, 1, {0, 0, 0})}};
     }
 
 } // Obj

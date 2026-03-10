@@ -3,7 +3,6 @@
 //
 
 #include "TestBehavior.hpp"
-#include "GLFW/glfw3.h"
 #include "Render/IO/Input.hpp"
 #include "Render/Objects/Physics/PhysicsObject.hpp"
 
@@ -13,7 +12,7 @@ namespace Obj {
         std::cout << "Collision detected\n";
     }
 
-    void TestBehavior::onUpdate(PhysicsObject &self, const float dt, Render::Input &input) {
+    void TestBehavior::onUpdate(PhysicsObject &self, const double dt, Render::Input &input) {
         if (input.isKeyDown(GLFW_KEY_LEFT))
             self.moveBy(-1 * dt, 0, 0);
         if (input.isKeyDown(GLFW_KEY_RIGHT))

@@ -22,11 +22,7 @@ public:
     void loop();
     void init();
 
-    void update();
-
     void pushTask(const Engine::Task &t);
-
-    void processTasks();
 
     Render::Screen &getScreen();
     Engine::CommandRegistry &getCommandRegistry();
@@ -36,10 +32,13 @@ public:
     static GameEngine &Get();
 
 private:
+    void update();
+    void processTasks();
+
     static GameEngine* engineInstance;
     Render::IGame& game;
     Render::Screen screen;
-    Render::Input input;
+
     Engine::CommandRegistry commandRegistry;
 
     std::deque<Engine::Task> tasks{};

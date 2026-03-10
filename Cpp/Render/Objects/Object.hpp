@@ -23,6 +23,8 @@ namespace Obj {
 
         Object(Object &&other) noexcept ;
 
+        Object(const Object &other) noexcept;
+
         virtual ~Object();
 
         virtual void init(Render::Shader *s);
@@ -36,6 +38,7 @@ namespace Obj {
         static Object getDummyObject();
 
         ggm::Matrix4f& getModelMatrix();
+        ggm::num::i64 uuid{};
 
     private:
         ggm::Quaternion rotation = ggm::Quaternion::Identity();

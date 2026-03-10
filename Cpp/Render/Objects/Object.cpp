@@ -13,23 +13,38 @@ namespace Obj {
     using ggm::Matrix4f;
 
     Object::Object(const std::string& objFile) {
+        static ggm::num::i64 id = 0;
         auto obj = OBJLoader::OBJObject(objFile);
         obj.load();
         meshes << (obj.getMesh());
+        uuid = id++;
     }
 
     Object::Object() = default;
 
-    Object::Object(Object&& other) noexcept:
-      rotation(other.rotation),
-      initialized(other.initialized),
-      scale(other.scale),
-      model(other.model),
-      dirty(other.dirty),
-      position(other.position),
-      meshes(std::move(other.meshes)),
-      shader(other.shader)
-    {}
+    Object::Object(Object&& other) noexcept :
+          rotation(other.rotation),
+          initialized(other.initialized),
+          scale(other.scale),
+          model(other.model),
+          dirty(other.dirty),
+          position(other.position),
+          meshes(std::move(other.meshes)),
+          shader(other.shader) {
+        uuid = other.uuid;
+    }
+
+    Object::Object(const Object& other) noexcept :
+          rotation(other.rotation),
+          initialized(other.initialized),
+          scale(other.scale),
+          model(other.model),
+          dirty(other.dirty),
+          position(other.position),
+          meshes(other.meshes),
+          shader(other.shader) {
+        uuid = other.uuid;
+    }
 
     Object::~Object() = default;
 

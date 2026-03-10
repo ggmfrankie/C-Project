@@ -35,7 +35,7 @@ namespace Render {
         auto obj5 = Obj::PhysicsObject::GetDummyPhysicsObject();
         obj5.attachBehavior(new Obj::TestBehavior);
         obj5.rotateBy(45, 45, 90);
-        obj5.moveBy(90,0,0);
+        obj5.moveBy(-80,0,0);
 
         screen->addObject(std::move(obj));
         screen->addObject(std::move(obj2));
@@ -94,7 +94,7 @@ namespace Render {
         gui_init(screen->getWindowHandle(), screen->getWidth(), screen->getHeight(), generateGUI);
     }
 
-    void BaseGame::onUpdate(float deltaTime) {
+    void BaseGame::onUpdate(double deltaTime) {
         ggm::Vector3f cameraMovement{};
 
         if (input->isKeyDown(GLFW_KEY_W)) cameraMovement.z = 1;

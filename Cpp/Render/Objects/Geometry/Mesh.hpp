@@ -26,6 +26,7 @@ namespace Obj {
              std::vector<GLuint> &&indices);
 
         Mesh(Mesh &&other) noexcept;
+        Mesh(const Mesh &other) noexcept;
 
         ~Mesh();
 

@@ -14,11 +14,17 @@ namespace Obj {
         IBehavior* m_behavior{};
     public:
         PhysicsObject(const std::string &objFile, std::initializer_list<Collider> list);
+        PhysicsObject(PhysicsObject && other) noexcept ;
+
         ~PhysicsObject() override;
 
         void init(Render::Shader *s) override;
 
         bool collidesWith(PhysicsObject &other);
+
+        void onCollision(PhysicsObject &other);
+
+        void onUpdate(double dt, Render::Input &input);
 
         void updateColliders();
 
@@ -29,6 +35,8 @@ namespace Obj {
         void moveTo(float x, float y, float z) override;
 
         void attachBehavior(IBehavior *behavior);
+
+        bool operator==(const PhysicsObject & physics_object) const;
 
         static PhysicsObject GetDummyPhysicsObject();
     };

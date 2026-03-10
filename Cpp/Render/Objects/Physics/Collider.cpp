@@ -20,8 +20,7 @@ namespace Obj {
         localHalfSides = {hx, hy, hz};
     }
 
-    Collider::~Collider() {
-    }
+    Collider::~Collider() = default;
 
     bool Collider::isOverlap(Collider& other) {
 
