@@ -7,6 +7,7 @@
 
 namespace Obj {
     using ggm::Vector3f, ggm::Matrix4f, ggm::Vector4f;
+
     Collider::Collider(const Vector3f center, const float width, const float height, const float length, const Vector3f rotation): center(center) {
         const auto R = Matrix4f::Rotation(rotation);
         localAxisX = (R * Vector4f(1, 0, 0, 0)).xyz().normalize();
@@ -22,17 +23,18 @@ namespace Obj {
 
     Collider::~Collider() = default;
 
-    bool Collider::isOverlap(Collider& other) {
+    Collider::ContactInfo Collider::isOverlap(Collider& other) {
 
         const Vector3f& C1 = this->center;
         const Vector3f& C2 = other.center;
 
-        const Vector3f distance = C2 - C1;
+        float minOverlap = std::numeric_limits<float>::max();
+        Vector3f bestAxis{};
 
+        const Vector3f distance = C2 - C1;
 
         const Vector3f* A[3] = { &axisX, &axisY, &axisZ };
         const Vector3f* B[3] = { &other.axisX, &other.axisY, &other.axisZ };
-
 
         auto projRadius = [&](const Collider& c, const Vector3f& axis) {
                 return std::fabs(axis.dot(c.axisX)) * c.halfSides.x +
@@ -50,23 +52,61 @@ namespace Obj {
 
             const float dist = std::fabs(n.dot(distance));
 
-            return dist <= (r1 + r2);
-        };
+
+            const float overlap = (r1 + r2) - dist;
+
+            if (overlap < 0)
+                return false;
 
 
-        for (auto & i : A)
-            if (!testAxis(*i)) return false;
+            if (overlap < minOverlap) {
+                minOverlap = overlap;
 
-        for (auto & i : B)
-            if (!testAxis(*i)) return false;
-
-        for (auto & i : A)
-            for (auto & j : B) {
-                if (Vector3f axis = i->cross(*j); !testAxis(axis)) return false;
+                const float sign = (distance.dot(n) < 0.0f) ? -1.0f : 1.0f;
+                bestAxis = n * sign;
             }
 
-        return true;
+            return true;
+        };
+        auto result = ContactInfo();
 
+        for (auto& i : A)
+            if (!testAxis(*i))
+                return result;
+
+        for (auto& i : B)
+            if (!testAxis(*i))
+                return result;
+
+        for (auto& i : A)
+            for (auto& j : B) {
+                if (Vector3f axis = i->cross(*j); !testAxis(axis))
+                    return result;
+            }
+
+        result.overlap = true;
+        result.normal = bestAxis;
+        result.penetration = minOverlap;
+
+        // Project both OBBs onto the collision normal
+        float extentA =
+            fabs(bestAxis.dot(axisX)) * halfSides.x +
+            fabs(bestAxis.dot(axisY)) * halfSides.y +
+            fabs(bestAxis.dot(axisZ)) * halfSides.z;
+
+        float extentB =
+            fabs(bestAxis.dot(other.axisX)) * other.halfSides.x +
+            fabs(bestAxis.dot(other.axisY)) * other.halfSides.y +
+            fabs(bestAxis.dot(other.axisZ)) * other.halfSides.z;
+
+        // Closest support points along normal
+        Vector3f pA = center + bestAxis * extentA;
+        Vector3f pB = other.center - bestAxis * extentB;
+
+        result.point = (pA + pB) * 0.5f;
+
+
+        return result;
     }
 
     void Collider::update(const Matrix4f& M) {

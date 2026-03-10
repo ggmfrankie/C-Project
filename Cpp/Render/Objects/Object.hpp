@@ -31,24 +31,28 @@ namespace Obj {
 
         void render() const;
 
+        virtual void update();
+
         virtual void rotateBy(float pitch, float yaw, float roll);
         virtual void moveBy(float dx, float dy, float dz);
         virtual void moveTo(float x, float y, float z);
 
         static Object getDummyObject();
-
         ggm::Matrix4f& getModelMatrix();
+
+    protected:
         ggm::num::i64 uuid{};
+        ggm::Vector3f position{0,0,0};
+        ggm::Quaternion rotation = ggm::Quaternion::Identity();
+        bool dirty = true;
 
     private:
-        ggm::Quaternion rotation = ggm::Quaternion::Identity();
         bool initialized = false;
         float scale = 1.0f;
 
         ggm::Matrix4f model = ggm::Matrix4f::Identity();
-        bool dirty = true;
 
-        ggm::Vector3f position{0,0,0};
+
         ggm::InlineVector<Mesh, 1> meshes{};
         Render::Shader* shader = nullptr;
     };

@@ -30,12 +30,12 @@ namespace Render {
 
         auto obj4 = Obj::PhysicsObject::GetDummyPhysicsObject();
         obj4.rotateBy(90, 90, 90);
-        obj4.moveBy(-90,0,0);
+        obj4.moveBy(-12,0,0);
 
         auto obj5 = Obj::PhysicsObject::GetDummyPhysicsObject();
         obj5.attachBehavior(new Obj::TestBehavior);
         obj5.rotateBy(45, 45, 90);
-        obj5.moveBy(-80,0,0);
+        obj5.moveBy(-8,0,0);
 
         screen->addObject(std::move(obj));
         screen->addObject(std::move(obj2));

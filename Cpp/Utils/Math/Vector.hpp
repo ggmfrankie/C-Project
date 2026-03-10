@@ -5,6 +5,7 @@
 #ifndef MIXEDPROJECT_VECTOR_H
 #define MIXEDPROJECT_VECTOR_H
 #include <cmath>
+#include <iostream>
 
 namespace ggm {
     struct Vector3f {
@@ -24,11 +25,24 @@ namespace ggm {
             return {v.x + x, v.y + y, v.z + z};
         }
 
+        constexpr void operator+=(const Vector3f& v) {
+            x += v.x; y += v.y; z += v.z;
+        }
+
+        constexpr void operator-=(const Vector3f& v) {
+            x -= v.x; y -= v.y; z -= v.z;
+        }
+
         constexpr Vector3f operator-(const Vector3f& v) const {
             return {x-v.x, y-v.y, z-v.z};
         }
+
         constexpr Vector3f operator*(const float factor) const {
             return {x * factor, y * factor, z * factor};
+        }
+
+        constexpr void operator*=(const float factor){
+            x *= factor; y *= factor; z *= factor;
         }
 
         [[nodiscard]] constexpr float dot(const Vector3f& v) const {
@@ -36,7 +50,11 @@ namespace ggm {
         }
 
         [[nodiscard]] constexpr Vector3f cross(const Vector3f& v) const {
-            return {y * v.z - z * v.y, z * v.x - x * v.z, x - x * v.y};
+            return {
+                y * v.z - z * v.y,
+                z * v.x - x * v.z,
+                x * v.y - y * v.x
+            };
         }
 
         static constexpr Vector3f normalize(const Vector3f& v) {
@@ -63,6 +81,11 @@ namespace ggm {
         float y;
         float z;
     };
+
+    inline std::ostream& operator<<(std::ostream& os, const Vector3f& v) {
+        os << "(" << v.x << ", " << v.y << ", " << v.z << ")";
+        return os;
+    }
 
     struct Vector4f {
         constexpr Vector4f(const float x, const float y, const float z, float w):

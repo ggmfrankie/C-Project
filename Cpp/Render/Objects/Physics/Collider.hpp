@@ -9,6 +9,13 @@
 
 namespace Obj {
     struct Collider {
+        struct ContactInfo {
+            bool overlap = false;
+            ggm::Vector3f normal{0,0,0};
+            float penetration = 0.0f;
+            ggm::Vector3f point{0,0,0};
+        };
+
         ggm::Vector3f center{};
         ggm::Vector3f localCenter{};
 
@@ -26,7 +33,7 @@ namespace Obj {
         Collider(ggm::Vector3f center, float width, float height, float length, ggm::Vector3f rotation);
         ~Collider();
 
-        bool isOverlap(Collider &other);
+        ContactInfo isOverlap(Collider &other);
 
         void update(const ggm::Matrix4f &M);
     };

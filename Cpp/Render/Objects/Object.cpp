@@ -64,6 +64,13 @@ namespace Obj {
         }
     }
 
+    void Object::update() {
+        if (dirty) {
+            model = Matrix4f::Translation(position) * Matrix4f(rotation.toMatrix()) * Matrix4f::Scale(scale);
+            dirty = false;
+        }
+    }
+
     void Object::rotateBy(const float pitch, const float yaw, const float roll) {
 
         const float p = Matrix4f::toRad(pitch);
@@ -97,10 +104,6 @@ namespace Obj {
     }
 
     Matrix4f& Object::getModelMatrix() {
-        if (dirty) {
-            dirty = false;
-            return model = Matrix4f::Translation(position) * Matrix4f(rotation.toMatrix()) * Matrix4f::Scale(scale);
-        }
         return model;
     }
 } // Core

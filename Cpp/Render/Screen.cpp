@@ -165,15 +165,23 @@ namespace Render {
     }
 
     void Screen::update(const double dt) {
-        for (auto& a : pObjects) {
-            for (auto& b : pObjects) {
-                if (a != b && a.collidesWith(b)) a.onCollision(b);
+        for (auto& o: objects) {
+            o.update();
+        }
+        for (size_t i = 0; i < pObjects.size(); i++) {
+            auto& A = pObjects[i];
+            A.integrate(dt);
+            A.update(dt, input);
+            for (size_t j = i + 1; j < pObjects.size(); j++) {
+                auto& B = pObjects[j];
+                A.collidesWith(B);
             }
-            a.onUpdate(dt, input);
         }
         gui_update();
     }
+
 }
+
 
 
 
