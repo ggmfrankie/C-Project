@@ -18,7 +18,7 @@ namespace Obj {
         ggm::Vector3f forces{0,0,0};
 
         ggm::Vector3f angularVelocity = {0,0,0};
-        ggm::Vector3f torque = {0,0,0};
+        ggm::Vector3f torques = {0,0,0};
 
         ggm::Matrix3f inertiaLocal;
         ggm::Matrix3f invInertiaLocal;
@@ -30,8 +30,8 @@ namespace Obj {
         float restitution = 0.2f;
         float friction = 0.5f;
 
-        float mass = 1.0;
-        float invMass = 1.0;
+        float mass = 100.0;
+        float invMass = 1/100.0;
         bool isStatic = false;
 
         void computeInertiaTensor();
@@ -61,7 +61,6 @@ namespace Obj {
         void update(double dt, Render::Input &input);
 
         void rotateBy(float pitch, float yaw, float roll) override;
-
         void rotateBy(const ggm::Vector3f &v);
 
         void moveBy(float dx, float dy, float dz) override;

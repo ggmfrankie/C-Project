@@ -14,7 +14,7 @@
 
 namespace Render {
     using std::string;
-    Shader::Shader(string  fileVert, string  fileFrag): vertPath(std::move(fileVert)), fragPath(std::move(fileFrag)) {
+    Shader::Shader(string fileVert, string fileFrag): vertPath(std::move(fileVert)), fragPath(std::move(fileFrag)) {
         programId = 0;
         vertexId = 0;
         fragmentId = 0;

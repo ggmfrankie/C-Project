@@ -154,6 +154,10 @@ add_executable(C-Project
         Cpp/Render/Objects/Behaviors/IBehavior.hpp
         Cpp/Render/Objects/Behaviors/TestBeahvior.cpp
         Cpp/Render/Objects/Behaviors/TestBehavior.hpp
+        Cpp/Render/Shader/Lighting/PointLight.cpp
+        Cpp/Render/Shader/Lighting/PointLight.hpp
+        Cpp/Render/Shader/DeferredShader.cpp
+        Cpp/Render/Shader/DeferredShader.hpp
 
 )
 #add_subdirectory("${CMAKE_SOURCE_DIR}/Render")

@@ -4,6 +4,7 @@ layout (location = 1) in vec3 norm;
 layout (location = 2) in vec2 uv;
 
 out vec2 texCoords;
+out vec3 outNorm;
 
 uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
@@ -12,4 +13,6 @@ void main() {
     texCoords = uv;
     vec4 mvPos = modelViewMatrix * vec4(pos, 1.0);
     gl_Position = projectionMatrix * mvPos;
+
+    outNorm = normalize(modelViewMatrix * vec4(norm, 0.0)).xyz;
 }

@@ -57,6 +57,10 @@ namespace ggm {
             };
         }
 
+        constexpr Vector3f operator/(const float len) const {
+            return {x / len, y / len, z / len};
+        }
+
         static constexpr Vector3f normalize(const Vector3f& v) {
             const float len = std::sqrt(v.x*v.x + v.y*v.y + v.z*v.z);
 

@@ -36,6 +36,7 @@ namespace Obj {
             for (auto& colliderB: other.m_colliders) {
                 if(auto [overlap, normal, penetration, point] = colliderA.isOverlap(colliderB); overlap) {
                     resolveCollision(other, normal, penetration, point);
+                    return true;
                 }
             }
         }
@@ -48,7 +49,6 @@ namespace Obj {
         if (isStatic && other.isStatic)
             return;
 
-
         // --- 1. Compute radii from centers to contact point
         Vector3f rA = contactPoint - this->position;
         Vector3f rB = contactPoint - other.position;
@@ -56,7 +56,7 @@ namespace Obj {
         // --- 2. Relative velocity at contact
         Vector3f vA = velocity + angularVelocity.cross(rA);
         Vector3f vB = other.velocity + other.angularVelocity.cross(rB);
-        Vector3f rv = vA - vB;
+        Vector3f rv = vB - vA;
 
         float velAlongNormal = rv.dot(normal);
         if (velAlongNormal > 0)
@@ -81,7 +81,7 @@ namespace Obj {
 
         if (denom < 1e-6f) return;
 
-        float j = numerator / denom;
+        float j = numerator / denom*0.02f;
 
         Vector3f impulse = normal * j;
 
@@ -100,27 +100,33 @@ namespace Obj {
         // --- 7. Positional correction (to prevent sinking)
         const float k_slop = 0.01f;
         const float percent = 0.4f;
+
+        float totalInvMass = invMass + other.invMass;
+        if (totalInvMass <= 0.0f) return;
+
         float correctionMag = std::max(penetration - k_slop, 0.0f)
-                              / (this->invMass + other.invMass);
-        Vector3f correction = normal * (correctionMag * percent);
+                              * percent;
+
+        Vector3f correction = normal * (correctionMag / totalInvMass);
 
         if (!isStatic)
-            moveBy(correction.x * invMass, correction.y * invMass, correction.z * invMass);
+            moveBy(-correction.x * invMass, -correction.y * invMass, -correction.z * invMass);
         if (!other.isStatic)
-            other.moveBy(-correction.x * other.invMass, -correction.y * other.invMass, -correction.z * other.invMass);
+            other.moveBy(correction.x * other.invMass, correction.y * other.invMass, correction.z * other.invMass);
     }
 
     void PhysicsObject::integrate(const double dt) {
         if (isStatic) return;
 
         acceleration = forces * (1.0f/mass);
+        torques += torques.cross(forces);
 
         velocity += acceleration * static_cast<float>(dt);
         moveBy(velocity.x * static_cast<float>(dt), velocity.y * static_cast<float>(dt), velocity.z * static_cast<float>(dt));
 
-        const auto dq = ggm::Quaternion::fromAngularVelocity(angularVelocity, static_cast<float>(dt));
-        rotation = (dq * rotation).normalized();
+        rotateBy(invInertiaWorld * angularVelocity * dt);
         angularVelocity *= 0.995f;
+
         dirty = true;
         forces = {};
     }

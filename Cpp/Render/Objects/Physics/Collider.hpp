@@ -16,6 +16,14 @@ namespace Obj {
             ggm::Vector3f point{0,0,0};
         };
 
+        struct FaceBasis {
+            ggm::Vector3f n;
+            ggm::Vector3f u;
+            ggm::Vector3f v;
+            float hu, hv;
+            float hn;
+        };
+
         ggm::Vector3f center{};
         ggm::Vector3f localCenter{};
 

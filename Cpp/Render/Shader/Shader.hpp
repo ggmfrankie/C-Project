@@ -13,7 +13,7 @@
 namespace Render {
     class Shader {
     public:
-        explicit Shader(std::string  fileVert, std::string  fileFrag);
+        explicit Shader(std::string fileVert, std::string fileFrag);
 
         [[nodiscard]] GLuint createVertexShader(const std::string &fileVert) const;
 
@@ -24,25 +24,19 @@ namespace Render {
         GLuint createShader(const GLchar *code, int shaderType) const;
 
         void bind() const;
-
         static void unbind();
 
-        ~Shader();
+        virtual ~Shader();
 
         void setUniform(const std::string &name, float value) const;
-
         void setUniform(const std::string &name, int value) const;
-
         void setUniform(const std::string &name, const  ggm::Vector3f& value) const;
-
         void setUniform(const std::string &name, const ggm::Matrix4f &value) const;
 
         void createUniform(const std::string &name);
-
         GLint getUniformLocation(const std::string &name) const;
 
-        void init();
-
+        virtual void init();
         void link() const;
 
     private:
@@ -52,6 +46,7 @@ namespace Render {
         GLuint programId = 0;
         GLuint vertexId = 0;
         GLuint fragmentId = 0;
+
     };
 }
 

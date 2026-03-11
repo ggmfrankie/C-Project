@@ -10,9 +10,9 @@ namespace Obj {
 
     Collider::Collider(const Vector3f center, const float width, const float height, const float length, const Vector3f rotation): center(center) {
         const auto R = Matrix4f::Rotation(rotation);
-        localAxisX = (R * Vector4f(1, 0, 0, 0)).xyz().normalize();
-        localAxisY = (R * Vector4f(0, 1, 0, 0)).xyz().normalize();
-        localAxisZ = (R * Vector4f(0, 0, 1, 0)).xyz().normalize();
+        axisX = localAxisX = (R * Vector4f(1, 0, 0, 0)).xyz().normalize();
+        axisY = localAxisY = (R * Vector4f(0, 1, 0, 0)).xyz().normalize();
+        axisZ = localAxisZ = (R * Vector4f(0, 0, 1, 0)).xyz().normalize();
 
         float hx = width  * 0.5f;
         float hy = height * 0.5f;
@@ -23,89 +23,94 @@ namespace Obj {
 
     Collider::~Collider() = default;
 
-    Collider::ContactInfo Collider::isOverlap(Collider& other) {
 
-        const Vector3f& C1 = this->center;
-        const Vector3f& C2 = other.center;
+    Collider::ContactInfo Collider::isOverlap(Collider& other)
+    {
+        ContactInfo result{};   // default: no overlap
+
+        const Vector3f C1 = center;
+        const Vector3f C2 = other.center;
+        const Vector3f dist = C2 - C1;
 
         float minOverlap = std::numeric_limits<float>::max();
         Vector3f bestAxis{};
 
-        const Vector3f distance = C2 - C1;
-
         const Vector3f* A[3] = { &axisX, &axisY, &axisZ };
         const Vector3f* B[3] = { &other.axisX, &other.axisY, &other.axisZ };
 
-        auto projRadius = [&](const Collider& c, const Vector3f& axis) {
-                return std::fabs(axis.dot(c.axisX)) * c.halfSides.x +
-                       std::fabs(axis.dot(c.axisY)) * c.halfSides.y +
-                       std::fabs(axis.dot(c.axisZ)) * c.halfSides.z;
+        auto projRadius = [](const Collider& c, const Vector3f& n){
+            return
+                std::fabs(n.dot(c.axisX)) * c.halfSides.x +
+                std::fabs(n.dot(c.axisY)) * c.halfSides.y +
+                std::fabs(n.dot(c.axisZ)) * c.halfSides.z;
         };
 
-        auto testAxis = [&](const Vector3f& axis) {
-            if (const float len = axis.length(); len < 1e-8f) return true;
+        auto testAxis = [&](const Vector3f& axis)
+        {
+            float len = axis.length();
+            if (len < 1e-8f)
+                return true; // skip degenerate axis
 
-            const Vector3f n = axis.normalize();
+            Vector3f n = axis / len;
 
-            const float r1 = projRadius(*this, n);
-            const float r2 = projRadius(other, n);
+            float r1 = projRadius(*this, n);
+            float r2 = projRadius(other, n);
+            float d  = std::fabs(n.dot(dist));
 
-            const float dist = std::fabs(n.dot(distance));
+            float overlap = (r1 + r2) - d;
+            if (overlap < 0.0f)
+                return false; // separating axis → no collision
 
-
-            const float overlap = (r1 + r2) - dist;
-
-            if (overlap < 0)
-                return false;
-
-
-            if (overlap < minOverlap) {
+            if (overlap < minOverlap)
+            {
                 minOverlap = overlap;
 
-                const float sign = (distance.dot(n) < 0.0f) ? -1.0f : 1.0f;
-                bestAxis = n * sign;
-            }
+                // Ensure normal points from A → B
+                if (n.dot(dist) < 0)
+                    n = -n;
 
+                bestAxis = n;
+            }
             return true;
         };
-        auto result = ContactInfo();
 
-        for (auto& i : A)
-            if (!testAxis(*i))
+        // --- Test A's 3 axes ---
+        for (auto& ax : A)
+            if (!testAxis(*ax))
                 return result;
 
-        for (auto& i : B)
-            if (!testAxis(*i))
+        // --- Test B's 3 axes ---
+        for (auto& bx : B)
+            if (!testAxis(*bx))
                 return result;
 
-        for (auto& i : A)
-            for (auto& j : B) {
-                if (Vector3f axis = i->cross(*j); !testAxis(axis))
+        // --- Test 9 cross products ---
+        for (auto& ax : A)
+            for (auto& bx : B)
+            {
+                Vector3f axis = ax->cross(*bx);
+                if (!testAxis(axis))
                     return result;
             }
 
+        // --- SAT says overlap ---
         result.overlap = true;
         result.normal = bestAxis;
         result.penetration = minOverlap;
 
-        // Project both OBBs onto the collision normal
-        float extentA =
-            fabs(bestAxis.dot(axisX)) * halfSides.x +
-            fabs(bestAxis.dot(axisY)) * halfSides.y +
-            fabs(bestAxis.dot(axisZ)) * halfSides.z;
+        // ============================
+        //   Proper support point OBB
+        // ============================
+        auto supportPointOnOBB = [](const Collider& c, const Vector3f& dir){
+                return c.center + c.axisX * (std::copysign(c.halfSides.x, dir.dot(c.axisX))) +
+                c.axisY * (std::copysign(c.halfSides.y, dir.dot(c.axisY))) +
+                c.axisZ * (std::copysign(c.halfSides.z, dir.dot(c.axisZ)));
+        };
 
-        float extentB =
-            fabs(bestAxis.dot(other.axisX)) * other.halfSides.x +
-            fabs(bestAxis.dot(other.axisY)) * other.halfSides.y +
-            fabs(bestAxis.dot(other.axisZ)) * other.halfSides.z;
-
-        // Closest support points along normal
-        Vector3f pA = center + bestAxis * extentA;
-        Vector3f pB = other.center - bestAxis * extentB;
+        Vector3f pA = supportPointOnOBB(*this,  bestAxis);
+        Vector3f pB = supportPointOnOBB(other, -bestAxis);
 
         result.point = (pA + pB) * 0.5f;
-
-
         return result;
     }
 
