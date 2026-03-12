@@ -115,7 +115,7 @@ namespace Render {
         const ggm::Vector2f camRot = input->getDisplaceVec();
 
         if (!guiMode) {
-            camera->moveBy(cameraMovement.x * CAMERA_POS_STEP, cameraMovement.y * CAMERA_POS_STEP, cameraMovement.z* CAMERA_POS_STEP);
+            camera->moveBy(cameraMovement.x * CAMERA_POS_STEP, cameraMovement.y * CAMERA_POS_STEP, cameraMovement.z * CAMERA_POS_STEP);
             camera->rotateBy(camRot.x * MOUSE_SENSITIVITY, 0 , camRot.y * MOUSE_SENSITIVITY);
         }
     }
