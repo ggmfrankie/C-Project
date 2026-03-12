@@ -7,11 +7,9 @@
 #include <stdbool.h>
 
 
-#include "Mesh.h"
 #include "Tasks.h"
-#include "TextDisplaying.h"
+#include "../Drawing/TextDisplaying.h"
 #include "../GUI/Texture.h"
-#include "../../Utils/SimpleArray.h"
 #include "../../Utils/HashMap.h"
 #include "../../Utils/Vector.h"
 
@@ -21,35 +19,6 @@ struct Element;
 typedef Element Element;
 
 typedef struct {
-    Vec2f pos;
-    Vec2f uv;
-
-    Vec4f color;
-    float brightness;
-
-    bool hasTexture;
-
-} GuiVertex;
-
-typedef struct {
-    GuiVertex vertices[32];
-    int length;
-    bool needUpdate;
-} GuiMesh;
-
-typedef struct TextElement {
-    Vec2f pos;
-    float width;
-    bool hasText;
-    bool forceResize;
-    String text;
-    Vec3f textColor;
-    float textScale;
-
-    List_Character charQuads;
-} TextElement;
-
-typedef struct Padding {
     int left;
     int up;
     int right;
@@ -72,62 +41,67 @@ typedef enum {
     t_textField
 } ElementType;
 
-typedef struct {
-    bool isActive: 1;
-    bool autoFit: 1;
-    bool invisible: 1;
-    bool fixedWidth: 1;
-    bool fixedHeight: 1;
-    bool draggable: 1;
-    bool needsDeletion: 1;
-    bool wantGrowHorizontal: 1;
-    bool wantGrowVertical: 1;
-    bool hasTexture: 1;
-} ElementFlags;
-
 ARRAY_LIST(ChildElements, Element*)
 
 typedef struct Element {
     char* name;
     ElementType type;
-    ElementFlags flags;
 
-    Vec2i pos;
-    Vec2i worldPos;
-    float transparency;
-    float brightness;
+    struct {
+        bool isActive: 1;
+        bool autoFit: 1;
+        bool invisible: 1;
+        bool fixedWidth: 1;
+        bool fixedHeight: 1;
+        bool draggable: 1;
+        bool needsDeletion: 1;
+        bool wantGrowHorizontal: 1;
+        bool wantGrowVertical: 1;
+        bool hasTexture: 1;
+    } flags;
+
+    struct {
+        Vec2i pos;
+        Vec2i worldPos;
+
+        int width;
+        int height;
+        int actualWidth;
+        int actualHeight;
+
+        int cornerRadius;
+    } dims;
+
+    struct {
+        float transparency;
+        float brightness;
+        Texture texture;
+        Vec4f color;
+        Vec3f defaultColor;
+    } visuals;
+
+    int ID;
 
     PositionMode positionMode;
     LayoutDirection layoutDirection;
 
-    int width;
-    int height;
+    void (*generateMesh)(const Element* element, GuiVertex *vertices, int *vt, int *indices, int *id);
 
-    int actualWidth;
-    int actualHeight;
+    struct {
+        bool (*isMouseOver)(const Element* element, Vec2i mousePos);
+        bool (*onClick)(Element* element, Renderer *renderer);
+        bool (*onHover)(Element* element, Renderer *renderer);
+        void (*whileSelected)(Element* element);
+        void (*onUpdate)(Element* element);
+        void (*reset)(Element* element);
+    } callbacks;
 
-    Mesh Mesh;
-    GuiMesh guiMesh;
-    Texture* simpleTexture;
-    Atlas_Texture texture;
-    Vec3f color;
-    Vec3f defaultColor;
-
-    //Text display
+    Padding padding;
     TextElement textElement;
-
-    //Interaction
-    bool (*isMouseOver)(const Element* element, Vec2i mousePos);
-    bool (*onClick)(Element* element, Renderer *renderer);
-    bool (*onHover)(Element* element, Renderer *renderer);
-    void (*whileSelected)(Element* element);
-    void (*onUpdate)(Element* element);
-    void (*reset)(Element* element);
 
     Task task;
     Element* parentElement;
     List_ChildElements childElements;
-    Padding padding;
     int childGap;
 
     void* elementData;
@@ -143,8 +117,11 @@ typedef struct {
     Vec2i pos;
     PositionMode posMode;
     LayoutDirection layoutDirection;
+
+    int cornerRadius;
     int width;
     int height;
+
     Texture* old_texture;
     char* texture;
     Vec3f color;
@@ -174,7 +151,7 @@ typedef struct {
 
 void initElements();
 
-Element* newElement(Mesh mesh, Vec2i pos, int width, int height, Texture* texture);
+Element* newElement(Vec2i pos, int width, int heigh);
 Element* f_addChildElements(Element* parent, ...);
 
 Element* addChildrenAsGrid(ElementSettings parentData, ElementSettings es, int numX, int numY);
@@ -203,7 +180,6 @@ bool isSelected_Quad(const Element *element, Vec2i mousePos);
 Element *guiAddElement(
     List_Element *list,
     char *name,
-    Mesh mesh,
     Vec2i pos,
     int width,
     int height,
@@ -224,45 +200,9 @@ Element *guiAddElement(
     bool fixedWidth,
     bool fixedHeight,
     void (*whileSelected)(Element *element), bool draggable, void (*onUpdate)(Element *element), bool wantGrowHorizontal, bool
-    wantGrowVertical, float transparency, char *texture, bool invisible
-);
-
-Element *guiAddSimpleRectangle_Texture(
-    Vec2i pos,
-    int width,
-    int height,
-    Texture *tex
-);
-
-Element *guiAddSimpleRectangle_Color(
-    Vec2i pos,
-    int width,
-    int height,
-    Vec3f color
-);
-
-Element *guiAddSimpleButton_Texture(
-    Vec2i pos,
-    int width,
-    int height,
-    Texture *tex,
-    Task task,
-    const char *text
-);
-
-Element *guiAddSimpleButton_Color(
-    Vec2i pos,
-    int width,
-    int height,
-    Vec3f color,
-    Task task,
-    const char *text
+    wantGrowVertical, float transparency, char *texture, bool invisible, int cornerRadius
 );
 
 Element *createElement(ElementSettings es);
-Element *createTextFieldElement( ElementSettings elementSettings);
-
-typedef struct Element_Functions {
- //TODO
-} Element_Functions;
+Element *createTextFieldElement( ElementSettings elementSettings, bool (*onEnterCallback)(Element* element, Renderer *renderer));
 #endif //C_GUIELEMENT_H

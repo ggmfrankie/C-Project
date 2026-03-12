@@ -1,20 +1,28 @@
 #version 460
 
-in vec2 outUV;
-in vec4 outColor;
-flat in float outBrightness;
-flat in int outHasTexture;
+in vec2 f_UV;
+in vec4 f_Color;
+flat in float f_Brightness;
+flat in int f_HasTexture;
+flat in int f_AtlasIndex;
 
 out vec4 fragColor;
 
-uniform sampler2D atlasSampler;
+layout(binding = 0) uniform sampler2D guiSampler;
+layout(binding = 1) uniform sampler2D glyphSampler;
 
 void main() {
-    if(outHasTexture == 1){
-        vec4 texColor = texture(atlasSampler, outUV);
-        fragColor = vec4(texColor.rgb, texColor.a);
+    vec4 base;
+    if (f_AtlasIndex == 0){
+
+        if (f_HasTexture == 1) {
+            base = texture(guiSampler, f_UV);
+        } else {
+            base = f_Color;
+        }
+
     } else {
-        fragColor = vec4(outColor.rgb, outColor.a);
+        base = vec4(f_Color.rgb, texture(glyphSampler, f_UV).a);
     }
-    //fragColor = vec4(0.3, 0.7, 0.9, 1.0);
+    fragColor = f_Brightness * base;
 }

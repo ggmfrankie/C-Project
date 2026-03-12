@@ -10,7 +10,7 @@
 
 #include "Vector.hpp"
 
-namespace Math {
+namespace ggm {
 
 struct Quaternion {
     float w, x, y, z;
@@ -26,28 +26,28 @@ struct Quaternion {
 
     // Identity quaternion
     static constexpr Quaternion Identity() {
-        return Quaternion(1,0,0,0);
+        return {1,0,0,0};
     }
 
     // -------------------------
     // From axis-angle
     // -------------------------
-    static Quaternion fromAxisAngle(float ax, float ay, float az, float radians) {
+    static constexpr Quaternion fromAxisAngle(float ax, float ay, float az, float radians) {
         float half = radians * 0.5f;
         float s = std::sin(half);
-        return Quaternion(
+        return {
             std::cos(half),
             ax * s,
             ay * s,
             az * s
-        );
+        };
     }
 
     // -------------------------
     // From Euler angles (pitch, yaw, roll)
     // NOTE: radians
     // -------------------------
-    static Quaternion fromEuler(float pitch, float yaw, float roll) {
+    static constexpr Quaternion fromEuler(float pitch, float yaw, float roll) {
         float cy = std::cos(yaw   * 0.5f);
         float sy = std::sin(yaw   * 0.5f);
         float cp = std::cos(pitch * 0.5f);
@@ -63,27 +63,27 @@ struct Quaternion {
         return q;
     }
 
-    static Quaternion fromEuler(const Vector3f& v) {
+    static constexpr Quaternion fromEuler(const Vector3f& v) {
         return fromEuler(v.x, v.y, v.z);
     }
 
     // -------------------------
     // Length
     // -------------------------
-    float length() const {
+    [[nodiscard]] constexpr float length() const {
         return std::sqrt(w*w + x*x + y*y + z*z);
     }
 
     // -------------------------
     // Normalized quaternion
     // -------------------------
-    Quaternion normalized() const {
+    [[nodiscard]] constexpr Quaternion normalized() const {
         float len = length();
-        if (len == 0) return Quaternion(1,0,0,0);
-        return Quaternion(w/len, x/len, y/len, z/len);
+        if (len == 0) return {1,0,0,0};
+        return {w/len, x/len, y/len, z/len};
     }
 
-    void normalize() {
+    constexpr void normalize() {
         float len = length();
         if (len == 0) { *this = Identity(); return; }
         w /= len; x /= len; y /= len; z /= len;
@@ -92,29 +92,29 @@ struct Quaternion {
     // -------------------------
     // Inverse quaternion
     // -------------------------
-    Quaternion inverse() const {
+    [[nodiscard]] constexpr Quaternion inverse() const {
         float lenSq = w*w + x*x + y*y + z*z;
         if (lenSq == 0) return Identity();
-        return Quaternion(w/lenSq, -x/lenSq, -y/lenSq, -z/lenSq);
+        return {w/lenSq, -x/lenSq, -y/lenSq, -z/lenSq};
     }
 
     // -------------------------
     // Quaternion multiplication (combines rotations)
     // qTotal = this * other
     // -------------------------
-    Quaternion operator*(const Quaternion& o) const {
-        return Quaternion(
+    constexpr Quaternion operator*(const Quaternion& o) const {
+        return {
             w*o.w - x*o.x - y*o.y - z*o.z,
             w*o.x + x*o.w + y*o.z - z*o.y,
             w*o.y - x*o.z + y*o.w + z*o.x,
             w*o.z + x*o.y - y*o.x + z*o.w
-        );
+        };
     }
 
     // -------------------------
     // Rotate a vector (3D)
     // -------------------------
-    std::array<float,3> rotate(const std::array<float,3>& v) const {
+    [[nodiscard]] constexpr std::array<float,3> rotate(const std::array<float,3>& v) const {
         Quaternion qv(0, v[0], v[1], v[2]);
         Quaternion r = (*this) * qv * this->inverse();
         return { r.x, r.y, r.z };
@@ -123,7 +123,7 @@ struct Quaternion {
     // -------------------------
     // Convert quaternion -> 4×4 matrix (OpenGL column-major)
     // -------------------------
-    std::array<float,16> toMatrix() const {
+    [[nodiscard]] constexpr std::array<float,16> toMatrix() const {
         std::array<float,16> M{};
 
         float xx = x*x; float yy = y*y; float zz = z*z;
@@ -153,10 +153,33 @@ struct Quaternion {
         return M;
     }
 
+    static constexpr Quaternion fromAngularVelocity(Vector3f& w, float dt) {
+
+        // Angular velocity magnitude = rotation rate (radians/sec)
+        float angle = w.length() * dt;
+
+        // If no rotation, return identity
+        if (angle < 1e-8f)
+            return Identity();
+
+        // Rotation axis = normalized angular velocity direction
+        Vector3f axis = w.normalize();
+
+        float half = angle * 0.5f;
+        float s = std::sin(half);
+
+        return {
+            std::cos(half),
+            axis.x * s,
+            axis.y * s,
+            axis.z * s
+        };
+    }
+
     // -------------------------
     //Spherical Linear Interpolation (SLERP)
     // -------------------------
-    static Quaternion slerp(const Quaternion& a, const Quaternion& b, float t) {
+    static constexpr Quaternion slerp(const Quaternion& a, const Quaternion& b, float t) {
         Quaternion q1 = a.normalized();
         Quaternion q2 = b.normalized();
 
@@ -184,12 +207,12 @@ struct Quaternion {
         float s2 = std::sin(t * theta);
         float inv = 1.0f / std::sin(theta);
 
-        return Quaternion(
+        return {
             (q1.w * s1 + q2.w * s2) * inv,
             (q1.x * s1 + q2.x * s2) * inv,
             (q1.y * s1 + q2.y * s2) * inv,
             (q1.z * s1 + q2.z * s2) * inv
-        );
+        };
     }
 };
 

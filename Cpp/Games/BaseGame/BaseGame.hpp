@@ -16,7 +16,7 @@ namespace Render {
         void preInit() override;
         void postInit() override;
 
-        void onUpdate(float deltaTime) override;
+        void onUpdate(double deltaTime) override;
         void onShutdown() override;
 
         void passState(EngineContext &&e) override;
@@ -27,10 +27,11 @@ namespace Render {
         Camera* camera = nullptr;
         Input* input = nullptr;
         Screen* screen = nullptr;
+        Engine::CommandRegistry* cRegistry = nullptr;
 
         bool guiMode = false;
 
-        static constexpr float CAMERA_POS_STEP = 0.03f;
+        float CAMERA_POS_STEP = 0.03f;
         static constexpr float MOUSE_SENSITIVITY = 0.05f;
 
         static void toggleCursorMode(GLFWwindow *window, bool guiMode);

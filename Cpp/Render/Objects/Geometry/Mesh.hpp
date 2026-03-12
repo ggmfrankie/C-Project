@@ -17,15 +17,16 @@
 namespace Obj {
     class Mesh {
     public:
-        Mesh(std::vector<Math::Vector3f> &&vertices, std::vector<Math::Vector2f> &&uvs,
-             std::vector<Math::Vector3f> &&normals,
+        Mesh(std::vector<ggm::Vector3f> &&vertices, std::vector<ggm::Vector2f> &&uvs,
+             std::vector<ggm::Vector3f> &&normals,
              std::vector<GLuint> &&indices, Texture &&texture);
 
-        Mesh(std::vector<Math::Vector3f> &&vertices, std::vector<Math::Vector2f> &&uvs,
-             std::vector<Math::Vector3f> &&normals,
+        Mesh(std::vector<ggm::Vector3f> &&vertices, std::vector<ggm::Vector2f> &&uvs,
+             std::vector<ggm::Vector3f> &&normals,
              std::vector<GLuint> &&indices);
 
         Mesh(Mesh &&other) noexcept;
+        Mesh(const Mesh &other) noexcept;
 
         ~Mesh();
 
@@ -49,9 +50,9 @@ namespace Obj {
         Material material{};
 
         std::array<GLuint, 3> VBOs{};
-        std::vector<Math::Vector3f> vertices{};
-        std::vector<Math::Vector3f> normals{};
-        std::vector<Math::Vector2f> uvs{};
+        std::vector<ggm::Vector3f> vertices{};
+        std::vector<ggm::Vector3f> normals{};
+        std::vector<ggm::Vector2f> uvs{};
         std::vector<GLuint> indices{};
 
         Render::Shader* shader = nullptr;

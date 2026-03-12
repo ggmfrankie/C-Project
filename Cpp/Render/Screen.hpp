@@ -4,21 +4,20 @@
 
 #ifndef MIXEDPROJECT_WINDOW_H
 #define MIXEDPROJECT_WINDOW_H
-#include <glad/gl.h>
-#include "GLFW/glfw3.h"
 #include <string>
 #include <vector>
 
 #include "IO/Input.hpp"
 #include "Objects/Object.hpp"
-#include "Objects/Geometry/Mesh.hpp"
+#include "Objects/Physics/PhysicsObject.hpp"
 #include "Shader/Shader.hpp"
 #include "Transformation/Camera.hpp"
 
-namespace Render{
+namespace Render {
     class Screen {
     public:
-        explicit Screen(std::string  windowName, int width, int height);
+        Screen(std::string windowName, int width, int height);
+
         ~Screen();
 
         void init();
@@ -26,16 +25,20 @@ namespace Render{
         void render();
 
         void addObject(Obj::Object &&object);
+        void addObject(Obj::PhysicsObject &&object);
 
         Camera &getCamera();
 
         int getWidth() const;
-
         int getHeight() const;
 
         std::vector<Obj::Object> &getObjectList();
 
+        void update(double dt);
         [[nodiscard]] GLFWwindow *getWindowHandle() const;
+        Input &getInput();
+
+        void endFrame();
 
     private:
         static void framebufferSizeCallback(GLFWwindow *window, int width, int height);
@@ -46,10 +49,11 @@ namespace Render{
         std::string name;
 
         Camera camera;
-
+        Input input;
         Shader shader;
 
         std::vector<Obj::Object> objects;
+        std::vector<Obj::PhysicsObject> pObjects;
     };
 }
 

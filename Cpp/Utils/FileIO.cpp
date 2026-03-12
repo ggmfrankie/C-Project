@@ -7,7 +7,7 @@
 #include <fstream>
 #include <stdexcept>
 
-namespace Utils::FileIO {
+namespace ggm::FileIO {
     std::string readFile(const std::string& filePath) {
 
         std::ifstream file(filePath, std::ios::binary);

@@ -8,7 +8,7 @@
 #include <cmath>
 #include <iostream>
 
-namespace Utils {
+namespace ggm {
 
     using std::vector, std::string_view, std::ranges::distance;
 

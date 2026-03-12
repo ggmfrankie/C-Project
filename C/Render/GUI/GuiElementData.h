@@ -5,8 +5,10 @@
 #ifndef C_GUIELEMENTDATA_H
 #define C_GUIELEMENTDATA_H
 #include <pthread.h>
-#include <stdbool.h>
+
 #include "../../Utils/CString.h"
+struct Element;
+struct Renderer;
 
 typedef struct {
     float min;
@@ -35,6 +37,8 @@ typedef struct {
 
     bool focused;
     bool selecting;
+
+    bool (*onEnterCallback)(struct Element* element, struct Renderer *renderer);
 } TextFieldData;
 
 #endif //C_GUIELEMENTDATA_H

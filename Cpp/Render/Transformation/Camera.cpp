@@ -13,7 +13,7 @@ namespace Render {
 
     void Camera::moveBy(const float offsetX, const float offsetY, const float offsetZ) {
 
-        const float yawRad = Math::Matrix4f::toRad(m_rotation.z);
+        const float yawRad = ggm::Matrix4f::toRad(m_rotation.z);
 
         // Forward (XZ) consistent with view R = Ry(-yaw) * Rx(-pitch): forward is -Z at yaw=0
         const float fx =  std::sin(yawRad);
@@ -24,7 +24,7 @@ namespace Render {
         const float rz =  std::sin(yawRad);
 
         // Apply movement in camera-aligned horizontal axes
-        m_pos.x += rx * offsetX + fx * offsetZ; // strafe + forward
+        m_pos.x += rx * offsetX + fx * offsetZ;
         m_pos.z += rz * offsetX + fz * offsetZ;
         m_pos.y += offsetY;
 
@@ -36,8 +36,8 @@ namespace Render {
         m_rotation.z += dYaw;
     }
 
-    Math::Matrix4f Camera::getViewMatrix() const {
-        using namespace Math;
+    ggm::Matrix4f Camera::getViewMatrix() const {
+        using namespace ggm;
 
         const float pitchDeg = m_rotation.x;
         const float yawDeg   = m_rotation.z;
@@ -45,6 +45,5 @@ namespace Render {
         // View is inverse rotation, hence the negatives:
         const Matrix4f R = Matrix4f::RotationX(-pitchDeg) * Matrix4f::RotationY(-yawDeg);
         return R * Matrix4f::Translation(-m_pos);
-
     }
 } // Render

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 4.0)
 project(MixedProject LANGUAGES C CXX)
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -march=native -pthread")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -march=native -pthread")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -march=native -pthread")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -march=native -pthread")
 
 set(CMAKE_C_STANDARD 23)
 set(CMAKE_C_STANDARD_REQUIRED ON)
@@ -18,12 +18,12 @@ add_library(GUI STATIC
         Main.c
         C/Utils/CString.c
         C/Utils/CString.h
-        C/Render/Render.c
-        C/Render/Render.h
-        C/Render/GUI/Mesh.c
-        C/Render/GUI/Mesh.h
+        C/Render/Drawing/Render.c
+        C/Render/Drawing/Render.h
+        C/Render/Drawing/Mesh.c
+        C/Render/Drawing/Mesh.h
         C/Utils/ArrayList.h
-        C/Render/gl.c
+        C/Render/Drawing/gl.c
         C/Render/Engine.c
         C/Render/Engine.h
         C/Utils/Vector.c
@@ -57,8 +57,8 @@ add_library(GUI STATIC
         C/Render/GUI/CallbackFunctions.h
         C/Render/GUI/CallbackFunctions.c
         C/Extern/Informatik/Geldautomat.c
-        C/Render/GUI/TextDisplaying.c
-        C/Render/GUI/TextDisplaying.h
+        C/Render/Drawing/TextDisplaying.c
+        C/Render/Drawing/TextDisplaying.h
         C/Extern/Informatik/PointerFun.c
         C/Extern/Informatik/Namensliste.c
         C/Extern/Informatik/Personalverwaltung.c
@@ -85,13 +85,15 @@ add_library(GUI STATIC
         C/Projects/ChessNewandImproved/ChessBetter2.c
         C/Projects/Tokenizer/Calculator.c
         C/Projects/Tokenizer/Calculator.h
-        C/Render/CRenderInterface.h
         C/Utils/CArrayList.c
         C/Utils/CArrayList.h
 
         Cpp/Games/BaseGame/GameGui.c
         C/Render/GUI/Update.c
         C/Render/GUI/Update.h
+        C/Render/Drawing/Batcher.c
+        C/Render/Drawing/Batcher.h
+        C/Render/Drawing/RenderTypes.h
 )
 
 set_target_properties(GUI PROPERTIES LINKER_LANGUAGE C)
@@ -128,7 +130,7 @@ add_executable(C-Project
         Cpp/Utils/Utils.cpp
         Cpp/Utils/Utils.hpp
         Cpp/Utils/Math/Quaternion.hpp
-        Cpp/Utils/DataStorage/ArrayList.hpp
+        Cpp/Utils/DataStorage/InlineVector.hpp
         Cpp/Utils/Math/ggmdef.hpp
         Cpp/Games/IGame.hpp
         Cpp/Render/IO/Input.cpp
@@ -143,6 +145,19 @@ add_executable(C-Project
         Cpp/Engine/Task.hpp
         Cpp/Games/BaseGame/GuiTasks.hpp
         Cpp/Games/BaseGame/GuiTasks.cpp
+        Cpp/Engine/CommandRegistry.cpp
+        Cpp/Engine/CommandRegistry.hpp
+        Cpp/Render/Objects/Physics/Collider.cpp
+        Cpp/Render/Objects/Physics/Collider.hpp
+        Cpp/Render/Objects/Physics/PhysicsObject.cpp
+        Cpp/Render/Objects/Physics/PhysicsObject.hpp
+        Cpp/Render/Objects/Behaviors/IBehavior.hpp
+        Cpp/Render/Objects/Behaviors/TestBeahvior.cpp
+        Cpp/Render/Objects/Behaviors/TestBehavior.hpp
+        Cpp/Render/Shader/Lighting/PointLight.cpp
+        Cpp/Render/Shader/Lighting/PointLight.hpp
+        Cpp/Render/Shader/DeferredShader.cpp
+        Cpp/Render/Shader/DeferredShader.hpp
 
 )
 #add_subdirectory("${CMAKE_SOURCE_DIR}/Render")

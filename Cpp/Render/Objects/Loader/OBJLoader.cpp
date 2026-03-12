@@ -25,7 +25,7 @@ namespace Obj::OBJLoader {
         const auto filePath = fs::path("..\\Resources\\Objects") / fileName;
         m_folderPath = filePath.parent_path().string() + "\\";
 
-        m_objFile = Utils::FileIO::readFile(filePath.string());
+        m_objFile = ggm::FileIO::readFile(filePath.string());
 
         m_glVertices.reserve(m_objFile.size());
         m_glUv.reserve(m_objFile.size());
@@ -37,17 +37,17 @@ namespace Obj::OBJLoader {
     }
 
 
-    std::vector<Math::Vector3f>
+    std::vector<ggm::Vector3f>
     OBJObject::convertToVec3f(const std::vector<std::string_view>& lineList)
     {
-        vector<Math::Vector3f> output;
+        vector<ggm::Vector3f> output;
         output.reserve(lineList.size());
         for (auto& line: lineList) {
-            auto numberStrings = Utils::split(line, ' ');
+            auto numberStrings = ggm::split(line, ' ');
             float nums[3] = {};
             for (int i = 0; auto numberString: numberStrings) {
                 try {
-                    nums[i++] = static_cast<float>(Utils::getDouble(numberString.data(), numberString.size()));
+                    nums[i++] = static_cast<float>(ggm::getDouble(numberString.data(), numberString.size()));
                 } catch (...) {
                     std::cout << "invalid string caught: " << numberString << "\n";
                 }
@@ -57,15 +57,15 @@ namespace Obj::OBJLoader {
         return output;
     }
 
-    std::vector<Math::Vector2f> OBJObject::convertToVec2f(const vector<string_view>& lineList) {
-        vector<Math::Vector2f> output;
+    std::vector<ggm::Vector2f> OBJObject::convertToVec2f(const vector<string_view>& lineList) {
+        vector<ggm::Vector2f> output;
         output.reserve(lineList.size());
         for (auto& line: lineList) {
-            auto numberStrings = Utils::split(line, ' ');
+            auto numberStrings = ggm::split(line, ' ');
             float nums[2] = {};
             for (int i = 0; auto numberString: numberStrings) {
                 try {
-                    nums[i++] = static_cast<float>(Utils::getDouble(numberString.data(), numberString.size()));
+                    nums[i++] = static_cast<float>(ggm::getDouble(numberString.data(), numberString.size()));
                 } catch (...) {
                     std::cout << "invalid string caught: " << numberString << "\n";
                 }
@@ -76,7 +76,7 @@ namespace Obj::OBJLoader {
     }
 
     void OBJObject::load() {
-        m_lines = Utils::split(m_objFile, '\n') | std::views::filter([](auto s){return !s.empty() && !s.starts_with("#"); }) | Utils::to_vector;
+        m_lines = ggm::split(m_objFile, '\n') | std::views::filter([](auto s){return !s.empty() && !s.starts_with("#"); }) | ggm::to_vector;
 
         for (auto& line : m_lines) {
             if (!line.empty() && line.back() == '\r') line.remove_suffix(1);
@@ -127,10 +127,10 @@ namespace Obj::OBJLoader {
 
     std::vector<OBJObject::IdxGroup> OBJObject::loadIdxGroups(const std::string_view &faceLine) {
         vector<IdxGroup> output;
-        for (const auto& token:  Utils::split(faceLine, ' ')) {
+        for (const auto& token:  ggm::split(faceLine, ' ')) {
             if (token.empty()) continue;
 
-            auto faceIndices = Utils::split(token, '/');
+            auto faceIndices = ggm::split(token, '/');
             int v = -1;
             int vt = -1;
             int vn = -1;
@@ -162,9 +162,9 @@ namespace Obj::OBJLoader {
         if (m_materialLib.empty()) return;
         std::cout << std::filesystem::current_path() << '\n';
         const auto fullPath = m_folderPath + std::string(m_materialLib);
-        const auto s = Utils::FileIO::readFile(fullPath);
+        const auto s = ggm::FileIO::readFile(fullPath);
 
-        for (auto _lines = Utils::split(s, '\n');
+        for (auto _lines = ggm::split(s, '\n');
             auto& line: _lines) {
             if (line.empty()) continue;
             if (line.back() == '\r') line.remove_suffix(1);

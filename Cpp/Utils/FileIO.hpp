@@ -7,7 +7,7 @@
 #include <string>
 
 
-namespace Utils::FileIO {
+namespace ggm::FileIO {
     std::string readFile(const std::string& filePath);
 }
 

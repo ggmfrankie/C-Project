@@ -7,9 +7,9 @@
 
 namespace Obj {
     using std::string, std::vector;
-    Mesh::Mesh(std::vector<Math::Vector3f>&& vertices,
-                   std::vector<Math::Vector2f>&& uvs,
-                   std::vector<Math::Vector3f>&& normals,
+    Mesh::Mesh(std::vector<ggm::Vector3f>&& vertices,
+                   std::vector<ggm::Vector2f>&& uvs,
+                   std::vector<ggm::Vector3f>&& normals,
                    std::vector<GLuint>&& indices,
                    Texture&& texture)
             : texture(std::move(texture)),
@@ -19,9 +19,9 @@ namespace Obj {
               indices(std::move(indices))
     {}
 
-    Mesh::Mesh(std::vector<Math::Vector3f>&& vertices,
-                   std::vector<Math::Vector2f>&& uvs,
-                   std::vector<Math::Vector3f>&& normals,
+    Mesh::Mesh(std::vector<ggm::Vector3f>&& vertices,
+                   std::vector<ggm::Vector2f>&& uvs,
+                   std::vector<ggm::Vector3f>&& normals,
                    std::vector<GLuint>&& indices)
             : texture(),
               vertices(std::move(vertices)),
@@ -47,6 +47,19 @@ namespace Obj {
         other.VAO = 0;
         other.EBO = 0;
         other.VBOs = {0, 0, 0};
+    }
+
+    Mesh::Mesh(const Mesh &other) noexcept:
+    initialized(other.initialized),
+          VAO(other.VAO),
+          EBO(other.EBO),
+          texture(other.texture),
+          material(other.material),
+          VBOs(other.VBOs),
+          vertices(other.vertices),
+          normals(other.normals),
+          uvs(other.uvs),
+          indices(other.indices) {
     }
 
     Mesh::~Mesh() {
@@ -85,8 +98,6 @@ namespace Obj {
 
         shader = s;
 
-        puts("init mesh");
-
         if (texture.hasData()) texture.init();
         if (material.hasData()) material.init();
 
@@ -113,14 +124,14 @@ namespace Obj {
     }
 
     Mesh Mesh::getDummyMesh() {
-        vector<Math::Vector3f> vertices = {
+        vector<ggm::Vector3f> vertices = {
             {0.5f, 0.5f, 0.0f},
             {0.5f, -0.5f, 0.0f},
             {-0.5f, -0.5f, 0.0f},
             {-0.5f, 0.5f, 0.0f}
         };
 
-        vector<Math::Vector3f> normals = {
+        vector<ggm::Vector3f> normals = {
             {0.5f, 0.5f, 0.0f},
             {0.5f, -0.5f, 0.0f},
             {-0.5f, -0.5f, 0.0f},
@@ -132,7 +143,7 @@ namespace Obj {
             1, 3, 2
         };
 
-        vector<Math::Vector2f> tex = {
+        vector<ggm::Vector2f> tex = {
             {1.0f, 1.0f},
             {1.0f, 0.0f},
             {0.0f, 0.0f},

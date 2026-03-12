@@ -97,7 +97,7 @@ namespace Render {
         return keysReleased[key];
     }
 
-    Math::Vector2f Input::getDisplaceVec() {
+    ggm::Vector2f Input::getDisplaceVec() {
         const auto vec = m_displaceVec;
         m_displaceVec = {};
         return vec;

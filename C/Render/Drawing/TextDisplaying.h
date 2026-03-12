@@ -5,18 +5,18 @@
 #ifndef C_TEXTELEMENT_H
 #define C_TEXTELEMENT_H
 
-#include "Texture.h"
+#include "../GUI/Texture.h"
 #include "../../../Dependencies/include/stb/stb_truetype.h"
 #include "../../Utils/Vector.h"
+#include "RenderTypes.h"
+
 struct Element;
 typedef struct Element Element;
 struct Renderer;
 typedef struct Renderer Renderer;
-struct TextElement;
-typedef struct TextElement TextElement;
 
 typedef struct {
-    Texture fontAtlas;
+    Basic_Texture fontAtlas;
     stbtt_packedchar glyphs[96];
     float fontSize;
     int maxCharHeight;
@@ -39,10 +39,23 @@ typedef struct {
 
 ARRAY_LIST(Character, Character)
 
+typedef struct {
+    Vec2f pos;
+    float width;
+    bool hasText;
+    bool forceResize;
+    String text;
+
+    Vec3f textColor;
+    float textScale;
+
+    List_Character charQuads;
+
+} TextElement;
+
 Font loadFontAtlas(char* file);
 void reloadTextQuads(const Font* font, Element *element);
-void renderText(const Renderer *renderer, const Element *element);
-void renderTextRetained(const Renderer* renderer, const Element* element);
+void accumulateTextQuads(const Element *element, GuiVertex *vertices, int *vt, int *indices, int *id, const Font *font);
 Vec2i measureText(const Font *font, const String *text);
 Vec2i measureElementText(const Font *font, const TextElement* textElement);
 

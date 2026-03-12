@@ -5,12 +5,13 @@
 #include "../GUI/CallbackFunctions.h"
 
 #include "GuiElementData.h"
-#include "../Render.h"
+#include "../Drawing/Render.h"
 #include "../../Utils/TimeMeasurenments.h"
 #include "../../Utils/UtilityFun.h"
 #include <windows.h>
 
 #include "../Engine.h"
+#include "Utils/DataStructures.h"
 
 bool dragFun(Element *element, const Renderer *renderer) {
     static Vec2i offset;
@@ -23,15 +24,15 @@ bool dragFun(Element *element, const Renderer *renderer) {
     }
 
     if (glfwGetKey(renderer->window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-        const Vec2i parentWorldPos = element->parentElement ? element->parentElement->worldPos : (Vec2i){0, 0};
+        const Vec2i parentWorldPos = element->parentElement ? element->parentElement->dims.worldPos : (Vec2i){0, 0};
         if (!dragging) {
-            offset.x = renderer->mousePos.x - element->worldPos.x;
-            offset.y = renderer->mousePos.y - element->worldPos.y;
+            offset.x = renderer->mousePos.x - element->dims.worldPos.x;
+            offset.y = renderer->mousePos.y - element->dims.worldPos.y;
             dragging = true;
         } else {
             element->positionMode = POS_ABSOLUTE;
-            element->pos.x = (renderer->mousePos.x - parentWorldPos.x) - offset.x - ((element->parentElement)?element->parentElement->padding.left:0);
-            element->pos.y = (renderer->mousePos.y - parentWorldPos.y) - offset.y - ((element->parentElement)?element->parentElement->padding.up:0);
+            element->dims.pos.x = (renderer->mousePos.x - parentWorldPos.x) - offset.x - ((element->parentElement)?element->parentElement->padding.left:0);
+            element->dims.pos.y = (renderer->mousePos.y - parentWorldPos.y) - offset.y - ((element->parentElement)?element->parentElement->padding.up:0);
         }
         return true;
     }
@@ -55,12 +56,12 @@ bool hoverAndDragFunctionInvis(Element *element, Renderer *renderer) {
 }
 
 bool defaultHoverFun(Element *element, Renderer *renderer) {
-    element->brightness = 0.8f;
+    element->visuals.brightness = 0.8f;
     return false;
 }
 
 bool changeColorOnHoverFun(Element *element, Renderer *renderer) {
-    element->color = *(Vec3f*) (element->elementData);
+    element->visuals.color = *(Vec4f*) (element->elementData);
     return false;
 }
 
@@ -90,25 +91,46 @@ bool sliderCallbackFun(Element *element, Renderer *renderer) {
     return false;
 }
 
-bool textFieldCallbackFun(Element *element, Renderer *renderer) {
-    TextFieldData* data = (TextFieldData*)(element->elementData);
+bool textField_onClick(Element *element, Renderer *renderer) {
+    if(element->type != t_textField) return false;
+
+    TextFieldData* data = element->elementData;
     if (Strings.isEmpty(&data->text)) return false;
 
     List_Character* charQuads = &element->textElement.charQuads;
     Vec2i mousePos = getMousePos();
 
-    Vec2f relMousPos = {(float)(mousePos.x - element->pos.x), (float)(mousePos.y - element->pos.y)};
-    mousePos.x -= element->pos.x;
-    mousePos.y -= element->pos.y;
+    Vec2f relMousePos = {(float)(mousePos.x - element->dims.pos.x), (float)(mousePos.y - element->dims.pos.y)};
+    mousePos.x -= element->dims.pos.x;
+    mousePos.y -= element->dims.pos.y;
     int i = 0;
     for (; i < charQuads->size; i++) {
         Character* currentChar = &charQuads->content[i];
-        if (relMousPos.x < currentChar->pos.x + currentChar->width/2) {
+        if (relMousePos.x < currentChar->pos.x + currentChar->width/2) {
             data->cursor.byteIndex = i;
             return true;
         }
     }
     data->cursor.byteIndex = i;
+    return true;
+}
+
+bool textField_runTask(Element *element, Renderer *renderer) {
+    if(element->type != t_textField) return false;
+    TextFieldData* data = element->elementData;
+    if (data->text.length == 0) return false;
+
+    char* newBuffer = malloc(data->text.length + 1);
+    memcpy(newBuffer, data->text.content, data->text.length);
+    newBuffer[data->text.length] = '\0';
+
+    str_clear(&data->text);
+    data->cursor.byteIndex = 0;
+    setText_noLock(element,"");
+
+    if (element->task.func && !element->task.isBlocked) {
+        pushTask(element->task.func, newBuffer);
+    }
     return true;
 }
 
@@ -137,8 +159,8 @@ void displayCurrentTime(Element *element) {
 
 void syncWithScreen(Element *element) {
     const Vec2i window = getWindowSize();
-    element->width = window.x;
-    element->height = window.y;
+    element->dims.width = window.x;
+    element->dims.height = window.y;
 }
 
 void updateColorRainbow(Element *element) {
@@ -153,7 +175,8 @@ void updateColorRainbow(Element *element) {
     hue += 120.0 * (double)timeNs * 1e-9;
     if (hue >= 360.0) hue -= 360.0;
 
-    element->color = hsv_to_rgb((float)hue, .3f, 1.0f);
+    Vec3f color = hsv_to_rgb((float)hue, .3f, 1.0f);
+    element->visuals.color = (Vec4f){color.x,color.y, color.z, 1.0f};
     lastTime = currentTime;
 }
 
@@ -163,9 +186,9 @@ void incrementWidth(Element *element) {
     calls++;
     if (calls < 1) return;
     calls = 0;
-    element->width += direction * 1;
-    if (element->width <= 0) direction = -direction;
-    if (element->width >= 800) direction = -direction;
+    element->dims.width += direction * 1;
+    if (element->dims.width <= 0) direction = -direction;
+    if (element->dims.width >= 800) direction = -direction;
 }
 
 void incrementHeight(Element *element) {
@@ -174,9 +197,9 @@ void incrementHeight(Element *element) {
     calls++;
     if (calls < 1) return;
     calls = 0;
-    element->height += direction * 1;
-    if (element->height <= 0) direction = -direction;
-    if (element->height >= 800) direction = -direction;
+    element->dims.height += direction * 1;
+    if (element->dims.height <= 0) direction = -direction;
+    if (element->dims.height >= 800) direction = -direction;
 }
 
 void shiftPosition(Element *element) {
@@ -184,8 +207,8 @@ void shiftPosition(Element *element) {
     calls++;
     if (calls < 100) return;
     calls = 0;
-    element->pos.x += 20;
-    element->pos.y += 20;
+    element->dims.pos.x += 20;
+    element->dims.pos.y += 20;
 }
 
 void changeTextSize(Element *element) {

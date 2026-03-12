@@ -53,13 +53,13 @@ namespace Obj::OBJLoader {
 
         std::vector<std::string_view> m_lines{};
 
-        std::vector<Math::Vector3f> m_allVertices{};
-        std::vector<Math::Vector3f> m_allNormals{};
-        std::vector<Math::Vector2f> m_allUv{};
+        std::vector<ggm::Vector3f> m_allVertices{};
+        std::vector<ggm::Vector3f> m_allNormals{};
+        std::vector<ggm::Vector2f> m_allUv{};
 
-        std::vector<Math::Vector3f> m_glVertices{};
-        std::vector<Math::Vector3f> m_glNormals{};
-        std::vector<Math::Vector2f> m_glUv{};
+        std::vector<ggm::Vector3f> m_glVertices{};
+        std::vector<ggm::Vector3f> m_glNormals{};
+        std::vector<ggm::Vector2f> m_glUv{};
 
         std::vector<GLuint> m_indices{};
 
@@ -67,9 +67,9 @@ namespace Obj::OBJLoader {
 
         [[nodiscard]] std::string_view getMaterialLib() const;
 
-        static std::vector<Math::Vector3f> convertToVec3f(const std::vector<std::string_view> &lineList);
+        static std::vector<ggm::Vector3f> convertToVec3f(const std::vector<std::string_view> &lineList);
 
-        static std::vector<Math::Vector2f> convertToVec2f(const std::vector<std::string_view> &lineList);
+        static std::vector<ggm::Vector2f> convertToVec2f(const std::vector<std::string_view> &lineList);
 
         void loadMeshData();
 

@@ -42,17 +42,20 @@ void generateMainMenuGui(Element* guiRoot) {
     const Task changeFov70 = {Engine_changeFOV, &fov};
     const Task changeFov90 = {Engine_changeFOV, &fov2};
 
+    const Task runCommand = {Engine_runCommand};
+
     addChildElements(guiRoot,
         addChildElements(
             createElement((ElementSettings){
                 .name = "Home Screen",
                 .pos = (Vec2i){100, 100},
                 .padding = (Padding){10, 10, 10, 10},
-                .color = {0.3, 0.7, 0.9},
+                .color = {0.78f, 0.78f, 0.78f},
                 .draggable = true,
                 .childGap = 10,
                 .posMode = POS_ABSOLUTE,
                 .transparency = 0.5,
+                .cornerRadius = 20.f
             }),
             createElement((ElementSettings){
                 .invisible = true,
@@ -64,37 +67,42 @@ void generateMainMenuGui(Element* guiRoot) {
                 .padding = {10,10,10,10},
                 .height = 20,
                 .width = 100,
-                .color = {0.5, 1.0, 0.3},
-            }),
+                .color = {0.88f, 0.88f, 0.91f},
+                .cornerRadius = 10,
+                .task = runCommand
+            }, textField_runTask),
             createElement((ElementSettings){
                 .padding = {10,10,10,10},
                 .height = 20,
                 .width = 100,
-                .color = {0.5, 1.0, 0.3},
+                .color = {0.88f, 0.88f, 0.91f},
                 .onClick = runTaskFun,
                 .onHover = defaultHoverFun,
                 .task = changeFov70,
                 .text = "change fov to 70",
-                .name = "btn_fov_70"
+                .name = "btn_fov_70",
+                .cornerRadius = 10
             }),
             createElement((ElementSettings){
                 .padding = {10,10,10,10},
                 .height = 20,
                 .width = 100,
-                .color = {0.5, 1.0, 0.3},
+                .color = {0.88f, 0.88f, 0.91f},
                 .onClick = runTaskFun,
                 .onHover = defaultHoverFun,
                 .task = changeFov90,
                 .text = "change fov to 90",
-                .name = "btn_fov_90"
+                .name = "btn_fov_90",
+                .cornerRadius = 10
             }),
             createElement((ElementSettings){
                 .text = "Quit",
                 .padding = {10,10,10,10},
-                .color = {0.5, 1.0, 0.3},
+                .color = {0.88f, 0.88f, 0.91f},
                 .onHover = defaultHoverFun,
                 .onClick = runTaskFun,
-                .task = quitTask
+                .task = quitTask,
+                .cornerRadius = 10
             })
         )
     );

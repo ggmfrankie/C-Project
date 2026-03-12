@@ -2,24 +2,48 @@
 
 layout (location = 0) in vec2 pos;
 layout (location = 1) in vec2 uv;
-layout (location = 2) in vec4 color;
-layout (location = 3) in float brightness;
-layout (location = 4) in int hasTexture;
+
+layout(location = 2) in int  inElementIndex;
+layout(location = 3) in int  inAtlasIndex;
+
+struct InstanceData {
+    float brightness;
+    int hasTexture;
+    vec2 worldPos;
+    vec4 color;
+    vec3 textColor;
+};
+
+layout(std430, binding = 0) buffer InstanceBuffer {
+    InstanceData instances[];
+};
 
 uniform float screenWidth;
 uniform float screenHeight;
 
-out vec2 outUV;
-out vec4 outColor;
-flat out float outBrightness;
-flat out int outHasTexture;
-
+out vec2 f_UV;
+out vec4 f_Color;
+flat out int f_HasTexture;
+flat out int f_AtlasIndex;
+flat out float f_Brightness;
 
 void main() {
-    vec2 normPos = vec2((pos.x / screenWidth) * 2.0 - 1.0, 1.0 - (pos.y / screenHeight) * 2.0);
+    InstanceData inst = instances[inElementIndex];
+
+    vec2 wPos = pos + inst.worldPos;
+
+    vec2 normPos = vec2((wPos.x / screenWidth) * 2.0 - 1.0, 1.0 - (wPos.y / screenHeight) * 2.0);
 
     gl_Position = vec4(normPos, 0.0, 1.0);
-    outUV = uv;
-    outHasTexture = hasTexture;
-    outColor = color;
+
+    f_UV = uv;
+    if (inAtlasIndex == 1){
+        f_Color = vec4(inst.textColor,1.0);
+    } else {
+        f_Color = inst.color;
+    }
+
+    f_HasTexture = inst.hasTexture;
+    f_Brightness = inst.brightness;
+    f_AtlasIndex = inAtlasIndex;
 }

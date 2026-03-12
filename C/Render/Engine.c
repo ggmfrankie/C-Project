@@ -7,7 +7,7 @@
 #include <windows.h>
 
 #include "GUI/GuiElement.h"
-#include "Render.h"
+#include "Drawing/Render.h"
 #include "GUI/CallbackFunctions.h"
 #include "../Extern/Informatik/Spannungsteiler_A3.h"
 #include "../Utils/Network.h"
@@ -64,6 +64,7 @@ void gui_init(GLFWwindow* window, const int width, const int height, void (*gene
     pthread_cond_broadcast(&guiInitCond);
     pthread_mutex_unlock(&guiMutex);
 
+
     pthread_create(&workerThreadID, nullptr, workerThreadInit, NULL);
 }
 
@@ -75,7 +76,7 @@ void gui_update() {
 }
 
 void gui_render() {
-    GUI_render(&g_Renderer);
+    Renderer_render2(&g_Renderer);
 }
 
 void gui_setVisible(const char* name, const bool b) {
@@ -94,10 +95,24 @@ void gui_setColor(const char* name, const float r, const float g, const float b)
     setColor(getElement(name), (Vec3f){r, g, b});
 }
 
-void startEngine(void (*generateGUI)(Element* guiRoot)) {
-    g_Renderer = newRenderer(1024, 1024, "Chess Game", "ARIAL.TTF");
+void gui_resetColor(const char* name) {
+    auto e = getElement(name);
+    setColor(e, e->visuals.defaultColor);
+}
 
-    Texture* graphTexture = newEmptyTexture(WIDTH, HEIGHT);
+void gui_setCornerRadius(const char* name, int radius) {
+    getElement(name)->dims.cornerRadius = radius;
+}
+
+void gui_addTextures(const char* name) {
+    loadTextures(&g_Renderer.atlasId, 1024, 1024, name);
+}
+
+[[Todo]]
+void startEngine(void (*generateGUI)(Element* guiRoot)) {
+    g_Renderer = newGUIRenderer(nullptr,1024, 1024, "ARIAL.TTF");
+
+    Basic_Texture* graphTexture = newEmptyTexture(WIDTH, HEIGHT);
     g_Renderer.computeShader = newComputeShader(nullptr, 1024);
     g_Renderer.computeShader.texture = graphTexture;
     g_Renderer.computeShader.thickness = 2;
@@ -118,8 +133,6 @@ void startEngine(void (*generateGUI)(Element* guiRoot)) {
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    //loadTextures(&g_Renderer.atlasId, 1024, 1024, "Pointer Schematic.png");
 
     generateGUI(g_Renderer.guiRoot);
 
@@ -154,7 +167,7 @@ void startEngine(void (*generateGUI)(Element* guiRoot)) {
             const u_int64 renderTimeStart = now_ns();
 
         pthread_mutex_lock(&guiMutex);
-        g_Renderer.render(&g_Renderer);
+        Renderer_render2(&g_Renderer);
         pthread_mutex_unlock(&guiMutex);
 
             const u_int64 renderTime = now_ns() - renderTimeStart;
@@ -189,15 +202,15 @@ static bool dragElement(const Renderer *renderer) {
     }
 
     if (glfwGetKey(renderer->window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-        const Vec2i parentWorldPos = element->parentElement ? element->parentElement->worldPos : (Vec2i){0, 0};
+        const Vec2i parentWorldPos = element->parentElement ? element->parentElement->dims.worldPos : (Vec2i){0, 0};
         if (!dragging) {
-            offset.x = renderer->mousePos.x - element->worldPos.x;
-            offset.y = renderer->mousePos.y - element->worldPos.y;
+            offset.x = renderer->mousePos.x - element->dims.worldPos.x;
+            offset.y = renderer->mousePos.y - element->dims.worldPos.y;
             dragging = true;
         } else {
             element->positionMode = POS_ABSOLUTE;
-            element->pos.x = (renderer->mousePos.x - parentWorldPos.x) - offset.x - ((element->parentElement)?element->parentElement->padding.left:0);
-            element->pos.y = (renderer->mousePos.y - parentWorldPos.y) - offset.y - ((element->parentElement)?element->parentElement->padding.up:0);
+            element->dims.pos.x = (renderer->mousePos.x - parentWorldPos.x) - offset.x - ((element->parentElement)?element->parentElement->padding.left:0);
+            element->dims.pos.y = (renderer->mousePos.y - parentWorldPos.y) - offset.y - ((element->parentElement)?element->parentElement->padding.up:0);
         }
         return true;
     }
@@ -205,29 +218,29 @@ static bool dragElement(const Renderer *renderer) {
 }
 
 static void updateState(Renderer *renderer) {
-    renderer->guiRoot->width = renderer->screenWidth;
-    renderer->guiRoot->height = renderer->screenHeight;
+    renderer->guiRoot->dims.width = renderer->screenWidth;
+    renderer->guiRoot->dims.height = renderer->screenHeight;
 
     const bool consumed = updateStateRecursively(renderer->guiRoot, renderer);
 
     if (click(renderer->window, GLFW_MOUSE_BUTTON_LEFT) && !consumed) focusedElement = nullptr;
-    if (focusedElement && focusedElement->whileSelected) focusedElement->whileSelected(focusedElement);
+    if (focusedElement && focusedElement->callbacks.whileSelected) focusedElement->callbacks.whileSelected(focusedElement);
 }
 
 static bool updateStateRecursively(Element *element, Renderer *renderer) {
     if (element == NULL || !element->flags.isActive) return false;
-    if (element->onUpdate) element->onUpdate(element);
+    if (element->callbacks.onUpdate) element->callbacks.onUpdate(element);
 
     for (int i = (int)element->childElements.size-1; i >=0 ; i--) {
         if (updateStateRecursively(element->childElements.content[i], renderer)) return true;
     }
     if (dragging) return false;
-    if (element->isMouseOver && element->isMouseOver(element, renderer->mousePos)) {
-        if (element->onHover && element->onHover(element, renderer)) return true;
+    if (element->callbacks.isMouseOver && element->callbacks.isMouseOver(element, renderer->mousePos)) {
+        if (element->callbacks.onHover && element->callbacks.onHover(element, renderer)) return true;
         if (click(renderer->window, GLFW_MOUSE_BUTTON_LEFT)) {
             mouseCapturedElement = element;
             focusedElement = element;
-            if (element->onClick && element->onClick(element, renderer)) return true;
+            if (element->callbacks.onClick && element->callbacks.onClick(element, renderer)) return true;
         }
         return true;
     }
@@ -249,6 +262,10 @@ void gui_charCallback(GLFWwindow* window, const unsigned int codepoint) {
 
 void gui_keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     if (focusedElement == NULL || focusedElement->type == t_defaultElement) return;
+    if (key == GLFW_KEY_ESCAPE) {
+        focusedElement = nullptr;
+        return;
+    }
 
     if (focusedElement->type == t_textField) {
         if (action == GLFW_PRESS || action == GLFW_REPEAT)
@@ -264,7 +281,12 @@ void gui_keyCallback(GLFWwindow* window, int key, int scancode, int action, int 
             else if (key == GLFW_KEY_RIGHT && tfd->cursor.byteIndex < tfd->text.length) {
                 tfd->cursor.byteIndex++;
             }
-
+            else if (key == GLFW_KEY_ENTER) {
+                if (tfd->onEnterCallback) {
+                    tfd->onEnterCallback(focusedElement, &g_Renderer);
+                }
+                focusedElement = nullptr;
+            }
         }
     }
 }
@@ -297,10 +319,6 @@ Vec2i getWindowSize() {
 Font* getFont() {
     Font* font = &g_Renderer.font;
     return font;
-}
-
-static void addShaderPrograms(Renderer *renderer) {
-    OtherShaders* otherShaders = &renderer->otherShaders;
 }
 
 double graphingFunction(const double x) {

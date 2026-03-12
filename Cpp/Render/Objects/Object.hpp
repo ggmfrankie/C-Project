@@ -6,7 +6,7 @@
 #define MIXEDPROJECT_OBJECT_H
 #include <vector>
 
-#include "../../Utils/DataStorage/ArrayList.hpp"
+#include "../../Utils/DataStorage/InlineVector.hpp"
 #include "../../Utils/Math/Quaternion.hpp"
 #include "../../Utils/Math/Matrix.hpp"
 #include "Geometry/Mesh.hpp"
@@ -23,32 +23,37 @@ namespace Obj {
 
         Object(Object &&other) noexcept ;
 
-        ~Object();
+        Object(const Object &other) noexcept;
 
-        void init(Render::Shader *s);
+        virtual ~Object();
+
+        virtual void init(Render::Shader *s);
 
         void render() const;
 
-        void rotateBy(float pitch, float yaw, float roll);
+        virtual void update();
 
-        void moveBy(float dx, float dy, float dz);
-
-        void moveTo(float x, float y, float z);
+        virtual void rotateBy(float pitch, float yaw, float roll);
+        virtual void moveBy(float dx, float dy, float dz);
+        virtual void moveTo(float x, float y, float z);
 
         static Object getDummyObject();
+        ggm::Matrix4f& getModelMatrix();
 
-        Math::Matrix4f getModelMatrix();
+    protected:
+        ggm::num::i64 uuid{};
+        ggm::Vector3f position{0,0,0};
+        ggm::Quaternion rotation = ggm::Quaternion::Identity();
+        bool dirty = true;
 
     private:
-        Math::Quaternion rotation = Math::Quaternion::Identity();
         bool initialized = false;
         float scale = 1.0f;
 
-        Math::Matrix4f model = Math::Matrix4f::Identity();
-        bool dirty = true;
+        ggm::Matrix4f model = ggm::Matrix4f::Identity();
 
-        Math::Vector3f position{0,0,0};
-        Render::ArrayList<Mesh, 1> meshes{};
+
+        ggm::InlineVector<Mesh, 1> meshes{};
         Render::Shader* shader = nullptr;
     };
 } // Core

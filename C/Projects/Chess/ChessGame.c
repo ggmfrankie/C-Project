@@ -89,7 +89,7 @@ static pthread_t multiplayerListener;
 
 static PieceColor turn = -1;
 
-static Texture* pieceTextures[13] = {};
+static Basic_Texture* pieceTextures[13] = {};
 
 static void chess_loadTextures();
 
@@ -542,8 +542,8 @@ static void resetBoard(void* nix) {
 static Vec2i getPosition(const Element* element) {
     const Element* parent = element->parentElement;
      return (Vec2i) {
-        element->pos.x / (parent->width/8),
-        element->pos.y / (parent->height/8)
+        element->dims.pos.x / (parent->dims.width/8),
+        element->dims.pos.y / (parent->dims.height/8)
     };
 }
 
@@ -642,7 +642,8 @@ static void setUpPiecesForTest() {
     board[4][1].piece = up_Queen;
     // Set side to move: White
 }
-
+[[todo]]
+/*
 static void syncGui() {
     pthread_mutex_lock(&guiMutex);
     for (int i = 0; i < 8; i++) {
@@ -653,6 +654,7 @@ static void syncGui() {
     }
     pthread_mutex_unlock(&guiMutex);
 }
+*/
 
 static void chess_loadTextures() {
     pieceTextures[0] = newEmptyTexture(64, 64);
