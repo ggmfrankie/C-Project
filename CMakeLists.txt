@@ -23,7 +23,7 @@ add_library(GUI STATIC
         C/Render/Drawing/Mesh.c
         C/Render/Drawing/Mesh.h
         C/Utils/ArrayList.h
-        C/Render/Drawing/gl.c
+        Dependencies/GL/gl.c
         C/Render/Engine.c
         C/Render/Engine.h
         C/Utils/Vector.c
