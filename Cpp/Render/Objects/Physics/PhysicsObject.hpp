@@ -26,7 +26,6 @@ namespace Obj {
         ggm::Matrix3f inertiaWorld;
         ggm::Matrix3f invInertiaWorld;
 
-
         float restitution = 0.2f;
         float friction = 0.5f;
 

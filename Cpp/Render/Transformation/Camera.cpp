@@ -24,7 +24,7 @@ namespace Render {
         const float rz =  std::sin(yawRad);
 
         // Apply movement in camera-aligned horizontal axes
-        m_pos.x += rx * offsetX + fx * offsetZ; // strafe + forward
+        m_pos.x += rx * offsetX + fx * offsetZ;
         m_pos.z += rz * offsetX + fz * offsetZ;
         m_pos.y += offsetY;
 

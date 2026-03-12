@@ -71,12 +71,10 @@ namespace Render {
         createShaderUniforms();
 
         for (auto& object: objects) {
-            object.getModelMatrix();
             object.init(&shader);
         }
 
         for (auto& object: pObjects) {
-            object.getModelMatrix();
             object.init(&shader);
         }
     }
@@ -84,7 +82,7 @@ namespace Render {
     void Screen::render() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glEnable(GL_DEPTH_TEST);
-        glDisable(GL_CULL_FACE);
+        //glDisable(GL_CULL_FACE);
 
         shader.bind();
 
@@ -101,8 +99,8 @@ namespace Render {
 
         for (auto& obj : objects) {
 
-            ggm::Matrix4f model      = obj.getModelMatrix();
-            ggm::Matrix4f modelView  = view * model;
+            ggm::Matrix4f& model = obj.getModelMatrix();
+            ggm::Matrix4f modelView = view * model;
 
             shader.setUniform("modelViewMatrix", modelView);
 
@@ -110,8 +108,8 @@ namespace Render {
         }
 
         for (auto& obj: pObjects) {
-            ggm::Matrix4f model      = obj.getModelMatrix();
-            ggm::Matrix4f modelView  = view * model;
+            ggm::Matrix4f& model = obj.getModelMatrix();
+            ggm::Matrix4f modelView = view * model;
 
             shader.setUniform("modelViewMatrix", modelView);
 
