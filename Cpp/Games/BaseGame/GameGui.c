@@ -70,6 +70,7 @@ void generateMainMenuGui(Element* guiRoot) {
                 .color = {0.88f, 0.88f, 0.91f},
                 .cornerRadius = 10,
                 .task = runCommand
+
             }, textField_runTask),
             createElement((ElementSettings){
                 .padding = {10,10,10,10},
