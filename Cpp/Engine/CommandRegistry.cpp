@@ -102,11 +102,7 @@ namespace Engine {
             throw std::runtime_error("No command found");
         }
 
-        for (auto& token: tokens) {
-            std::cout << token.value << "\n";
-        }
-
-        std::string command = std::string(tokens[0].value);
+        auto command = std::string(tokens[0].value);
         std::vector<std::string> args;
 
         for (size_t i = 1; i < tokens.size(); ++i) {

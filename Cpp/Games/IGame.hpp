@@ -2,8 +2,7 @@
 // Created by ertls on 26.02.2026.
 //
 
-#ifndef MIXEDPROJECT_GAMEINTERFACE_H
-#define MIXEDPROJECT_GAMEINTERFACE_H
+#pragma once
 #include <vector>
 
 #include "../Render/IO/Input.hpp"
@@ -14,12 +13,12 @@
 #include "Render/Screen.hpp"
 
 
-namespace Render {
+namespace Game {
 
     struct EngineContext {
-        Input& input;
-        Camera& camera;
-        Screen& screen;
+        Render::Input& input;
+        Render::Camera& camera;
+        Render::Screen& screen;
         Engine::CommandRegistry& commandRegistry;
     };
 
@@ -37,10 +36,4 @@ namespace Render {
 
         virtual void passState(EngineContext&& e) = 0;
     };
-
-
-
-
 } // ggm
-
-#endif //MIXEDPROJECT_GAMEINTERFACE_H

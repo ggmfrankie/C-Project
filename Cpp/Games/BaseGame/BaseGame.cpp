@@ -17,7 +17,7 @@ void toggle(T& x) {
     x = !x;
 }
 
-namespace Render {
+namespace Game {
     void BaseGame::preInit() {
         auto obj = Obj::Object::getDummyObject();
         obj.moveBy(0,0, -30);
@@ -44,12 +44,11 @@ namespace Render {
         screen->addObject(std::move(obj5));
 
         cRegistry->registerCommand<
-            Engine::Arg<int>,
-            Engine::Arg<int>
+            Engine::Arg<std::string>
         >(
-            "add",
-            [](int a, int b) {
-                std::cout << a + b << std::endl;
+            "say",
+            [](std::string a) {
+                std::cout << a << std::endl;
             }
         );
 

@@ -158,6 +158,11 @@ add_executable(C-Project
         Cpp/Render/Shader/Lighting/PointLight.hpp
         Cpp/Render/Shader/DeferredShader.cpp
         Cpp/Render/Shader/DeferredShader.hpp
+        Cpp/Games/IGameLayer.hpp
+        Cpp/Engine/LayerStack.cpp
+        Cpp/Engine/LayerStack.hpp
+        Cpp/Games/BaseGame/Layers/GameLayer.cpp
+        Cpp/Games/BaseGame/Layers/GameLayer.hpp
 
 )
 #add_subdirectory("${CMAKE_SOURCE_DIR}/Render")

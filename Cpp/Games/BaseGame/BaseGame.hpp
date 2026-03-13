@@ -6,7 +6,7 @@
 #define MIXEDPROJECT_BASEGAME_H
 #include "../IGame.hpp"
 
-namespace Render {
+namespace Game {
     class BaseGame: public IGame{
 
     public:
@@ -24,9 +24,9 @@ namespace Render {
 
 
     private:
-        Camera* camera = nullptr;
-        Input* input = nullptr;
-        Screen* screen = nullptr;
+        Render::Camera* camera = nullptr;
+        Render::Input* input = nullptr;
+        Render::Screen* screen = nullptr;
         Engine::CommandRegistry* cRegistry = nullptr;
 
         bool guiMode = false;

@@ -17,7 +17,7 @@ public:
 
     ~GameEngine() = default;
 
-    explicit GameEngine(Render::IGame &game);
+    explicit GameEngine(Game::IGame &game);
 
     void loop();
     void init();
@@ -27,7 +27,7 @@ public:
     Render::Screen &getScreen();
     Engine::CommandRegistry &getCommandRegistry();
 
-    static GameEngine &New(Render::IGame &game);
+    static GameEngine &New(Game::IGame &game);
 
     static GameEngine &Get();
 
@@ -36,7 +36,7 @@ private:
     void processTasks();
 
     static GameEngine* engineInstance;
-    Render::IGame& game;
+    Game::IGame& game;
     Render::Screen screen;
 
     Engine::CommandRegistry commandRegistry;

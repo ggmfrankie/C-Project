@@ -7,7 +7,7 @@
 #define GAME
 #ifdef GAME
 int main() {
-    auto game = Render::BaseGame();
+    auto game = Game::BaseGame();
     GameEngine& gameEngine = GameEngine::New(game);
     gameEngine.init();
     gameEngine.loop();

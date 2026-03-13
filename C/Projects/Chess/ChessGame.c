@@ -849,7 +849,7 @@ static void createEndScreen(Element* root) {
             ),
             createElement(
                 (ElementSettings){
-                    .color = (Vec3f){.8, .0, .0},
+                    .color = {.8, .0, .0},
                     .padding = {10,10,10,10},
                     .text = "End it all",
                     .onHover = defaultHoverFun,

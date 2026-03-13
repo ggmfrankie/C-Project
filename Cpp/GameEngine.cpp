@@ -9,7 +9,7 @@
 
 GameEngine* GameEngine::engineInstance = nullptr;
 
-GameEngine::GameEngine(Render::IGame& game) : game(game), screen("My Window", 800, 600) {
+GameEngine::GameEngine(Game::IGame& game) : game(game), screen("My Window", 800, 600) {
 }
 
 void GameEngine::loop() {
@@ -72,7 +72,7 @@ Engine::CommandRegistry& GameEngine::getCommandRegistry() {
     return commandRegistry;
 }
 
-GameEngine& GameEngine::New(Render::IGame& game) {
+GameEngine& GameEngine::New(Game::IGame& game) {
     engineInstance = new GameEngine(game);
     return *engineInstance;
 }
