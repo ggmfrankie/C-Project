@@ -7,8 +7,8 @@
 typedef struct Element Element;
 #include "RenderTypes.h"
 
-#define MAX_GUI_VERTICES 16384
-#define MAX_GUI_INDICES 16384
+#define MAX_GUI_VERTICES 163840
+#define MAX_GUI_INDICES 163840
 
 void initBatchedRendering();
 void uploadBatchedQuads(const GuiVertex *vertices, int vt, const int* indices, int id);

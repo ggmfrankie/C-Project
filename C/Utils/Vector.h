@@ -46,11 +46,12 @@ Vec2i Vec2i_Mul(Vec2i v1, int factor);
 
 Vec3f Vec3f_Add(Vec3f v1, Vec3f v2);
 Vec3f Vec3f_Mul(Vec3f v1, float factor);
-
 bool Vec3f_Equals(Vec3f a, Vec3f b);
 
-Vec2f newVec2f(float x, float y);
+Vec4f Vec4f_Add(Vec4f v1, Vec4f v2);
+Vec4f Vec4f_Mul(Vec4f v1, float factor);
 
+Vec2f newVec2f(float x, float y);
 Vec2f toVec2f(Vec2i vec);
 
 
@@ -62,6 +63,12 @@ Vec2f: Vec2f_Sub\
 #define v_mul(vec1, factor) _Generic((vec1),\
 Vec2i: Vec2i_Mul,\
 Vec3f: Vec3f_Mul\
+)(vec1, factor)
+
+#define v_add(vec1, vec2) _Generic((vec1),\
+Vec2i: Vec2i_Add,\
+Vec3f: Vec3f_Add,\
+Vec4f: Vec4f_Add\
 )(vec1, factor)
 
 #endif //C_VECTOR_H

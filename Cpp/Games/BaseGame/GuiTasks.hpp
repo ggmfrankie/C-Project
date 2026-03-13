@@ -12,7 +12,7 @@ extern "C" {
 
     void Engine_changeFOV(void* FOV);
     void Engine_runCommand(void* commandString);
-
+    void update_chessGame(void*);
 
 
 #ifdef __cplusplus

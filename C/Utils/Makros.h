@@ -12,4 +12,7 @@
 #define sig(x)\
     ((x<0)?-1:(x==0)?0:1)
 
+#define min(a, b) (((a) < (b)) ? (a) : (b))
+#define max(a, b) (((a) > (b)) ? (a) : (b))
+
 #endif //C_MAKROS_H

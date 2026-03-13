@@ -23,14 +23,16 @@ struct Element;
     void gui_update();
     void gui_render();
 
-    void gui_addTextures(const char* name);
+    void f_gui_loadTextures(char* first, ...);
+    #define gui_loadTextures(first, ...) f_gui_loadTextures(first, __VA_ARGS__, nullptr)
+    void gui_setTexture(Element* e, const char* name);
 
     void gui_charCallback(GLFWwindow*, unsigned int codepoint);
     void gui_keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
     void gui_cursorPositionCallback(GLFWwindow* window, double xPos, double yPos);
     void gui_resizeCallback(GLFWwindow *window, int width, int height);
 
-    void gui_setVisible(const char* name, bool b);
+    void gui_setActive(const char* name, bool b);
     void gui_toggleVisible(const char* name);
     void gui_setText(const char* name, const char* text);
     void gui_setColor(const char* name, float r, float g, float b);

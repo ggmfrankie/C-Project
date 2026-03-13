@@ -38,7 +38,7 @@ GLFWwindow* initWindow(const int width, const int height, const char* name) {
     if (!gladLoadGL(glfwGetProcAddress)) {
         glfwDestroyWindow(window);
         glfwTerminate();
-        return NULL;
+        return nullptr;
     }
     glViewport(0, 0, width, height);
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -51,28 +51,25 @@ void GUIRenderer_init(Renderer *renderer) {
     //ComputeShader_update(&renderer->computeShader, graphingFunction);
 
     initBatchedRendering();
-    Shader_createUniform(&renderer->batched_guiShader, "screenWidth");
-    Shader_createUniform(&renderer->batched_guiShader, "screenHeight");
+    Shader_createUniform(&renderer->guiShader, "screenWidth");
+    Shader_createUniform(&renderer->guiShader, "screenHeight");
 }
 
 
-void beginScissor(const Element* e, int screenHeight) {
+void beginScissor(const Element* e, const int screenHeight) {
     glEnable(GL_SCISSOR_TEST);
 
-    int x = e->dims.worldPos.x;
-    int y = screenHeight - (e->dims.worldPos.y + e->dims.actualHeight);
-    int w = e->dims.actualWidth;
-    int h = e->dims.actualHeight;
+    const int x = e->dims.worldPos.x;
+    const int y = screenHeight - (e->dims.worldPos.y + e->dims.actualHeight);
+    const int w = e->dims.actualWidth;
+    const int h = e->dims.actualHeight;
 
     glScissor(x, y, w, h);
 }
 
-
 void endScissor() {
     glDisable(GL_SCISSOR_TEST);
 }
-
-
 
 void Renderer_render2(const Renderer *renderer) {
     static GuiVertex vertices[MAX_GUI_VERTICES];
@@ -90,16 +87,16 @@ void Renderer_render2(const Renderer *renderer) {
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 #endif
 
-    Shaders.bind(&renderer->batched_guiShader);
+    Shaders.bind(&renderer->guiShader);
     glEnable(GL_MULTISAMPLE);
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, renderer->atlasId);
+    glBindTexture(GL_TEXTURE_2D, renderer->texAtlas.ID);
 
     glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, renderer->font.fontAtlas.textureId);
+    glBindTexture(GL_TEXTURE_2D, renderer->font.fontAtlas.ID);
 
-    setUniform(&renderer->batched_guiShader, "screenWidth", (float) renderer->screenWidth);
-    setUniform(&renderer->batched_guiShader, "screenHeight", (float) renderer->screenHeight);
+    setUniform(&renderer->guiShader, "screenWidth", (float) renderer->screenWidth);
+    setUniform(&renderer->guiShader, "screenHeight", (float) renderer->screenHeight);
 
     const Element* guiRoot = renderer->guiRoot;
 
@@ -221,12 +218,13 @@ inline bool isMousePressed(GLFWwindow* window, const int mouseButton) {
 
 Renderer newGUIRenderer(GLFWwindow* window, const int width, const int height, char *fontFile) {
     return (Renderer){
-        .batched_guiShader = newShader("GuiRender.vert", "GuiRender.frag"),
+        .guiShader = newShader("GuiRender.vert", "GuiRender.frag"),
         .window = window,
         .screenWidth = width,
         .screenHeight = height,
         .font = loadFontAtlas(fontFile),
-        .guiRoot = createRootElement()
+        .guiRoot = createRootElement(),
+        .texAtlas = loadTextureAtlas(2048 , 2048)
     };
 }
 

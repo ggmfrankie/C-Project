@@ -6,7 +6,7 @@
 
 #include <stdio.h>
 
-
+#if 0
 void initSockets() {
 #ifdef _WIN32
     WSADATA wsa;
@@ -63,3 +63,4 @@ int sendData(SOCKET sock, const void* buffer, const int len) {
 int receiveData(SOCKET sock, void* buffer, const int len) {
     return recv(sock, buffer, len, 0);
 }
+#endif

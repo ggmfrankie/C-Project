@@ -8,6 +8,7 @@
 #include "Render/GUI/CallbackFunctions.h"
 #include "GuiTasks.hpp"
 #include "GuiInterface.h"
+#include "Projects/Chess/ChessGame.h"
 
 
 void quitTask(void*) {
@@ -97,6 +98,15 @@ void generateMainMenuGui(Element* guiRoot) {
                 .cornerRadius = 10
             }),
             createElement((ElementSettings){
+                .text = "Start Chess",
+                .padding = {10,10,10,10},
+                .color = {0.88f, 0.88f, 0.91f},
+                .onHover = defaultHoverFun,
+                .onClick = runTaskFun,
+                .task = {update_chessGame},
+                .cornerRadius = 10
+            }),
+            createElement((ElementSettings){
                 .text = "Quit",
                 .padding = {10,10,10,10},
                 .color = {0.88f, 0.88f, 0.91f},
@@ -108,10 +118,11 @@ void generateMainMenuGui(Element* guiRoot) {
         )
     );
 
-    setVisible(getElement("Home Screen"), false);
+    setActive(getElement("Home Screen"), false);
 }
 
 void generateGUI(Element* guiRoot) {
     generateDebugGui(guiRoot);
     generateMainMenuGui(guiRoot);
+    createChessGUI(guiRoot);
 }

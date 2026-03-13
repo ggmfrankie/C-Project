@@ -12,6 +12,7 @@
 #include "../Engine.h"
 #include "GuiElementData.h"
 #include "Render/Drawing/Mesh.h"
+#include "Utils/Makros.h"
 
 
 Element elementArray[1024];
@@ -26,10 +27,12 @@ Element* newElement(const Vec2i pos, const int width, const int height) {
     g_Elements.content[g_Elements.size] = (Element){
         .name = nullptr,
         .dims = {
+            .width = width,
             .height = height,
             .pos = pos,
             .worldPos = pos,
             .actualWidth = width,
+            .actualHeight = height
         },
         .callbacks = {
             .onClick = nullptr,
@@ -111,7 +114,7 @@ void setText_int(Element* element, const int i) {
     setText(element, tempText);
 }
 
-void setVisible(Element* element, const bool b) {
+void setActive(Element* element, const bool b) {
     pthread_mutex_lock(&guiMutex);
     element->flags.isActive = b;
     pthread_mutex_unlock(&guiMutex);
@@ -123,9 +126,9 @@ void toggleVisible(Element* element) {
     pthread_mutex_unlock(&guiMutex);
 }
 
-void setColor(Element* element, const Vec3f color) {
+void Element_setColor(Element* element, const Vec3f color) {
     pthread_mutex_lock(&guiMutex);
-    element->visuals.color = (Vec4f){color.x, color.y, color.z, 1.0f};
+    element->visuals.color = color;
     pthread_mutex_unlock(&guiMutex);
 }
 
@@ -142,12 +145,10 @@ bool isSelected_Quad(const Element *element, const Vec2i mousePos) {
 }
 
 Element *guiAddElement(
-    List_Element *list,
     char *name,
     const Vec2i pos,
     const int width,
     const int height,
-    Texture *tex,
     const Vec3f color,
     const Padding padding,
     const int childGap,
@@ -186,9 +187,17 @@ Element *guiAddElement(
             }
         }
     }
-    lastElement->visuals.color = (Vec4f){color.x, color.y, color.z, 1.0f};
+
+    const auto p = (Padding){
+        max(padding.left, cornerRadius),
+        max(padding.up, cornerRadius),
+        max(padding.right, cornerRadius),
+        max(padding.up, cornerRadius),
+    };
+
+    lastElement->visuals.color = color;
     lastElement->visuals.defaultColor = color;
-    lastElement->padding = padding;
+    lastElement->padding = p;
     lastElement->name = name;
     lastElement->positionMode = positionMode;
     lastElement->childGap = childGap;
@@ -210,6 +219,7 @@ Element *guiAddElement(
 
     if (texture) {
         lastElement->visuals.texture = getTexture(texture);
+        lastElement->flags.hasTexture = true;
     }
 
     if (notSelectable) lastElement->callbacks.isMouseOver = nullptr;
@@ -242,11 +252,11 @@ Element *guiAddSimpleSlider(
     SliderData* sliderData
 )
 {
-    Element* element = guiAddElement(&g_Elements, nullptr, pos, width, height, nullptr, colorBackground, (Padding){10, 10, 10, 10}, 10, isSelected_Quad, hoverAndDragFun, NULL, (Task){}, NULL, true, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false, 0.0f, NULL, true, 0);
+    Element* element = guiAddElement(nullptr, pos, width, height, colorBackground, (Padding){10, 10, 10, 10}, 10, isSelected_Quad, hoverAndDragFun, NULL, (Task){}, NULL, true, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false, 0.0f, NULL, true, 0);
     Vec2i sliderPos = {};
     sliderPos.x = width/2;
     sliderPos.y = 0;
-    Element* sliderElement = guiAddElement(&g_Elements, nullptr, sliderPos, width, height, nullptr, colorSlider, (Padding){10, 10, 10, 10}, 10, isSelected_Quad, hoverAndDragFun, sliderCallbackFun, (Task){}, NULL, true, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false, 0.0f, NULL, true, 0);
+    Element* sliderElement = guiAddElement(nullptr, sliderPos, width, height, colorSlider, (Padding){10, 10, 10, 10}, 10, isSelected_Quad, hoverAndDragFun, sliderCallbackFun, (Task){}, NULL, true, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false, 0.0f, NULL, true, 0);
     element->childElements.add(&element->childElements, sliderElement);
     element->elementData = sliderData;
     return element;
@@ -276,12 +286,10 @@ Element *createTextFieldElement(const ElementSettings elementSettings, bool (*on
 }
 
 Element *createElement(const ElementSettings es) {
-    return guiAddElement(&g_Elements,
-                         es.name,
+    return guiAddElement(es.name,
                          es.pos,
                          es.width,
                          es.height,
-                         es.old_texture,
                          es.color,
                          es.padding,
                          es.childGap,
@@ -310,13 +318,15 @@ Element *createElement(const ElementSettings es) {
 }
 
 Element* addChildrenAsGrid(const ElementSettings parentData, const ElementSettings es, const int numX, const int numY) {
-    return addChildrenAsGridWithGenerator(parentData, es, numX, numY, createElement);
+    return nullptr;
 }
 
-Element* addChildrenAsGridWithGenerator(const ElementSettings parentData, ElementSettings es, const int numX, const int numY, Element* (*generateElement)(ElementSettings)) {
+Element* addChildrenAsGridWithGenerator(const ElementSettings parentData, ElementSettings es, const int numX, const int numY, Element* (*generateElement)(int row, int col, ElementSettings)) {
     Element* parent = createElement(parentData);
     const int childWidth = parent->dims.width/numX;
     const int childHeight = parent->dims.height/numY;
+
+    printf("childWidth>: %i childHeight>: %i\n", childWidth, childHeight);
 
     es.posMode = POS_ABSOLUTE;
     es.width = childWidth;
@@ -326,7 +336,7 @@ Element* addChildrenAsGridWithGenerator(const ElementSettings parentData, Elemen
         for (int ii = 0; ii < numY; ii++) {
             es.pos.x = childWidth * i + parent->padding.left;
             es.pos.y = childHeight * ii + parent->padding.up;
-            addChildElements(parent, generateElement(es));
+            addChildElements(parent, generateElement(i, ii, es));
         }
     }
     return parent;

@@ -8,9 +8,10 @@ layout(location = 3) in int  inAtlasIndex;
 
 struct InstanceData {
     float brightness;
+    float transparency;
     int hasTexture;
     vec2 worldPos;
-    vec4 color;
+    vec3 color;
     vec3 textColor;
 };
 
@@ -37,10 +38,11 @@ void main() {
     gl_Position = vec4(normPos, 0.0, 1.0);
 
     f_UV = uv;
+
     if (inAtlasIndex == 1){
         f_Color = vec4(inst.textColor,1.0);
     } else {
-        f_Color = inst.color;
+        f_Color = vec4(inst.color, inst.transparency);
     }
 
     f_HasTexture = inst.hasTexture;

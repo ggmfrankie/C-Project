@@ -21,10 +21,10 @@ extern "C" void update_setFovHighlight(void* data) {
 }
 
 extern "C" void Engine_runCommand(void* commandString) {
-    std::string_view s = {static_cast<char *>(commandString)};
+    std::string s = {static_cast<char *>(commandString)};
     GameEngine::Get().pushTask(
         Engine::Task( [s] {
-                GameEngine::Get().getCommandRegistry().run(std::string(s));
+                GameEngine::Get().getCommandRegistry().run(s);
             }
         )
     );
@@ -36,11 +36,13 @@ extern "C" void Engine_changeFOV(void* FOV) {
     GameEngine::Get().pushTask(
         Engine::Task( [fovValue] {
                 GameEngine::Get().getScreen().getCamera().setFOV(fovValue);
-
                 auto* payload = new float(fovValue);
                 gui_pushUpdate(update_setFovHighlight, payload);
-
             }
         )
     );
+}
+
+extern "C" void update_chessGame(void*) {
+    gui_setActive("start screen", true);
 }

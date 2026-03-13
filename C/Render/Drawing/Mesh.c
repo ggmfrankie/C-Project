@@ -7,7 +7,6 @@
 #include <math.h>
 
 #include <bemapiset.h>
-#include "glad/gl.h"
 #include "Render/GUI/GuiElement.h"
 #include "Utils/Vector.h"
 
@@ -32,7 +31,7 @@ static struct ArcInfo Mesh_triangulate(const Vec2f corner, const float radius, G
         corner.y + sinf(startAngle)*radius,
     };
 
-    for (int i = 1 ; i <= numTriangles; i++) {
+    for (int i = 1 ; i <= (radius > 0 ? numTriangles : 1); i++) {
 
 
         verts[*vt].pos = (Vec2f){

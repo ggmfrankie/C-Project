@@ -5,8 +5,17 @@
 
 #ifndef C_CHESSGAME_H
 #define C_CHESSGAME_H
-#include "../../Render/GUI/GuiElement.h"
 
-void createChessGUI(Element* root);
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+struct Element;
+
+void createChessGUI(struct Element *root);
+
+#ifdef __cplusplus
+    }
+#endif
 
 #endif //C_CHESSGAME_H

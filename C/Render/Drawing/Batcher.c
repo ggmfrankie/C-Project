@@ -16,7 +16,7 @@ struct asd {
     InstanceData instanceData;
 };
 
-#define MAX_GUI_INSTANCES 8192
+#define MAX_GUI_INSTANCES 81920
 
 static GraphicsData graphicsData;
 
@@ -77,11 +77,12 @@ void uploadBatchedQuads(const GuiVertex *vertices, const int vt, const int* indi
 
 static InstanceData instanceFromElement(const Element* e) {
     InstanceData out;
-    out.brightness = e->visuals.brightness;
-    out.worldPos   = toVec2f(e->dims.worldPos);
-    out.color      = e->visuals.color;
-    out.hasTexture = e->flags.hasTexture;
-    out.textColor  = e->textElement.textColor;
+    out.brightness      = e->visuals.brightness;
+    out.worldPos        = toVec2f(e->dims.worldPos);
+    out.color           = e->visuals.color;
+    out.hasTexture      = e->flags.hasTexture;
+    out.textColor       = e->textElement.textColor;
+    out.transparency    = 1.0f - e->visuals.transparency;
     return out;
 }
 

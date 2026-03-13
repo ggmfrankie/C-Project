@@ -20,23 +20,20 @@ ARRAY_LIST(Texture, Basic_Texture)
 static GLuint uploadTextureToGPU(int width, int height, int channels, const unsigned char* pixels);
 
 static Basic_Texture textureArray[256];
-static Hashmap_AtlasTextures textureMap;
-static List_Texture g_Textures = (List_Texture){.content = textureArray, .capacity = 256, .size = 0};
+static Hashmap_AtlasTextures g_textureMap;
+static auto g_Textures = (List_Texture){.content = textureArray, .capacity = 256, .size = 0};
 
 Basic_Texture newTexture(const int width, const int height, const GLuint textureId) {
     return (Basic_Texture){
         .width = width,
         .height = height,
-        .textureId = textureId
+        .ID = textureId
     };
 }
 
-void f_loadTextures(GLuint *atlasId, const int atlasWidth, const int atlasHeight, char *first, ...) {
+void f_loadTextures(TextureAtlas *atlas, const char *first, va_list args) {
 
-    va_list args;
-    va_start(args, first);
-
-    textureMap = newHashmap_AtlasTextures(64);
+    g_textureMap = newHashmap_AtlasTextures(64);
     stbrp_rect rects[MAX_ATLAS_TEXTURES];
     u_char* pixels[MAX_ATLAS_TEXTURES];
     const char* names[MAX_ATLAS_TEXTURES];
@@ -64,30 +61,49 @@ void f_loadTextures(GLuint *atlasId, const int atlasWidth, const int atlasHeight
         Strings.delete_(&fullPath);
         file = va_arg(args, const char*);
     }
-    va_end(args);
 
-    unsigned char* atlas = calloc(atlasWidth * atlasHeight * 4, 1);
+    unsigned char* data = calloc(atlas->width * atlas->height * 4, 1);
 
     stbrp_context ctx;
-    stbrp_node* nodes = malloc(sizeof(stbrp_node) * index);
+    stbrp_node* nodes = malloc(sizeof(stbrp_node) * atlas->width);
 
-    stbrp_init_target(&ctx, atlasWidth, atlasHeight, nodes, index);
+    stbrp_init_target(&ctx, atlas->width, atlas->height, nodes, atlas->width);
     stbrp_pack_rects(&ctx, rects, index);
 
-    *atlasId = uploadTextureToGPU(atlasWidth, atlasHeight, 4, atlas);
+    for (int i = 0; i < index; i++) {
+        if (!rects[i].was_packed) {
+            fprintf(stderr, "Atlas pack failed for rect %d (%s)\n", i, names[i]);
+            continue;
+        }
+
+        const int dstX = rects[i].x;
+        const int dstY = rects[i].y;
+        const int w    = rects[i].w;
+        const int h    = rects[i].h;
+
+        const unsigned char* src = pixels[i];
+
+        for (int row = 0; row < h; ++row) {
+            unsigned char* dst = data + ((dstY + row) * atlas->width + dstX) * 4;
+            const unsigned char* s = src + row * (w * 4);
+            memcpy(dst, s, (size_t)w * 4);
+        }
+    }
+
+    atlas->ID = uploadTextureToGPU((int)atlas->width, (int)atlas->height, 4, data);
 
     for (int i = 0; i < index; i++) {
-        Hashmap_AtlasTextures_add(&textureMap, names[i], (Texture){
-            .uv0 = {(float)rects[i].x/(float)atlasWidth, (float)rects[i].y/(float)atlasHeight},
-            .uv1 = {(float)(rects[i].x + rects[i].w)/(float)atlasWidth, (float)(rects[i].y + rects[i].h)/(float)atlasHeight}
+        Hashmap_AtlasTextures_add(&g_textureMap, names[i], (Texture){
+            .uv0 = {(float)rects[i].x/(float)atlas->width, (float)rects[i].y/(float)atlas->height},
+            .uv1 = {(float)(rects[i].x + rects[i].w)/(float)atlas->width, (float)(rects[i].y + rects[i].h)/(float)atlas->height}
         });
     }
 
     for (int i = 0; i < index; i++) {
         stbi_image_free(pixels[i]);
     }
-    free(atlas);
     free(nodes);
+    free(data);
 }
 
 Basic_Texture *newEmptyTexture(const int width, const int height) {
@@ -114,7 +130,7 @@ Basic_Texture *newEmptyTexture(const int width, const int height) {
     glBindTexture(GL_TEXTURE_2D, 0);
 
 
-    Texture_ListAdd(&g_Textures, (Basic_Texture){.width = width, .height = height, .textureId = tex});
+    Texture_ListAdd(&g_Textures, (Basic_Texture){.width = width, .height = height, .ID = tex});
 
     return Texture_ListGetLast(&g_Textures);
 }
@@ -136,7 +152,7 @@ Basic_Texture *loadTextureFromPng(char *fileName) {
     const GLuint texture = uploadTextureToGPU(width, height, channels, data);
 
     stbi_image_free(data);
-    Texture_ListAdd(&g_Textures, (Basic_Texture){.width = width, .height = height, .textureId = texture});
+    Texture_ListAdd(&g_Textures, (Basic_Texture){.width = width, .height = height, .ID = texture});
 
     return Texture_ListGetLast(&g_Textures);
 }
@@ -146,7 +162,7 @@ Texture getTexture(const char* name) {
         puts("Error loading texture: no name provided");
         return (Texture){};
     }
-    const Texture* texture = Hashmap_AtlasTextures_get(&textureMap, name);
+    const Texture* texture = Hashmap_AtlasTextures_get(&g_textureMap, name);
     return *texture;
 }
 
@@ -168,5 +184,13 @@ static GLuint uploadTextureToGPU(const int width, const int height, const int ch
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     return texture;
+}
+
+TextureAtlas loadTextureAtlas(const int width, const int height) {
+    return (TextureAtlas){
+        .width = width,
+        .height = height,
+        .ID = 0
+    };
 }
 

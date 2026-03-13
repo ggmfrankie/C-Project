@@ -120,7 +120,7 @@ void ComputeShader_run(const ComputeShader *computeShader) {
     glUseProgram(computeShader->programId);
     glBindImageTexture(
         0,                          // image unit index in shader (binding = 0)
-        texture->textureId,         // texture ID you created (your "empty" graph texture)
+        texture->ID,         // texture ID you created (your "empty" graph texture)
         0,                          // mip level
         GL_FALSE,                   // not layered (2D texture)
         0,                          // layer index (ignored for 2D)

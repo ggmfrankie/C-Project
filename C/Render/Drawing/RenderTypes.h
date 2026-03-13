@@ -16,11 +16,15 @@ typedef struct {
 
 typedef struct {
     float brightness;
-    int hasTexture;
+    float transparency;
+    int   hasTexture;
+    float _pad0;
     Vec2f worldPos;
-    Vec4f color;
+    float _pad1[2];
+    Vec3f color;
+    float _pad2;
     Vec3f textColor;
-    char _pad[4];
+    float _pad3;
 } InstanceData;
 
 struct test {

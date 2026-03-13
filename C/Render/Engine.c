@@ -53,6 +53,7 @@ void* workerThreadInit(void* args) {
 }
 
 void gui_init(GLFWwindow* window, const int width, const int height, void (*generateGUI)(Element* guiRoot)) {
+
     g_Renderer = newGUIRenderer(window, width, height, "ARIAL.TTF");
 
     GUIRenderer_init(&g_Renderer);
@@ -62,10 +63,9 @@ void gui_init(GLFWwindow* window, const int width, const int height, void (*gene
 
     guiInitialized = true;
     pthread_cond_broadcast(&guiInitCond);
-    pthread_mutex_unlock(&guiMutex);
 
 
-    pthread_create(&workerThreadID, nullptr, workerThreadInit, NULL);
+    pthread_create(&workerThreadID, nullptr, workerThreadInit, nullptr);
 }
 
 void gui_update() {
@@ -79,8 +79,26 @@ void gui_render() {
     Renderer_render2(&g_Renderer);
 }
 
-void gui_setVisible(const char* name, const bool b) {
-    setVisible(getElement(name), b);
+void f_gui_loadTextures(char* first, ...) {
+    va_list args;
+    va_start(args, first);
+    f_loadTextures(&g_Renderer.texAtlas, first, args);
+    va_end(args);
+}
+
+void gui_setTexture(Element* e, const char* name) {
+    if (name) {
+        e->visuals.texture = getTexture(name);
+        e->flags.hasTexture = true;
+        return;
+    }
+    e->visuals.texture = (Texture){};
+    e->flags.hasTexture = false;
+}
+
+void gui_setActive(const char* name, const bool b) {
+
+    setActive(getElement(name), b);
 }
 
 void gui_toggleVisible(const char* name) {
@@ -92,25 +110,23 @@ void gui_setText(const char* name, const char* text) {
 }
 
 void gui_setColor(const char* name, const float r, const float g, const float b) {
-    setColor(getElement(name), (Vec3f){r, g, b});
+    Element_setColor(getElement(name), (Vec3f){r, g, b});
 }
 
 void gui_resetColor(const char* name) {
-    auto e = getElement(name);
-    setColor(e, e->visuals.defaultColor);
+    const auto e = getElement(name);
+    Element_setColor(e, e->visuals.defaultColor);
 }
 
-void gui_setCornerRadius(const char* name, int radius) {
+void gui_setCornerRadius(const char* name, const int radius) {
     getElement(name)->dims.cornerRadius = radius;
-}
-
-void gui_addTextures(const char* name) {
-    loadTextures(&g_Renderer.atlasId, 1024, 1024, name);
 }
 
 [[Todo]]
 void startEngine(void (*generateGUI)(Element* guiRoot)) {
-    g_Renderer = newGUIRenderer(nullptr,1024, 1024, "ARIAL.TTF");
+    int width = 512;
+    int height = 512;
+    gui_init(initWindow(width, height, "Chess"), width, height, generateGUI);
 
     Basic_Texture* graphTexture = newEmptyTexture(WIDTH, HEIGHT);
     g_Renderer.computeShader = newComputeShader(nullptr, 1024);
@@ -121,61 +137,26 @@ void startEngine(void (*generateGUI)(Element* guiRoot)) {
     g_Renderer.computeShader.endX = 5.0f;
 
     //initSockets();
-    GUIRenderer_init(&g_Renderer);
 
     glfwSetFramebufferSizeCallback(g_Renderer.window, gui_resizeCallback);
     glfwSetCursorPosCallback(g_Renderer.window, gui_cursorPositionCallback);
-
-    initElements();
 
     glfwSetCharCallback(g_Renderer.window, gui_charCallback);
     glfwSetKeyCallback(g_Renderer.window, gui_keyCallback);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    generateGUI(g_Renderer.guiRoot);
-
-    guiInitialized = true;
-    pthread_cond_broadcast(&guiInitCond);
-    pthread_mutex_unlock(&guiMutex);
-
-    pthread_create(&workerThreadID, nullptr, workerThreadInit, NULL);
-
-
-    int num = 0;
     while (!glfwWindowShouldClose(g_Renderer.window)) {
-            const u_int64 startTime = now_ns();
 
         glfwPollEvents();
 
-            const u_int64 pollEventsTime = now_ns() - startTime;
+        gui_update();
 
-            const u_int64 updateLayoutTimeStart = now_ns();
-        dragElement(&g_Renderer);
+        //pthread_mutex_lock(&guiMutex);
 
-        updateLayout(g_Renderer.guiRoot, (Vec2i){0, 0}, (Vec2i){0, 0}, &g_Renderer.font);
+        gui_render();
 
-            const u_int64 updateLayoutTime = now_ns() - updateLayoutTimeStart;
-
-            const u_int64 updateStateTimeStart = now_ns();
-
-        updateState(&g_Renderer);
-
-            const u_int64 updateStateTime = now_ns() - updateStateTimeStart;
-
-            const u_int64 renderTimeStart = now_ns();
-
-        pthread_mutex_lock(&guiMutex);
-        Renderer_render2(&g_Renderer);
-        pthread_mutex_unlock(&guiMutex);
-
-            const u_int64 renderTime = now_ns() - renderTimeStart;
-
-        if (num++ > 100) {
-            printf("Elapsed Time: %lf ms\n Poll: %llu, Update Layout: %llu, Update State: %llu, Render: %llu\n",(double)(now_ns()-startTime)/1000000, pollEventsTime, updateLayoutTime, updateStateTime, renderTime);
-            num = 0;
-        }
+        //pthread_mutex_unlock(&guiMutex);
 
         Sleep(1);
     }

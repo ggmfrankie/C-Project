@@ -61,7 +61,7 @@ bool defaultHoverFun(Element *element, Renderer *renderer) {
 }
 
 bool changeColorOnHoverFun(Element *element, Renderer *renderer) {
-    element->visuals.color = *(Vec4f*) (element->elementData);
+    element->visuals.color = *(Vec3f*) (element->elementData);
     return false;
 }
 
@@ -175,8 +175,8 @@ void updateColorRainbow(Element *element) {
     hue += 120.0 * (double)timeNs * 1e-9;
     if (hue >= 360.0) hue -= 360.0;
 
-    Vec3f color = hsv_to_rgb((float)hue, .3f, 1.0f);
-    element->visuals.color = (Vec4f){color.x,color.y, color.z, 1.0f};
+    const Vec3f color = hsv_to_rgb((float)hue, .3f, 1.0f);
+    element->visuals.color = color;
     lastTime = currentTime;
 }
 

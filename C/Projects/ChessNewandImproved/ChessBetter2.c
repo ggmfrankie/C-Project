@@ -86,7 +86,7 @@ typedef struct {
 
 
 Board chess_board = {};
-Texture* chess_pieceTextures[13] = {};
+Basic_Texture* chess_pieceTextures[13] = {};
 
 Color chess_getPieceColor(ChessPiece piece) {
 
@@ -335,28 +335,21 @@ void chess_loadTextures() {
     chess_pieceTextures[12] = loadTextureFromPng("ChessPieces/w_king_1x_ns.png");
 }
 
-static Element* createChessSquares(ElementSettings es) {
-    static int row = 0;
-    static int column = 0;
-    es.color = ((row+column) % 2 ? COLOR_GRAY : COLOR_WHITE);
+static Element* createChessSquares(const int row, const int col, ElementSettings es) {
+    es.color = ((row+col) % 2 ? COLOR_GRAY : COLOR_WHITE);
 
     const ElementSettings pieceDisplaySettings = {
-        .old_texture = chess_pieceTextures[0],
         .width = es.width,
         .height = es.height,
-        .notSelectable = true
+        .notSelectable = true,
+        .color = {},
+        .transparency = 0.0f,
     };
 
     Element* square = createElement(es);
     Element* piece = createElement(pieceDisplaySettings);
 
-    if (row == 7) {
-        column++;
-        row = 0;
-    } else {
-        row++;
-    }
-    return square;
+    return addChildElements(square, piece);
 }
 
 void chess_createChessBoard(Element* element) {

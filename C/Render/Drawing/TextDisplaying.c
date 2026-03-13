@@ -78,7 +78,7 @@ Font loadFontAtlas(char* file) {
     font.fontAtlas = (Basic_Texture){
         .width = FONT_ATLAS_SIZE,
         .height = FONT_ATLAS_SIZE,
-        .textureId = tex
+        .ID = tex
     };
 
     measureFont(&font);
@@ -187,7 +187,7 @@ void reloadTextQuads(const Font* font, Element *element) {
         .y = (float)startPos.y
     };
 
-    glBindTexture(GL_TEXTURE_2D, font->fontAtlas.textureId);
+    glBindTexture(GL_TEXTURE_2D, font->fontAtlas.ID);
 
     float prevX = 0.0f;
 

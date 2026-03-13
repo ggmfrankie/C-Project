@@ -76,7 +76,7 @@ typedef struct Element {
         float transparency;
         float brightness;
         Texture texture;
-        Vec4f color;
+        Vec3f color;
         Vec3f defaultColor;
     } visuals;
 
@@ -151,11 +151,11 @@ typedef struct {
 
 void initElements();
 
-Element* newElement(Vec2i pos, int width, int heigh);
+Element* newElement(Vec2i pos, int width, int height);
 Element* f_addChildElements(Element* parent, ...);
 
 Element* addChildrenAsGrid(ElementSettings parentData, ElementSettings es, int numX, int numY);
-Element* addChildrenAsGridWithGenerator(ElementSettings parentData, ElementSettings es, int numX, int numY, Element* (*generateElement)(ElementSettings));
+Element* addChildrenAsGridWithGenerator(ElementSettings parentData, ElementSettings es, int numX, int numY, Element* (*generateElement)(int row, int col, ElementSettings));
 
 void setOnClickCallback(Element* element, bool (*onClick)(Element* element, Renderer* renderer));
 void setOnHoverCallback(Element* element, bool (*onHover)(Element* element, Renderer* renderer));
@@ -165,9 +165,9 @@ void defaultReset(Element* element);
 void setText(Element* element, const char* text);
 void setText_noLock(Element* element, const char* text);
 void setText_int(Element* element, int i);
-void setVisible(Element* element, bool b);
+void setActive(Element* element, bool b);
 void toggleVisible(Element* element);
-void setColor(Element* element, Vec3f color);
+void Element_setColor(Element* element, Vec3f color);
 Element* getElement(const char* name);
 
 bool isSelected_Quad(const Element *element, Vec2i mousePos);
@@ -178,12 +178,10 @@ bool isSelected_Quad(const Element *element, Vec2i mousePos);
 #define fitMode (Vec2i){-1, -1}
 
 Element *guiAddElement(
-    List_Element *list,
     char *name,
     Vec2i pos,
     int width,
     int height,
-    Texture *tex,
     Vec3f color,
     Padding padding,
     int childGap,

@@ -19,19 +19,12 @@ typedef struct Renderer {
     GLFWwindow *window;
     Vec2i mousePos;
 
-    Shader batched_guiShader;
+    Shader guiShader;
 
     ComputeShader computeShader;
 
     Font font;
-    GLuint atlasId;
-
-    struct {
-        char* textureNames[512];
-        int index;
-    } textureBuffer;
-
-    Hashmap_AtlasTextures textures;
+    TextureAtlas texAtlas;
 
     Element* guiRoot;
 } Renderer;

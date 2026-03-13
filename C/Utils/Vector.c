@@ -93,3 +93,23 @@ inline Vec3f Vec3f_Mul(const Vec3f v1, const float factor) {
 inline bool Vec2i_Equals(const Vec2i a, const Vec2i b) {
     return a.x == b.x && a.y == b.y;
 }
+
+inline Vec4f Vec4f_Add(const Vec4f v1, const Vec4f v2) {
+    const Vec4f result = {
+        v1.x + v2.x,
+        v1.y + v2.y,
+        v1.z + v2.z,
+        v1.w + v2.w
+    };
+    return result;
+}
+
+inline Vec4f Vec4f_Mul(const Vec4f v1, const float factor) {
+    const Vec4f result = {
+        v1.x * factor,
+        v1.y * factor,
+        v1.z * factor,
+        v1.w * factor
+    };
+    return result;
+}
