@@ -9,8 +9,8 @@ namespace Obj {
     public:
         TestBehavior() = default;
 
-        void onCollision(PhysicsObject& self, PhysicsObject& other) override;
-        void onUpdate(PhysicsObject& self, double dt, Render::Input& input) override;
+        void onCollision(PhysicsObject_old& self, PhysicsObject_old& other) override;
+        void onUpdate(PhysicsObject_old& self, double dt, Render::Input& input) override;
     };
 } // Obj
 

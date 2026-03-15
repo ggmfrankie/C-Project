@@ -6,26 +6,26 @@
 #define MIXEDPROJECT_OBJECT_H
 #include <vector>
 
-#include "../../Utils/DataStorage/InlineVector.hpp"
-#include "../../Utils/Math/Quaternion.hpp"
-#include "../../Utils/Math/Matrix.hpp"
-#include "Geometry/Mesh.hpp"
-#include "../Shader/Shader.hpp"
+#include "../../../Utils/DataStorage/InlineVector.hpp"
+#include "../../../Utils/Math/Quaternion.hpp"
+#include "../../../Utils/Math/Matrix.hpp"
+#include "Mesh.hpp"
+#include "../../Shader/Shader.hpp"
 
 
 
 namespace Obj {
-    class Object {
+    class RenderObject {
         public:
-        explicit Object(const std::string &objFile);
+        explicit RenderObject(const std::string &objFile);
 
-        Object();
+        RenderObject();
 
-        Object(Object &&other) noexcept ;
+        RenderObject(RenderObject &&other) noexcept ;
 
-        Object(const Object &other) noexcept;
+        RenderObject(const RenderObject &other) noexcept;
 
-        virtual ~Object();
+        virtual ~RenderObject();
 
         virtual void init(Render::Shader *s);
 
@@ -37,7 +37,7 @@ namespace Obj {
         virtual void moveBy(float dx, float dy, float dz);
         virtual void moveTo(float x, float y, float z);
 
-        static Object getDummyObject();
+        static RenderObject getDummyObject();
         ggm::Matrix4f& getModelMatrix();
 
     protected:

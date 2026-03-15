@@ -4,8 +4,7 @@
 #include "Cpp/GameEngine.hpp"
 #include "Cpp/Games/BaseGame/BaseGame.hpp"
 
-#define GAME
-#ifdef GAME
+#if 1
 int main() {
     auto game = Game::BaseGame();
     GameEngine& gameEngine = GameEngine::New(game);

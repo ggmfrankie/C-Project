@@ -5,7 +5,7 @@
 #ifndef MIXEDPROJECT_GGMDEF_H
 #define MIXEDPROJECT_GGMDEF_H
 
-namespace ggm::num {
+namespace ggm {
     typedef int i32;
     typedef long long i64;
     typedef unsigned int u32;

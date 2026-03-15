@@ -11,10 +11,10 @@
 #include "../Math/ggmdef.hpp"
 
 namespace ggm {
-    template <typename T, num::u64 InlineCapacity>
+    template <typename T, u64 InlineCapacity>
     class InlineVector {
     public:
-        explicit InlineVector(num::u64 capacity = InlineCapacity) {
+        explicit InlineVector(u64 capacity = InlineCapacity) {
             if (capacity <= InlineCapacity) {
                 data = inlinePtr();
                 this->capacity = InlineCapacity;
@@ -34,7 +34,7 @@ namespace ggm {
                 isHeap = true;
             } else {
                 data = inlinePtr();
-                for (num::u64 i = 0; i < other.size; ++i) {
+                for (u64 i = 0; i < other.size; ++i) {
                     std::construct_at(&data[i], std::move(other.data[i]));
                     std::destroy_at(&other.data[i]);
                 }
@@ -56,7 +56,7 @@ namespace ggm {
                 data = inlinePtr();
                 isHeap = false;
             }
-            for (num::u64 i = 0; i < other.size; ++i) {
+            for (u64 i = 0; i < other.size; ++i) {
                 std::construct_at(&data[i], other.data[i]);
             }
             capacity = other.capacity;
@@ -64,7 +64,7 @@ namespace ggm {
         }
 
         ~InlineVector() {
-            for (num::u64 i = 0; i < size; ++i)
+            for (u64 i = 0; i < size; ++i)
                 std::destroy_at(&data[i]);
             if (isHeap) operator delete(data);
         }
@@ -93,7 +93,7 @@ namespace ggm {
             return *this;
         }
 
-        T& operator[](num::u64 index) noexcept {
+        T& operator[](u64 index) noexcept {
             if (index >= size) {
                 std::cerr << "index out of bounds in ArrayList\n";
                 exit(-1);
@@ -101,7 +101,7 @@ namespace ggm {
             return data[index];
         }
 
-        T& at(num::u64 index) {
+        T& at(u64 index) {
             if (index >= size) {
                 std::cerr << "index out of bounds in ArrayList\n";
                 exit(-1);
@@ -110,7 +110,7 @@ namespace ggm {
         }
 
         void clear() noexcept {
-            for (num::u64 i = 0; i < size; ++i) {
+            for (u64 i = 0; i < size; ++i) {
                 std::destroy_at(&data[i]);
             }
             size = 0;
@@ -123,7 +123,7 @@ namespace ggm {
             data = static_cast<T*>(operator new(size * sizeof(T)));
             capacity = size;
 
-            for (num::u64 i = 0; i < size; ++i) {
+            for (u64 i = 0; i < size; ++i) {
                 std::construct_at(&data[i], std::move(old[i]));
                 std::destroy_at(&old[i]);
             }
@@ -140,8 +140,8 @@ namespace ggm {
     private:
         bool isHeap = false;
         T* data{};
-        num::u64 size = 0;
-        num::u64 capacity = 0;
+        u64 size = 0;
+        u64 capacity = 0;
         alignas(T) std::byte inlineRaw_[sizeof(T) * InlineCapacity]{};
 
     private:
@@ -150,7 +150,7 @@ namespace ggm {
             capacity = capacity*2+1;
             data = static_cast<T *>(operator new(capacity * sizeof(T)));
 
-            for (num::u64 i = 0; i < size; i++) {
+            for (u64 i = 0; i < size; i++) {
                 std::construct_at(&data[i], std::move(oldData[i]));
                 std::destroy_at(&oldData[i]);
             }

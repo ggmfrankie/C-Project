@@ -2,7 +2,7 @@
 // Created by ertls on 16.02.2026.
 //
 
-#include "../Geometry/Mesh.hpp"
+#include "../Render/Mesh.hpp"
 #include "../../Cpp/Utils/Math/Vector.hpp"
 
 namespace Obj {

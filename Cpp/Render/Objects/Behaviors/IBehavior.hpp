@@ -10,13 +10,13 @@ namespace Render {
 }
 
 namespace Obj {
-    class PhysicsObject;
+    class PhysicsObject_old;
 
     class IBehavior {
     public:
         virtual ~IBehavior() = default;
-        virtual void onCollision(PhysicsObject& self, PhysicsObject& other) = 0;
-        virtual void onUpdate(PhysicsObject& self, double dt, Render::Input& input) = 0;
+        virtual void onCollision(PhysicsObject_old& self, PhysicsObject_old& other) = 0;
+        virtual void onUpdate(PhysicsObject_old& self, double dt, Render::Input& input) = 0;
     };
 } // Obj
 

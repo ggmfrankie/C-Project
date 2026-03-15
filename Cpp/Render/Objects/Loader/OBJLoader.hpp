@@ -9,7 +9,7 @@
 
 #include "../../../Utils/Math/Matrix.hpp"
 #include "../../../Utils/Math/Vector.hpp"
-#include "../Geometry/Mesh.hpp"
+#include "../Render/Mesh.hpp"
 
 namespace Obj::OBJLoader {
 

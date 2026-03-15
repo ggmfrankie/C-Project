@@ -8,8 +8,8 @@
 #include <vector>
 
 #include "IO/Input.hpp"
-#include "Objects/Object.hpp"
-#include "Objects/Physics/PhysicsObject.hpp"
+#include "Objects/Render/RenderObject.hpp"
+#include "Objects/Physics/PhysicsObject_old.hpp"
 #include "Shader/Shader.hpp"
 #include "Transformation/Camera.hpp"
 
@@ -24,15 +24,15 @@ namespace Render {
 
         void render();
 
-        void addObject(Obj::Object &&object);
-        void addObject(Obj::PhysicsObject &&object);
+        void addObject(Obj::RenderObject &&object);
+        void addObject(Obj::PhysicsObject_old &&object);
 
         Camera &getCamera();
 
         int getWidth() const;
         int getHeight() const;
 
-        std::vector<Obj::Object> &getObjectList();
+        std::vector<Obj::RenderObject> &getObjectList();
 
         void update(double dt);
         [[nodiscard]] GLFWwindow *getWindowHandle() const;
@@ -52,8 +52,8 @@ namespace Render {
         Input input;
         Shader shader;
 
-        std::vector<Obj::Object> objects;
-        std::vector<Obj::PhysicsObject> pObjects;
+        std::vector<Obj::RenderObject> objects;
+        std::vector<Obj::PhysicsObject_old> pObjects;
     };
 }
 

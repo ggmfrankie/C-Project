@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 4.0)
 project(MixedProject LANGUAGES C CXX)
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -march=native -pthread")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -march=native -pthread")
+
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -pthread")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -pthread")
 
 set(CMAKE_C_STANDARD 23)
 set(CMAKE_C_STANDARD_REQUIRED ON)
@@ -11,6 +12,7 @@ include_directories(
         "${CMAKE_SOURCE_DIR}/Dependencies/include"
         "${CMAKE_SOURCE_DIR}/C"
         "${CMAKE_SOURCE_DIR}/Cpp"
+        "${CMAKE_SOURCE_DIR}/Dependencies/JoltPhysics"
 )
 
 add_library(GUI STATIC
@@ -100,31 +102,29 @@ set_target_properties(GUI PROPERTIES LINKER_LANGUAGE C)
 
 add_executable(C-Project
         Dependencies/include/stb/stb_image.h
-
         Dependencies/include/stb/stb_truetype.h
         Dependencies/include/stb/stb_truetype.h
         Dependencies/include/stb/stb_rect_pack.h
-
         Cpp/GameEngine.cpp
         Main.cpp
         Cpp/Render/Screen.cpp
         Cpp/Render/Screen.hpp
-        Cpp/Render/Objects/Geometry/Mesh.cpp
-        Cpp/Render/Objects/Geometry/Mesh.hpp
+        Cpp/Render/Objects/Render/Mesh.cpp
+        Cpp/Render/Objects/Render/Mesh.hpp
         Cpp/Utils/Math/Vector.hpp
         Cpp/Render/Shader/Shader.cpp
         Cpp/Render/Shader/Shader.hpp
         Cpp/Utils/FileIO.cpp
         Cpp/Utils/FileIO.hpp
-        Cpp/Render/Objects/Object.cpp
-        Cpp/Render/Objects/Object.hpp
+        Cpp/Render/Objects/Render/RenderObject.cpp
+        Cpp/Render/Objects/Render/RenderObject.hpp
         Cpp/Utils/Math/Matrix.hpp
         Cpp/Render/Transformation/Camera.cpp
         Cpp/Render/Transformation/Camera.hpp
-        Cpp/Render/Objects/Geometry/Texture.cpp
-        Cpp/Render/Objects/Geometry/Texture.hpp
-        Cpp/Render/Objects/Geometry/Material.cpp
-        Cpp/Render/Objects/Geometry/Material.hpp
+        Cpp/Render/Objects/Render/Texture.cpp
+        Cpp/Render/Objects/Render/Texture.hpp
+        Cpp/Render/Objects/Render/Material.cpp
+        Cpp/Render/Objects/Render/Material.hpp
         Cpp/Render/Objects/Loader/ObjLoader.cpp
         Cpp/Render/Objects/Loader/ObjLoader.hpp
         Cpp/Utils/Utils.cpp
@@ -137,7 +137,6 @@ add_executable(C-Project
         Cpp/Render/IO/Input.hpp
         Cpp/Games/BaseGame/BaseGame.cpp
         Cpp/Games/BaseGame/BaseGame.hpp
-
         Cpp/Games/BaseGame/GameGui.h
         C/GuiInterface.h
         C/GuiInterface.h
@@ -147,8 +146,6 @@ add_executable(C-Project
         Cpp/Games/BaseGame/GuiTasks.cpp
         Cpp/Engine/CommandRegistry.cpp
         Cpp/Engine/CommandRegistry.hpp
-        Cpp/Render/Objects/Physics/Collider.cpp
-        Cpp/Render/Objects/Physics/Collider.hpp
         Cpp/Render/Objects/Physics/PhysicsObject.cpp
         Cpp/Render/Objects/Physics/PhysicsObject.hpp
         Cpp/Render/Objects/Behaviors/IBehavior.hpp
@@ -163,16 +160,27 @@ add_executable(C-Project
         Cpp/Engine/LayerStack.hpp
         Cpp/Games/BaseGame/Layers/GameLayer.cpp
         Cpp/Games/BaseGame/Layers/GameLayer.hpp
+        Cpp/Render/Objects/Physics/PhysicsObject.cpp
+        Cpp/Render/Objects/Physics/PhysicsObject.hpp
+        Cpp/Games/DefaultLayer/PhysicsHandler.cpp
+        Cpp/Games/DefaultLayer/PhysicsHandler.hpp
 
 )
-#add_subdirectory("${CMAKE_SOURCE_DIR}/Render")
+target_compile_definitions(C-Project PRIVATE
+        JPH_DEBUG_RENDERER
+        JPH_PROFILE_ENABLED
+        JPH_OBJECT_STREAM
+)
 
 set(GLFW_LIB "${CMAKE_SOURCE_DIR}/Dependencies/lib-mingw-w64/libglfw3.a")
 
 add_library(glfw STATIC IMPORTED)
-
 set_target_properties(glfw PROPERTIES
         IMPORTED_LOCATION "${GLFW_LIB}"
+)
+add_library(Jolt STATIC IMPORTED)
+set_target_properties(Jolt PROPERTIES
+        IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/Dependencies/JoltPhysics/Build/MinGW_Debug/libJolt.a"
 )
 
 target_link_libraries(C-Project
@@ -183,4 +191,6 @@ target_link_libraries(C-Project
         kernel32     # Core Windows functions
         ws2_32
         GUI
+        Jolt
+        winpthread
 )

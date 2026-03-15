@@ -120,11 +120,11 @@ namespace Render {
         glfwSwapBuffers(windowHandle);
     }
 
-    void Screen::addObject(Obj::Object&& object) {
+    void Screen::addObject(Obj::RenderObject&& object) {
         objects.push_back(std::move(object));
     }
 
-    void Screen::addObject(Obj::PhysicsObject&& object) {
+    void Screen::addObject(Obj::PhysicsObject_old&& object) {
         pObjects.push_back(std::move(object));
     }
 
@@ -158,7 +158,7 @@ namespace Render {
         return height;
     }
 
-    std::vector<Obj::Object>& Screen::getObjectList() {
+    std::vector<Obj::RenderObject>& Screen::getObjectList() {
         return objects;
     }
 

@@ -4,15 +4,15 @@
 
 #include "TestBehavior.hpp"
 #include "Render/IO/Input.hpp"
-#include "Render/Objects/Physics/PhysicsObject.hpp"
+#include "Render/Objects/Physics/PhysicsObject_old.hpp"
 
 namespace Obj {
 
-    void TestBehavior::onCollision(PhysicsObject& self, PhysicsObject& other) {
+    void TestBehavior::onCollision(PhysicsObject_old& self, PhysicsObject_old& other) {
         std::cout << "Collision\n";
     }
 
-    void TestBehavior::onUpdate(PhysicsObject &self, const double dt, Render::Input &input) {
+    void TestBehavior::onUpdate(PhysicsObject_old &self, const double dt, Render::Input &input) {
         if (input.isKeyDown(GLFW_KEY_LEFT))
             self.applyForce({static_cast<float>(-100.0 * dt), 0, 0});
         if (input.isKeyDown(GLFW_KEY_RIGHT))

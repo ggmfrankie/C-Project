@@ -318,21 +318,7 @@ void chess_loadChessPosition(char* fen) {
 }
 
 void chess_loadTextures() {
-    chess_pieceTextures[0] = newEmptyTexture(64, 64);
 
-    chess_pieceTextures[1] = loadTextureFromPng("ChessPieces/b_pawn_1x_ns.png");
-    chess_pieceTextures[2] = loadTextureFromPng("ChessPieces/b_knight_1x_ns.png");
-    chess_pieceTextures[3] = loadTextureFromPng("ChessPieces/b_bishop_1x_ns.png");
-    chess_pieceTextures[4] = loadTextureFromPng("ChessPieces/b_rook_1x_ns.png");
-    chess_pieceTextures[5] = loadTextureFromPng("ChessPieces/b_queen_1x_ns.png");
-    chess_pieceTextures[6] = loadTextureFromPng("ChessPieces/b_king_1x_ns.png");
-
-    chess_pieceTextures[7] = loadTextureFromPng("ChessPieces/w_pawn_1x_ns.png");
-    chess_pieceTextures[8] = loadTextureFromPng("ChessPieces/w_knight_1x_ns.png");
-    chess_pieceTextures[9] = loadTextureFromPng("ChessPieces/w_bishop_1x_ns.png");
-    chess_pieceTextures[10] = loadTextureFromPng("ChessPieces/w_rook_1x_ns.png");
-    chess_pieceTextures[11] = loadTextureFromPng("ChessPieces/w_queen_1x_ns.png");
-    chess_pieceTextures[12] = loadTextureFromPng("ChessPieces/w_king_1x_ns.png");
 }
 
 static Element* createChessSquares(const int row, const int col, ElementSettings es) {

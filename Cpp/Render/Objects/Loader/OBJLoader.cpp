@@ -9,7 +9,7 @@
 #include <unordered_map>
 #include <charconv>
 
-#include "../Geometry/Mesh.hpp"
+#include "../Render/Mesh.hpp"
 
 using std::string;
 using std::string_view;
