@@ -13,24 +13,17 @@
 
 namespace Render {
     Screen::Screen(std::string  windowName, const int width, const int height) :
-    name(std::move(windowName)),
-    shader("MainShader.vert", "MainShader.frag") {
+        name(std::move(windowName)),
+        mLayerStack({&mInput, &mScene.getCamera(), &mScene})
+     {
         this->width = width;
         this->height = height;
-        objects.reserve(16);
-        pObjects.reserve(16);
         windowHandle = nullptr;
     }
 
     Screen::~Screen() {
         glfwDestroyWindow(windowHandle);
         glfwTerminate();
-    }
-
-    void Screen::createShaderUniforms() {
-        shader.createUniform("textureSampler");
-        shader.createUniform("modelViewMatrix");
-        shader.createUniform("projectionMatrix");
     }
 
     void Screen::init() {
@@ -63,69 +56,13 @@ namespace Render {
 
         glfwSetFramebufferSizeCallback(windowHandle, framebufferSizeCallback);
 
-        shader.init();
-        shader.link();
-
-        input.init(windowHandle);
-
-        createShaderUniforms();
-
-        for (auto& object: objects) {
-            object.init(&shader);
-        }
-
-        for (auto& object: pObjects) {
-            object.init(&shader);
-        }
+        mInput.init(windowHandle);
     }
 
-    void Screen::render() {
+    void Screen::render() const {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glEnable(GL_DEPTH_TEST);
-        //glDisable(GL_CULL_FACE);
-
-        shader.bind();
-
-        shader.setUniform("projectionMatrix",
-                              ggm::Matrix4f::Perspective(
-                                  camera.getFOV(),
-                                  static_cast<float>(width) / static_cast<float>(height),
-                                  0.01f,
-                                  1000.0f
-                                  )
-                             );
-
-        const ggm::Matrix4f view = camera.getViewMatrix();
-
-        for (auto& obj : objects) {
-
-            ggm::Matrix4f& model = obj.getModelMatrix();
-            ggm::Matrix4f modelView = view * model;
-
-            shader.setUniform("modelViewMatrix", modelView);
-
-            obj.render();
-        }
-
-        for (auto& obj: pObjects) {
-            ggm::Matrix4f& model = obj.getModelMatrix();
-            ggm::Matrix4f modelView = view * model;
-
-            shader.setUniform("modelViewMatrix", modelView);
-
-            obj.render();
-        }
-
-        gui_render();
+        mLayerStack.render(width, height);
         glfwSwapBuffers(windowHandle);
-    }
-
-    void Screen::addObject(Obj::RenderObject&& object) {
-        objects.push_back(std::move(object));
-    }
-
-    void Screen::addObject(Obj::PhysicsObject_old&& object) {
-        pObjects.push_back(std::move(object));
     }
 
     GLFWwindow* Screen::getWindowHandle() const {
@@ -133,11 +70,11 @@ namespace Render {
     }
 
     Input& Screen::getInput() {
-        return input;
+        return mInput;
     }
 
     void Screen::endFrame() {
-        input.endFrame();
+        mInput.endFrame();
     }
 
     void Screen::framebufferSizeCallback(GLFWwindow* window, const int width, const int height)
@@ -146,8 +83,8 @@ namespace Render {
         gui_resizeCallback(window, width, height);
     }
 
-    Camera& Screen::getCamera() {
-        return camera;
+    Engine::Scene& Screen::getScene() {
+        return mScene;
     }
 
     int Screen::getWidth() const {
@@ -158,23 +95,8 @@ namespace Render {
         return height;
     }
 
-    std::vector<Obj::RenderObject>& Screen::getObjectList() {
-        return objects;
-    }
-
-    void Screen::update(const double dt) {
-        for (auto& o: objects) {
-            o.update();
-        }
-        for (size_t i = 0; i < pObjects.size(); i++) {
-            auto& A = pObjects[i];
-            A.integrate(dt);
-            A.update(dt, input);
-            for (size_t j = i + 1; j < pObjects.size(); j++) {
-                auto& B = pObjects[j];
-                A.collidesWith(B);
-            }
-        }
+    void Screen::update(const double dt) const {
+        mLayerStack.update(dt);
         gui_update();
     }
 

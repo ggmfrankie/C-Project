@@ -42,7 +42,7 @@ void GameEngine::loop() {
 }
 
 void GameEngine::init() {
-    game.passState({screen.getInput(), screen.getCamera(), screen, commandRegistry});
+    game.passState({screen.getInput(), screen.getScene().getCamera(), screen, commandRegistry});
     game.preInit();
     screen.init();
     game.postInit();

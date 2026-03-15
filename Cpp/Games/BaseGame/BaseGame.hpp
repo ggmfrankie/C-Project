@@ -6,6 +6,10 @@
 #define MIXEDPROJECT_BASEGAME_H
 #include "../IGame.hpp"
 
+struct GLFWwindow {
+};
+
+
 namespace Game {
     class BaseGame: public IGame{
 
@@ -20,8 +24,6 @@ namespace Game {
         void onShutdown() override;
 
         void passState(EngineContext &&e) override;
-
-
 
     private:
         Render::Camera* camera = nullptr;

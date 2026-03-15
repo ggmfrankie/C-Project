@@ -5,6 +5,8 @@
 #include "PhysicsHandler.hpp"
 #include "Jolt/RegisterTypes.h"
 #include "Jolt/Core/Factory.h"
+#include "Jolt/Physics/Body/BodyCreationSettings.h"
+#include "Jolt/Physics/Collision/Shape/BoxShape.h"
 
 namespace Game {
     using namespace JPH;
@@ -16,7 +18,7 @@ namespace Game {
 
     PhysicsHandler::~PhysicsHandler() = default;
 
-    void PhysicsHandler::onAttach() {
+    void PhysicsHandler::onAttach(const LayerEngineContext& ec) {
         RegisterDefaultAllocator();
         Factory::sInstance = new Factory();
         RegisterTypes();
@@ -41,14 +43,30 @@ namespace Game {
         mPhysicsSystem.Update(dt, 1, &mTempAllocator, &mJobSystem);
     }
 
-    void PhysicsHandler::onRender() {
+    void PhysicsHandler::onRender(int width, int height) {
     }
 
     void PhysicsHandler::addObject(Obj::PhysicsObject &&obj) {
-        mObjects.push_back(std::move(obj));
+        mObjects.push_back(obj);
     }
 
     void PhysicsHandler::removeObject(Obj::PhysicsObject &obj) {
+    }
+
+    Obj::PhysicsObject PhysicsHandler::newBox(float x, float y, float z, const ggm::Vector3f &pos) {
+        auto& interface = mPhysicsSystem.GetBodyInterface();
+        const auto* shape = new BoxShape(Vec3(x,y,z));
+        const BodyCreationSettings settings(
+            shape,
+            Vec3(pos.x,pos.y,pos.z),
+            Quat::sIdentity(),
+            EMotionType::Dynamic,
+            Layers::MOVING
+        );
+
+        const auto bodyId = interface.CreateAndAddBody(settings, EActivation::Activate);
+
+        return {bodyId, interface};
     }
 
     PhysicsHandler::BPLayerInterfaceImpl::BPLayerInterfaceImpl() {
@@ -98,7 +116,7 @@ namespace Game {
         {
             case static_cast<BroadPhaseLayer::Type>(BroadPhaseLayers::NON_MOVING):	return "NON_MOVING";
             case static_cast<BroadPhaseLayer::Type>(BroadPhaseLayers::MOVING):		return "MOVING";
-            default:													JPH_ASSERT(false); return "INVALID";
+            default: JPH_ASSERT(false); return "INVALID";
         }
     }
 } // Game

@@ -5,13 +5,11 @@
 #ifndef MIXEDPROJECT_WINDOW_H
 #define MIXEDPROJECT_WINDOW_H
 #include <string>
-#include <vector>
 
+
+#include "Engine/LayerStack.hpp"
 #include "IO/Input.hpp"
-#include "Objects/Render/RenderObject.hpp"
-#include "Objects/Physics/PhysicsObject_old.hpp"
-#include "Shader/Shader.hpp"
-#include "Transformation/Camera.hpp"
+
 
 namespace Render {
     class Screen {
@@ -22,19 +20,16 @@ namespace Render {
 
         void init();
 
-        void render();
+        void render() const;
 
-        void addObject(Obj::RenderObject &&object);
-        void addObject(Obj::PhysicsObject_old &&object);
+        Engine::Scene& getScene();
 
-        Camera &getCamera();
+        Engine::LayerStack &getLayerStack() { return mLayerStack; }
 
-        int getWidth() const;
-        int getHeight() const;
+        [[nodiscard]] int getWidth() const;
+        [[nodiscard]] int getHeight() const;
 
-        std::vector<Obj::RenderObject> &getObjectList();
-
-        void update(double dt);
+        void update(double dt) const;
         [[nodiscard]] GLFWwindow *getWindowHandle() const;
         Input &getInput();
 
@@ -43,17 +38,14 @@ namespace Render {
     private:
         static void framebufferSizeCallback(GLFWwindow *window, int width, int height);
 
-        void createShaderUniforms();
         GLFWwindow* windowHandle;
         int width, height;
         std::string name;
 
-        Camera camera;
-        Input input;
-        Shader shader;
+        Input mInput;
+        Engine::Scene mScene;
 
-        std::vector<Obj::RenderObject> objects;
-        std::vector<Obj::PhysicsObject_old> pObjects;
+        Engine::LayerStack mLayerStack;
     };
 }
 

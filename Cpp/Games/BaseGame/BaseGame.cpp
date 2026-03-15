@@ -4,13 +4,16 @@
 
 #include "BaseGame.hpp"
 
-#include <vector>
-
 #include "GameGui.h"
 #include "../../Render/Objects/Render/RenderObject.hpp"
 #include "Render/Objects/Loader/OBJLoader.hpp"
 #include "GuiInterface.h"
-#include "Render/Objects/Behaviors/TestBehavior.hpp"
+#include "Engine/CommandRegistry.hpp"
+#include "Games/DefaultLayer/PhysicsHandler.hpp"
+#include "Layers/RenderLayer.hpp"
+#include "Render/Screen.hpp"
+#include "Render/Transformation/Camera.hpp"
+
 
 template<typename T>
 void toggle(T& x) {
@@ -19,29 +22,27 @@ void toggle(T& x) {
 
 namespace Game {
     void BaseGame::preInit() {
+        auto physics = new PhysicsHandler();
+        auto render = new RenderLayer();
+
+        auto& ls = screen->getLayerStack();
+        ls.pushLayer(physics);
+        ls.pushLayer(render);
+
         auto obj = Obj::RenderObject::getDummyObject();
         obj.moveBy(0,0, -30);
 
-        auto obj2 = Obj::RenderObject("grass_block\\grass_block.obj");
-        obj2.moveBy(0,0, -20);
+        auto obj2 = Obj::GameObject(
+            Obj::RenderObject("grass_block\\grass_block.obj"),
+            physics->newBox(1,1,1, {0.5,0.5,0.5})
+        );
+        obj2.moveTo({0,0, -20});
 
         auto obj3 = Obj::RenderObject("ground_plane\\ground_plane.obj");
         obj3.moveBy(0,-30, 0);
 
-        auto obj4 = Obj::PhysicsObject_old::GetDummyPhysicsObject();
-        obj4.rotateBy(90, 90, 90);
-        obj4.moveBy(-12,0,0);
-
-        auto obj5 = Obj::PhysicsObject_old::GetDummyPhysicsObject();
-        obj5.attachBehavior(new Obj::TestBehavior);
-        obj5.rotateBy(45, 45, 90);
-        obj5.moveBy(-8,0,0);
-
-        screen->addObject(std::move(obj));
-        screen->addObject(std::move(obj2));
-        screen->addObject(std::move(obj3));
-        screen->addObject(std::move(obj4));
-        screen->addObject(std::move(obj5));
+        auto& scene = screen->getScene();
+        scene.pushObject(std::move(obj2));
 
         cRegistry->registerCommand<
             Engine::Arg<std::string>

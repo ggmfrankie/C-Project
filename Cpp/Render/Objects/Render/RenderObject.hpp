@@ -34,14 +34,19 @@ namespace Obj {
         virtual void update();
 
         virtual void rotateBy(float pitch, float yaw, float roll);
+
+        void rotateTo(const ggm::Quaternion &rot);
+
         virtual void moveBy(float dx, float dy, float dz);
         virtual void moveTo(float x, float y, float z);
+
+        void moveTo(const ggm::Vector3f &pos);
 
         static RenderObject getDummyObject();
         ggm::Matrix4f& getModelMatrix();
 
     protected:
-        ggm::num::i64 uuid{};
+        ggm::i64 uuid{};
         ggm::Vector3f position{0,0,0};
         ggm::Quaternion rotation = ggm::Quaternion::Identity();
         bool dirty = true;

@@ -74,13 +74,15 @@ namespace Game {
         explicit PhysicsHandler();
         ~PhysicsHandler() override;
 
-        void onAttach() override;
+        void onAttach(const LayerEngineContext &ec) override;
         void onDetach() override;
         void onUpdate(float dt) override;
-        void onRender() override;
+        void onRender(int width, int height) override;
 
         void addObject(Obj::PhysicsObject&& obj);
         void removeObject(Obj::PhysicsObject& obj);
+
+        Obj::PhysicsObject newBox(float x, float y, float z, const ggm::Vector3f &pos);
     };
 } // Game
 

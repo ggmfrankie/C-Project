@@ -2,12 +2,12 @@
 // Created by Stefan on 27.02.2026.
 //
 
-#ifndef MIXEDPROJECT_GUIINTERFACE_H
-#define MIXEDPROJECT_GUIINTERFACE_H
+#pragma once
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+#include <GLFW/glfw3.h>
 typedef struct {
     GLFWkeyfun keyCallback;
     GLFWcharfun charCallback;
@@ -42,5 +42,3 @@ struct Element;
 #ifdef __cplusplus
 }
 #endif
-
-#endif //MIXEDPROJECT_GUIINTERFACE_H

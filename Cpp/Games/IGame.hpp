@@ -3,15 +3,17 @@
 //
 
 #pragma once
-#include <vector>
 
-#include "../Render/IO/Input.hpp"
-#include "../Render/Objects/Render/RenderObject.hpp"
-#include "../Render/Objects/Loader/OBJLoader.hpp"
-#include "../Render/Transformation/Camera.hpp"
-#include "Engine/CommandRegistry.hpp"
-#include "Render/Screen.hpp"
 
+namespace Engine {
+    class CommandRegistry;
+}
+
+namespace Render {
+    class Camera;
+    class Input;
+    class Screen;
+}
 
 namespace Game {
 

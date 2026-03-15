@@ -5,4 +5,36 @@
 #include "LayerStack.hpp"
 
 namespace Engine {
+    LayerStack::LayerStack(const Game::LayerEngineContext &ec):
+        mEngineContext(ec)
+    {
+        mLayers.reserve(16);
+    }
+
+    LayerStack::~LayerStack() = default;
+
+    void LayerStack::pushLayer(Game::IGameLayer *layer) {
+        layer->onAttach(mEngineContext);
+        mLayers.push_back(layer);
+    }
+
+    void LayerStack::popLayer(Game::IGameLayer *layer) {
+        if (const auto it = std::ranges::find(mLayers, layer); it != mLayers.end()) {
+            (*it)->onDetach();
+            delete *it;
+            mLayers.erase(it);
+        }
+    }
+
+    void LayerStack::update(const float dt) const {
+        for (auto* layer : mLayers) {
+            if (layer->enabled) layer->onUpdate(dt);
+        }
+    }
+
+    void LayerStack::render(const int width, const int height) const {
+        for (auto* layer : mLayers) {
+            if (layer->enabled) layer->onRender(width, height);
+        }
+    }
 } // Engine

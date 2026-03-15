@@ -13,7 +13,7 @@ namespace Obj {
     using ggm::Matrix4f;
 
     RenderObject::RenderObject(const std::string& objFile) {
-        static ggm::num::i64 id = 0;
+        static ggm::i64 id = 0;
         auto obj = OBJLoader::OBJObject(objFile);
         obj.load();
         meshes << (obj.getMesh());
@@ -83,6 +83,11 @@ namespace Obj {
         dirty = true;
     }
 
+    void RenderObject::rotateTo(const ggm::Quaternion& rot) {
+        rotation = rot;
+        dirty = true;
+    }
+
     void RenderObject::moveBy(const float dx, const float dy, const float dz) {
         position.x += dx;
         position.y += dy;
@@ -96,6 +101,12 @@ namespace Obj {
         position.z = z;
         dirty = true;
     }
+
+    void RenderObject::moveTo(const ggm::Vector3f& pos) {
+        position = pos;
+        dirty = true;
+    }
+
 
     RenderObject RenderObject::getDummyObject() {
         RenderObject dummy{};
