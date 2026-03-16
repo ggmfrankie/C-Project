@@ -17,7 +17,12 @@ namespace Obj {
     public:
         PhysicsObject(JPH::BodyID ID, JPH::BodyInterface& bodyInterface);
 
-        JPH::BodyID getBodyID() const { return mBodyID; }
+        PhysicsObject(const PhysicsObject&) = delete;
+        PhysicsObject& operator=(const PhysicsObject&) = delete;
+
+        PhysicsObject(const PhysicsObject&&) noexcept;
+
+        [[nodiscard]] JPH::BodyID getBodyID() const { return mBodyID; }
 
         void applyForce(float x, float y, float z) const;
         void setPosition(float x, float y, float z) const;

@@ -26,6 +26,12 @@ namespace Engine {
         }
     }
 
+    void LayerStack::init() const {
+        for (auto* layer : mLayers) {
+            layer->onInit();
+        }
+    }
+
     void LayerStack::update(const float dt) const {
         for (auto* layer : mLayers) {
             if (layer->enabled) layer->onUpdate(dt);

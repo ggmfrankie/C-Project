@@ -29,8 +29,8 @@ namespace Obj {
           model(other.model),
           dirty(other.dirty),
           position(other.position),
-          meshes(std::move(other.meshes)),
-          shader(other.shader) {
+          meshes(std::move(other.meshes))
+    {
         uuid = other.uuid;
     }
 
@@ -41,20 +41,19 @@ namespace Obj {
           model(other.model),
           dirty(other.dirty),
           position(other.position),
-          meshes(other.meshes),
-          shader(other.shader) {
+          meshes(other.meshes)
+    {
         uuid = other.uuid;
     }
 
     RenderObject::~RenderObject() = default;
 
-    void RenderObject::init(Render::Shader* s) {
-        shader = s;
+    void RenderObject::init() {
         initialized = true;
         dirty = true;
         getModelMatrix();
         for (auto& mesh : meshes) {
-            mesh.init(shader);
+            mesh.init();
         }
     }
 

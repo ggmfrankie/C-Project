@@ -5,7 +5,6 @@
 #pragma once
 #include <Jolt/Jolt.h>
 #include "Games/IGameLayer.hpp"
-#include <vector>
 #include <Jolt/Core/TempAllocator.h>
 #include <Jolt/Physics/PhysicsSystem.h>
 
@@ -53,8 +52,6 @@ namespace Game {
             bool ShouldCollide(JPH::ObjectLayer inObject1, JPH::ObjectLayer inObject2) const override;
         };
 
-
-        std::vector<Obj::PhysicsObject> mObjects;
         JPH::PhysicsSystem mPhysicsSystem;
 
         JPH::TempAllocatorImpl mTempAllocator;
@@ -78,9 +75,7 @@ namespace Game {
         void onDetach() override;
         void onUpdate(float dt) override;
         void onRender(int width, int height) override;
-
-        void addObject(Obj::PhysicsObject&& obj);
-        void removeObject(Obj::PhysicsObject& obj);
+        void onInit() override;
 
         Obj::PhysicsObject newBox(float x, float y, float z, const ggm::Vector3f &pos);
     };

@@ -5,7 +5,7 @@ in vec3 outNorm;
 
 out vec4 FragColor;
 
-uniform sampler2D textureSampler;
+layout(binding = 0) uniform sampler2D textureSampler;
 
 struct Attenuation{
     float constant;

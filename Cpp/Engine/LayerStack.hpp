@@ -26,6 +26,8 @@ namespace Engine {
         void pushLayer(Game::IGameLayer* layer);
         void popLayer(Game::IGameLayer* layer);
 
+        void init() const;
+
         void update(float dt) const;
         void render(int width, int height) const;
     };

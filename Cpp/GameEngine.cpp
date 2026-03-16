@@ -6,6 +6,8 @@
 
 #include "GuiInterface.h"
 #include "Games/IGame.hpp"
+#include "Jolt/RegisterTypes.h"
+#include "Jolt/Core/Factory.h"
 
 GameEngine* GameEngine::engineInstance = nullptr;
 
@@ -42,6 +44,9 @@ void GameEngine::loop() {
 }
 
 void GameEngine::init() {
+    JPH::RegisterDefaultAllocator();
+    JPH::Factory::sInstance = new JPH::Factory();
+    JPH::RegisterTypes();
     game.passState({screen.getInput(), screen.getScene().getCamera(), screen, commandRegistry});
     game.preInit();
     screen.init();

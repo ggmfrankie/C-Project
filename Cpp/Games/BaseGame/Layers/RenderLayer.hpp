@@ -16,7 +16,6 @@
 namespace Game {
     class RenderLayer final : public IGameLayer {
 
-        std::vector<Obj::GameObject> mGameObjects;
         Render::Shader mShader;
         Render::Camera* mCamera = nullptr;
         Render::Input* mInput = nullptr;
@@ -27,6 +26,7 @@ namespace Game {
         ~RenderLayer() override;
 
         void onAttach(const LayerEngineContext &ec) override;
+        void onInit() override;
         void onDetach() override;
 
         void onUpdate(float dt) override;

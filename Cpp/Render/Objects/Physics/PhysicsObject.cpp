@@ -12,6 +12,11 @@ namespace Obj {
         mBodyID(ID)
     {}
 
+    PhysicsObject::PhysicsObject(const PhysicsObject &&other) noexcept :
+        mBodyID(std::move(other.mBodyID)),
+        mBodyInterface(other.mBodyInterface)
+    {}
+
     void PhysicsObject::applyForce(float x, float y, float z) const {
         mBodyInterface.AddForce(mBodyID, JPH::Vec3(x, y, z));
     }

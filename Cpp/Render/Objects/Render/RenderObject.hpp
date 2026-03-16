@@ -25,20 +25,20 @@ namespace Obj {
 
         RenderObject(const RenderObject &other) noexcept;
 
-        virtual ~RenderObject();
+        ~RenderObject();
 
-        virtual void init(Render::Shader *s);
+        void init();
 
         void render() const;
 
-        virtual void update();
+        void update();
 
-        virtual void rotateBy(float pitch, float yaw, float roll);
+        void rotateBy(float pitch, float yaw, float roll);
 
         void rotateTo(const ggm::Quaternion &rot);
 
-        virtual void moveBy(float dx, float dy, float dz);
-        virtual void moveTo(float x, float y, float z);
+        void moveBy(float dx, float dy, float dz);
+        void moveTo(float x, float y, float z);
 
         void moveTo(const ggm::Vector3f &pos);
 
@@ -59,7 +59,6 @@ namespace Obj {
 
 
         ggm::InlineVector<Mesh, 1> meshes{};
-        Render::Shader* shader = nullptr;
     };
 } // Core
 

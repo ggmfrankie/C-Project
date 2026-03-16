@@ -25,11 +25,12 @@ namespace Game{
         virtual ~IGameLayer() = default;
 
         virtual void onAttach(const LayerEngineContext &ec) = 0;
+        virtual void onInit() = 0;
         virtual void onDetach() = 0;
 
         virtual void onUpdate(float dt) = 0;
         virtual void onRender(int width, int height) = 0;
 
-        bool enabled = false;
+        bool enabled = true;
     };
 }

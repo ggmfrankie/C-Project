@@ -44,6 +44,7 @@ namespace Render {
         }
 
         glfwMakeContextCurrent(windowHandle);
+        glfwSetWindowUserPointer(windowHandle, this);
 
         if (!gladLoadGL(glfwGetProcAddress)) {
             glfwDestroyWindow(windowHandle);
@@ -57,6 +58,8 @@ namespace Render {
         glfwSetFramebufferSizeCallback(windowHandle, framebufferSizeCallback);
 
         mInput.init(windowHandle);
+        mLayerStack.init();
+        mScene.init();
     }
 
     void Screen::render() const {
@@ -79,6 +82,9 @@ namespace Render {
 
     void Screen::framebufferSizeCallback(GLFWwindow* window, const int width, const int height)
     {
+        const auto screen =  static_cast<Screen *>(glfwGetWindowUserPointer(window));
+        screen->width = width;
+        screen->height = height;
         glViewport(0, 0, width, height);
         gui_resizeCallback(window, width, height);
     }

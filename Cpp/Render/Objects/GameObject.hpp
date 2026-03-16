@@ -12,13 +12,17 @@ namespace Obj {
         PhysicsObject mPhysicsObject;
 
     public:
-        GameObject(const RenderObject &ro, const PhysicsObject &po);
 
         GameObject(RenderObject &&ro, PhysicsObject &&po);
 
+        GameObject(const GameObject&) = delete;
+        GameObject& operator=(const GameObject&) = delete;
+
+        GameObject(GameObject&&) noexcept;
+
         void sync();
 
-        void moveTo(const ggm::Vector3f &pos);
+        void moveTo(const ggm::Vector3f &pos) const;
 
         RenderObject& getRenderObject() { return mRenderObject; }
     };

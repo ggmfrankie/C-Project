@@ -13,9 +13,11 @@ namespace Engine {
     public:
         Scene();
 
-        std::vector<Obj::GameObject>& getObjects() { return mObjects; }
         void pushObject(Obj::GameObject&& obj);
 
+        void init();
+
         Render::Camera &getCamera() { return camera; }
+        std::vector<Obj::GameObject>& getObjects() { return mObjects; }
     };
 } // Engine

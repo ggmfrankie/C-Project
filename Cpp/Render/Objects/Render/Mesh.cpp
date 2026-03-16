@@ -66,7 +66,7 @@ namespace Obj {
         if (initialized) glDeleteVertexArrays(1, &VAO);
     }
 
-    void Mesh::init(Render::Shader* s) {
+    void Mesh::init() {
         glGenVertexArrays(1, &VAO);
         glBindVertexArray(VAO);
         glGenBuffers(3, VBOs.data());
@@ -96,8 +96,6 @@ namespace Obj {
         uvs = {};
         normals = {};
 
-        shader = s;
-
         if (texture.hasData()) texture.init();
         if (material.hasData()) material.init();
 
@@ -105,8 +103,6 @@ namespace Obj {
     }
 
     void Mesh::render() const {
-        shader->setUniform("textureSampler", 0);
-
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture.id());
 

@@ -19,9 +19,6 @@ namespace Game {
     PhysicsHandler::~PhysicsHandler() = default;
 
     void PhysicsHandler::onAttach(const LayerEngineContext& ec) {
-        RegisterDefaultAllocator();
-        Factory::sInstance = new Factory();
-        RegisterTypes();
 
         mPhysicsSystem.Init(
             cMaxBodies,
@@ -33,40 +30,40 @@ namespace Game {
             mObjectCollisionFilter
         );
 
+        mPhysicsSystem.SetGravity(Vec3(0.0f, -9.81f, 0.0f));
+
         mPhysicsSystem.OptimizeBroadPhase();
+    }
+
+    void PhysicsHandler::onInit() {
+
     }
 
     void PhysicsHandler::onDetach() {
     }
 
-    void PhysicsHandler::onUpdate(float dt) {
+    void PhysicsHandler::onUpdate(const float dt) {
         mPhysicsSystem.Update(dt, 1, &mTempAllocator, &mJobSystem);
     }
 
     void PhysicsHandler::onRender(int width, int height) {
     }
 
-    void PhysicsHandler::addObject(Obj::PhysicsObject &&obj) {
-        mObjects.push_back(obj);
-    }
-
-    void PhysicsHandler::removeObject(Obj::PhysicsObject &obj) {
-    }
-
     Obj::PhysicsObject PhysicsHandler::newBox(float x, float y, float z, const ggm::Vector3f &pos) {
         auto& interface = mPhysicsSystem.GetBodyInterface();
-        const auto* shape = new BoxShape(Vec3(x,y,z));
+        const RefConst<Shape> shape = new BoxShape(Vec3(x,y,z));
+
         const BodyCreationSettings settings(
             shape,
-            Vec3(pos.x,pos.y,pos.z),
+            Vec3(pos.x, pos.y, pos.z),
             Quat::sIdentity(),
             EMotionType::Dynamic,
             Layers::MOVING
         );
 
-        const auto bodyId = interface.CreateAndAddBody(settings, EActivation::Activate);
+        const BodyID bodyId = interface.CreateAndAddBody(settings, EActivation::Activate);
 
-        return {bodyId, interface};
+        return Obj::PhysicsObject(bodyId, interface);
     }
 
     PhysicsHandler::BPLayerInterfaceImpl::BPLayerInterfaceImpl() {

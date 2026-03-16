@@ -22,6 +22,7 @@ void toggle(T& x) {
 
 namespace Game {
     void BaseGame::preInit() {
+
         auto physics = new PhysicsHandler();
         auto render = new RenderLayer();
 
@@ -36,13 +37,16 @@ namespace Game {
             Obj::RenderObject("grass_block\\grass_block.obj"),
             physics->newBox(1,1,1, {0.5,0.5,0.5})
         );
-        obj2.moveTo({0,0, -20});
+        obj2.moveTo({0,20, -20});
 
-        auto obj3 = Obj::RenderObject("ground_plane\\ground_plane.obj");
-        obj3.moveBy(0,-30, 0);
+        auto obj3 = Obj::GameObject(
+            Obj::RenderObject("ground_plane\\ground_plane.obj"),
+            physics->newBox(1,1,1, {0.5,0.5,0.5})
+        );
 
         auto& scene = screen->getScene();
         scene.pushObject(std::move(obj2));
+        //scene.pushObject(std::move(obj3));
 
         cRegistry->registerCommand<
             Engine::Arg<std::string>
