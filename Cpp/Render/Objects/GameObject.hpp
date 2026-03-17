@@ -8,6 +8,7 @@
 
 namespace Obj {
     class GameObject {
+
         RenderObject mRenderObject;
         PhysicsObject mPhysicsObject;
 
@@ -22,7 +23,11 @@ namespace Obj {
 
         void sync();
 
-        void moveTo(const ggm::Vector3f &pos) const;
+        GameObject& moveTo(const ggm::Vector3f &pos);
+
+        GameObject &rotateTo(const ggm::Vector3f &rot);
+
+        GameObject &rotateToDeg(const ggm::Vector3f &rot);
 
         RenderObject& getRenderObject() { return mRenderObject; }
     };

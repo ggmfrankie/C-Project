@@ -14,6 +14,7 @@
 #include "Render/Screen.hpp"
 #include "Render/Transformation/Camera.hpp"
 
+#include "Utils/Math/ggmdef.hpp"
 
 template<typename T>
 void toggle(T& x) {
@@ -26,27 +27,44 @@ namespace Game {
         auto physics = new PhysicsHandler();
         auto render = new RenderLayer();
 
+        auto& scene = screen->getScene();
+
         auto& ls = screen->getLayerStack();
         ls.pushLayer(physics);
         ls.pushLayer(render);
 
-        auto obj = Obj::RenderObject::getDummyObject();
-        obj.moveBy(0,0, -30);
+        std::mt19937 rng(static_cast<unsigned int>(
+            std::chrono::steady_clock::now().time_since_epoch().count()
+        ));
 
-        auto obj2 = Obj::GameObject(
-            Obj::RenderObject("grass_block\\grass_block.obj"),
-            physics->newBox(1,1,1, {0.5,0.5,0.5})
-        );
-        obj2.moveTo({0,20, -20});
+        // Position ranges
+        std::uniform_real_distribution posX(-10.0f, 10.0f);
+        std::uniform_real_distribution posY(0.5f, 40.0f); // avoid intersecting floor
+        std::uniform_real_distribution posZ(-10.0f, 10.0f);
 
-        auto obj3 = Obj::GameObject(
+        // Rotation ranges (degrees)
+        std::uniform_real_distribution rotPitch(0.0f, 360.0f);
+        std::uniform_real_distribution rotYaw(0.0f, 360.0f);
+        std::uniform_real_distribution rotRoll(0.0f, 360.0f);
+
+        for (int i = 0; i < 500; i++) {
+            // Randomized position
+            ggm::Vector3f pos(posX(rng), posY(rng), posZ(rng));
+
+            // Randomized rotation
+            ggm::Vector3f rot(rotPitch(rng), rotYaw(rng), rotRoll(rng));
+
+            scene.pushObject(
+                Obj::RenderObject("grass_block\\grass_block.obj"),
+                physics->newBox(1, 1, 1, pos)
+            )
+            .rotateToDeg(rot);
+        }
+
+        scene.pushObject(
             Obj::RenderObject("ground_plane\\ground_plane.obj"),
-            physics->newBox(1,1,1, {0.5,0.5,0.5})
+            physics->newBox(1000,0,1000, {0,-32, -20}, JPH::EMotionType::Static)
         );
-
-        auto& scene = screen->getScene();
-        scene.pushObject(std::move(obj2));
-        //scene.pushObject(std::move(obj3));
 
         cRegistry->registerCommand<
             Engine::Arg<std::string>

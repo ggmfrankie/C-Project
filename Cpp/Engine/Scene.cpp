@@ -9,10 +9,6 @@ namespace Engine {
         mObjects.reserve(16);
     }
 
-    void Scene::pushObject(Obj::GameObject &&obj) {
-        mObjects.push_back(std::move(obj));
-    }
-
     void Scene::init() {
         for (auto& obj: mObjects) {
             obj.getRenderObject().init();

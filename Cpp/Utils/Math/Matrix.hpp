@@ -8,6 +8,7 @@
 #include <cmath>
 #include <numbers>
 
+#include "ggmdef.hpp"
 #include "Quaternion.hpp"
 #include "Vector.hpp"
 
@@ -21,7 +22,7 @@ namespace ggm {
 
         constexpr explicit Matrix3f(const std::array<float, 9> &&a): m(a){}
     private:
-        static constexpr auto toRad(const float degree){return degree * (static_cast<float>(std::numbers::pi) / 180);}
+
 
         std::array<float, 9> m{};
     public:
@@ -158,7 +159,6 @@ namespace ggm {
         constexpr explicit Matrix4f(const std::array<float, 16> &a): m(a){}
 
         constexpr explicit Matrix4f(const std::array<float, 16> &&a): m(a){}
-        static constexpr auto toRad(const float degree){return degree * (static_cast<float>(std::numbers::pi) / 180);};
 
         static constexpr Matrix4f Identity() noexcept {
             Matrix4f I{};

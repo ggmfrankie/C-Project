@@ -25,9 +25,11 @@ namespace Obj {
         [[nodiscard]] JPH::BodyID getBodyID() const { return mBodyID; }
 
         void applyForce(float x, float y, float z) const;
-        void setPosition(float x, float y, float z) const;
+        void setPosition(float x, float y, float z);
 
-        ggm::Vector3f getPosition() const;
+        void setRotation(float pitch, float yaw, float roll);
+
+        [[nodiscard]] ggm::Vector3f getPosition() const;
 
         ggm::Quaternion getRotation() const;
     };

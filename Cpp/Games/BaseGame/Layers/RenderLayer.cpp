@@ -57,7 +57,8 @@ namespace Game {
 
         for (auto& obj : mScene->getObjects()) {
             auto& renderObj = obj.getRenderObject();
-            ggm::Matrix4f& model = renderObj.getModelMatrix();
+
+            const ggm::Matrix4f& model = renderObj.getModelMatrix();
             ggm::Matrix4f modelView = view * model;
 
             mShader.setUniform("modelViewMatrix", modelView);

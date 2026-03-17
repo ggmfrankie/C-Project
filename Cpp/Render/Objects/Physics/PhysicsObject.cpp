@@ -4,6 +4,7 @@
 
 #include "PhysicsObject.hpp"
 
+#include "Utils/Math/ggmdef.hpp"
 #include "Utils/Math/Quaternion.hpp"
 
 namespace Obj {
@@ -21,8 +22,13 @@ namespace Obj {
         mBodyInterface.AddForce(mBodyID, JPH::Vec3(x, y, z));
     }
 
-    void PhysicsObject::setPosition(float x, float y, float z) const {
+    void PhysicsObject::setPosition(float x, float y, float z) {
         mBodyInterface.SetPosition(mBodyID, JPH::Vec3(x, y, z), JPH::EActivation::Activate);
+    }
+
+    void PhysicsObject::setRotation(float pitch, float yaw, float roll) {
+        auto r = ggm::Quaternion::fromEuler(pitch, yaw, roll);
+        mBodyInterface.SetRotation(mBodyID, {r.x, r.y, r.z, r.w}, JPH::EActivation::Activate);
     }
 
     ggm::Vector3f PhysicsObject::getPosition() const {

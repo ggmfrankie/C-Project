@@ -77,7 +77,8 @@ namespace Game {
         void onRender(int width, int height) override;
         void onInit() override;
 
-        Obj::PhysicsObject newBox(float x, float y, float z, const ggm::Vector3f &pos);
+        Obj::PhysicsObject newBox(float x, float y, float z, const ggm::Vector3f &pos, JPH::EMotionType= JPH::EMotionType::Dynamic);
+
     };
 } // Game
 

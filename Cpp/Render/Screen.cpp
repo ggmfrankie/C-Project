@@ -101,7 +101,7 @@ namespace Render {
         return height;
     }
 
-    void Screen::update(const double dt) const {
+    void Screen::update(const double dt) {
         mLayerStack.update(dt);
         gui_update();
     }

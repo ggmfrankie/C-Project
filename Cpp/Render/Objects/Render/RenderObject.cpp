@@ -23,24 +23,24 @@ namespace Obj {
     RenderObject::RenderObject() = default;
 
     RenderObject::RenderObject(RenderObject&& other) noexcept :
+          position(other.position),
           rotation(other.rotation),
+          dirty(other.dirty),
           initialized(other.initialized),
           scale(other.scale),
           model(other.model),
-          dirty(other.dirty),
-          position(other.position),
           meshes(std::move(other.meshes))
     {
         uuid = other.uuid;
     }
 
     RenderObject::RenderObject(const RenderObject& other) noexcept :
+          position(other.position),
           rotation(other.rotation),
+          dirty(other.dirty),
           initialized(other.initialized),
           scale(other.scale),
           model(other.model),
-          dirty(other.dirty),
-          position(other.position),
           meshes(other.meshes)
     {
         uuid = other.uuid;
@@ -63,18 +63,11 @@ namespace Obj {
         }
     }
 
-    void RenderObject::update() {
-        if (dirty) {
-            model = Matrix4f::Translation(position) * Matrix4f(rotation.toMatrix()) * Matrix4f::Scale(scale);
-            dirty = false;
-        }
-    }
-
     void RenderObject::rotateBy(const float pitch, const float yaw, const float roll) {
 
-        const float p = Matrix4f::toRad(pitch);
-        const float y = Matrix4f::toRad(yaw);
-        const float r = Matrix4f::toRad(roll);
+        const float p = ggm::toRad(pitch);
+        const float y = ggm::toRad(yaw);
+        const float r = ggm::toRad(roll);
 
         const auto dq = ggm::Quaternion::fromEuler(p, y, r);
         rotation = (rotation * dq).normalized();
@@ -113,7 +106,11 @@ namespace Obj {
         return dummy;
     }
 
-    Matrix4f& RenderObject::getModelMatrix() {
+    const Matrix4f& RenderObject::getModelMatrix() {
+        if (dirty) {
+            model = Matrix4f::Translation(position) * Matrix4f(rotation.toMatrix()) * Matrix4f::Scale(scale);
+            dirty = false;
+        }
         return model;
     }
 } // Core

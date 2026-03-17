@@ -29,7 +29,7 @@ namespace Render {
         [[nodiscard]] int getWidth() const;
         [[nodiscard]] int getHeight() const;
 
-        void update(double dt) const;
+        void update(double dt);
         [[nodiscard]] GLFWwindow *getWindowHandle() const;
         Input &getInput();
 

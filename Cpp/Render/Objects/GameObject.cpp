@@ -24,8 +24,19 @@ namespace Obj {
         mRenderObject.rotateTo(rot);
     }
 
-    void GameObject::moveTo(const ggm::Vector3f& pos) const {
+    GameObject& GameObject::moveTo(const ggm::Vector3f &pos) {
         mPhysicsObject.setPosition(pos.x, pos.y, pos.z);
+        return *this;
+    }
+
+    GameObject& GameObject::rotateTo(const ggm::Vector3f &rot) {
+        mPhysicsObject.setRotation(rot.x, rot.y, rot.z);
+        return *this;
+    }
+
+    GameObject& GameObject::rotateToDeg(const ggm::Vector3f &rot) {
+        mPhysicsObject.setRotation(ggm::toRad(rot.x), ggm::toRad(rot.y), ggm::toRad(rot.z));
+        return *this;
     }
 
 }

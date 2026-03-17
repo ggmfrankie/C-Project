@@ -160,7 +160,6 @@ namespace Obj::OBJLoader {
 
     void OBJObject::loadMaterial() {
         if (m_materialLib.empty()) return;
-        std::cout << std::filesystem::current_path() << '\n';
         const auto fullPath = m_folderPath + std::string(m_materialLib);
         const auto s = ggm::FileIO::readFile(fullPath);
 

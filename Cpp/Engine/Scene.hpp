@@ -13,7 +13,11 @@ namespace Engine {
     public:
         Scene();
 
-        void pushObject(Obj::GameObject&& obj);
+        template<typename... Args>
+        Obj::GameObject& pushObject(Args&&... args) {
+            mObjects.emplace_back(std::forward<Args>(args)...);
+            return mObjects.back();
+        }
 
         void init();
 

@@ -49,21 +49,24 @@ namespace Game {
     void PhysicsHandler::onRender(int width, int height) {
     }
 
-    Obj::PhysicsObject PhysicsHandler::newBox(float x, float y, float z, const ggm::Vector3f &pos) {
+    Obj::PhysicsObject PhysicsHandler::newBox(float x, float y, float z, const ggm::Vector3f& pos, EMotionType mt) {
         auto& interface = mPhysicsSystem.GetBodyInterface();
-        const RefConst<Shape> shape = new BoxShape(Vec3(x,y,z));
+        const RefConst<Shape> shape = new BoxShape(Vec3(x/2,y/2,z/2));
 
         const BodyCreationSettings settings(
             shape,
             Vec3(pos.x, pos.y, pos.z),
             Quat::sIdentity(),
-            EMotionType::Dynamic,
-            Layers::MOVING
+            mt,
+            (mt == EMotionType::Dynamic) ? Layers::MOVING : Layers::NON_MOVING
         );
 
-        const BodyID bodyId = interface.CreateAndAddBody(settings, EActivation::Activate);
+        const BodyID bodyId = interface.CreateAndAddBody(
+            settings,
+            (mt == EMotionType::Dynamic) ? EActivation::Activate : EActivation::DontActivate
+        );
 
-        return Obj::PhysicsObject(bodyId, interface);
+        return {bodyId, interface};
     }
 
     PhysicsHandler::BPLayerInterfaceImpl::BPLayerInterfaceImpl() {

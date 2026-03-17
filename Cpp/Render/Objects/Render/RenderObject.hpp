@@ -31,8 +31,6 @@ namespace Obj {
 
         void render() const;
 
-        void update();
-
         void rotateBy(float pitch, float yaw, float roll);
 
         void rotateTo(const ggm::Quaternion &rot);
@@ -42,8 +40,9 @@ namespace Obj {
 
         void moveTo(const ggm::Vector3f &pos);
 
+        const ggm::Matrix4f& getModelMatrix();
+
         static RenderObject getDummyObject();
-        ggm::Matrix4f& getModelMatrix();
 
     protected:
         ggm::i64 uuid{};
