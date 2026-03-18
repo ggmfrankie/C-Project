@@ -168,6 +168,8 @@ add_executable(C-Project
         Cpp/Render/Objects/GameObject.hpp
         Cpp/Engine/Scene.cpp
         Cpp/Engine/Scene.hpp
+        Cpp/Games/Controller/Player.cpp
+        Cpp/Games/Controller/Player.hpp
 
 )
 target_compile_definitions(C-Project PRIVATE

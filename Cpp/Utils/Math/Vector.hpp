@@ -44,6 +44,9 @@ namespace ggm {
         constexpr void operator*=(const float factor){
             x *= factor; y *= factor; z *= factor;
         }
+        bool operator==(const Vector3f& other) const noexcept {
+            return x == other.x && y == other.y && z == other.z;
+        }
 
         [[nodiscard]] constexpr float dot(const Vector3f& v) const {
             return v.x*x + v.y*y + v.z*z;
@@ -173,5 +176,20 @@ namespace ggm {
     };
 }
 
+template <>
+        struct std::hash<ggm::Vector3f> {
+    size_t operator()(const ggm::Vector3f& v) const noexcept {
+        size_t h1 = std::hash<float>{}(v.x);
+        size_t h2 = std::hash<float>{}(v.y);
+        size_t h3 = std::hash<float>{}(v.z);
+
+        // Combine hashes (boost-style)
+        size_t seed = h1;
+        seed ^= h2 + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+        seed ^= h3 + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+
+        return seed;
+    }
+};
 
 #endif //MIXEDPROJECT_VECTOR_H

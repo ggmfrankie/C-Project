@@ -50,8 +50,15 @@ namespace Game {
     }
 
     Obj::PhysicsObject PhysicsHandler::newBox(float x, float y, float z, const ggm::Vector3f& pos, EMotionType mt) {
+        static std::unordered_map<ggm::Vector3f, RefConst<Shape>> duplicates{16};
+
+        const auto index = ggm::Vector3f(x,y,z);
+        const auto it = duplicates.find(index);
+
+        const RefConst<Shape> shape = (it != duplicates.end()) ? it->second: new BoxShape(Vec3(x/2,y/2,z/2));
+        if (it == duplicates.end()) duplicates[index] = shape;
+
         auto& interface = mPhysicsSystem.GetBodyInterface();
-        const RefConst<Shape> shape = new BoxShape(Vec3(x/2,y/2,z/2));
 
         const BodyCreationSettings settings(
             shape,

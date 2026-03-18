@@ -33,8 +33,8 @@ namespace Game {
 
         class BPLayerInterfaceImpl final : public JPH::BroadPhaseLayerInterface {
             JPH::BroadPhaseLayer mObjectToBroadPhase[Layers::NUM_LAYERS]{};
-            ggm::u32 GetNumBroadPhaseLayers() const override;
-            JPH::BroadPhaseLayer GetBroadPhaseLayer(JPH::ObjectLayer inLayer) const override;
+            [[nodiscard]] ggm::u32 GetNumBroadPhaseLayers() const override;
+            [[nodiscard]] JPH::BroadPhaseLayer GetBroadPhaseLayer(JPH::ObjectLayer inLayer) const override;
 
         #if defined(JPH_EXTERNAL_PROFILE) || defined(JPH_PROFILE_ENABLED)
             [[nodiscard]] const char * GetBroadPhaseLayerName(JPH::BroadPhaseLayer inLayer) const override;
