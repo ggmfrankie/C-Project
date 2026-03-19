@@ -7,7 +7,9 @@
 #include "Jolt/Physics/PhysicsSystem.h"
 
 namespace Game {
-    class Player : public Obj::GameObject{
+    class Player {
+        Obj::RenderObject mRenderObj;
+    public:
         Player();
 
         Player(ggm::Vector3f &pos, JPH::PhysicsSystem &system);

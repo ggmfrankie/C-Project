@@ -14,20 +14,21 @@
 namespace Game {
 
     Obj::RenderObject createPlayerRenderObject(){
-    };
-
-    Obj::PhysicsObject createPlayerController() {
-;
+        return Obj::RenderObject("grass_block\\grass_block.obj");
     }
 
-    Player::Player(ggm::Vector3f& pos, JPH::PhysicsSystem& system) : GameObject(createPlayerRenderObject(), createPlayerController()) {
+    Player::Player(ggm::Vector3f& pos, JPH::PhysicsSystem& system) :
+        mRenderObj(createPlayerRenderObject())
+    {
         JPH::CharacterSettings settings{};
         settings.mMass = 10;
         settings.mLayer = Layers::MOVING;
         settings.mMaxSlopeAngle = JPH::DegreesToRadians(45.0f);
         settings.mShape = new JPH::CapsuleShape(0.5, .01);
 
-        JPH::RefConst character = new JPH::Character(&settings, {0, 0, 0}, {}, 0, &system);
+        JPH::Ref character = new JPH::Character(&settings, {0, 0, 0}, {}, 0, &system);
+
+        character->AddToPhysicsSystem();
     }
 
     Player::~Player() {
