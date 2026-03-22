@@ -171,6 +171,8 @@ add_executable(C-Project
         Cpp/Games/Controller/Player.cpp
         Cpp/Games/Controller/Player.hpp
         Cpp/Utils/DataStorage/SparseSet.hpp
+        Cpp/Engine/Debug/Logger.cpp
+        Cpp/Engine/Debug/Logger.hpp
 
 )
 target_compile_definitions(C-Project PRIVATE
