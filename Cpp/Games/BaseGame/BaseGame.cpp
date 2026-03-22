@@ -10,7 +10,7 @@
 #include "GuiInterface.h"
 #include "Engine/CommandRegistry.hpp"
 #include "Games/DefaultLayer/PhysicsHandler.hpp"
-#include "Layers/RenderLayer.hpp"
+#include "../DefaultLayer/RenderLayer.hpp"
 #include "Render/Screen.hpp"
 #include "Render/Transformation/Camera.hpp"
 
@@ -22,6 +22,8 @@ void toggle(T& x) {
 }
 
 namespace Game {
+    BaseGame::BaseGame() = default;
+
     void BaseGame::preInit() {
 
         auto physics = new PhysicsHandler();
@@ -39,7 +41,7 @@ namespace Game {
 
         // Position ranges
         std::uniform_real_distribution posX(-10.0f, 10.0f);
-        std::uniform_real_distribution posY(0.5f, 40.0f); // avoid intersecting floor
+        std::uniform_real_distribution posY(0.5f, 20.0f); // avoid intersecting floor
         std::uniform_real_distribution posZ(-10.0f, 10.0f);
 
         // Rotation ranges (degrees)
@@ -55,16 +57,19 @@ namespace Game {
             ggm::Vector3f rot(rotPitch(rng), rotYaw(rng), rotRoll(rng));
 
             scene.pushObject(
-                Obj::RenderObject("grass_block\\grass_block.obj"),
-                physics->newBox(1, 1, 1, pos)
+                render->newObject("grass_block\\grass_block.obj"),
+                physics->newBox(1,1,1,pos)
             )
             .rotateToDeg(rot);
         }
 
         scene.pushObject(
-            Obj::RenderObject("ground_plane\\ground_plane.obj"),
+            render->newObject("ground_plane\\ground_plane.obj"),
             physics->newBox(1000,0,1000, {0,-32, -20}, JPH::EMotionType::Static)
         );
+
+        mPlayer = std::make_unique<Player>(ggm::Vector3f{0,0,0}, physics->getPhysicsSystem());
+        mPlayer->init();
 
         cRegistry->registerCommand<
             Engine::Arg<std::string>

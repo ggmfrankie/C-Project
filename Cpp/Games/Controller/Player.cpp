@@ -17,20 +17,49 @@ namespace Game {
         return Obj::RenderObject("grass_block\\grass_block.obj");
     }
 
-    Player::Player(ggm::Vector3f& pos, JPH::PhysicsSystem& system) :
-        mRenderObj(createPlayerRenderObject())
+    Player::Player(const ggm::Vector3f& pos, JPH::PhysicsSystem& system) :
+        mRenderObj(createPlayerRenderObject()),
+        mPos(pos)
     {
-        JPH::CharacterSettings settings{};
-        settings.mMass = 10;
-        settings.mLayer = Layers::MOVING;
-        settings.mMaxSlopeAngle = JPH::DegreesToRadians(45.0f);
-        settings.mShape = new JPH::CapsuleShape(0.5, .01);
+        JPH::Ref settings = new JPH::CharacterSettings{};
+        settings->mMass = 10;
+        settings->mLayer = Layers::MOVING;
+        settings->mMaxSlopeAngle = JPH::DegreesToRadians(45.0f);
+        settings->mShape = new JPH::CapsuleShape(0.5, .01);
 
-        JPH::Ref character = new JPH::Character(&settings, {0, 0, 0}, {}, 0, &system);
+        mCharacter = new JPH::Character(settings, {pos.x, pos.y, pos.z}, JPH::Quat::sIdentity(), 0, &system);
+    }
 
-        character->AddToPhysicsSystem();
+    Player::Player(Player &&other) noexcept:
+        mRenderObj(std::move(other.mRenderObj)),
+        mPos(other.mPos),
+        mCharacter(std::move(other.mCharacter))
+    {
+        other.mCharacter = nullptr;
+    }
+
+    Player::Player() :
+        mRenderObj(),
+        mPos(),
+        mCharacter()
+    {
+    }
+
+    void Player::init() const {
+        mCharacter->AddToPhysicsSystem();
     }
 
     Player::~Player() {
+        if (mCharacter != nullptr) mCharacter->RemoveFromPhysicsSystem();
+    }
+
+    Player& Player::operator=(Player&& other) noexcept
+    {
+        if (this != &other)
+        {
+            mPos = other.mPos;
+            mRenderObj = std::move(other.mRenderObj);
+        }
+        return *this;
     }
 } // Game

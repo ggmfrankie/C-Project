@@ -5,37 +5,47 @@
 #include "GameObject.hpp"
 
 namespace Obj {
-    GameObject::GameObject(RenderObject&& ro, PhysicsObject&& po) :
-        mRenderObject(std::move(ro)), mPhysicsObject(std::move(po))
+
+    GameObject::GameObject(const std::pair<ggm::SparseSet<RenderObject>&, ggm::u64> &renderObj, std::optional<PhysicsObject> po) :
+        mRenderObjectID(renderObj.second),
+        mRenderObjects(renderObj.first),
+        mPhysicsObject(std::move(po))
     {
     }
 
-    GameObject::GameObject(GameObject &&other) noexcept:
-        mRenderObject(std::move(other.mRenderObject)),
-        mPhysicsObject(std::move(other.mPhysicsObject))
-    {
+    bool GameObject::hasRenderObj() const {
+        return mRenderObjectID != INVALID_ID;
+    }
+
+    RenderObject& GameObject::getRenderObj() const {
+        return mRenderObjects.get(mRenderObjectID);
     }
 
     void GameObject::sync() {
-        const auto pos = mPhysicsObject.getPosition();
-        mRenderObject.moveTo(pos);
+        if (!mPhysicsObject || !hasRenderObj()) return;
+        const auto pos = mPhysicsObject->getPosition();
 
-        const auto rot = mPhysicsObject.getRotation();
-        mRenderObject.rotateTo(rot);
+        auto& rObj = getRenderObj();
+        rObj.moveTo(pos);
+
+        const auto rot = mPhysicsObject->getRotation();
+        rObj.rotateTo(rot);
     }
 
     GameObject& GameObject::moveTo(const ggm::Vector3f &pos) {
-        mPhysicsObject.setPosition(pos.x, pos.y, pos.z);
+        if (mPhysicsObject) mPhysicsObject->setPosition(pos.x, pos.y, pos.z);
+        if (hasRenderObj()) getRenderObj().moveTo(pos);
         return *this;
     }
 
     GameObject& GameObject::rotateTo(const ggm::Vector3f &rot) {
-        mPhysicsObject.setRotation(rot.x, rot.y, rot.z);
+        if (mPhysicsObject) mPhysicsObject->setRotation(rot.x, rot.y, rot.z);
+        if (hasRenderObj()) getRenderObj().rotateTo(ggm::Quaternion::fromEuler(rot));
         return *this;
     }
 
     GameObject& GameObject::rotateToDeg(const ggm::Vector3f &rot) {
-        mPhysicsObject.setRotation(ggm::toRad(rot.x), ggm::toRad(rot.y), ggm::toRad(rot.z));
+        rotateTo({ggm::toRad(rot.x), ggm::toRad(rot.y), ggm::toRad(rot.z)});
         return *this;
     }
 

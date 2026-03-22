@@ -13,7 +13,8 @@ namespace Game {
 
     PhysicsHandler::PhysicsHandler() :
         mTempAllocator(10 * 1024 * 1024),
-        mJobSystem(cMaxPhysicsJobs, cMaxPhysicsBarriers, static_cast<int>(thread::hardware_concurrency()) - 1) {
+        mJobSystem(cMaxPhysicsJobs, cMaxPhysicsBarriers, static_cast<int>(thread::hardware_concurrency()) - 1)
+    {
     }
 
     PhysicsHandler::~PhysicsHandler() = default;
@@ -47,6 +48,10 @@ namespace Game {
     }
 
     void PhysicsHandler::onRender(int width, int height) {
+    }
+
+    PhysicsSystem& PhysicsHandler::getPhysicsSystem() {
+        return mPhysicsSystem;
     }
 
     Obj::PhysicsObject PhysicsHandler::newBox(float x, float y, float z, const ggm::Vector3f& pos, EMotionType mt) {

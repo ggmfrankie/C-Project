@@ -8,9 +8,7 @@
 #include "GLFW/glfw3.h"
 
 namespace Game {
-    RenderLayer::RenderLayer() :
-        mShader("MainShader.vert", "MainShader.frag")
-    {
+    RenderLayer::RenderLayer() : mShader("MainShader.vert", "MainShader.frag"), mObjects(64) {
     }
 
     RenderLayer::~RenderLayer() = default;
@@ -28,6 +26,10 @@ namespace Game {
         mShader.createUniform("textureSampler");
         mShader.createUniform("modelViewMatrix");
         mShader.createUniform("projectionMatrix");
+
+        for (auto& obj : mObjects) {
+            obj.init();
+        }
     }
 
     void RenderLayer::onDetach() {
@@ -55,15 +57,15 @@ namespace Game {
 
         const ggm::Matrix4f view = mCamera->getViewMatrix();
 
-        for (auto& obj : mScene->getObjects()) {
-            auto& renderObj = obj.getRenderObject();
+        for (auto& obj : mObjects) {
 
-            const ggm::Matrix4f& model = renderObj.getModelMatrix();
+
+            const ggm::Matrix4f& model = obj.getModelMatrix();
             ggm::Matrix4f modelView = view * model;
 
             mShader.setUniform("modelViewMatrix", modelView);
 
-            renderObj.render();
+            obj.render();
         }
         gui_render();
     }

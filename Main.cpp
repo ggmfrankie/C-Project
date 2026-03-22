@@ -6,7 +6,7 @@
 
 #if 1
 int main() {
-    auto game = Game::BaseGame();
+    Game::BaseGame game{};
     GameEngine& gameEngine = GameEngine::New(game);
     gameEngine.init();
     gameEngine.loop();

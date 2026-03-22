@@ -44,6 +44,8 @@ namespace Obj {
 
         static RenderObject getDummyObject();
 
+        RenderObject & operator=(RenderObject&& other) noexcept;
+
     protected:
         ggm::i64 uuid{};
         ggm::Vector3f position{0,0,0};
@@ -57,7 +59,7 @@ namespace Obj {
         ggm::Matrix4f model = ggm::Matrix4f::Identity();
 
 
-        ggm::InlineVector<Mesh, 1> meshes{};
+        ggm::InlineVector<Mesh, 1> mMeshes{};
     };
 } // Core
 

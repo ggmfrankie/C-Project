@@ -10,8 +10,5 @@ namespace Engine {
     }
 
     void Scene::init() {
-        for (auto& obj: mObjects) {
-            obj.getRenderObject().init();
-        }
     }
 } // Enginedsee

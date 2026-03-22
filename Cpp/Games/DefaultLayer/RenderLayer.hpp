@@ -3,14 +3,13 @@
 //
 
 #pragma once
-#include <vector>
 
 #include "Engine/Scene.hpp"
-#include "Games/IGame.hpp"
 #include "Games/IGameLayer.hpp"
 #include "Render/IO/Input.hpp"
 #include "Render/Objects/GameObject.hpp"
 #include "Render/Transformation/Camera.hpp"
+#include "Utils/DataStorage/SparseSet.hpp"
 
 
 namespace Game {
@@ -20,6 +19,8 @@ namespace Game {
         Render::Camera* mCamera = nullptr;
         Render::Input* mInput = nullptr;
         Engine::Scene* mScene = nullptr;
+
+        ggm::SparseSet<Obj::RenderObject> mObjects;
 
     public:
         RenderLayer();
@@ -32,5 +33,10 @@ namespace Game {
         void onUpdate(float dt) override;
 
         void onRender(int width, int height) override;
+
+        template<typename... Args>
+        auto newObject(Args &&... args) -> std::pair<ggm::SparseSet<Obj::RenderObject>&, ggm::i64> {
+            return { mObjects, static_cast<ggm::u64>(mObjects.push(std::forward<Args>(args)...)) };
+        }
     };
 } // Game

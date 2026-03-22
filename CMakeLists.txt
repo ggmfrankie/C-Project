@@ -158,8 +158,8 @@ add_executable(C-Project
         Cpp/Games/IGameLayer.hpp
         Cpp/Engine/LayerStack.cpp
         Cpp/Engine/LayerStack.hpp
-        Cpp/Games/BaseGame/Layers/RenderLayer.cpp
-        Cpp/Games/BaseGame/Layers/RenderLayer.hpp
+        Cpp/Games/DefaultLayer/RenderLayer.cpp
+        Cpp/Games/DefaultLayer/RenderLayer.hpp
         Cpp/Render/Objects/Physics/PhysicsObject.cpp
         Cpp/Render/Objects/Physics/PhysicsObject.hpp
         Cpp/Games/DefaultLayer/PhysicsHandler.cpp
@@ -170,6 +170,7 @@ add_executable(C-Project
         Cpp/Engine/Scene.hpp
         Cpp/Games/Controller/Player.cpp
         Cpp/Games/Controller/Player.hpp
+        Cpp/Utils/DataStorage/SparseSet.hpp
 
 )
 target_compile_definitions(C-Project PRIVATE

@@ -5,30 +5,32 @@
 #pragma once
 #include "Physics/PhysicsObject.hpp"
 #include "Render/RenderObject.hpp"
+#include "Utils/DataStorage/SparseSet.hpp"
 
 namespace Obj {
     class GameObject {
 
-        RenderObject mRenderObject;
-        PhysicsObject mPhysicsObject;
+        ggm::u64 mRenderObjectID;
+        ggm::SparseSet<RenderObject>& mRenderObjects;
+        std::optional<PhysicsObject> mPhysicsObject;
+
+        [[nodiscard]] bool hasRenderObj() const;
+        [[nodiscard]] RenderObject &getRenderObj() const;
 
     public:
 
-        GameObject(RenderObject &&ro, PhysicsObject &&po);
-
+        explicit GameObject(const std::pair<ggm::SparseSet<RenderObject>&, ggm::u64> &renderObj, std::optional<PhysicsObject> po);
         GameObject(const GameObject&) = delete;
+        GameObject(GameObject&& other) = default;
+
         GameObject& operator=(const GameObject&) = delete;
-
-        GameObject(GameObject&&) noexcept;
-
         void sync();
 
         GameObject& moveTo(const ggm::Vector3f &pos);
+        GameObject& rotateTo(const ggm::Vector3f &rot);
+        GameObject& rotateToDeg(const ggm::Vector3f &rot);
 
-        GameObject &rotateTo(const ggm::Vector3f &rot);
+        static constexpr ggm::u64 INVALID_ID = std::numeric_limits<ggm::u64>::max();
 
-        GameObject &rotateToDeg(const ggm::Vector3f &rot);
-
-        RenderObject& getRenderObject() { return mRenderObject; }
     };
 } // Obj

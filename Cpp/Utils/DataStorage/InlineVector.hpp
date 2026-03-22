@@ -16,74 +16,96 @@ namespace ggm {
     public:
         explicit InlineVector(u64 capacity = InlineCapacity) {
             if (capacity <= InlineCapacity) {
-                data = inlinePtr();
-                this->capacity = InlineCapacity;
-                isHeap = false;
+                mData = inlinePtr();
+                this->mCapacity = InlineCapacity;
+                mIsHeap = false;
             } else {
-                data = static_cast<T *>(operator new(capacity * sizeof(T)));
-                this->capacity = capacity;
-                isHeap = true;
+                mData = static_cast<T *>(operator new(capacity * sizeof(T)));
+                this->mCapacity = capacity;
+                mIsHeap = true;
             }
-            size = 0;
+            mSize = 0;
         }
 
         InlineVector(InlineVector&& other)  noexcept {
-            if (other.isHeap) {
-                data = other.data;
-                other.isHeap = false;
-                isHeap = true;
+            if (other.mIsHeap) {
+                mData = other.mData;
+                other.mIsHeap = false;
+                mIsHeap = true;
             } else {
-                data = inlinePtr();
-                for (u64 i = 0; i < other.size; ++i) {
-                    std::construct_at(&data[i], std::move(other.data[i]));
-                    std::destroy_at(&other.data[i]);
+                mData = inlinePtr();
+                for (u64 i = 0; i < other.mSize; ++i) {
+                    std::construct_at(&mData[i], std::move(other.mData[i]));
+                    std::destroy_at(&other.mData[i]);
                 }
-                isHeap = false;
+                mIsHeap = false;
             }
-            capacity = other.capacity;
-            size = other.size;
+            mCapacity = other.mCapacity;
+            mSize = other.mSize;
 
-            other.data = other.inlinePtr();
-            other.capacity = InlineCapacity;
-            other.size = 0;
+            other.mData = other.inlinePtr();
+            other.mCapacity = InlineCapacity;
+            other.mSize = 0;
         }
 
         InlineVector(const InlineVector& other) {
-            if (other.isHeap) {
-                data = static_cast<T *>(operator new(other.capacity * sizeof(T)));
-                isHeap = true;
+            if (other.mIsHeap) {
+                mData = static_cast<T *>(operator new(other.mCapacity * sizeof(T)));
+                mIsHeap = true;
             } else {
-                data = inlinePtr();
-                isHeap = false;
+                mData = inlinePtr();
+                mIsHeap = false;
             }
-            for (u64 i = 0; i < other.size; ++i) {
-                std::construct_at(&data[i], other.data[i]);
+            for (u64 i = 0; i < other.mSize; ++i) {
+                std::construct_at(&mData[i], other.mData[i]);
             }
-            capacity = other.capacity;
-            size = other.size;
+            mCapacity = other.mCapacity;
+            mSize = other.mSize;
         }
 
         ~InlineVector() {
-            for (u64 i = 0; i < size; ++i)
-                std::destroy_at(&data[i]);
-            if (isHeap) operator delete(data);
+            for (u64 i = 0; i < mSize; ++i)
+                std::destroy_at(&mData[i]);
+            if (mIsHeap) operator delete(mData);
+        }
+
+        InlineVector& operator=(InlineVector&& other)  noexcept {
+            if (other.mIsHeap) {
+                mData = other.mData;
+                other.mIsHeap = false;
+                mIsHeap = true;
+            } else {
+                mData = inlinePtr();
+                for (u64 i = 0; i < other.mSize; ++i) {
+                    std::construct_at(&mData[i], std::move(other.mData[i]));
+                    std::destroy_at(&other.mData[i]);
+                }
+                mIsHeap = false;
+            }
+            mCapacity = other.mCapacity;
+            mSize = other.mSize;
+
+            other.mData = other.inlinePtr();
+            other.mCapacity = InlineCapacity;
+            other.mSize = 0;
+            return *this;
         }
 
         void add(const T& thing) {
-            if (capacity <= size) grow();
-            std::construct_at(&data[size++], thing);
+            if (mCapacity <= mSize) grow(mCapacity*2+1);
+            std::construct_at(&mData[mSize++], thing);
         }
 
         void add(T&& thing) {
-            if (capacity <= size) grow();
-            std::construct_at(&data[size++], std::move(thing));
+            if (mCapacity <= mSize) grow(mCapacity*2+1);
+            std::construct_at(&mData[mSize++], std::move(thing));
         }
 
         template<typename... Args>
         T& push(Args&&... args) {
-            if (size == capacity) grow();
-            T* ptr = std::construct_at(&data[size], std::forward<Args>(args)...);
-            ++size;
+            if (mSize == mCapacity) grow(mCapacity*2+1);
+            T* ptr = std::construct_at(&mData[mSize], std::forward<Args>(args)...);
+            ++mSize;
             return *ptr;
         }
 
@@ -93,89 +115,102 @@ namespace ggm {
             return *this;
         }
 
-        T& operator[](u64 index) noexcept {
-            if (index >= size) {
-                std::cerr << "index out of bounds in ArrayList\n";
-                exit(-1);
-            }
-            return data[index];
+        void growTo(u64 capacity) {
+            if (capacity <= mCapacity) return;
+            grow(capacity);
         }
 
-        T& at(u64 index) {
-            if (index >= size) {
+        T& operator[](u64 index) noexcept {
+            if (index >= mSize) {
                 std::cerr << "index out of bounds in ArrayList\n";
                 exit(-1);
             }
-            return data[index];
+            return mData[index];
+        }
+
+        T& get(u64 index) {
+            if (index >= mSize) {
+                std::cerr << "index out of bounds in ArrayList\n";
+                exit(-1);
+            }
+            return mData[index];
         }
 
         void clear() noexcept {
-            for (u64 i = 0; i < size; ++i) {
-                std::destroy_at(&data[i]);
+            for (u64 i = 0; i < mSize; ++i) {
+                std::destroy_at(&mData[i]);
             }
-            size = 0;
+            mSize = 0;
         }
 
         void fit() {
-            if (!isHeap || size == capacity) return;
+            if (!mIsHeap || mSize == mCapacity) return;
 
-            T* old = data;
-            data = static_cast<T*>(operator new(size * sizeof(T)));
-            capacity = size;
+            T* old = mData;
+            mData = static_cast<T*>(operator new(mSize * sizeof(T)));
+            mCapacity = mSize;
 
-            for (u64 i = 0; i < size; ++i) {
-                std::construct_at(&data[i], std::move(old[i]));
+            for (u64 i = 0; i < mSize; ++i) {
+                std::construct_at(&mData[i], std::move(old[i]));
                 std::destroy_at(&old[i]);
             }
             operator delete(old);
         }
 
         const T* getDataPtr() const noexcept {
-            return data;
+            return mData;
         }
 
         [[nodiscard]] bool empty() const noexcept {
-            return size == 0;
+            return mSize == 0;
         }
-    private:
-        bool isHeap = false;
-        T* data{};
-        u64 size = 0;
-        u64 capacity = 0;
-        alignas(T) std::byte inlineRaw_[sizeof(T) * InlineCapacity]{};
+
+        [[nodiscard]] u64 size() const {
+            return mSize;
+        }
+
+        [[nodiscard]] u64 capacity() const {
+            return mCapacity;
+        }
 
     private:
-        void grow() {
-            T* oldData = data;
-            capacity = capacity*2+1;
-            data = static_cast<T *>(operator new(capacity * sizeof(T)));
+        bool mIsHeap = false;
+        T* mData{};
+        u64 mSize = 0;
+        u64 mCapacity = 0;
+        alignas(T) std::byte _inlineRaw_[sizeof(T) * InlineCapacity]{};
 
-            for (u64 i = 0; i < size; i++) {
-                std::construct_at(&data[i], std::move(oldData[i]));
+        void grow(u64 capacity) {
+            T* oldData = mData;
+            mCapacity = capacity;
+            mData = static_cast<T *>(operator new(mCapacity * sizeof(T)));
+
+            for (u64 i = 0; i < mSize; i++) {
+                std::construct_at(&mData[i], std::move(oldData[i]));
                 std::destroy_at(&oldData[i]);
             }
-            if (isHeap) {
+            if (mIsHeap) {
                 operator delete(oldData);
             }
-            isHeap = true;
+            mIsHeap = true;
         }
 
         T* inlinePtr() noexcept {
-            return std::launder(reinterpret_cast<T*>(inlineRaw_));
+            return std::launder(reinterpret_cast<T*>(_inlineRaw_));
         }
 
     public:
         using iterator = T*;
         using const_iterator = const T*;
 
-        iterator begin() noexcept {return data;}
-        iterator end() noexcept {return data + size;}
+        iterator begin() noexcept {return mData;}
+        iterator end() noexcept {return mData + mSize;}
 
-        const_iterator begin() const noexcept {return data;}
-        const_iterator end() const noexcept {return data + size;}
+        const_iterator begin() const noexcept {return mData;}
+        const_iterator end() const noexcept {return mData + mSize;}
 
-        iterator cbegin() noexcept {return data;}
-        iterator cend() noexcept {return data + size;}
+        const_iterator cbegin() noexcept {return mData;}
+        const_iterator cend() noexcept {return mData + mSize;}
 
 
         using reverse_iterator = std::reverse_iterator<iterator>;

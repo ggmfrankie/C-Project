@@ -5,6 +5,7 @@
 #ifndef MIXEDPROJECT_BASEGAME_H
 #define MIXEDPROJECT_BASEGAME_H
 #include "../IGame.hpp"
+#include "Games/Controller/Player.hpp"
 
 struct GLFWwindow {
 };
@@ -14,7 +15,7 @@ namespace Game {
     class BaseGame: public IGame{
 
     public:
-        BaseGame() = default;
+        BaseGame();
         ~BaseGame() override = default;
 
         void preInit() override;
@@ -30,6 +31,8 @@ namespace Game {
         Render::Input* input = nullptr;
         Render::Screen* screen = nullptr;
         Engine::CommandRegistry* cRegistry = nullptr;
+
+        std::unique_ptr<Player> mPlayer = nullptr;
 
         bool guiMode = false;
 

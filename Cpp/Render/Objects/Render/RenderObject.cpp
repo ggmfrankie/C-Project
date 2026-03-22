@@ -16,7 +16,7 @@ namespace Obj {
         static ggm::i64 id = 0;
         auto obj = OBJLoader::OBJObject(objFile);
         obj.load();
-        meshes << (obj.getMesh());
+        mMeshes << (obj.getMesh());
         uuid = id++;
     }
 
@@ -29,7 +29,7 @@ namespace Obj {
           initialized(other.initialized),
           scale(other.scale),
           model(other.model),
-          meshes(std::move(other.meshes))
+          mMeshes(std::move(other.mMeshes))
     {
         uuid = other.uuid;
     }
@@ -41,7 +41,7 @@ namespace Obj {
           initialized(other.initialized),
           scale(other.scale),
           model(other.model),
-          meshes(other.meshes)
+          mMeshes(other.mMeshes)
     {
         uuid = other.uuid;
     }
@@ -52,13 +52,13 @@ namespace Obj {
         initialized = true;
         dirty = true;
         getModelMatrix();
-        for (auto& mesh : meshes) {
+        for (auto& mesh : mMeshes) {
             mesh.init();
         }
     }
 
     void RenderObject::render() const {
-        for (auto& mesh : meshes) {
+        for (auto& mesh : mMeshes) {
             mesh.render();
         }
     }
@@ -102,8 +102,13 @@ namespace Obj {
 
     RenderObject RenderObject::getDummyObject() {
         RenderObject dummy{};
-        dummy.meshes << Mesh::getDummyMesh();
+        dummy.mMeshes << Mesh::getDummyMesh();
         return dummy;
+    }
+
+    RenderObject& RenderObject::operator=(RenderObject&& other) noexcept {
+        mMeshes = std::move(other.mMeshes);
+        return *this;
     }
 
     const Matrix4f& RenderObject::getModelMatrix() {
