@@ -9,12 +9,12 @@
 
 namespace Obj {
     PhysicsObject::PhysicsObject(const JPH::BodyID ID, JPH::BodyInterface& bodyInterface) :
-        mBodyInterface(bodyInterface),
-        mBodyID(ID)
+        mBodyID(ID),
+        mBodyInterface(bodyInterface)
     {}
 
     PhysicsObject::PhysicsObject(const PhysicsObject &&other) noexcept :
-        mBodyID(std::move(other.mBodyID)),
+        mBodyID(other.mBodyID),
         mBodyInterface(other.mBodyInterface)
     {}
 

@@ -173,6 +173,8 @@ add_executable(C-Project
         Cpp/Utils/DataStorage/SparseSet.hpp
         Cpp/Engine/Debug/Logger.cpp
         Cpp/Engine/Debug/Logger.hpp
+        Cpp/Utils/Time.cpp
+        Cpp/Utils/Time.hpp
 
 )
 target_compile_definitions(C-Project PRIVATE
