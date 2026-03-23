@@ -5,4 +5,15 @@
 #include "Logger.hpp"
 
 namespace Engine {
+    Logger& Logger::Get() {
+        static Logger logger;
+
+        return logger;
+    }
+
+    void Logger::info(std::string &s) {
+    }
+
+    void Logger::error(std::string &s) {
+    }
 } // Engine

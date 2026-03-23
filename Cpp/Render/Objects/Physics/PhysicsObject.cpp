@@ -14,7 +14,7 @@ namespace Obj {
     {}
 
     PhysicsObject::PhysicsObject(const PhysicsObject &&other) noexcept :
-        mBodyID(std::move(other.mBodyID)),
+        mBodyID(other.mBodyID),
         mBodyInterface(other.mBodyInterface)
     {}
 
