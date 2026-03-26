@@ -165,11 +165,11 @@ namespace ggm {
             return mSize == 0;
         }
 
-        [[nodiscard]] u64 size() const {
+        [[nodiscard]] u64 size() const noexcept {
             return mSize;
         }
 
-        [[nodiscard]] u64 capacity() const {
+        [[nodiscard]] u64 capacity() const noexcept {
             return mCapacity;
         }
 
