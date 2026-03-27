@@ -167,11 +167,61 @@ namespace ggm {
             this->x = x;
             this->y = y;
         }
-        float x;
-        float y;
+        float x = 0;
+        float y = 0;
 
         constexpr Vector2f operator-(const Vector2f& v) const {
             return {x-v.x, y-v.y};
+        }
+
+        constexpr Vector2f operator*(float f) const {
+            return {x * f, y * f};
+        }
+
+        friend constexpr Vector2f operator*(float f, const Vector2f & v) {
+            return {v.x * f, v.y * f};
+        }
+
+        constexpr Vector2f operator/(float f) const {
+            return {x / f, y / f};
+        }
+
+        constexpr Vector2f& operator*=(float f) {
+            x *= f;
+            y *= f;
+            return *this;
+        }
+
+        constexpr Vector2f& operator+=(float f) {
+            x += f;
+            y += f;
+            return *this;
+        }
+
+        constexpr Vector2f& operator+=(const Vector2f& f) {
+            x += f.x;
+            y += f.y;
+            return *this;
+        }
+
+        constexpr Vector2f operator-() const noexcept {
+            return {-x, -y};
+        }
+
+        [[nodiscard]] constexpr float dot(const Vector2f& other) const {
+            return x * other.x + y * other.y;
+        }
+
+        [[nodiscard]] constexpr float length() const {
+            return std::sqrtf(x*x +y*y);
+        }
+
+        [[nodiscard]] constexpr Vector2f normalize() const {
+            return *this/this->length();
+        }
+
+        [[nodiscard]] static constexpr float dot(const Vector2f& v1, const Vector2f& v2) {
+            return v1.x * v2.x + v1.y * v2.y;
         }
     };
 }

@@ -18,26 +18,20 @@ namespace Obj {
     class RenderObject {
         public:
         explicit RenderObject(const std::string &objFile);
-
         RenderObject();
-
         RenderObject(RenderObject &&other) noexcept ;
-
         RenderObject(const RenderObject &other) noexcept;
 
         ~RenderObject();
 
         void init();
-
         void render() const;
 
         void rotateBy(float pitch, float yaw, float roll);
-
         void rotateTo(const ggm::Quaternion &rot);
 
         void moveBy(float dx, float dy, float dz);
         void moveTo(float x, float y, float z);
-
         void moveTo(const ggm::Vector3f &pos);
 
         const ggm::Matrix4f& getModelMatrix();
@@ -57,8 +51,6 @@ namespace Obj {
         float scale = 1.0f;
 
         ggm::Matrix4f model = ggm::Matrix4f::Identity();
-
-
         ggm::InlineVector<Mesh, 1> mMeshes{};
     };
 } // Core

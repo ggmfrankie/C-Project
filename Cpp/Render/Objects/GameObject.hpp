@@ -9,17 +9,21 @@
 
 namespace Obj {
     class GameObject {
+        struct RenderObjRef {
+            ggm::u64 ID;
+            ggm::SparseSet<RenderObject>& objects;
 
-        ggm::u64 mRenderObjectID;
-        ggm::SparseSet<RenderObject>& mRenderObjects;
+            [[nodiscard]] RenderObject& get() const;
+        };
+
+        RenderObjRef mRenderObj;
         std::optional<PhysicsObject> mPhysicsObject;
 
         [[nodiscard]] bool hasRenderObj() const;
         [[nodiscard]] RenderObject &getRenderObj() const;
 
     public:
-
-        explicit GameObject(const std::pair<ggm::SparseSet<RenderObject>&, ggm::u64> &renderObj, std::optional<PhysicsObject> po);
+        explicit GameObject(const std::pair<ggm::SparseSet<RenderObject>&, ggm::u64> &renderObj, std::optional<PhysicsObject>&& po);
         GameObject(const GameObject&) = delete;
         GameObject(GameObject&& other) = default;
 

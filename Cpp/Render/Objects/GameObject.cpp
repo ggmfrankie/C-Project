@@ -6,19 +6,18 @@
 
 namespace Obj {
 
-    GameObject::GameObject(const std::pair<ggm::SparseSet<RenderObject>&, ggm::u64> &renderObj, std::optional<PhysicsObject> po) :
-        mRenderObjectID(renderObj.second),
-        mRenderObjects(renderObj.first),
+    GameObject::GameObject(const std::pair<ggm::SparseSet<RenderObject>&, ggm::u64> &renderObj, std::optional<PhysicsObject>&& po) :
+        mRenderObj(renderObj.second, renderObj.first),
         mPhysicsObject(std::move(po))
     {
     }
 
     bool GameObject::hasRenderObj() const {
-        return mRenderObjectID != INVALID_ID;
+        return mRenderObj.ID != INVALID_ID;
     }
 
     RenderObject& GameObject::getRenderObj() const {
-        return mRenderObjects.get(mRenderObjectID);
+        return mRenderObj.get();
     }
 
     void GameObject::sync() {
@@ -49,4 +48,7 @@ namespace Obj {
         return *this;
     }
 
+    RenderObject& GameObject::RenderObjRef::get() const {
+        return objects.get(ID);
+    }
 }

@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include <numbers>
 
 namespace ggm {
     typedef int i32;

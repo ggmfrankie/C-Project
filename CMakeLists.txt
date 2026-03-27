@@ -175,6 +175,18 @@ add_executable(C-Project
         Cpp/Engine/Debug/Logger.hpp
         Cpp/Utils/Time.cpp
         Cpp/Utils/Time.hpp
+        Cpp/Engine/Core/PhysixBox/PointMass.cpp
+        Cpp/Engine/Core/PhysixBox/PointMass.hpp
+        Cpp/Render/Objects/Objects2D/RenderObject2D.cpp
+        Cpp/Render/Objects/Objects2D/RenderObject2D.hpp
+        Cpp/Engine/Core/PhysixBox/PhysicsSystem.cpp
+        Cpp/Engine/Core/PhysixBox/PhysicsSystem.hpp
+        Cpp/Engine/Core/PhysixBox/SoftBody2D.cpp
+        Cpp/Engine/Core/PhysixBox/SoftBody2D.hpp
+        Cpp/Engine/Core/PhysixBox/Constrains/Spring.cpp
+        Cpp/Engine/Core/PhysixBox/Constrains/Spring.hpp
+        Cpp/Render/Objects/Objects2D/GameObject2D.cpp
+        Cpp/Render/Objects/Objects2D/GameObject2D.hpp
 
 )
 target_compile_definitions(C-Project PRIVATE
