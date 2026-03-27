@@ -61,29 +61,21 @@ static inline void _resize_##Name(Hashmap_##Name* map) {\
         return;\
     }\
     for (size_t s = 0; s < oldCapacity; s++) {\
-        const MapEntry_##Name* entry = &oldContent[s];\
-        if (!entry->isOccupied) continue;\
-        size_t newIndex = FNV_##Name(entry->key, 0) % map->capacity;\
-\
-        bool isOccupied = newContent[newIndex].isOccupied;\
-\
-        while (isOccupied) {\
+        const MapEntry_##Name *oldEntry = &oldContent[s];\
+        if (!oldEntry->isOccupied) continue;\
+        size_t newIndex = FNV_##Name(oldEntry->key, 0) % map->capacity;\
+    		\
+        while (newContent[newIndex].isOccupied) {\
             newIndex = (newIndex + 1) % map->capacity;\
-            isOccupied = newContent[newIndex].isOccupied;\
         }\
-\
-        newContent[newIndex] = (MapEntry_##Name){\
-            .key = entry->key,\
-            .value = entry->value,\
-            .isOccupied = entry->isOccupied,\
-        };\
-    }\
+        newContent[newIndex] = oldContent[s];\
+	}\
     map->content = newContent;\
     free(oldContent);\
 }\
 \
 static inline void Hashmap_##Name##_add(Hashmap_##Name* map, const Key key, Value value) {\
-    if ((float)map->size+1 / (float)map->capacity > 0.75f) _resize_##Name(map);\
+    if (((float)map->size+1) / (float)map->capacity > 0.75f) _resize_##Name(map);\
 \
     const uint32_t hash = FNV_##Name(key, 0);\
     size_t index = hash % map->capacity;\
