@@ -12,5 +12,10 @@ namespace PhysixBox {
 
         void update(int steps, float dt);
 
+        template<typename... Args>
+        ggm::u64 addBody(Args&&... args) {
+            return mBodies.push(std::forward<Args>(args)...);
+        }
+
     };
 } // PhysicsBox

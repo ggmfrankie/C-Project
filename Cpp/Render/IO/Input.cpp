@@ -18,6 +18,10 @@ namespace Render {
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     }
 
+    ggm::Vector2f Input::getMousePos() {
+        return mCurrMousePos;
+    }
+
     void Input::keyCallback(GLFWwindow* window, const int key, const int code, const int action, const int mode) {
         if (const auto input = static_cast<Input*>(glfwGetWindowUserPointer(window))) {
             input->setLastKey(key, action, mode);
@@ -47,16 +51,16 @@ namespace Render {
 
     void Input::setMousePos(const float x, const float y) {
 
-        float xOffset = x - m_currMousePos.x;
-        float yOffset = y - m_currMousePos.y;
+        float xOffset = x - mCurrMousePos.x;
+        float yOffset = y - mCurrMousePos.y;
 
-        m_currMousePos = {x, y};
+        mCurrMousePos = {x, y};
 
-        m_displaceVec = { yOffset, xOffset };
+        mDisplaceVec = { yOffset, xOffset };
     }
 
     void Input::setLastChar(const GLuint c) {
-        m_lastChar = c;
+        mLastChar = c;
     }
 
     void Input::setLastKey(const int key, const int mode, const int mods) {
@@ -64,49 +68,48 @@ namespace Render {
         if (key < 0 || key >= KEY_COUNT) return;
 
         if (mode == GLFW_PRESS) {
-            keysDown[key] = true;
-            keysPressed[key] = true;
-            keysReleased[key] = false;
+            mKeysDown[key] = true;
+            mKeysPressed[key] = true;
+            mKeysReleased[key] = false;
         }
         else if (mode == GLFW_RELEASE) {
-            keysDown[key] = false;
-            keysPressed[key] = false;
-
-            keysReleased[key] = true;
+            mKeysDown[key] = false;
+            mKeysPressed[key] = false;
+            mKeysReleased[key] = true;
         }
         else if (mode == GLFW_REPEAT) {
-            keysDown[key] = true;
-            keysPressed[key] = false;
+            mKeysDown[key] = true;
+            mKeysPressed[key] = false;
         }
     }
 
     void Input::setEntered(const bool entered) {
-        m_inWindow = entered;
+        mInWindow = entered;
     }
 
 
     bool Input::isKeyDown(const int key) const {
-        return keysDown[key];
+        return mKeysDown[key];
     }
 
     bool Input::wasKeyPressed(const int key) const {
-        return keysPressed[key];
+        return mKeysPressed[key];
     }
 
     bool Input::wasKeyReleased(const int key) const {
-        return keysReleased[key];
+        return mKeysReleased[key];
     }
 
     ggm::Vector2f Input::getDisplaceVec() {
-        const auto vec = m_displaceVec;
-        m_displaceVec = {};
+        const auto vec = mDisplaceVec;
+        mDisplaceVec = {};
         return vec;
     }
 
     void Input::endFrame() {
         for (int i = 0; i < KEY_COUNT; ++i) {
-            keysPressed[i] = false;
-            keysReleased[i] = false;
+            mKeysPressed[i] = false;
+            mKeysReleased[i] = false;
         }
     }
 

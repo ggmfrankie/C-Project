@@ -14,19 +14,19 @@ namespace Render {
         static constexpr int KEY_COUNT = 348;
 
         ggm::Vector2f m_prevMousePos{};
-        ggm::Vector2f m_currMousePos{};
-        ggm::Vector2f m_displaceVec{};
+        ggm::Vector2f mCurrMousePos{};
+        ggm::Vector2f mDisplaceVec{};
 
-        bool m_inWindow = false;
+        bool mInWindow = false;
 
-        bool m_rightMouseDown = false;
-        bool m_leftMouseDown = false;
+        bool mRightMouseDown = false;
+        bool mLeftMouseDown = false;
 
-        bool keysDown[KEY_COUNT]{};
-        bool keysPressed[KEY_COUNT]{};
-        bool keysReleased[KEY_COUNT]{};
+        bool mKeysDown[KEY_COUNT]{};
+        bool mKeysPressed[KEY_COUNT]{};
+        bool mKeysReleased[KEY_COUNT]{};
 
-        GLuint m_lastChar = 0;
+        GLuint mLastChar = 0;
 
         static void keyCallback(GLFWwindow* window, int key, int code, int action, int mode);
 

@@ -18,6 +18,8 @@ namespace Obj {
 
         RenderObjRef mRenderObj;
         std::optional<PhysicsObject> mPhysicsObject;
+        ggm::Vector3f mPos;
+        ggm::Quaternion mRot;
 
         [[nodiscard]] bool hasRenderObj() const;
         [[nodiscard]] RenderObject &getRenderObj() const;

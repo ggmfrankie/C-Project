@@ -5,7 +5,7 @@
 #pragma once
 
 #include "RenderObject2D.hpp"
-#include "Engine/Core/PhysixBox/SoftBody2D.hpp"
+#include "Engine/Core/PhysixBox2D/SoftBody2D.hpp"
 
 namespace Obj {
     class GameObject2D {

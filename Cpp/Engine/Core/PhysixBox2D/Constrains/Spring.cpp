@@ -4,7 +4,7 @@
 
 #include "Spring.hpp"
 
-#include "Engine/Core/PhysixBox/PointMass.hpp"
+#include "Engine/Core/PhysixBox2D/PointMass.hpp"
 #include "Utils/Math/Vector.hpp"
 
 namespace PhysixBox {
