@@ -10,7 +10,7 @@
 #include "GuiInterface.h"
 #include "Engine/CommandRegistry.hpp"
 #include "Games/DefaultLayer/PhysicsHandler.hpp"
-#include "../DefaultLayer/RenderLayer.hpp"
+#include "../DefaultLayer/RenderLayer3D.hpp"
 #include "Render/Screen.hpp"
 #include "Render/Transformation/Camera.hpp"
 
@@ -27,7 +27,7 @@ namespace Game {
     void BaseGame::preInit() {
 
         auto physics = new PhysicsHandler();
-        auto render = new RenderLayer();
+        auto render = new RenderLayer3D();
 
         auto& scene = screen->getScene();
 

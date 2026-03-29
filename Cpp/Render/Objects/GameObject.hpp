@@ -37,6 +37,5 @@ namespace Obj {
         GameObject& rotateToDeg(const ggm::Vector3f &rot);
 
         static constexpr ggm::u64 INVALID_ID = std::numeric_limits<ggm::u64>::max();
-
     };
 } // Obj

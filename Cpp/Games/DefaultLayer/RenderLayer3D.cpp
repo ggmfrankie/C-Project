@@ -2,24 +2,24 @@
 // Created by ertls on 13.03.2026.
 //
 
-#include "RenderLayer.hpp"
+#include "RenderLayer3D.hpp"
 
 #include "GuiInterface.h"
 #include "GLFW/glfw3.h"
 
 namespace Game {
-    RenderLayer::RenderLayer() : mShader("MainShader.vert", "MainShader.frag"), mObjects(64) {
+    RenderLayer3D::RenderLayer3D() : mShader("MainShader.vert", "MainShader.frag"), mObjects(64) {
     }
 
-    RenderLayer::~RenderLayer() = default;
+    RenderLayer3D::~RenderLayer3D() = default;
 
-    void RenderLayer::onAttach(const LayerEngineContext& ec) {
+    void RenderLayer3D::onAttach(const LayerEngineContext& ec) {
         mCamera = ec.camera;
         mInput = ec.input;
         mScene = ec.scene;
     }
 
-    void RenderLayer::onInit() {
+    void RenderLayer3D::onInit() {
         mShader.init();
         mShader.link();
 
@@ -32,16 +32,16 @@ namespace Game {
         }
     }
 
-    void RenderLayer::onDetach() {
+    void RenderLayer3D::onDetach() {
     }
 
-    void RenderLayer::onUpdate(float dt) {
+    void RenderLayer3D::onUpdate(float dt) {
         for (auto& obj : mScene->getObjects()) {
             obj.sync();
         }
     }
 
-    void RenderLayer::onRender(const int width, const int height) {
+    void RenderLayer3D::onRender(const int width, const int height) {
         glEnable(GL_DEPTH_TEST);
         glDisable(GL_CULL_FACE);
         mShader.bind();

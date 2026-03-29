@@ -157,7 +157,7 @@ namespace ggm {
             operator delete(old);
         }
 
-        const T* getDataPtr() const noexcept {
+        const T* data() const noexcept {
             return mData;
         }
 

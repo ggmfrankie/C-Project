@@ -156,18 +156,18 @@ add_executable(C-Project
         Cpp/Render/Shader/DeferredShader.cpp
         Cpp/Render/Shader/DeferredShader.hpp
         Cpp/Games/IGameLayer.hpp
-        Cpp/Engine/LayerStack.cpp
-        Cpp/Engine/LayerStack.hpp
-        Cpp/Games/DefaultLayer/RenderLayer.cpp
-        Cpp/Games/DefaultLayer/RenderLayer.hpp
+        Cpp/Games/Scene/LayerStack.cpp
+        Cpp/Games/Scene/LayerStack.hpp
+        Cpp/Games/DefaultLayer/RenderLayer3D.cpp
+        Cpp/Games/DefaultLayer/RenderLayer3D.hpp
         Cpp/Render/Objects/Physics/PhysicsObject.cpp
         Cpp/Render/Objects/Physics/PhysicsObject.hpp
         Cpp/Games/DefaultLayer/PhysicsHandler.cpp
         Cpp/Games/DefaultLayer/PhysicsHandler.hpp
         Cpp/Render/Objects/GameObject.cpp
         Cpp/Render/Objects/GameObject.hpp
-        Cpp/Engine/Scene.cpp
-        Cpp/Engine/Scene.hpp
+        Cpp/Games/Scene/Scene.cpp
+        Cpp/Games/Scene/Scene.hpp
         Cpp/Games/Controller/Player.cpp
         Cpp/Games/Controller/Player.hpp
         Cpp/Utils/DataStorage/SparseSet.hpp
@@ -177,8 +177,8 @@ add_executable(C-Project
         Cpp/Utils/Time.hpp
         Cpp/Engine/Core/PhysixBox2D/PointMass.cpp
         Cpp/Engine/Core/PhysixBox2D/PointMass.hpp
-        Cpp/Render/Objects/Objects2D/RenderObject2D.cpp
-        Cpp/Render/Objects/Objects2D/RenderObject2D.hpp
+        Cpp/Render/Objects/Objects2D/Render/RenderObject2D.cpp
+        Cpp/Render/Objects/Objects2D/Render/RenderObject2D.hpp
         Cpp/Engine/Core/PhysixBox2D/PhysicsSystem.cpp
         Cpp/Engine/Core/PhysixBox2D/PhysicsSystem.hpp
         Cpp/Engine/Core/PhysixBox2D/SoftBody2D.cpp
@@ -187,6 +187,10 @@ add_executable(C-Project
         Cpp/Engine/Core/PhysixBox2D/Constrains/Spring.hpp
         Cpp/Render/Objects/Objects2D/GameObject2D.cpp
         Cpp/Render/Objects/Objects2D/GameObject2D.hpp
+        Cpp/Render/Objects/Objects2D/Render/DynamicMesh.cpp
+        Cpp/Render/Objects/Objects2D/Render/DynamicMesh.hpp
+        Cpp/Games/DefaultLayer/RenderLayer2D.cpp
+        Cpp/Games/DefaultLayer/RenderLayer2D.hpp
 
 )
 target_compile_definitions(C-Project PRIVATE

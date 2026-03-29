@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "Engine/Scene.hpp"
+#include "../Scene/Scene.hpp"
 #include "Games/IGameLayer.hpp"
 #include "Render/IO/Input.hpp"
 #include "Render/Objects/GameObject.hpp"
@@ -13,7 +13,7 @@
 
 
 namespace Game {
-    class RenderLayer final : public IGameLayer {
+    class RenderLayer3D final : public IGameLayer {
 
         Render::Shader mShader;
         Render::Camera* mCamera = nullptr;
@@ -23,8 +23,8 @@ namespace Game {
         ggm::SparseSet<Obj::RenderObject> mObjects;
 
     public:
-        RenderLayer();
-        ~RenderLayer() override;
+        RenderLayer3D();
+        ~RenderLayer3D() override;
 
         void onAttach(const LayerEngineContext &ec) override;
         void onInit() override;

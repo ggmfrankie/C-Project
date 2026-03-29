@@ -5,6 +5,7 @@
 #pragma once
 #include "PointMass.hpp"
 #include "Utils/DataStorage/InlineVector.hpp"
+#include <vector>
 
 namespace PhysixBox {
     class SoftBody2D {
@@ -13,5 +14,7 @@ namespace PhysixBox {
 
     public:
         void update(float dt);
+
+        std::vector<ggm::Vector2f> getPositions();
     };
 } // PhysicsBox
