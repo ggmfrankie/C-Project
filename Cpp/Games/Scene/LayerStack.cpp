@@ -2,7 +2,7 @@
 // Created by ertls on 13.03.2026.
 //
 
-#include "../../Engine/LayerStack.hpp"
+#include "LayerStack.hpp"
 
 namespace Engine {
     LayerStack::LayerStack(const Game::LayerEngineContext &ec):

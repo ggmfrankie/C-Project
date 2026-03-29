@@ -1,12 +1,13 @@
 cmake_minimum_required(VERSION 4.0)
 project(MixedProject LANGUAGES C CXX)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -pthread")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -pthread")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -pthread")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -pthread")
 
 set(CMAKE_C_STANDARD 23)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(
         "${CMAKE_SOURCE_DIR}/Dependencies/include"
@@ -191,6 +192,8 @@ add_executable(C-Project
         Cpp/Render/Objects/Objects2D/Render/DynamicMesh.hpp
         Cpp/Games/DefaultLayer/RenderLayer2D.cpp
         Cpp/Games/DefaultLayer/RenderLayer2D.hpp
+        Cpp/Test/Test.cpp
+        Cpp/Test/Test.hpp
 
 )
 target_compile_definitions(C-Project PRIVATE
@@ -210,6 +213,8 @@ set_target_properties(Jolt PROPERTIES
         IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/Dependencies/JoltPhysics/Build/MinGW_Debug/libJolt.a"
 )
 
+find_package(TBB REQUIRED)
+
 target_link_libraries(C-Project
         glfw
         opengl32     # OpenGL (needed by GLFW)
@@ -220,4 +225,5 @@ target_link_libraries(C-Project
         GUI
         Jolt
         winpthread
+        TBB::tbb
 )
