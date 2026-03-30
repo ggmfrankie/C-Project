@@ -13,33 +13,33 @@ namespace Engine {
 
     LayerStack::~LayerStack() = default;
 
-    void LayerStack::pushLayer(Game::IGameLayer *layer) {
+    Game::IGameLayer& LayerStack::pushLayer(std::unique_ptr<Game::IGameLayer> layer) {
         layer->onAttach(mEngineContext);
-        mLayers.push_back(layer);
+        mLayers.push_back(std::move(layer));
+        return *mLayers.back();
     }
 
     void LayerStack::popLayer(Game::IGameLayer *layer) {
-        if (const auto it = std::ranges::find(mLayers, layer); it != mLayers.end()) {
+        if (const auto it = std::ranges::find(mLayers, layer, &std::unique_ptr<Game::IGameLayer>::get); it != mLayers.end()) {
             (*it)->onDetach();
-            delete *it;
             mLayers.erase(it);
         }
     }
 
     void LayerStack::init() const {
-        for (auto* layer : mLayers) {
+        for (auto& layer : mLayers) {
             layer->onInit();
         }
     }
 
     void LayerStack::update(const float dt) const {
-        for (auto* layer : mLayers) {
+        for (auto& layer : mLayers) {
             if (layer->enabled) layer->onUpdate(dt);
         }
     }
 
     void LayerStack::render(const int width, const int height) const {
-        for (auto* layer : mLayers) {
+        for (auto& layer : mLayers) {
             if (layer->enabled) layer->onRender(width, height);
         }
     }

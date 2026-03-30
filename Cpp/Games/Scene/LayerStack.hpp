@@ -16,14 +16,14 @@ namespace Engine {
 
     class LayerStack {
 
-        std::vector<Game::IGameLayer*> mLayers;
+        std::vector<std::unique_ptr<Game::IGameLayer>> mLayers;
         Game::LayerEngineContext mEngineContext;
 
     public:
         explicit LayerStack(const Game::LayerEngineContext& ec);
         ~LayerStack();
 
-        void pushLayer(Game::IGameLayer* layer);
+        Game::IGameLayer& pushLayer(std::unique_ptr<Game::IGameLayer> layer);
         void popLayer(Game::IGameLayer* layer);
 
         void init() const;

@@ -40,7 +40,7 @@ inline int test(){
     std::iota(Numbers.begin(), Numbers.end(), 0);
 
     std::for_each(
-        std::execution::seq,
+        std::execution::par_unseq,
         Numbers.begin(), Numbers.end(),
             Log
         );
