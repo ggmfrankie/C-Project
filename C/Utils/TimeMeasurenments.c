@@ -5,6 +5,7 @@
 #include "TimeMeasurenments.h"
 
 #include <stdint.h>
+#define NOMINMAX
 #include <windows.h>
 
 TimeNs now_ns() {

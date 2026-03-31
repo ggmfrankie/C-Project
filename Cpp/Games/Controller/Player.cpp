@@ -5,7 +5,7 @@
 #include "Jolt/Jolt.h"
 #include "Player.hpp"
 
-#include "Games/DefaultLayer/PhysicsHandler.hpp"
+#include "Games/DefaultLayer/PhysicsHandler3D.hpp"
 #include "Jolt/Physics/Character/Character.h"
 #include "Jolt/Physics/Character/Character.h"
 #include "Jolt/Physics/Collision/Shape/Shape.h"

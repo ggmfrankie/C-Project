@@ -3,15 +3,13 @@
 //
 
 #pragma once
+
 #include <Jolt/Jolt.h>
-#include "Games/IGameLayer.hpp"
-#include <Jolt/Core/TempAllocator.h>
 #include <Jolt/Physics/PhysicsSystem.h>
-
-
-#include "Jolt/Core/JobSystemThreadPool.h"
+#include <Jolt/Core/JobSystemThreadPool.h>
 #include "Render/Objects/Physics/PhysicsObject.hpp"
 #include "Utils/Math/ggmdef.hpp"
+#include "Games/IGameLayer.hpp"
 
 namespace Game {
     namespace Layers
@@ -28,7 +26,7 @@ namespace Game {
         static constexpr ggm::u32 NUM_LAYERS(2);
     }
 
-    class PhysicsHandler final : public IGameLayer {
+    class PhysicsHandler3D final : public IGameLayer {
 
 
         class BPLayerInterfaceImpl final : public JPH::BroadPhaseLayerInterface {
@@ -68,8 +66,8 @@ namespace Game {
         JPH::JobSystemThreadPool mJobSystem;
 
     public:
-        explicit PhysicsHandler();
-        ~PhysicsHandler() override;
+        explicit PhysicsHandler3D();
+        ~PhysicsHandler3D() override;
 
         void onAttach(const LayerEngineContext &ec) override;
         void onDetach() override;

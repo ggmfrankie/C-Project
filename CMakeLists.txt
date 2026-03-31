@@ -194,6 +194,9 @@ add_executable(C-Project
         Cpp/Games/DefaultLayer/RenderLayer2D.hpp
         Cpp/Test/Test.cpp
         Cpp/Test/Test.hpp
+        Cpp/Games/Scene/Services/IRender2DProvider.hpp
+        Cpp/Games/DefaultLayer/ObjectHandler.cpp
+        Cpp/Games/DefaultLayer/ObjectHandler.hpp
 
 )
 target_compile_definitions(C-Project PRIVATE

@@ -5,7 +5,7 @@
 
 // The Jolt headers don't include Jolt.h. Always include Jolt.h before including any other Jolt header.
 // You can use Jolt.h in your precompiled header to speed up compilation.
-#if 1
+#if 0
 #include <Jolt/Jolt.h>
 
 // Jolt includes

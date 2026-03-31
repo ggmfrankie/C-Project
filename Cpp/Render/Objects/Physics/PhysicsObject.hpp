@@ -3,6 +3,9 @@
 //
 
 #pragma once
+#define JPH_PLATFORM_WINDOWS
+#define JPH_CPU_X64
+#define JPH_COMPILER_GCC
 #include <Jolt/Jolt.h>
 #include "Jolt/Physics/Body/BodyID.h"
 #include "Jolt/Physics/Body/BodyInterface.h"
@@ -31,6 +34,6 @@ namespace Obj {
 
         [[nodiscard]] ggm::Vector3f getPosition() const;
 
-        ggm::Quaternion getRotation() const;
+        [[nodiscard]] ggm::Quaternion getRotation() const;
     };
 } // Obj

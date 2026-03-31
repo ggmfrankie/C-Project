@@ -3,18 +3,17 @@
 //
 
 #include "Screen.hpp"
-#include <iostream>
 #include <ranges>
 #include <utility>
 #include <algorithm>
+#include <cassert>
 #include <glad/gl.h>
 
 #include "../../C/GuiInterface.h"
 
 namespace Render {
     Screen::Screen(std::string  windowName, const int width, const int height) :
-        name(std::move(windowName)),
-        mLayerStack({&mInput, &mScene.getCamera(), &mScene})
+        name(std::move(windowName))
      {
         this->width = width;
         this->height = height;
@@ -58,13 +57,13 @@ namespace Render {
         glfwSetFramebufferSizeCallback(windowHandle, framebufferSizeCallback);
 
         mInput.init(windowHandle);
-        mLayerStack.init();
         mScene.init();
     }
 
     void Screen::render() const {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        mLayerStack.render(width, height);
+
+        mScene.render(width, height);
         glfwSwapBuffers(windowHandle);
     }
 
@@ -74,6 +73,10 @@ namespace Render {
 
     Input& Screen::getInput() {
         return mInput;
+    }
+
+    Engine::Scene& Screen::getScene() {
+        return mScene;
     }
 
     void Screen::endFrame() {
@@ -89,10 +92,6 @@ namespace Render {
         gui_resizeCallback(window, width, height);
     }
 
-    Engine::Scene& Screen::getScene() {
-        return mScene;
-    }
-
     int Screen::getWidth() const {
         return width;
     }
@@ -102,10 +101,9 @@ namespace Render {
     }
 
     void Screen::update(const double dt) {
-        mLayerStack.update(dt);
+        mScene.update(dt);
         gui_update();
     }
-
 }
 
 

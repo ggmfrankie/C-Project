@@ -5,14 +5,11 @@
 #pragma once
 #include <vector>
 
-#include "Scene.hpp"
-#include "Games/IGame.hpp"
 #include "Games/IGameLayer.hpp"
+#include <memory>
 
 
 namespace Engine {
-
-
 
     class LayerStack {
 
@@ -20,12 +17,13 @@ namespace Engine {
         Game::LayerEngineContext mEngineContext;
 
     public:
-        explicit LayerStack(const Game::LayerEngineContext& ec);
+        explicit LayerStack();
         ~LayerStack();
 
         Game::IGameLayer& pushLayer(std::unique_ptr<Game::IGameLayer> layer);
         void popLayer(Game::IGameLayer* layer);
 
+        void onAttach(const Game::LayerEngineContext& ec);
         void init() const;
 
         void update(float dt) const;

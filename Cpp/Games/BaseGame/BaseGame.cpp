@@ -1,20 +1,18 @@
 //
 // Created by ertls on 26.02.2026.
 //
-
+#include <Jolt/Core/Mot>
 #include "BaseGame.hpp"
 
 #include "GameGui.h"
-#include "../../Render/Objects/Render/RenderObject.hpp"
 #include "Render/Objects/Loader/OBJLoader.hpp"
 #include "GuiInterface.h"
 #include "Engine/CommandRegistry.hpp"
-#include "Games/DefaultLayer/PhysicsHandler.hpp"
+#include "Games/DefaultLayer/PhysicsHandler3D.hpp"
 #include "../DefaultLayer/RenderLayer3D.hpp"
 #include "Render/Screen.hpp"
 #include "Render/Transformation/Camera.hpp"
 
-#include "Utils/Math/ggmdef.hpp"
 
 template<typename T>
 void toggle(T& x) {
@@ -25,15 +23,11 @@ namespace Game {
     BaseGame::BaseGame() = default;
 
     void BaseGame::preInit() {
-
-        auto physics = new PhysicsHandler();
-        auto render = new RenderLayer3D();
-
         auto& scene = screen->getScene();
 
-        auto& ls = screen->getLayerStack();
-        ls.pushLayer(physics);
-        ls.pushLayer(render);
+        auto& ls = scene.getLayerStack();
+        auto& physics = ls.pushLayer(std::make_unique<PhysicsHandler3D>());
+        auto& render = ls.pushLayer(std::make_unique<RenderLayer3D>());
 
         std::mt19937 rng(static_cast<unsigned int>(
             std::chrono::steady_clock::now().time_since_epoch().count()
@@ -57,7 +51,7 @@ namespace Game {
             ggm::Vector3f rot(rotPitch(rng), rotYaw(rng), rotRoll(rng));
 
             scene.pushObject(
-                render->newObject("grass_block\\grass_block.obj"),
+                render.newObject("grass_block\\grass_block.obj"),
                 physics->newBox(1,1,1,pos)
             )
             .rotateToDeg(rot);

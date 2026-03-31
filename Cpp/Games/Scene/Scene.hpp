@@ -10,11 +10,12 @@
 namespace Engine {
     class Scene {
         std::vector<Obj::GameObject> mObjects;
-        Render::Camera camera;
-
+        Render::Camera mCamera;
         LayerStack mLayerStack;
+
+
     public:
-        Scene();
+        Scene(Render::Input& input);
 
         template<typename... Args>
         Obj::GameObject& pushObject(Args&&... args) {
@@ -26,9 +27,12 @@ namespace Engine {
             return mLayerStack.pushLayer(std::move(layer));
         }
 
+        void render(int width, int height) const;
+        void update(float dt);
+
         void init();
 
-        Render::Camera &getCamera() { return camera; }
+        Render::Camera &getCamera() { return mCamera; }
         std::vector<Obj::GameObject>& getObjects() { return mObjects; }
     };
 } // Engine

@@ -2,24 +2,23 @@
 // Created by Stefan on 15.03.2026.
 //
 
-#include "PhysicsHandler.hpp"
-#include "Jolt/RegisterTypes.h"
-#include "Jolt/Core/Factory.h"
+#include "PhysicsHandler3D.hpp"
 #include "Jolt/Physics/Body/BodyCreationSettings.h"
 #include "Jolt/Physics/Collision/Shape/BoxShape.h"
+#include <unordered_map>
 
 namespace Game {
     using namespace JPH;
 
-    PhysicsHandler::PhysicsHandler() :
+    PhysicsHandler3D::PhysicsHandler3D() :
         mTempAllocator(10 * 1024 * 1024),
         mJobSystem(cMaxPhysicsJobs, cMaxPhysicsBarriers, static_cast<int>(thread::hardware_concurrency()) - 1)
     {
     }
 
-    PhysicsHandler::~PhysicsHandler() = default;
+    PhysicsHandler3D::~PhysicsHandler3D() = default;
 
-    void PhysicsHandler::onAttach(const LayerEngineContext& ec) {
+    void PhysicsHandler3D::onAttach(const LayerEngineContext& ec) {
 
         mPhysicsSystem.Init(
             cMaxBodies,
@@ -36,25 +35,25 @@ namespace Game {
         mPhysicsSystem.OptimizeBroadPhase();
     }
 
-    void PhysicsHandler::onInit() {
+    void PhysicsHandler3D::onInit() {
 
     }
 
-    void PhysicsHandler::onDetach() {
+    void PhysicsHandler3D::onDetach() {
     }
 
-    void PhysicsHandler::onUpdate(const float dt) {
+    void PhysicsHandler3D::onUpdate(const float dt) {
         mPhysicsSystem.Update(dt, 1, &mTempAllocator, &mJobSystem);
     }
 
-    void PhysicsHandler::onRender(int width, int height) {
+    void PhysicsHandler3D::onRender(int width, int height) {
     }
 
-    PhysicsSystem& PhysicsHandler::getPhysicsSystem() {
+    PhysicsSystem& PhysicsHandler3D::getPhysicsSystem() {
         return mPhysicsSystem;
     }
 
-    Obj::PhysicsObject PhysicsHandler::newBox(float x, float y, float z, const ggm::Vector3f& pos, EMotionType mt) {
+    Obj::PhysicsObject PhysicsHandler3D::newBox(float x, float y, float z, const ggm::Vector3f& pos, EMotionType mt) {
         static std::unordered_map<ggm::Vector3f, RefConst<Shape>> duplicates{16};
 
         const auto index = ggm::Vector3f(x,y,z);
@@ -81,14 +80,14 @@ namespace Game {
         return {bodyId, interface};
     }
 
-    PhysicsHandler::BPLayerInterfaceImpl::BPLayerInterfaceImpl() {
+    PhysicsHandler3D::BPLayerInterfaceImpl::BPLayerInterfaceImpl() {
         // Create a mapping table from object to broad phase layer
         mObjectToBroadPhase[Layers::NON_MOVING] = BroadPhaseLayers::NON_MOVING;
         mObjectToBroadPhase[Layers::MOVING] = BroadPhaseLayers::MOVING;
 
     }
 
-    bool PhysicsHandler::ObjectVsBroadPhaseLayerFilterImpl::ShouldCollide(ObjectLayer inLayer1, BroadPhaseLayer inLayer2) const {
+    bool PhysicsHandler3D::ObjectVsBroadPhaseLayerFilterImpl::ShouldCollide(ObjectLayer inLayer1, BroadPhaseLayer inLayer2) const {
         switch (inLayer1)
         {
             case Layers::NON_MOVING:
@@ -101,7 +100,7 @@ namespace Game {
         }
     }
 
-    bool PhysicsHandler::ObjectLayerPairFilterImpl::ShouldCollide(ObjectLayer inObject1, ObjectLayer inObject2) const {
+    bool PhysicsHandler3D::ObjectLayerPairFilterImpl::ShouldCollide(ObjectLayer inObject1, ObjectLayer inObject2) const {
         switch (inObject1)
         {
             case Layers::NON_MOVING:
@@ -114,16 +113,16 @@ namespace Game {
         }
     }
 
-    ggm::u32 PhysicsHandler::BPLayerInterfaceImpl::GetNumBroadPhaseLayers() const {
+    ggm::u32 PhysicsHandler3D::BPLayerInterfaceImpl::GetNumBroadPhaseLayers() const {
         return BroadPhaseLayers::NUM_LAYERS;
     }
 
-    BroadPhaseLayer PhysicsHandler::BPLayerInterfaceImpl::GetBroadPhaseLayer(ObjectLayer inLayer) const {
+    BroadPhaseLayer PhysicsHandler3D::BPLayerInterfaceImpl::GetBroadPhaseLayer(ObjectLayer inLayer) const {
         JPH_ASSERT(inLayer < Layers::NUM_LAYERS);
         return mObjectToBroadPhase[inLayer];
     }
 
-    const char * PhysicsHandler::BPLayerInterfaceImpl::GetBroadPhaseLayerName(BroadPhaseLayer inLayer) const {
+    const char * PhysicsHandler3D::BPLayerInterfaceImpl::GetBroadPhaseLayerName(BroadPhaseLayer inLayer) const {
         switch (static_cast<BroadPhaseLayer::Type>(inLayer))
         {
             case static_cast<BroadPhaseLayer::Type>(BroadPhaseLayers::NON_MOVING):	return "NON_MOVING";

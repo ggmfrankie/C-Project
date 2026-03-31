@@ -5,8 +5,8 @@
 #include "LayerStack.hpp"
 
 namespace Engine {
-    LayerStack::LayerStack(const Game::LayerEngineContext &ec):
-        mEngineContext(ec)
+    LayerStack::LayerStack():
+        mEngineContext()
     {
         mLayers.reserve(16);
     }
@@ -24,6 +24,10 @@ namespace Engine {
             (*it)->onDetach();
             mLayers.erase(it);
         }
+    }
+
+    void LayerStack::onAttach(const Game::LayerEngineContext &ec) {
+        mEngineContext = ec;
     }
 
     void LayerStack::init() const {
