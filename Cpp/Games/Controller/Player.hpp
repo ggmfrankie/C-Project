@@ -6,10 +6,11 @@
 #include "GameEngine.hpp"
 #include "Jolt/Physics/PhysicsSystem.h"
 #include "Jolt/Physics/Character/Character.h"
+#include "Render/Objects/Render/RenderObject3D.hpp"
 
 namespace Game {
     class Player {
-        Obj::RenderObject mRenderObj;
+        Obj3D::RenderObject3D mRenderObj;
         ggm::Vector3f mPos{};
 
         JPH::Ref<JPH::Character> mCharacter;

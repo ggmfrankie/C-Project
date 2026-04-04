@@ -9,7 +9,7 @@
 #include "Utils/Math/Quaternion.hpp"
 #include "Utils/Math/Vector.hpp"
 
-namespace Obj {
+namespace Obj2D {
     class RenderObject2D {
         ggm::i64 uuid{};
         ggm::Vector2f mPos{};

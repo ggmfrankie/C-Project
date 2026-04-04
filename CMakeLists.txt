@@ -117,8 +117,8 @@ add_executable(C-Project
         Cpp/Render/Shader/Shader.hpp
         Cpp/Utils/FileIO.cpp
         Cpp/Utils/FileIO.hpp
-        Cpp/Render/Objects/Render/RenderObject.cpp
-        Cpp/Render/Objects/Render/RenderObject.hpp
+        Cpp/Render/Objects/Render/RenderObject3D.cpp
+        Cpp/Render/Objects/Render/RenderObject3D.hpp
         Cpp/Utils/Math/Matrix.hpp
         Cpp/Render/Transformation/Camera.cpp
         Cpp/Render/Transformation/Camera.hpp
@@ -147,8 +147,8 @@ add_executable(C-Project
         Cpp/Games/BaseGame/GuiTasks.cpp
         Cpp/Engine/CommandRegistry.cpp
         Cpp/Engine/CommandRegistry.hpp
-        Cpp/Render/Objects/Physics/PhysicsObject.cpp
-        Cpp/Render/Objects/Physics/PhysicsObject.hpp
+        Cpp/Render/Objects/Physics/PhysicsObjectRef.cpp
+        Cpp/Render/Objects/Physics/PhysicsObjectRef.hpp
         Cpp/Render/Objects/Behaviors/IBehavior.hpp
         Cpp/Render/Objects/Behaviors/TestBeahvior.cpp
         Cpp/Render/Objects/Behaviors/TestBehavior.hpp
@@ -159,16 +159,12 @@ add_executable(C-Project
         Cpp/Games/IGameLayer.hpp
         Cpp/Games/Scene/LayerStack.cpp
         Cpp/Games/Scene/LayerStack.hpp
-        Cpp/Games/DefaultLayer/RenderLayer3D.cpp
-        Cpp/Games/DefaultLayer/RenderLayer3D.hpp
-        Cpp/Render/Objects/Physics/PhysicsObject.cpp
-        Cpp/Render/Objects/Physics/PhysicsObject.hpp
-        Cpp/Games/DefaultLayer/PhysicsHandler.cpp
-        Cpp/Games/DefaultLayer/PhysicsHandler.hpp
+        Cpp/Games/DefaultLayer/Renderer3D.cpp
+        Cpp/Games/DefaultLayer/Renderer3D.hpp
+        Cpp/Games/DefaultLayer/PhysicsHandler3D.cpp
+        Cpp/Games/DefaultLayer/PhysicsHandler3D.hpp
         Cpp/Render/Objects/GameObject.cpp
         Cpp/Render/Objects/GameObject.hpp
-        Cpp/Games/Scene/Scene.cpp
-        Cpp/Games/Scene/Scene.hpp
         Cpp/Games/Controller/Player.cpp
         Cpp/Games/Controller/Player.hpp
         Cpp/Utils/DataStorage/SparseSet.hpp
@@ -194,9 +190,10 @@ add_executable(C-Project
         Cpp/Games/DefaultLayer/RenderLayer2D.hpp
         Cpp/Test/Test.cpp
         Cpp/Test/Test.hpp
-        Cpp/Games/Scene/Services/IRender2DProvider.hpp
-        Cpp/Games/DefaultLayer/ObjectHandler.cpp
-        Cpp/Games/DefaultLayer/ObjectHandler.hpp
+        Cpp/Games/Scene/Scene3d.cpp
+        Cpp/Games/Scene/Scene3d.hpp
+        Cpp/Render/Objects/Physics/PhysicsFactory.hpp
+        Cpp/Render/Objects/Physics/PhysicsFactory.cpp
 
 )
 target_compile_definitions(C-Project PRIVATE

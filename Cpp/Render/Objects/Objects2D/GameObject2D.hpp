@@ -8,7 +8,7 @@
 #include "Engine/Core/PhysixBox2D/SoftBody2D.hpp"
 #include "Utils/DataStorage/SparseSet.hpp"
 
-namespace Obj {
+namespace Obj2D {
     class GameObject2D {
         struct RenderObjRef2D {
             ggm::u64 ID;

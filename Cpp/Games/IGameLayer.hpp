@@ -9,7 +9,7 @@ namespace Render {
 }
 
 namespace Engine {
-    class Scene;
+    class SceneV1;
 }
 
 namespace Game{
@@ -17,7 +17,7 @@ namespace Game{
     {
         Render::Input* input;
         Render::Camera* camera;
-        Engine::Scene* scene;
+        Engine::SceneV1* scene;
     };
 
     class IGameLayer {

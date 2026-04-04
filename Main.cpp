@@ -7,7 +7,7 @@
 
 #if 1
 int main() {
-    return test();
+    //return test();
     Game::BaseGame game{};
     GameEngine& gameEngine = GameEngine::New(game);
     gameEngine.init();

@@ -17,7 +17,7 @@ using std::vector;
 using std::cout;
 
 
-namespace Obj::OBJLoader {
+namespace Obj3D::OBJLoader {
 
     OBJObject::OBJObject(const std::string &fileName) {
         namespace fs = std::filesystem;

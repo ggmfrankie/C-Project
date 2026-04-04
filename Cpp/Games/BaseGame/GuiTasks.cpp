@@ -5,6 +5,7 @@
 
 #include "GameEngine.hpp"
 #include "GuiInterface.h"
+#include "Games/Scene/Scene3D.hpp"
 #include "Render/GUI/Update.h"
 
 

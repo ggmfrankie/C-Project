@@ -8,23 +8,21 @@
 
 #include "glad/gl.h"
 
-namespace Obj {
+namespace Obj3D {
     class Texture {
     public:
         explicit Texture(const std::string &file);
 
         Texture();
-
         Texture(const Texture &other);
-
         Texture(Texture&& other) noexcept ;
 
-        bool hasData() const noexcept;
+        [[nodiscard]] bool hasData() const noexcept;
 
         unsigned char *loadTexture(const std::string &file);
 
         void init();
-        GLuint id() const;
+        [[nodiscard]] GLuint id() const;
 
         ~Texture() = default;
 

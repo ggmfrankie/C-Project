@@ -10,11 +10,13 @@
 #include <glad/gl.h>
 
 #include "../../C/GuiInterface.h"
+#include "Games/Scene/Scene3D.hpp"
 
 namespace Render {
-    Screen::Screen(std::string  windowName, const int width, const int height) :
-        name(std::move(windowName))
-     {
+    Screen::Screen(std::string windowName, const int width, const int height) :
+        name(std::move(windowName)),
+        mScene(nullptr)
+    {
         this->width = width;
         this->height = height;
         windowHandle = nullptr;
@@ -57,14 +59,17 @@ namespace Render {
         glfwSetFramebufferSizeCallback(windowHandle, framebufferSizeCallback);
 
         mInput.init(windowHandle);
-        mScene.init();
+        mScene->init();
     }
 
     void Screen::render() const {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        mScene.render(width, height);
+        mScene->render(width, height);
         glfwSwapBuffers(windowHandle);
+    }
+
+    void Screen::attachScene(Game::Scene3D *scene) {
+        mScene = scene;
     }
 
     GLFWwindow* Screen::getWindowHandle() const {
@@ -75,12 +80,12 @@ namespace Render {
         return mInput;
     }
 
-    Engine::Scene& Screen::getScene() {
-        return mScene;
-    }
-
     void Screen::endFrame() {
         mInput.endFrame();
+    }
+
+    Game::Scene3D& Screen::getScene() const {
+        return *mScene;
     }
 
     void Screen::framebufferSizeCallback(GLFWwindow* window, const int width, const int height)
@@ -100,8 +105,8 @@ namespace Render {
         return height;
     }
 
-    void Screen::update(const double dt) {
-        mScene.update(dt);
+    void Screen::update(const double dt) const {
+        mScene->update(dt);
         gui_update();
     }
 }

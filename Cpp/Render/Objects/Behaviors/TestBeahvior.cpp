@@ -5,7 +5,7 @@
 #include "TestBehavior.hpp"
 #include "Render/IO/Input.hpp"
 
-namespace Obj {
+namespace Obj3D {
 
     void TestBehavior::onCollision(PhysicsObject_old& self, PhysicsObject_old& other) {
         std::cout << "Collision\n";

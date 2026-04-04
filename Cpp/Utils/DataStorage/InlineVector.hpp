@@ -91,14 +91,16 @@ namespace ggm {
             return *this;
         }
 
-        void add(const T& thing) {
+        T& add(const T& thing) {
             if (mCapacity <= mSize) grow(mCapacity*2+1);
-            std::construct_at(&mData[mSize++], thing);
+            T* ptr = std::construct_at(&mData[mSize++], thing);
+            return *ptr;
         }
 
-        void add(T&& thing) {
+        T& add(T&& thing) {
             if (mCapacity <= mSize) grow(mCapacity*2+1);
-            std::construct_at(&mData[mSize++], std::move(thing));
+            T* ptr = std::construct_at(&mData[mSize++], std::move(thing));
+            return *ptr;
         }
 
         template<typename... Args>
@@ -113,6 +115,10 @@ namespace ggm {
         InlineVector& operator<<(U&& thing) {
             add(std::forward<U>(thing));
             return *this;
+        }
+
+        T& back() {
+            return mData[mSize-1];
         }
 
         void growTo(u64 capacity) {

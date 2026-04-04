@@ -1,7 +1,7 @@
 //
 // Created by ertls on 26.02.2026.
 //
-#include <Jolt/Core/Mot>
+#include <Jolt/Jolt.h>
 #include "BaseGame.hpp"
 
 #include "GameGui.h"
@@ -9,9 +9,11 @@
 #include "GuiInterface.h"
 #include "Engine/CommandRegistry.hpp"
 #include "Games/DefaultLayer/PhysicsHandler3D.hpp"
-#include "../DefaultLayer/RenderLayer3D.hpp"
+#include "Games/Scene/Scene3D.hpp"
 #include "Render/Screen.hpp"
+#include "Render/Objects/Physics/PhysicsFactory.hpp"
 #include "Render/Transformation/Camera.hpp"
+#include "../Controller/Player.hpp"
 
 
 template<typename T>
@@ -22,12 +24,14 @@ void toggle(T& x) {
 namespace Game {
     BaseGame::BaseGame() = default;
 
-    void BaseGame::preInit() {
-        auto& scene = screen->getScene();
+    BaseGame::~BaseGame() = default;
 
-        auto& ls = scene.getLayerStack();
-        auto& physics = ls.pushLayer(std::make_unique<PhysicsHandler3D>());
-        auto& render = ls.pushLayer(std::make_unique<RenderLayer3D>());
+    void BaseGame::preInit(EngineContext &&e) {
+        mScene = std::make_unique<Scene3D>();
+        mCamera = &mScene->getCamera();
+        mCommandRegistry = &e.commandRegistry;
+        mInput = &e.input;
+        mScreen = &e.screen;
 
         std::mt19937 rng(static_cast<unsigned int>(
             std::chrono::steady_clock::now().time_since_epoch().count()
@@ -35,7 +39,7 @@ namespace Game {
 
         // Position ranges
         std::uniform_real_distribution posX(-10.0f, 10.0f);
-        std::uniform_real_distribution posY(0.5f, 20.0f); // avoid intersecting floor
+        std::uniform_real_distribution posY(0.5f, 20.0f);
         std::uniform_real_distribution posZ(-10.0f, 10.0f);
 
         // Rotation ranges (degrees)
@@ -43,29 +47,34 @@ namespace Game {
         std::uniform_real_distribution rotYaw(0.0f, 360.0f);
         std::uniform_real_distribution rotRoll(0.0f, 360.0f);
 
-        for (int i = 0; i < 500; i++) {
+        std::uniform_real_distribution size(0.5f, 5.0f);
+
+        for (int i = 0; i < 200; i++) {
             // Randomized position
             ggm::Vector3f pos(posX(rng), posY(rng), posZ(rng));
 
             // Randomized rotation
             ggm::Vector3f rot(rotPitch(rng), rotYaw(rng), rotRoll(rng));
 
-            scene.pushObject(
-                render.newObject("grass_block\\grass_block.obj"),
-                physics->newBox(1,1,1,pos)
-            )
+            const float scale = size(rng);
+            mScene->addObject(
+                        "grass_block\\grass_block.obj", scale,
+                        Obj3D::PhysicsFactory::newBox(scale,scale,scale, pos)
+                    )
             .rotateToDeg(rot);
         }
 
-        scene.pushObject(
-            render->newObject("ground_plane\\ground_plane.obj"),
-            physics->newBox(1000,0,1000, {0,-32, -20}, JPH::EMotionType::Static)
+        mScene->addObject(
+            "ground_plane\\ground_plane.obj", 1.0f,
+            Obj3D::PhysicsFactory::newBox(1000,0,1000, {0,-32, -20}, JPH::EMotionType::Static)
         );
 
-        mPlayer = std::make_unique<Player>(ggm::Vector3f{0,0,0}, physics->getPhysicsSystem());
-        mPlayer->init();
+        mScreen->attachScene(mScene.get());
 
-        cRegistry->registerCommand<
+        //mPlayer = std::make_unique<Player>(ggm::Vector3f{0,0,0}, physics->getPhysicsSystem());
+        //mPlayer->init();
+
+        mCommandRegistry->registerCommand<
             Engine::Arg<std::string>
         >(
             "say",
@@ -74,18 +83,18 @@ namespace Game {
             }
         );
 
-        cRegistry->registerCommand<
+        mCommandRegistry->registerCommand<
             Engine::Arg<float>,
             Engine::Arg<float>,
             Engine::Arg<float>
         >(
             "tp",
             [this](float a, float b, float c) {
-                camera->setPos({a,b,c});
+                mCamera->setPos({a,b,c});
             }
         );
 
-        cRegistry->registerCommand<
+        mCommandRegistry->registerCommand<
             Engine::Arg<bool>
         >(
             "debug",
@@ -100,7 +109,7 @@ namespace Game {
             }
         );
 
-        cRegistry->registerCommand<
+        mCommandRegistry->registerCommand<
             Engine::Arg<float>
         >(
             "movespeed",
@@ -111,44 +120,37 @@ namespace Game {
     }
 
     void BaseGame::postInit() {
-        gui_init(screen->getWindowHandle(), screen->getWidth(), screen->getHeight(), generateGUI);
+        gui_init(mScreen->getWindowHandle(), mScreen->getWidth(), mScreen->getHeight(), generateGUI);
     }
 
     void BaseGame::onUpdate(double deltaTime) {
         ggm::Vector3f cameraMovement{};
 
-        if (input->isKeyDown(GLFW_KEY_W)) cameraMovement.z = 1;
-        else if (input->isKeyDown(GLFW_KEY_S)) cameraMovement.z = -1;
+        if (mInput->isKeyDown(GLFW_KEY_W)) cameraMovement.z = 1;
+        else if (mInput->isKeyDown(GLFW_KEY_S)) cameraMovement.z = -1;
 
-        if (input->isKeyDown(GLFW_KEY_A)) cameraMovement.x = -1;
-        else if (input->isKeyDown(GLFW_KEY_D)) cameraMovement.x = 1;
+        if (mInput->isKeyDown(GLFW_KEY_A)) cameraMovement.x = -1;
+        else if (mInput->isKeyDown(GLFW_KEY_D)) cameraMovement.x = 1;
 
-        if (input->isKeyDown(GLFW_KEY_LEFT_CONTROL)) cameraMovement.y = -1;
-        else if (input->isKeyDown(GLFW_KEY_SPACE)) cameraMovement.y = 1;
+        if (mInput->isKeyDown(GLFW_KEY_LEFT_CONTROL)) cameraMovement.y = -1;
+        else if (mInput->isKeyDown(GLFW_KEY_SPACE)) cameraMovement.y = 1;
 
-        if (input->wasKeyPressed(GLFW_KEY_ESCAPE)) {
+        if (mInput->wasKeyPressed(GLFW_KEY_ESCAPE)) {
             gui_toggleVisible("Home Screen");
             toggle(guiMode);
-            toggleCursorMode(screen->getWindowHandle(), guiMode);
+            toggleCursorMode(mScreen->getWindowHandle(), guiMode);
         }
 
-        const ggm::Vector2f camRot = input->getDisplaceVec();
+        const ggm::Vector2f camRot = mInput->getDisplaceVec();
 
         if (!guiMode) {
-            camera->moveBy(cameraMovement.x * CAMERA_POS_STEP, cameraMovement.y * CAMERA_POS_STEP, cameraMovement.z * CAMERA_POS_STEP);
-            camera->rotateBy(camRot.x * MOUSE_SENSITIVITY, 0 , camRot.y * MOUSE_SENSITIVITY);
+            mCamera->moveBy(cameraMovement.x * CAMERA_POS_STEP, cameraMovement.y * CAMERA_POS_STEP, cameraMovement.z * CAMERA_POS_STEP);
+            mCamera->rotateBy(camRot.x * MOUSE_SENSITIVITY, 0 , camRot.y * MOUSE_SENSITIVITY);
         }
     }
 
     void BaseGame::onShutdown() {
 
-    }
-
-    void BaseGame::passState(EngineContext &&e) {
-        camera = &e.camera;
-        input = &e.input;
-        screen = &e.screen;
-        cRegistry = &e.commandRegistry;
     }
 
     void BaseGame::toggleCursorMode(GLFWwindow* window, const bool guiMode) {

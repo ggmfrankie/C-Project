@@ -19,7 +19,6 @@ namespace Game {
 
     struct EngineContext {
         Render::Input& input;
-        Render::Camera& camera;
         Render::Screen& screen;
         Engine::CommandRegistry& commandRegistry;
     };
@@ -28,14 +27,12 @@ namespace Game {
     public:
         virtual ~IGame() = default;
 
-        virtual void preInit() = 0;
+        virtual void preInit(EngineContext &&e) = 0;
 
         virtual void postInit() = 0;
 
         virtual void onShutdown() = 0;
 
         virtual void onUpdate(double deltaTime) = 0;
-
-        virtual void passState(EngineContext&& e) = 0;
     };
 } // ggm

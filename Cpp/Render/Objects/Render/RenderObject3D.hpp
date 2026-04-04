@@ -14,15 +14,15 @@
 
 
 
-namespace Obj {
-    class RenderObject {
-        public:
-        explicit RenderObject(const std::string &objFile);
-        RenderObject();
-        RenderObject(RenderObject &&other) noexcept ;
-        RenderObject(const RenderObject &other) noexcept;
+namespace Obj3D {
+    class RenderObject3D {
+    public:
+        explicit RenderObject3D(const std::string &objFile);
+        RenderObject3D();
+        RenderObject3D(RenderObject3D &&other) noexcept ;
+        RenderObject3D(const RenderObject3D &other) noexcept;
 
-        ~RenderObject();
+        ~RenderObject3D();
 
         void init();
         void render() const;
@@ -34,23 +34,25 @@ namespace Obj {
         void moveTo(float x, float y, float z);
         void moveTo(const ggm::Vector3f &pos);
 
+        void scaleTo(float scale);
+
         const ggm::Matrix4f& getModelMatrix();
 
-        static RenderObject getDummyObject();
+        static RenderObject3D getDummyObject();
 
-        RenderObject & operator=(RenderObject&& other) noexcept;
+        RenderObject3D & operator=(RenderObject3D&& other) noexcept;
 
     protected:
-        ggm::i64 uuid{};
-        ggm::Vector3f position{0,0,0};
-        ggm::Quaternion rotation = ggm::Quaternion::Identity();
-        bool dirty = true;
+        ggm::i64 mUuid{};
+        ggm::Vector3f mPosition{0,0,0};
+        ggm::Quaternion mRotation = ggm::Quaternion::Identity();
+        bool mDirty = true;
 
     private:
-        bool initialized = false;
-        float scale = 1.0f;
+        bool mInitialized = false;
+        float mScale = 1.0f;
 
-        ggm::Matrix4f model = ggm::Matrix4f::Identity();
+        ggm::Matrix4f mModel = ggm::Matrix4f::Identity();
         ggm::InlineVector<Mesh, 1> mMeshes{};
     };
 } // Core

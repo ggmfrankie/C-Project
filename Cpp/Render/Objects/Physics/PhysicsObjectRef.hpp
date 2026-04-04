@@ -12,18 +12,13 @@
 #include "Utils/Math/Quaternion.hpp"
 #include "Utils/Math/Vector.hpp"
 
-namespace Obj {
-    class PhysicsObject {
+namespace Obj3D {
+    class PhysicsObjectRef {
         JPH::BodyID mBodyID;
         JPH::BodyInterface& mBodyInterface;
 
     public:
-        PhysicsObject(JPH::BodyID ID, JPH::BodyInterface& bodyInterface);
-
-        PhysicsObject(const PhysicsObject&) = delete;
-        PhysicsObject& operator=(const PhysicsObject&) = delete;
-
-        PhysicsObject(const PhysicsObject&&) noexcept;
+        PhysicsObjectRef(JPH::BodyID ID, JPH::BodyInterface& bodyInterface);
 
         [[nodiscard]] JPH::BodyID getBodyID() const { return mBodyID; }
 

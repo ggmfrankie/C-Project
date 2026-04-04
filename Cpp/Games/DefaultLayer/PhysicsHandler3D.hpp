@@ -7,9 +7,13 @@
 #include <Jolt/Jolt.h>
 #include <Jolt/Physics/PhysicsSystem.h>
 #include <Jolt/Core/JobSystemThreadPool.h>
-#include "Render/Objects/Physics/PhysicsObject.hpp"
+#include "Render/Objects/Physics/PhysicsObjectRef.hpp"
 #include "Utils/Math/ggmdef.hpp"
 #include "Games/IGameLayer.hpp"
+
+namespace Obj3D {
+    struct PhysicsSettings;
+}
 
 namespace Game {
     namespace Layers
@@ -26,7 +30,7 @@ namespace Game {
         static constexpr ggm::u32 NUM_LAYERS(2);
     }
 
-    class PhysicsHandler3D final : public IGameLayer {
+    class PhysicsHandler3D  {
 
 
         class BPLayerInterfaceImpl final : public JPH::BroadPhaseLayerInterface {
@@ -67,17 +71,13 @@ namespace Game {
 
     public:
         explicit PhysicsHandler3D();
-        ~PhysicsHandler3D() override;
+        ~PhysicsHandler3D();
 
-        void onAttach(const LayerEngineContext &ec) override;
-        void onDetach() override;
-        void onUpdate(float dt) override;
-        void onRender(int width, int height) override;
-        void onInit() override;
+        void update(float dt);
+        void init() ;
 
         JPH::PhysicsSystem& getPhysicsSystem();
-
-        Obj::PhysicsObject newBox(float x, float y, float z, const ggm::Vector3f &pos, JPH::EMotionType= JPH::EMotionType::Dynamic);
+        Obj3D::PhysicsObjectRef newObj(const Obj3D::PhysicsSettings& s);
     };
 } // Game
 

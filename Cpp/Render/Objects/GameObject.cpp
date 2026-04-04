@@ -4,49 +4,65 @@
 
 #include "GameObject.hpp"
 
-namespace Obj {
+namespace Obj3D {
     using namespace ggm;
 
-    GameObject::GameObject(const std::pair<SparseSet<RenderObject>&, u64> &renderObj, std::optional<PhysicsObject>&& po) :
-        mRenderObj(renderObj.second, renderObj.first),
-        mPhysicsObject(std::move(po)),
+    GameObject::GameObject(std::optional<RenderObjectRef> renderObj, std::optional<PhysicsObjectRef> physicsObj) :
+        mRenderObj(std::move(renderObj)),
+        mPhysicsObj(std::move(physicsObj)),
         mPos(),
         mRot(Quaternion::Identity())
     {
     }
 
-    bool GameObject::hasRenderObj() const {
-        return mRenderObj.ID != INVALID_ID;
+    GameObject::GameObject(RenderObjectRef renderObj, PhysicsObjectRef physicsObj) :
+        mRenderObj(renderObj),
+        mPhysicsObj(physicsObj),
+        mPos(),
+        mRot(Quaternion::Identity())
+    {
     }
 
-    RenderObject& GameObject::getRenderObj() const {
-        return mRenderObj.get();
+    GameObject::GameObject(RenderObjectRef renderObj) :
+        mRenderObj(renderObj),
+        mPhysicsObj(),
+        mPos(),
+        mRot(Quaternion::Identity())
+    {
+    }
+
+    GameObject::GameObject(PhysicsObjectRef physicsObj) :
+        mRenderObj(),
+        mPhysicsObj(physicsObj),
+        mPos(),
+        mRot(Quaternion::Identity())
+    {
     }
 
     void GameObject::sync() {
-        if (!mPhysicsObject || !hasRenderObj()) return;
-        auto& rObj = getRenderObj();
+        if (!mPhysicsObj || !mRenderObj) return;
+        auto& rObj = mRenderObj->get();
 
-        const auto pos = mPhysicsObject->getPosition();
+        const auto pos = mPhysicsObj->getPosition();
         mPos = pos;
         rObj.moveTo(pos);
 
-        const auto rot = mPhysicsObject->getRotation();
+        const auto rot = mPhysicsObj->getRotation();
         mRot = rot;
         rObj.rotateTo(rot);
     }
 
     GameObject& GameObject::moveTo(const Vector3f &pos) {
-        if (mPhysicsObject) mPhysicsObject->setPosition(pos.x, pos.y, pos.z);
-        if (hasRenderObj()) getRenderObj().moveTo(pos);
+        if (mPhysicsObj) mPhysicsObj->setPosition(pos.x, pos.y, pos.z);
+        if (mRenderObj) mRenderObj->get().moveTo(pos);
         mPos = pos;
         return *this;
     }
 
     GameObject& GameObject::rotateTo(const Vector3f &rot) {
-        if (mPhysicsObject) mPhysicsObject->setRotation(rot.x, rot.y, rot.z);
+        if (mPhysicsObj) mPhysicsObj->setRotation(rot.x, rot.y, rot.z);
         const auto rotation = Quaternion::fromEuler(rot);
-        if (hasRenderObj()) getRenderObj().rotateTo(rotation);
+        if (mRenderObj) mRenderObj->get().rotateTo(rotation);
         mRot = rotation;
         return *this;
     }
@@ -54,9 +70,5 @@ namespace Obj {
     GameObject& GameObject::rotateToDeg(const Vector3f &rot) {
         rotateTo({toRad(rot.x), toRad(rot.y), toRad(rot.z)});
         return *this;
-    }
-
-    RenderObject& GameObject::RenderObjRef::get() const {
-        return objects.get(ID);
     }
 }

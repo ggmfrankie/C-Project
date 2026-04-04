@@ -17,7 +17,7 @@ namespace Game {
         Render::Shader mShader;
         Render::Input* mInput = nullptr;
 
-        ggm::SparseSet<Obj::RenderObject2D> mObjects;
+        ggm::SparseSet<Obj2D::RenderObject2D> mObjects;
 
     public:
         RenderLayer2D();
@@ -33,7 +33,7 @@ namespace Game {
 
 
         template<typename... Args>
-        auto newObject(Args &&... args) -> std::pair<ggm::SparseSet<Obj::RenderObject2D>&, ggm::i64> {
+        auto newObject(Args &&... args) -> std::pair<ggm::SparseSet<Obj2D::RenderObject2D>&, ggm::i64> {
             return { mObjects, static_cast<ggm::u64>(mObjects.push(std::forward<Args>(args)...)) };
         }
     };
