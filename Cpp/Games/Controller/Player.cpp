@@ -13,8 +13,8 @@
 
 namespace Game {
 
-    Obj::RenderObject createPlayerRenderObject(){
-        return Obj::RenderObject("grass_block\\grass_block.obj");
+    Obj3D::RenderObject3D createPlayerRenderObject(){
+        return Obj3D::RenderObject3D("grass_block\\grass_block.obj");
     }
 
     Player::Player(const ggm::Vector3f& pos, JPH::PhysicsSystem& system) :

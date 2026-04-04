@@ -4,7 +4,7 @@
 
 #include "GameObject2D.hpp"
 
-namespace Obj {
+namespace Obj2D {
 
 
     GameObject2D::GameObject2D(const RenderObj &renderObj, PhysixBox::SoftBody2D *body) :

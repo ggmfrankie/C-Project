@@ -5,7 +5,7 @@
 #include "../Render/Mesh.hpp"
 #include "../../Cpp/Utils/Math/Vector.hpp"
 
-namespace Obj {
+namespace Obj3D {
     using std::string, std::vector;
     Mesh::Mesh(std::vector<ggm::Vector3f>&& vertices,
                    std::vector<ggm::Vector2f>&& uvs,

@@ -39,11 +39,17 @@ inline int test(){
     std::vector<int> Numbers(100);
     std::iota(Numbers.begin(), Numbers.end(), 0);
 
-    std::for_each(
-        std::execution::par_unseq,
+    std::for_each(std::execution::par_unseq,
         Numbers.begin(), Numbers.end(),
             Log
-        );
+    );
 
+
+    struct X { const int n; };
+    union U { X x; float f; };
+
+    U u = {{ 1 }};
+
+    X *p = new (&u.x) X {2};
     return 0;
 }

@@ -1,16 +1,18 @@
 //
 // Created by ertls on 16.02.2026.
 //
+#pragma once
 
-#ifndef C_GAMEENGINE_H
-#define C_GAMEENGINE_H
 #include <queue>
 
 #include "Engine/CommandRegistry.hpp"
 #include "Engine/Task.hpp"
-#include "Games/IGame.hpp"
+
 #include "Render/Screen.hpp"
-#include "Render/IO/Input.hpp"
+
+namespace Game {
+    class IGame;
+}
 
 class GameEngine {
 public:
@@ -32,7 +34,6 @@ public:
     static GameEngine &Get();
 
 private:
-    void update();
     void processTasks();
 
     static GameEngine* engineInstance;
@@ -43,6 +44,3 @@ private:
 
     std::deque<Engine::Task> tasks{};
 };
-
-
-#endif //C_GAMEENGINE_H

@@ -7,6 +7,8 @@
 #include "Jolt/Physics/Collision/Shape/BoxShape.h"
 #include <unordered_map>
 
+#include "Render/Objects/Physics/PhysicsFactory.hpp"
+
 namespace Game {
     using namespace JPH;
 
@@ -18,8 +20,7 @@ namespace Game {
 
     PhysicsHandler3D::~PhysicsHandler3D() = default;
 
-    void PhysicsHandler3D::onAttach(const LayerEngineContext& ec) {
-
+    void PhysicsHandler3D::init() {
         mPhysicsSystem.Init(
             cMaxBodies,
             cNumBodyMutexes,
@@ -31,53 +32,31 @@ namespace Game {
         );
 
         mPhysicsSystem.SetGravity(Vec3(0.0f, -9.81f, 0.0f));
-
         mPhysicsSystem.OptimizeBroadPhase();
     }
 
-    void PhysicsHandler3D::onInit() {
-
-    }
-
-    void PhysicsHandler3D::onDetach() {
-    }
-
-    void PhysicsHandler3D::onUpdate(const float dt) {
+    void PhysicsHandler3D::update(const float dt) {
         mPhysicsSystem.Update(dt, 1, &mTempAllocator, &mJobSystem);
-    }
-
-    void PhysicsHandler3D::onRender(int width, int height) {
     }
 
     PhysicsSystem& PhysicsHandler3D::getPhysicsSystem() {
         return mPhysicsSystem;
     }
 
-    Obj::PhysicsObject PhysicsHandler3D::newBox(float x, float y, float z, const ggm::Vector3f& pos, EMotionType mt) {
-        static std::unordered_map<ggm::Vector3f, RefConst<Shape>> duplicates{16};
-
-        const auto index = ggm::Vector3f(x,y,z);
-        const auto it = duplicates.find(index);
-
-        const RefConst<Shape> shape = (it != duplicates.end()) ? it->second: new BoxShape(Vec3(x/2,y/2,z/2));
-        if (it == duplicates.end()) duplicates[index] = shape;
-
-        auto& interface = mPhysicsSystem.GetBodyInterface();
-
-        const BodyCreationSettings settings(
-            shape,
-            Vec3(pos.x, pos.y, pos.z),
+    Obj3D::PhysicsObjectRef PhysicsHandler3D::newObj(const Obj3D::PhysicsSettings &s) {
+        const BodyCreationSettings settings {
+            s.shape,
+            Vec3(s.pos.x, s.pos.y, s.pos.z),
             Quat::sIdentity(),
-            mt,
-            (mt == EMotionType::Dynamic) ? Layers::MOVING : Layers::NON_MOVING
-        );
-
-        const BodyID bodyId = interface.CreateAndAddBody(
+            s.motionType,
+            (s.motionType == EMotionType::Dynamic) ? Layers::MOVING : Layers::NON_MOVING
+        };
+        auto& interface = mPhysicsSystem.GetBodyInterface();
+        BodyID id = interface.CreateAndAddBody(
             settings,
-            (mt == EMotionType::Dynamic) ? EActivation::Activate : EActivation::DontActivate
+            (s.motionType == EMotionType::Dynamic) ? EActivation::Activate : EActivation::DontActivate
         );
-
-        return {bodyId, interface};
+        return {id, interface};
     }
 
     PhysicsHandler3D::BPLayerInterfaceImpl::BPLayerInterfaceImpl() {

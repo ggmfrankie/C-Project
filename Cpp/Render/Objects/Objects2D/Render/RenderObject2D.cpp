@@ -4,7 +4,7 @@
 
 #include "RenderObject2D.hpp"
 
-namespace Obj {
+namespace Obj2D {
     RenderObject2D::RenderObject2D() {
     }
 

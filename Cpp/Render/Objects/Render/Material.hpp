@@ -5,7 +5,7 @@
 #ifndef MIXEDPROJECT_MATERIAL_H
 #define MIXEDPROJECT_MATERIAL_H
 
-namespace Obj {
+namespace Obj3D {
     class Material {
         public:
         Material();

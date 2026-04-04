@@ -5,7 +5,7 @@
 #include "DynamicMesh.hpp"
 #include <vector>
 
-namespace Obj {
+namespace Obj2D {
     using namespace ggm;
     DynamicMesh::DynamicMesh() = default;
 

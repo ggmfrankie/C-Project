@@ -6,10 +6,12 @@
 #define MIXEDPROJECT_WINDOW_H
 #include <string>
 
-
-#include "Games/Scene/Scene.hpp"
 #include "IO/Input.hpp"
 
+
+namespace Game {
+    class Scene3D;
+}
 
 namespace Render {
     class Screen {
@@ -20,16 +22,18 @@ namespace Render {
 
         void init();
         void render() const;
+        void attachScene(Game::Scene3D* scene);
 
         [[nodiscard]] int getWidth() const;
         [[nodiscard]] int getHeight() const;
 
-        void update(double dt);
+        void update(double dt) const;
         [[nodiscard]] GLFWwindow *getWindowHandle() const;
         Input &getInput();
-        Engine::Scene& getScene();
 
         void endFrame();
+
+        Game::Scene3D& getScene() const;
 
     private:
         static void framebufferSizeCallback(GLFWwindow *window, int width, int height);
@@ -38,8 +42,8 @@ namespace Render {
         int width, height;
         std::string name;
 
+        Game::Scene3D* mScene;
         Input mInput;
-        Engine::Scene mScene;
     };
 }
 

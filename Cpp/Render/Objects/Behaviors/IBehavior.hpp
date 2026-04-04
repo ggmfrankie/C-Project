@@ -9,7 +9,7 @@ namespace Render {
     class Input;
 }
 
-namespace Obj {
+namespace Obj3D {
     class PhysicsObject_old;
 
     class IBehavior {

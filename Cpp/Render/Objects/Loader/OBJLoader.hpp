@@ -11,7 +11,7 @@
 #include "../../../Utils/Math/Vector.hpp"
 #include "../Render/Mesh.hpp"
 
-namespace Obj::OBJLoader {
+namespace Obj3D::OBJLoader {
 
     class OBJObject {
     public:

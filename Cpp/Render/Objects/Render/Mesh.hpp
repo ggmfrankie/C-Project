@@ -14,7 +14,7 @@
 #include "glad/gl.h"
 #include "../../Shader/Shader.hpp"
 
-namespace Obj {
+namespace Obj3D {
     class Mesh {
     public:
         Mesh(std::vector<ggm::Vector3f> &&vertices, std::vector<ggm::Vector2f> &&uvs,

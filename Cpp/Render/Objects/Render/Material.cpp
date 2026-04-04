@@ -6,7 +6,7 @@
 
 #include <cstdio>
 
-namespace Obj {
+namespace Obj3D {
     Material::Material() = default;
 
     void Material::init() {

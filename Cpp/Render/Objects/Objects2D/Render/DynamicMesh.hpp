@@ -9,14 +9,14 @@
 #include "Utils/Math/Vector.hpp"
 #include <vector>
 
-namespace Obj {
+namespace Obj2D {
     class DynamicMesh {
         GLuint mVAO = 0;
         GLuint mEBO = 0;
 
         bool mInitialized = false;
 
-        Texture mTexture;
+        Obj3D::Texture mTexture;
         std::vector<ggm::Vector2f> mVertices;
         std::vector<ggm::Vector2f> mUvs;
 

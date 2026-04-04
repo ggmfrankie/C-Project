@@ -3,33 +3,24 @@
 //
 
 #pragma once
-#include "Physics/PhysicsObject.hpp"
-#include "Render/RenderObject.hpp"
+
+#include "Games/DefaultLayer/Renderer3D.hpp"
+#include "Physics/PhysicsObjectRef.hpp"
 #include "Utils/DataStorage/SparseSet.hpp"
 
-namespace Obj {
+namespace Obj3D {
     class GameObject {
-        struct RenderObjRef {
-            ggm::u64 ID;
-            ggm::SparseSet<RenderObject>& objects;
-
-            [[nodiscard]] RenderObject& get() const;
-        };
-
-        RenderObjRef mRenderObj;
-        std::optional<PhysicsObject> mPhysicsObject;
+        std::optional<RenderObjectRef> mRenderObj;
+        std::optional<PhysicsObjectRef> mPhysicsObj;
         ggm::Vector3f mPos;
         ggm::Quaternion mRot;
 
-        [[nodiscard]] bool hasRenderObj() const;
-        [[nodiscard]] RenderObject &getRenderObj() const;
-
     public:
-        explicit GameObject(const std::pair<ggm::SparseSet<RenderObject>&, ggm::u64> &renderObj, std::optional<PhysicsObject>&& po);
-        GameObject(const GameObject&) = delete;
-        GameObject(GameObject&& other) = default;
+        GameObject(std::optional<RenderObjectRef> renderObj, std::optional<PhysicsObjectRef> physicsObj);
+        GameObject(RenderObjectRef renderObj, PhysicsObjectRef physicsObj);
+        explicit GameObject(RenderObjectRef renderObj);
+        explicit GameObject(PhysicsObjectRef physicsObj);
 
-        GameObject& operator=(const GameObject&) = delete;
         void sync();
 
         GameObject& moveTo(const ggm::Vector3f &pos);

@@ -1,13 +1,15 @@
 //
 // Created by ertls on 16.02.2026.
 //
-
-#include "GameEngine.hpp"
-
-#include "GuiInterface.h"
-#include "Games/IGame.hpp"
+#include <Jolt/Jolt.h>
 #include "Jolt/RegisterTypes.h"
 #include "Jolt/Core/Factory.h"
+
+#include "GameEngine.hpp"
+#include "GuiInterface.h"
+#include "Games/IGame.hpp"
+
+
 
 GameEngine* GameEngine::engineInstance = nullptr;
 
@@ -47,14 +49,9 @@ void GameEngine::init() {
     JPH::RegisterDefaultAllocator();
     JPH::Factory::sInstance = new JPH::Factory();
     JPH::RegisterTypes();
-    game.passState({screen.getInput(), screen.getScene().getCamera(), screen, commandRegistry});
-    game.preInit();
+    game.preInit({screen.getInput(), screen, commandRegistry});
     screen.init();
     game.postInit();
-}
-
-void GameEngine::update() {
-
 }
 
 void GameEngine::pushTask(const Engine::Task& t) {

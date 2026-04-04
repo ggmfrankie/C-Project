@@ -9,7 +9,7 @@
 #include "glad/gl.h"
 #include "stb/stb_image.h"
 
-namespace Obj {
+namespace Obj3D {
     Texture::Texture(const std::string &file) {
         m_data = loadTexture(file);
         m_textureId = 0;

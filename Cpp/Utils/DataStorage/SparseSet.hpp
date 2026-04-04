@@ -13,9 +13,9 @@
 namespace ggm {
     template <typename T>
     class SparseSet {
-        InlineVector<T, 16> mDense;
-        InlineVector<u64, 16> mSparse;
-        InlineVector<u64, 16> mDenseToSparse;
+        InlineVector<T, 0> mDense;
+        InlineVector<u64, 0> mSparse;
+        InlineVector<u64, 0> mDenseToSparse;
 
         u64 updateIndices() {
             if (mSparse.size() < mDense.size()) {

@@ -4,7 +4,7 @@
 #pragma once
 #include "IBehavior.hpp"
 
-namespace Obj {
+namespace Obj3D {
     class TestBehavior: public IBehavior {
     public:
         TestBehavior() = default;
