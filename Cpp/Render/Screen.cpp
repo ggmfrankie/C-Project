@@ -10,7 +10,7 @@
 #include <glad/gl.h>
 
 #include "../../C/GuiInterface.h"
-#include "Games/Scene/Scene3D.hpp"
+#include "../Games/Scene/3D/Scene3D.hpp"
 
 namespace Render {
     Screen::Screen(std::string windowName, const int width, const int height) :
@@ -68,7 +68,7 @@ namespace Render {
         glfwSwapBuffers(windowHandle);
     }
 
-    void Screen::attachScene(Game::Scene3D *scene) {
+    void Screen::attachScene(Game::IScene *scene) {
         mScene = scene;
     }
 
@@ -84,7 +84,7 @@ namespace Render {
         mInput.endFrame();
     }
 
-    Game::Scene3D& Screen::getScene() const {
+    Game::IScene& Screen::getScene() const {
         return *mScene;
     }
 
@@ -105,7 +105,7 @@ namespace Render {
         return height;
     }
 
-    void Screen::update(const double dt) const {
+    void Screen::update(const float dt) const {
         mScene->update(dt);
         gui_update();
     }

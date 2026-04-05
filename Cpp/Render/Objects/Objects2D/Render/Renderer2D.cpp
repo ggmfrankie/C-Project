@@ -2,40 +2,33 @@
 // Created by Stefan on 29.03.2026.
 //
 
-#include "RenderLayer2D.hpp"
+#include "Renderer2D.hpp"
+#include "Render/Objects/Objects2D/Render/RenderObject2D.hpp"
 
 namespace Game {
-    RenderLayer2D::RenderLayer2D() :
+    Renderer2D::Renderer2D() :
         mShader("Shader2D.vert", "Shader2D.frag"),
         mObjects(64)
     {
     }
 
-    RenderLayer2D::~RenderLayer2D() = default;
+    Renderer2D::~Renderer2D() = default;
 
-    void RenderLayer2D::onAttach(const LayerEngineContext &ec) {
-        mInput = ec.input;
-    }
-
-    void RenderLayer2D::onDetach() {
-    }
-
-    void RenderLayer2D::onInit() {
+    void Renderer2D::init(Render::Camera* camera) {
         mShader.init();
         mShader.link();
 
         mShader.createUniform("textureSampler");
         mShader.createUniform("projectionMatrix");
 
+        mCamera = camera;
+
         for (auto& obj: mObjects) {
             obj.init();
         }
     }
 
-    void RenderLayer2D::onUpdate(float dt) {
-    }
-
-    void RenderLayer2D::onRender(int width, int height) {
+    void Renderer2D::render(int width, int height) {
         for (auto& obj: mObjects) {
             obj.render();
         }

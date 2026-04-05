@@ -22,7 +22,7 @@ namespace Obj2D {
 
         std::array<GLuint, 2> mVBOs{};
     public:
-        DynamicMesh();
+        explicit DynamicMesh(const std::vector<ggm::Vector2f>& pos);
         ~DynamicMesh();
 
         void init();

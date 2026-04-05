@@ -4,8 +4,9 @@
 
 #pragma once
 
-#include "Games/DefaultLayer/Renderer3D.hpp"
+#include "Render/Renderer3D.hpp"
 #include "Physics/PhysicsObjectRef.hpp"
+#include "Render/RenderObjectRef3D.hpp"
 #include "Utils/DataStorage/SparseSet.hpp"
 
 namespace Obj3D {
@@ -26,7 +27,5 @@ namespace Obj3D {
         GameObject& moveTo(const ggm::Vector3f &pos);
         GameObject& rotateTo(const ggm::Vector3f &rot);
         GameObject& rotateToDeg(const ggm::Vector3f &rot);
-
-        static constexpr ggm::u64 INVALID_ID = std::numeric_limits<ggm::u64>::max();
     };
 } // Obj

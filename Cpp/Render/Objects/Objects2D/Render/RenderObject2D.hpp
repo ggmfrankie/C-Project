@@ -15,10 +15,11 @@ namespace Obj2D {
         ggm::Vector2f mPos{};
 
         ggm::Quaternion mRot{};
-        DynamicMesh mMesh{};
+        DynamicMesh mMesh;
+        ggm::Vector3f mColor{};
 
     public:
-        RenderObject2D();
+        RenderObject2D(const ggm::Vector3f& color, const std::vector<ggm::Vector2f> &pos);
         ~RenderObject2D();
 
         void init();

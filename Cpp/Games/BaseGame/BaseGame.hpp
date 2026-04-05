@@ -5,7 +5,8 @@
 #ifndef MIXEDPROJECT_BASEGAME_H
 #define MIXEDPROJECT_BASEGAME_H
 #include "../IGame.hpp"
-#include <memory>
+
+#include "Games/Scene/3D/Scene3D.hpp"
 
 struct GLFWwindow {
 };
@@ -15,7 +16,7 @@ namespace Game {
     class Scene3D;
     class Player;
 
-    class BaseGame: public IGame{
+    class BaseGame final : public IGame{
 
     public:
         BaseGame();
@@ -33,8 +34,7 @@ namespace Game {
         Render::Screen* mScreen = nullptr;
         Engine::CommandRegistry* mCommandRegistry = nullptr;
 
-        std::unique_ptr<Player> mPlayer;
-        std::unique_ptr<Scene3D> mScene;
+        Scene3D mScene;
 
         bool guiMode = false;
 

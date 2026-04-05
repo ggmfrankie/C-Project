@@ -4,29 +4,20 @@
 
 #include "GameObject2D.hpp"
 
+#include "Render/DynamicMesh.hpp"
+#include "Render/RenderObject2D.hpp"
+
 namespace Obj2D {
-
-
-    GameObject2D::GameObject2D(const RenderObj &renderObj, PhysixBox::SoftBody2D *body) :
-        mRenderObj(renderObj.second, renderObj.first)
-    {
-        mPhysicsObj = body;
-    }
+    GameObject2D::GameObject2D(const RenderObjRef2D &renderObj, const PhysicsObjectRef2D &body) :
+        mRenderObj(renderObj), mPhysicsObj(body)
+    {}
 
     GameObject2D::~GameObject2D() = default;
 
     void GameObject2D::sync() {
-        if (!mPhysicsObj || mRenderObj.empty()) return;
+        if (!mPhysicsObj || !mRenderObj) return;
 
-        DynamicMesh& mesh = mRenderObj.get().getMesh();
-        mesh.update(mPhysicsObj->getPositions());
-    }
-
-    RenderObject2D& GameObject2D::RenderObjRef2D::get() const {
-        return objects.get(ID);
-    }
-
-    bool GameObject2D::RenderObjRef2D::empty() const {
-        return ID == INVALID_ID;
+        DynamicMesh& mesh = mRenderObj->get().getMesh();
+        mesh.update(mPhysicsObj->get().getPositions());
     }
 } // Obj

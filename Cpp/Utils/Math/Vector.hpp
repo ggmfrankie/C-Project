@@ -220,6 +220,10 @@ namespace ggm {
             return *this/this->length();
         }
 
+        constexpr Vector2f operator+(const Vector2f& v) const {
+            return {x + v.x, y +v.y};
+        }
+
         [[nodiscard]] static constexpr float dot(const Vector2f& v1, const Vector2f& v2) {
             return v1.x * v2.x + v1.y * v2.y;
         }

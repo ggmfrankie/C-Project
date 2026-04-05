@@ -6,7 +6,7 @@
 
 
 namespace PhysixBox {
-    struct PointMass;
+    struct  PointMass;
 
     struct Spring {
         PointMass& first;

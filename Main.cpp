@@ -8,6 +8,8 @@
 #if 1
 int main() {
     //return test();
+    JPH::RegisterDefaultAllocator();
+
     Game::BaseGame game{};
     GameEngine& gameEngine = GameEngine::New(game);
     gameEngine.init();

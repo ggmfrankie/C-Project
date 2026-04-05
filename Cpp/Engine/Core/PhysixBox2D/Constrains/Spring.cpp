@@ -32,7 +32,7 @@ namespace PhysixBox {
 
         force += forceD;
 
-        first.addForce(force);
-        second.addForce(-force);
+        first.force += (force);
+        second.force += (-force);
     }
 } // PhysixBox

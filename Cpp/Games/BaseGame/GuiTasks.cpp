@@ -5,14 +5,13 @@
 
 #include "GameEngine.hpp"
 #include "GuiInterface.h"
-#include "Games/Scene/Scene3D.hpp"
+#include "../Scene/3D/Scene3D.hpp"
 #include "Render/GUI/Update.h"
 
 
 extern "C" void update_setFovHighlight(void* data) {
     if (const float fov = *static_cast<float *>(data); fov == 70.0f) {
         gui_setColor("btn_fov_70", 0.3, 0.2, 0.2);
-        //gui_setColor("btn_fov_90", 0.5, 1.0, 0.3);
         gui_resetColor("btn_fov_90");
     } else {
         gui_resetColor("btn_fov_70");

@@ -10,8 +10,9 @@
 
 
 namespace Game {
-    class Scene3D;
+    class IScene;
 }
+
 
 namespace Render {
     class Screen {
@@ -22,18 +23,18 @@ namespace Render {
 
         void init();
         void render() const;
-        void attachScene(Game::Scene3D* scene);
+        void attachScene(Game::IScene* scene);
 
         [[nodiscard]] int getWidth() const;
         [[nodiscard]] int getHeight() const;
 
-        void update(double dt) const;
+        void update(float dt) const;
         [[nodiscard]] GLFWwindow *getWindowHandle() const;
         Input &getInput();
 
         void endFrame();
 
-        Game::Scene3D& getScene() const;
+        [[nodiscard]] Game::IScene& getScene() const;
 
     private:
         static void framebufferSizeCallback(GLFWwindow *window, int width, int height);
@@ -42,7 +43,7 @@ namespace Render {
         int width, height;
         std::string name;
 
-        Game::Scene3D* mScene;
+        Game::IScene* mScene;
         Input mInput;
     };
 }

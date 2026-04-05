@@ -3,7 +3,7 @@
 //
 
 #include "Scene3D.hpp"
-#include "Games/DefaultLayer/Renderer3D.hpp"
+#include "../../../Render/Objects/Render/Renderer3D.hpp"
 #include "Render/Objects/Physics/PhysicsFactory.hpp"
 
 namespace Game {

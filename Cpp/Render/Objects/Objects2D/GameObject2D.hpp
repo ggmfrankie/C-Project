@@ -3,26 +3,17 @@
 //
 
 #pragma once
-
-#include "Render/RenderObject2D.hpp"
-#include "Engine/Core/PhysixBox2D/SoftBody2D.hpp"
-#include "Utils/DataStorage/SparseSet.hpp"
+#include "Physics/PhysicsObjectRef2D.hpp"
+#include "Render/RenderObjectRef2D.hpp"
 
 namespace Obj2D {
     class GameObject2D {
-        struct RenderObjRef2D {
-            ggm::u64 ID;
-            ggm::SparseSet<RenderObject2D>& objects;
-
-            [[nodiscard]] RenderObject2D& get() const;
-            bool empty() const;
-        };
-        RenderObjRef2D mRenderObj;
-        PhysixBox::SoftBody2D* mPhysicsObj = nullptr;
+        std::optional<RenderObjRef2D> mRenderObj;
+        std::optional<PhysicsObjectRef2D> mPhysicsObj;
 
     public:
-        using RenderObj = std::pair<ggm::SparseSet<RenderObject2D>&, ggm::u64>;
-        GameObject2D(const RenderObj &renderObj, PhysixBox::SoftBody2D* body);
+
+        GameObject2D(const RenderObjRef2D &renderObj, const PhysicsObjectRef2D& body);
         ~GameObject2D();
 
         void sync();

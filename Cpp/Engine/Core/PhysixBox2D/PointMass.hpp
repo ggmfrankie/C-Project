@@ -11,11 +11,10 @@ namespace PhysixBox {
     struct PointMass {
         ggm::Vector2f mPos{};
         ggm::Vector2f mVelocity{};
-        ggm::Vector2f mForce{};
+        ggm::Vector2f force{};
 
         float mMass = 1.0;
 
-        void integrate(float dt);
-        void addForce(const ggm::Vector2f& force);
+        explicit PointMass(const ggm::Vector2f &pos) : mPos(pos) {}
     };
 } // PhysixBox

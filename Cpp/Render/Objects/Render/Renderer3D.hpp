@@ -4,23 +4,13 @@
 
 #pragma once
 
-#include "Render/Objects/Render/RenderObject3D.hpp"
+#include "RenderObjectRef3D.hpp"
 #include "Utils/DataStorage/SparseSet.hpp"
 
 namespace Render {
     class Camera;
 }
 
-namespace Obj3D {
-    struct RenderObjectRef {
-        ggm::SparseSet<RenderObject3D>& interface;
-        ggm::u64 id;
-
-        [[nodiscard]] RenderObject3D& get() const {
-            return interface.get(id);
-        }
-    };
-}
 namespace Game {
 
     class Renderer3D  {
@@ -39,7 +29,7 @@ namespace Game {
 
         template<typename... Args>
         Obj3D::RenderObjectRef newObject(Args &&... args) {
-            return { mObjects, mObjects.push(std::forward<Args>(args)...) };
+            return {mObjects.push(std::forward<Args>(args)...) , mObjects};
         }
     };
 } // Game

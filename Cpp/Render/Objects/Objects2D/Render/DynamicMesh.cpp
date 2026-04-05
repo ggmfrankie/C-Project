@@ -7,7 +7,10 @@
 
 namespace Obj2D {
     using namespace ggm;
-    DynamicMesh::DynamicMesh() = default;
+
+    DynamicMesh::DynamicMesh(const std::vector<Vector2f>& pos) :
+        mVertices(pos)
+    {}
 
     DynamicMesh::~DynamicMesh() = default;
 

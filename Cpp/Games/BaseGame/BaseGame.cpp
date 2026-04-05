@@ -8,8 +8,8 @@
 #include "Render/Objects/Loader/OBJLoader.hpp"
 #include "GuiInterface.h"
 #include "Engine/CommandRegistry.hpp"
-#include "Games/DefaultLayer/PhysicsHandler3D.hpp"
-#include "Games/Scene/Scene3D.hpp"
+#include "../../Render/Objects/Physics/PhysicsHandler3D.hpp"
+#include "../Scene/3D/Scene3D.hpp"
 #include "Render/Screen.hpp"
 #include "Render/Objects/Physics/PhysicsFactory.hpp"
 #include "Render/Transformation/Camera.hpp"
@@ -27,8 +27,8 @@ namespace Game {
     BaseGame::~BaseGame() = default;
 
     void BaseGame::preInit(EngineContext &&e) {
-        mScene = std::make_unique<Scene3D>();
-        mCamera = &mScene->getCamera();
+
+        mCamera = &mScene.getCamera();
         mCommandRegistry = &e.commandRegistry;
         mInput = &e.input;
         mScreen = &e.screen;
@@ -57,19 +57,19 @@ namespace Game {
             ggm::Vector3f rot(rotPitch(rng), rotYaw(rng), rotRoll(rng));
 
             const float scale = size(rng);
-            mScene->addObject(
-                        "grass_block\\grass_block.obj", scale,
-                        Obj3D::PhysicsFactory::newBox(scale,scale,scale, pos)
-                    )
+            mScene.addObject(
+                "grass_block\\grass_block.obj", scale,
+                Obj3D::PhysicsFactory::newBox(scale,scale,scale, pos)
+            )
             .rotateToDeg(rot);
         }
 
-        mScene->addObject(
+        mScene.addObject(
             "ground_plane\\ground_plane.obj", 1.0f,
             Obj3D::PhysicsFactory::newBox(1000,0,1000, {0,-32, -20}, JPH::EMotionType::Static)
         );
 
-        mScreen->attachScene(mScene.get());
+        mScreen->attachScene(&mScene);
 
         //mPlayer = std::make_unique<Player>(ggm::Vector3f{0,0,0}, physics->getPhysicsSystem());
         //mPlayer->init();
