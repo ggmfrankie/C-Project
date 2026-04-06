@@ -4,9 +4,14 @@ layout (location = 1) in vec2 uv;
 
 out vec2 texCoords;
 
-uniform mat4 projectionMatrix;
+uniform float screenWidth;
+uniform float screenHeight;
 
 void main() {
-    gl_Position = projectionMatrix * vec4(pos, 0.0, 1.0);
+    vec2 ndc = vec2(
+        (pos.x / screenWidth) * 2.0 - 1.0,
+        (pos.y / screenHeight) * 2.0 - 1.0
+    );
+    gl_Position = vec4(ndc, 0.0, 1.0);
     texCoords = uv;
 }

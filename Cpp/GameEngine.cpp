@@ -35,7 +35,7 @@ void GameEngine::loop() {
         const auto currentTime = glfwGetTime() - frameStart;
 
         if (i > 100) {
-            gui_setText("fps display", std::to_string(1.0/currentTime).c_str());
+            //gui_setText("fps display", std::to_string(1.0/currentTime).c_str());
             i = 0;
         }
         i++;

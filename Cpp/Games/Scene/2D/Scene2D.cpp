@@ -19,7 +19,10 @@ namespace Game {
     }
 
     void Scene2D::update(float dt) {
-        mPhysicsSystem.update(1, dt);
+        mPhysicsSystem.update(10, dt);
+        for (auto& obj : mObjects) {
+            obj.update();
+        }
     }
 
     Render::Camera& Scene2D::getCamera() {

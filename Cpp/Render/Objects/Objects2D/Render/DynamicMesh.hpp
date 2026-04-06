@@ -15,6 +15,7 @@ namespace Obj2D {
         GLuint mEBO = 0;
 
         bool mInitialized = false;
+        GLint mNumVerts = 0;
 
         Obj3D::Texture mTexture;
         std::vector<ggm::Vector2f> mVertices;

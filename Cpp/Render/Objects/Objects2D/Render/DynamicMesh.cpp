@@ -3,6 +3,8 @@
 //
 
 #include "DynamicMesh.hpp"
+
+#include <cassert>
 #include <vector>
 
 namespace Obj2D {
@@ -28,8 +30,9 @@ namespace Obj2D {
         glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
 
         glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
+        //glEnableVertexAttribArray(1);
 
+        mNumVerts = static_cast<GLsizei>(mVertices.size());
         mVertices.clear();
         mUvs.clear();
 
@@ -39,15 +42,16 @@ namespace Obj2D {
     }
 
     void DynamicMesh::render() const {
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, mTexture.id());
+        //glActiveTexture(GL_TEXTURE0);
+        //glBindTexture(GL_TEXTURE_2D, mTexture.id());
 
         glBindVertexArray(mVAO);
-        glDrawArrays(GL_TRIANGLES, 0, mVertices.size());
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, mNumVerts);
         glBindVertexArray(0);
     }
 
     void DynamicMesh::update(const std::vector<Vector2f>& newVerts) {
+        assert(newVerts.size() == mNumVerts);
         glBindBuffer(GL_ARRAY_BUFFER, mVBOs[0]);
         glBufferSubData(
             GL_ARRAY_BUFFER,

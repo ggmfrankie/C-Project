@@ -3,6 +3,8 @@
 //
 
 #include "Scene3D.hpp"
+
+#include "GuiInterface.h"
 #include "../../../Render/Objects/Render/Renderer3D.hpp"
 #include "Render/Objects/Physics/PhysicsFactory.hpp"
 
@@ -39,5 +41,6 @@ namespace Game {
             obj.sync();
         }
         mPhysicsHandler.update(dt);
+        gui_update();
     }
 } // Game

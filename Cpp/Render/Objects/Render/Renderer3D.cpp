@@ -15,7 +15,7 @@ namespace Game {
     Renderer3D::~Renderer3D() = default;
 
     void Renderer3D::init(Render::Camera* camera) {
-        mShader.init();
+        mShader.compile();
         mShader.link();
 
         mShader.createUniform("textureSampler");

@@ -160,8 +160,7 @@ namespace ggm {
         float w;
     };
 
-    class Vector2f {
-    public:
+    struct Vector2f {
         constexpr Vector2f() = default;
         constexpr Vector2f(const float x, const float y) {
             this->x = x;
@@ -204,6 +203,12 @@ namespace ggm {
             return *this;
         }
 
+        Vector2f &operator-=(const Vector2f & f) {
+            x -= f.x;
+            y -= f.y;
+            return *this;
+        }
+
         constexpr Vector2f operator-() const noexcept {
             return {-x, -y};
         }
@@ -226,6 +231,15 @@ namespace ggm {
 
         [[nodiscard]] static constexpr float dot(const Vector2f& v1, const Vector2f& v2) {
             return v1.x * v2.x + v1.y * v2.y;
+        }
+
+        [[nodiscard]] static constexpr float cross(const Vector2f& v1, const Vector2f& v2) {
+            return v1.x * v2.y - v1.y * v2.x;
+        }
+
+        friend std::ostream& operator<<(std::ostream& os, const Vector2f& v) {
+            os << "{ " << v.x << ", " << v.y << " }";
+            return os;
         }
     };
 }

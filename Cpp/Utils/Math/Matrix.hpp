@@ -360,6 +360,32 @@ namespace ggm {
         std::array<float, 16> m;
     };
 
+    class Matrix2f {
+        std::array<float, 4> m;
+
+    public:
+        constexpr Matrix2f() : m() {}
+        constexpr Matrix2f(float aa, float ab, float ba, float bb) : m{aa, ab, ba, bb} {}
+
+        static constexpr Matrix2f Rotation(float rot) {
+            return {
+                std::cos(rot), -std::sin(rot),
+                std::sin(rot), std::cos(rot)
+            };
+        }
+
+        constexpr float operator()(int row, int col) const noexcept {
+            return m[col + row * 2];
+        }
+
+        friend constexpr Vector2f operator*(const Matrix2f& A, const Vector2f& b) noexcept {
+            return {
+                A(0, 0) * b.x + A(0, 1) * b.y,
+                A(1, 0) * b.x + A(1, 1) * b.y
+            };
+        }
+    };
+
 
 } // Math
 

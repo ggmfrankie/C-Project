@@ -12,11 +12,10 @@ namespace PhysixBox {
         PointMass& first;
         PointMass& second;
 
-        Spring(PointMass& first, PointMass& second, float strength, float length);
-        void update();
+        Spring(PointMass& first, PointMass& second, float strength, float length, float damping);
 
-    private:
-        float mStrength = 0;
-        float mLength = 0;
+        float strength = 0;
+        float length = 0;
+        float damping = 0;
     };
 } // PhysixBox

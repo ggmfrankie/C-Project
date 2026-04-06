@@ -107,7 +107,6 @@ namespace Render {
 
     void Screen::update(const float dt) const {
         mScene->update(dt);
-        gui_update();
     }
 }
 

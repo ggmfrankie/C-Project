@@ -58,7 +58,7 @@ namespace Render {
         return it->second;
     }
 
-    void Shader::init() {
+    void Shader::compile() {
         programId = glCreateProgram();
         int success;
         char infoLog[512];
@@ -72,13 +72,13 @@ namespace Render {
             printf("Vertex Shader Compile Error:\n%s\n", infoLog);
         }
 
-        // --- DEBUG: Check fragment shader compile status ---
-        glGetShaderiv(fragmentId, GL_COMPILE_STATUS, &success);
-        if (!success) {
-            glGetShaderInfoLog(fragmentId, 512, nullptr, infoLog);
-            printf("Fragment Shader Compile Error:\n%s\n", infoLog);
-        }
+        vertPath = {};
+        fragPath = {};
+    }
 
+    void Shader::link() const {
+        int success;
+        char infoLog[512];
         glLinkProgram(programId);
 
         // --- DEBUG: Check program link status ---
@@ -89,12 +89,11 @@ namespace Render {
         } else {
             printf("Shader Program linked successfully! ID: %d\n", programId);
         }
-        vertPath = {};
-        fragPath = {};
-    }
-
-    void Shader::link() const {
-        glLinkProgram(programId);
+        glGetShaderiv(fragmentId, GL_COMPILE_STATUS, &success);
+        if (!success) {
+            glGetShaderInfoLog(fragmentId, 512, nullptr, infoLog);
+            printf("Fragment Shader Compile Error:\n%s\n", infoLog);
+        }
         glValidateProgram(programId);
         puts("linked shader program");
     }
@@ -122,7 +121,7 @@ namespace Render {
     GLuint Shader::createShader(const GLchar *code, const int shaderType) const {
         const GLuint shaderId = glCreateShader(shaderType);
 
-        const GLchar* codePtr = code;    // pointer to C-string
+        const GLchar* codePtr = code;
         glShaderSource(shaderId, 1, &codePtr, nullptr);
 
         glCompileShader(shaderId);
@@ -135,7 +134,7 @@ namespace Render {
         glUseProgram(programId);
     }
 
-    void Shader::unbind() {
+    void Shader::unbind() const {
         glUseProgram(0);
     }
 

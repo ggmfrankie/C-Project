@@ -9,10 +9,10 @@ namespace Render {
 
     }
 
-    void DeferredShader::init() {
+    void DeferredShader::compile() {
         constexpr GLuint screenWidth = 1024, screenHeight = 768;
 
-        Shader::init();
+        Shader::compile();
         glGenFramebuffers(1, &gBufferId);
         glBindFramebuffer(GL_FRAMEBUFFER, gBufferId);
 

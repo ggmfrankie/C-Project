@@ -31,5 +31,7 @@ namespace PhysixBox {
         PointMass& getPointMass(ggm::u64 index);
 
         std::vector<ggm::Vector2f> getPositions();
+
+        ggm::InlineVector<PointMass, 16>& getPoints();
     };
 } // PhysicsBox

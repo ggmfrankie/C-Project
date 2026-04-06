@@ -23,8 +23,9 @@ namespace Obj2D {
         ~RenderObject2D();
 
         void init();
-        void render();
+        void render() const;
 
+        [[nodiscard]] ggm::Vector3f getColor() const;
         DynamicMesh& getMesh();
     };
 } // Obj

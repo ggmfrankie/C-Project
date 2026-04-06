@@ -9,30 +9,11 @@
 
 namespace PhysixBox {
     using namespace ggm;
-    Spring::Spring(PointMass& first, PointMass& second, float strength, float length) :
+    Spring::Spring(PointMass& first, PointMass& second, float strength, float length,  float damping) :
         first(first),
         second(second),
-        mStrength(strength),
-        mLength(length)
+        strength(strength),
+        length(length),
+        damping(damping)
     {}
-
-    void Spring::update() {
-        using vec2 = Vector2f;
-
-        const vec2 delta = second.mPos - first.mPos;
-        const vec2 dir = delta.normalize();
-
-        const float diff = delta.length() - mLength;
-        vec2 force = (diff * -mStrength) * dir;
-
-        vec2 relVel = second.mVelocity - first.mVelocity;
-        float dampening = Vector2f::dot(dir, relVel);
-
-        const vec2 forceD = (-mStrength * dampening) * dir;
-
-        force += forceD;
-
-        first.force += (force);
-        second.force += (-force);
-    }
 } // PhysixBox

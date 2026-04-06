@@ -16,7 +16,7 @@ namespace Obj2D {
         GameObject2D(const RenderObjRef2D &renderObj, const PhysicsObjectRef2D& body);
         ~GameObject2D();
 
-        void sync();
+        void update();
         static constexpr ggm::u64 INVALID_ID = std::numeric_limits<ggm::u64>::max();
     };
 } // Obj

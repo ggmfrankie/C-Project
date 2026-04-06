@@ -15,8 +15,12 @@ namespace Obj2D {
         mMesh.init();
     }
 
-    void RenderObject2D::render() {
+    void RenderObject2D::render() const {
         mMesh.render();
+    }
+
+    ggm::Vector3f RenderObject2D::getColor() const {
+        return mColor;
     }
 
     DynamicMesh& RenderObject2D::getMesh() {

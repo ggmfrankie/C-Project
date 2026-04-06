@@ -13,6 +13,10 @@ namespace PhysixBox {
     class PhysicsSystem {
         ggm::SparseSet<SoftBody2D> mBodies{16};
 
+        void checkIntersection(SoftBody2D& a, SoftBody2D& b);
+
+        static bool isInside(SoftBody2D &a, const ggm::Vector2f &point);
+
     public:
         void update(int steps, float dt);
 

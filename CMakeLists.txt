@@ -204,6 +204,7 @@ add_executable(C-Project
         Cpp/Render/Objects/Objects2D/Physics/PhysicsFactory2D.cpp
         Cpp/Render/Objects/Objects2D/Physics/PhysicsFactory2D.hpp
         Cpp/Render/Objects/Objects2D/Render/RenderObjectRef2D.hpp
+        Cpp/Engine/Core/PhysixBox2D/Collision.hpp
 
 )
 target_compile_definitions(C-Project PRIVATE

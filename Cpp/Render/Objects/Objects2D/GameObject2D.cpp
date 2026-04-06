@@ -14,7 +14,7 @@ namespace Obj2D {
 
     GameObject2D::~GameObject2D() = default;
 
-    void GameObject2D::sync() {
+    void GameObject2D::update() {
         if (!mPhysicsObj || !mRenderObj) return;
 
         DynamicMesh& mesh = mRenderObj->get().getMesh();

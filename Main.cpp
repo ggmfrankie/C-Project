@@ -3,6 +3,7 @@
 //
 #include "Cpp/GameEngine.hpp"
 #include "Cpp/Games/BaseGame/BaseGame.hpp"
+#include "Games/Game2D/Game2D.hpp"
 #include "Test/Test.hpp"
 
 #if 1
@@ -11,7 +12,10 @@ int main() {
     JPH::RegisterDefaultAllocator();
 
     Game::BaseGame game{};
-    GameEngine& gameEngine = GameEngine::New(game);
+    Game::Game2D game2D{};
+
+    GameEngine& gameEngine = GameEngine::New(game2D);
+    //GameEngine& gameEngine = GameEngine::New(game);
     gameEngine.init();
     gameEngine.loop();
 

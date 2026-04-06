@@ -24,7 +24,7 @@ namespace Render {
         GLuint createShader(const GLchar *code, int shaderType) const;
 
         void bind() const;
-        static void unbind();
+        void unbind() const;
 
         virtual ~Shader();
 
@@ -36,7 +36,7 @@ namespace Render {
         void createUniform(const std::string &name);
         GLint getUniformLocation(const std::string &name) const;
 
-        virtual void init();
+        virtual void compile();
         void link() const;
 
     private:
