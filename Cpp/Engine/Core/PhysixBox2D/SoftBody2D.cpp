@@ -30,7 +30,7 @@ namespace PhysixBox {
         using vec2 = Vector2f;
 
         for (auto& point: mPoints) {
-            point.vel += vec2{0, -9.81f} * dt;
+            point.vel += vec2{0, -90.81f} * dt;
         }
 
         for (auto& spring: mSprings) {

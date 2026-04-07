@@ -11,11 +11,19 @@ namespace Obj2D::PhysicsFactory2D {
 
 namespace PhysixBox {
     class PhysicsSystem {
+        struct Collision {
+            PointMass* a = nullptr;
+            PointMass* b = nullptr;
+            ggm::Vector2f point{};
+            ggm::Vector2f normal{};
+            float distance = 0;
+        };
+
         ggm::SparseSet<SoftBody2D> mBodies{16};
 
-        void checkIntersection(SoftBody2D& a, SoftBody2D& b);
-
+        static static void checkIntersection(SoftBody2D& a, SoftBody2D& b);
         static bool isInside(SoftBody2D &a, const ggm::Vector2f &point);
+        static Collision getCollision(SoftBody2D &body, const ggm::Vector2f& p);
 
     public:
         void update(int steps, float dt);

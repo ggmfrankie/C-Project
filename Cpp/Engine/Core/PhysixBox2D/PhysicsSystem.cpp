@@ -9,6 +9,7 @@
 #include "Render/Objects/Objects2D/Physics/PhysicsFactory2D.hpp"
 
 namespace PhysixBox {
+
     void PhysicsSystem::update(int steps, float dt) {
         for (int ii = 0; ii < steps; ii++) {
 
@@ -35,7 +36,17 @@ namespace PhysixBox {
     void PhysicsSystem::checkIntersection(SoftBody2D &a, SoftBody2D &b) {
         for (auto& point : b.getPoints()) {
             if (auto& p = point.pos; isInside(a, p)) {
-                //puts("collision");
+                Collision c = getCollision(a, p);
+
+                puts("collision");
+            }
+        }
+
+        for (auto& point : a.getPoints()) {
+            if (auto& p = point.pos; isInside(b, p)) {
+                Collision c = getCollision(b, p);
+
+                puts("collision");
             }
         }
     }
@@ -74,6 +85,50 @@ namespace PhysixBox {
         return intersections % 2;
     }
 
+    PhysicsSystem::Collision PhysicsSystem::getCollision(SoftBody2D& body, const ggm::Vector2f& p) {
+        using namespace ggm;
+        using vec2 = Vector2f;
+
+        Collision result{};
+        float minDistance = std::numeric_limits<float>::max();
+
+        auto& points = body.getPoints();
+        const u64 length = points.size();
+
+        for (u64 i = 0; i < length; i++) {
+            auto& pma = points[i];
+            auto& pmb = points[(i+1)%length];
+
+            vec2 a = pma.pos;
+            vec2 b = pmb.pos;
+
+            vec2 ab = b - a;
+            vec2 ap = p - a;
+
+            const float scalar = vec2::dot(ab, ap);
+
+            const float abLenSq = ab.lengthSquared();
+            const float d = scalar/abLenSq;
+
+            vec2 pointOnLine;
+
+            if (d <= 0) pointOnLine = a;
+            else if (d >= 1) pointOnLine = b;
+            else pointOnLine = a + ab * d;
+
+            if (const float distSq = vec2::distanceSquared(pointOnLine, p); distSq < minDistance) {
+                minDistance = distSq;
+
+                result.a = &pma;
+                result.b = &pmb;
+                result.normal = (pointOnLine - p).normalize();
+                result.point = pointOnLine;
+            }
+        }
+        result.distance = std::sqrt(minDistance);
+        return result;
+    }
+
     Obj2D::PhysicsObjectRef2D PhysicsSystem::addBody(const Obj2D::PhysicsFactory2D::PhysicsSettings &settings) {
         const auto id = mBodies.push();
         auto& body = mBodies.get(id);
@@ -88,7 +143,7 @@ namespace PhysixBox {
 
             float length = ggm::Vector2f{first.pos - second.pos}.length();
 
-            body.addSpring(first, second, 100.0f, length, 1.0f);
+            body.addSpring(first, second, 200000.0f, length, 20.0f);
         }
 
         return {id, mBodies};

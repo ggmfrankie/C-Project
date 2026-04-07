@@ -218,11 +218,17 @@ namespace ggm {
         }
 
         [[nodiscard]] constexpr float length() const {
-            return std::sqrtf(x*x +y*y);
+            return std::sqrt(x*x +y*y);
+        }
+
+        [[nodiscard]] constexpr float lengthSquared() const {
+            return (x*x +y*y);
         }
 
         [[nodiscard]] constexpr Vector2f normalize() const {
-            return *this/this->length();
+            if (const float len = length(); len > 0.0f)
+                return *this / len;
+            return {0.0f, 0.0f};
         }
 
         constexpr Vector2f operator+(const Vector2f& v) const {
@@ -235,6 +241,14 @@ namespace ggm {
 
         [[nodiscard]] static constexpr float cross(const Vector2f& v1, const Vector2f& v2) {
             return v1.x * v2.y - v1.y * v2.x;
+        }
+
+        [[nodiscard]] static constexpr float distance(const Vector2f& v1, const Vector2f& v2) {
+            return (v2 - v1).length();
+        }
+
+        [[nodiscard]] static constexpr float distanceSquared(const Vector2f& v1, const Vector2f& v2) {
+            return (v2 - v1).lengthSquared();
         }
 
         friend std::ostream& operator<<(std::ostream& os, const Vector2f& v) {
