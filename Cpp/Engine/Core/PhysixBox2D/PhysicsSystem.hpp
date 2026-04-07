@@ -21,7 +21,7 @@ namespace PhysixBox {
 
         ggm::SparseSet<SoftBody2D> mBodies{16};
 
-        static static void checkIntersection(SoftBody2D& a, SoftBody2D& b);
+        static void checkIntersection(SoftBody2D& a, SoftBody2D& b);
         static bool isInside(SoftBody2D &a, const ggm::Vector2f &point);
         static Collision getCollision(SoftBody2D &body, const ggm::Vector2f& p);
 
