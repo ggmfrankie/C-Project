@@ -15,7 +15,7 @@ int main() {
     Game::Game2D game2D{};
 
     GameEngine& gameEngine = GameEngine::New(game2D);
-    //GameEngine& gameEngine = GameEngine::New(game);
+    //& gameEngine = GameEngine::New(game);
     gameEngine.init();
     gameEngine.loop();
 

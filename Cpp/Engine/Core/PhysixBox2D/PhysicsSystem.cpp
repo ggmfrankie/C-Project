@@ -23,9 +23,10 @@ namespace PhysixBox {
             for (auto& obj: mBodies) {
                 obj.update(dt/static_cast<float>(steps));
 
-                constexpr float groundY = 0.0f;
                 for (auto& point : obj.getPoints()) {
-                    if (point.pos.y < groundY) {
+                    if (constexpr float groundY = 0.0f; point.pos.y < groundY) {
+
+                        //TODO fix
                         point.vel = - point.vel;
                     }
                 }
@@ -37,7 +38,7 @@ namespace PhysixBox {
         for (auto& point : b.getPoints()) {
             if (auto& p = point.pos; isInside(a, p)) {
                 Collision c = getCollision(a, p);
-
+                //TODO implement
                 puts("collision");
             }
         }
@@ -45,15 +46,15 @@ namespace PhysixBox {
         for (auto& point : a.getPoints()) {
             if (auto& p = point.pos; isInside(b, p)) {
                 Collision c = getCollision(b, p);
-
+                //TODO implement
                 puts("collision");
             }
         }
     }
 
     bool PhysicsSystem::isInside(SoftBody2D& a, const ggm::Vector2f& point) {
-        using vec2 = ggm::Vector2f;
         using namespace ggm;
+        using vec2 = Vector2f;
 
         auto& points = a.getPoints();
         const auto length = points.size();
@@ -70,7 +71,7 @@ namespace PhysixBox {
             if (point.y > p0.y && point.y > p1.y) continue;
             if (point.y < p0.y && point.y < p1.y) continue;
 
-            const float cross = Vector2f::cross(point-p0, p1-p0);
+            const float cross = vec2::cross(point-p0, p1-p0);
 
             //deduplicate
             constexpr float EPS = 1e-6f;
@@ -129,7 +130,7 @@ namespace PhysixBox {
         return result;
     }
 
-    Obj2D::PhysicsObjectRef2D PhysicsSystem::addBody(const Obj2D::PhysicsFactory2D::PhysicsSettings &settings) {
+    Obj2D::PhysicsObjectRef2D PhysicsSystem::addBody(const Obj2D::PhysicsFactory2D::PhysicsSettings& settings) {
         const auto id = mBodies.push();
         auto& body = mBodies.get(id);
 
@@ -141,9 +142,9 @@ namespace PhysixBox {
             auto& first = body.getPointMass(a);
             auto& second = body.getPointMass(b);
 
-            float length = ggm::Vector2f{first.pos - second.pos}.length();
+            float length = (first.pos - second.pos).length();
 
-            body.addSpring(first, second, 200000.0f, length, 20.0f);
+            body.addSpring(first, second, 2000.0f, length, 2.0f);
         }
 
         return {id, mBodies};
