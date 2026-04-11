@@ -19,7 +19,7 @@ public:
 
     ~GameEngine() = default;
 
-    explicit GameEngine(Game::IGame &game);
+    explicit GameEngine(Game::IGame& game);
 
     void loop();
     void init();

@@ -44,8 +44,6 @@ namespace Obj2D {
     void DynamicMesh::render() const {
         //glActiveTexture(GL_TEXTURE0);
         //glBindTexture(GL_TEXTURE_2D, mTexture.id());
-        glDisable(GL_CULL_FACE);
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
         glBindVertexArray(mVAO);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, mNumVerts);

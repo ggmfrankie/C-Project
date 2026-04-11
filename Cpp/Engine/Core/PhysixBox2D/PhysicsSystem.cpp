@@ -27,7 +27,7 @@ namespace PhysixBox {
                     if (constexpr float groundY = 0.0f; point.pos.y < groundY) {
 
                         //TODO fix
-                        point.vel = - point.vel;
+                        point.vel = -point.vel;
                     }
                 }
             }
@@ -35,10 +35,27 @@ namespace PhysixBox {
     }
 
     void PhysicsSystem::checkIntersection(SoftBody2D &a, SoftBody2D &b) {
+        using vec2 = ggm::Vector2f;
         for (auto& point : b.getPoints()) {
             if (auto& p = point.pos; isInside(a, p)) {
                 Collision c = getCollision(a, p);
-                //TODO implement
+                float allMass = c.a->mass + c.b->mass + point.mass;
+
+                float factorA = c.a->mass/allMass;
+                float factorB = c.b->mass/allMass;
+
+                float factorP = point.mass/allMass;
+
+                vec2 displacement = c.normal * c.distance;
+
+                c.a->pos -= displacement * factorA;
+                c.b->pos -= displacement * factorB;
+                point.pos += displacement * factorP;
+
+                c.a->vel -= displacement * (factorA/10);
+                c.b->vel -= displacement * (factorB/10);
+                point.vel += displacement * (factorP/10);
+
                 puts("collision");
             }
         }
@@ -46,7 +63,22 @@ namespace PhysixBox {
         for (auto& point : a.getPoints()) {
             if (auto& p = point.pos; isInside(b, p)) {
                 Collision c = getCollision(b, p);
-                //TODO implement
+                float allMass = c.a->mass + c.b->mass + point.mass;
+
+                float factorA = c.a->mass/allMass;
+                float factorB = c.b->mass/allMass;
+
+                float factorP = point.mass/allMass;
+
+                vec2 displacement = c.normal * c.distance;
+
+                c.a->pos -= displacement * factorA;
+                c.b->pos -= displacement * factorB;
+                point.pos += displacement * factorP;
+
+                c.a->vel -= displacement * (factorA/10);
+                c.b->vel -= displacement * (factorB/10);
+                point.vel += displacement * (factorP/10);
                 puts("collision");
             }
         }
@@ -57,7 +89,7 @@ namespace PhysixBox {
         using vec2 = Vector2f;
 
         auto& points = a.getPoints();
-        const auto length = points.size();
+        const u64 length = points.size();
         int intersections = 0;
 
         for (int i = 0; i < length; i++) {
@@ -76,10 +108,10 @@ namespace PhysixBox {
             //deduplicate
             constexpr float EPS = 1e-6f;
             if (p0.y >= p1.y) {
-                if (std::fabs(point.y - p0.y) < EPS || cross < 0) continue;
+                if (std::abs(point.y - p0.y) < EPS || cross < 0) continue;
                 intersections++;
             } else {
-                if (std::fabs(point.y - p1.y) < EPS || cross > 0) continue;
+                if (std::abs(point.y - p1.y) < EPS || cross > 0) continue;
                 intersections++;
             }
         }

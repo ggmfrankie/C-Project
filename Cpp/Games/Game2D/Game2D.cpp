@@ -14,9 +14,9 @@ namespace Game {
         mInput = &e.input;
         mScreen = &e.screen;
 
-        mScene.addObject({.2, .4, .6}, Obj2D::PhysicsFactory2D::newQuad(100, 100, {100, 100}));
+        mScene.addObject({.2, .4, .6}, Obj2D::PhysicsFactory2D::newQuad(100, 100, {200, 100}));
         mScene.addObject({.2, 1.0, .6}, Obj2D::PhysicsFactory2D::newQuad(200, 400, {400, 500}, ggm::toRad(45)));
-        mScene.addObject({.2, 1.0, .3}, Obj2D::PhysicsFactory2D::newQuad(400, 400, {800, 500}, ggm::toRad(50)));
+        //mScene.addObject({.2, 1.0, .3}, Obj2D::PhysicsFactory2D::newQuad(400, 400, {800, 500}, ggm::toRad(50)));
         //mScene.addObject({.6, 1.0, .6}, Obj2D::PhysicsFactory2D::newSoftBall(12, 40, {600, 300}));
 
         mScreen->attachScene(&mScene);
