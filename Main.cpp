@@ -8,7 +8,7 @@
 
 #if 1
 int main() {
-    //return test();
+    return test();
     JPH::RegisterDefaultAllocator();
 
     Game::BaseGame game{};
