@@ -4,6 +4,7 @@
 
 #ifndef MIXEDPROJECT_CARRAYLIST_H
 #define MIXEDPROJECT_CARRAYLIST_H
+#include <stdio.h>
 
 #ifdef __cplusplus
 extern "C" {

@@ -8,7 +8,7 @@
 #ifdef GAME
 int main() {
     auto game = Game::BaseGame();
-    GameEngine& gameEngine = GameEngine::New(game);
+    auto& gameEngine = GameEngine::New(game);
     gameEngine.init();
     gameEngine.loop();
 
