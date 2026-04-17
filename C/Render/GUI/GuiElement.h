@@ -66,8 +66,11 @@ typedef struct Element {
 
         int width;
         int height;
-        int actualWidth;
-        int actualHeight;
+        int prefWidth;
+        int prefHeight;
+
+        int worldWidth;
+        int worldHeight;
 
         int cornerRadius;
     } dims;

@@ -31,8 +31,8 @@ Element* newElement(const Vec2i pos, const int width, const int height) {
             .height = height,
             .pos = pos,
             .worldPos = pos,
-            .actualWidth = width,
-            .actualHeight = height
+            .worldWidth = width,
+            .worldHeight = height
         },
         .callbacks = {
             .onClick = nullptr,
@@ -137,8 +137,8 @@ Element* getElement(const char* name) {
 }
 
 bool isSelected_Quad(const Element *element, const Vec2i mousePos) {
-    if (mousePos.x <= element->dims.worldPos.x+element->dims.actualWidth && mousePos.x >= element->dims.worldPos.x &&
-        mousePos.y <= element->dims.worldPos.y+element->dims.actualHeight && mousePos.y >= element->dims.worldPos.y) {
+    if (mousePos.x <= element->dims.worldPos.x+element->dims.worldWidth && mousePos.x >= element->dims.worldPos.x &&
+        mousePos.y <= element->dims.worldPos.y+element->dims.worldHeight && mousePos.y >= element->dims.worldPos.y) {
         return true;
     }
     return false;

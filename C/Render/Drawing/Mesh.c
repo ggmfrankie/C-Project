@@ -62,8 +62,8 @@ void Mesh_connectFans(struct ArcInfo* a1, struct ArcInfo* a2, int* indices, int*
 }
 
 void Mesh_loadRoundedCornerMesh2(const Element* element, GuiVertex *vertices, int *vt, int* indices, int* id) {
-    const float width = (float)element->dims.actualWidth;
-    const float height = (float)element->dims.actualHeight;
+    const float width = (float)element->dims.worldWidth;
+    const float height = (float)element->dims.worldHeight;
     const float radius = min((float)element->dims.cornerRadius, min(width, height) * 0.5f);
 
     constexpr float r90 = (float)M_PI * 0.5f;

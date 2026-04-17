@@ -27,6 +27,7 @@ typedef struct {
 
 typedef struct {
     Vec2f pos;
+
     float width;
     float height;
     float advance;

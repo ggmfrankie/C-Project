@@ -12,7 +12,8 @@
 #include "../../Utils/Vector.h"
 #include "../GUI/CallbackFunctions.h"
 
-void accumulateMeshes(Element *element, const Renderer *renderer, GuiVertex *vertices, int *vt, int *indices, int *id);
+static void accumulateMeshes(Element *element, const Renderer *renderer, GuiVertex *vertices, int *vt, int *indices, int *id);
+static Vec2i updateLayout(Element* element, Vec2i parentCursor, Vec2i parentPos, const Font* font);
 
 Element* createRootElement();
 
@@ -60,9 +61,9 @@ void beginScissor(const Element* e, const int screenHeight) {
     glEnable(GL_SCISSOR_TEST);
 
     const int x = e->dims.worldPos.x;
-    const int y = screenHeight - (e->dims.worldPos.y + e->dims.actualHeight);
-    const int w = e->dims.actualWidth;
-    const int h = e->dims.actualHeight;
+    const int y = screenHeight - (e->dims.worldPos.y + e->dims.worldHeight);
+    const int w = e->dims.worldWidth;
+    const int h = e->dims.worldHeight;
 
     glScissor(x, y, w, h);
 }
@@ -71,7 +72,7 @@ void endScissor() {
     glDisable(GL_SCISSOR_TEST);
 }
 
-void Renderer_render2(const Renderer *renderer) {
+void Renderer_render(const Renderer *renderer) {
     static GuiVertex vertices[MAX_GUI_VERTICES];
     int numVertices = 0;
     static int indices[MAX_GUI_VERTICES];
@@ -116,7 +117,7 @@ void Renderer_render2(const Renderer *renderer) {
     Shaders.unbind();
 }
 
-void accumulateMeshes(Element *element, const Renderer *renderer, GuiVertex *vertices, int *vt, int *indices, int *id) {
+static void accumulateMeshes(Element *element, const Renderer *renderer, GuiVertex *vertices, int *vt, int *indices, int *id) {
     if (element == NULL || !element->flags.isActive) return;
 
     beginScissor(element, renderer->screenHeight);
@@ -134,7 +135,19 @@ void accumulateMeshes(Element *element, const Renderer *renderer, GuiVertex *ver
     endScissor();
 }
 
-Vec2i updateLayout(Element* element, const Vec2i parentCursor, const Vec2i parentPos, const Font* font) {
+void Renderer_updateLayout(const Renderer *renderer) {
+    Element* root = renderer->guiRoot;
+    root->dims.width = renderer->screenWidth;
+    root->dims.height = renderer->screenHeight;
+
+    updateLayout(root, (Vec2i){0, 0}, (Vec2i){0, 0}, &renderer->font);
+}
+
+
+//TODO maybe pass available size to the child element
+
+// @brief traverses the gui_element tree and updates positions and dimensions of children and then parents
+static Vec2i updateLayout(Element* element, const Vec2i parentCursor, const Vec2i parentPos, const Font* font) {
     if (!element || !element->flags.isActive) return (Vec2i){0,0};
     const auto cb = &element->callbacks;
     const auto dims = &element->dims;
@@ -147,8 +160,8 @@ Vec2i updateLayout(Element* element, const Vec2i parentCursor, const Vec2i paren
     dims->worldPos.x = dims->pos.x + parentPos.x;
     dims->worldPos.y = dims->pos.y + parentPos.y;
 
-    dims->actualWidth = dims->width;
-    dims->actualHeight = dims->height;
+    dims->worldWidth = dims->width;
+    dims->worldHeight = dims->height;
 
     auto cursor = (Vec2i){element->padding.left, element->padding.up};
     const LayoutDirection layoutDirection = element->layoutDirection;
@@ -162,8 +175,8 @@ Vec2i updateLayout(Element* element, const Vec2i parentCursor, const Vec2i paren
         const int textW = padding.left + (int)element->textElement.width + padding.right;
         const int textH = padding.up + (int)((float)(font->maxCharHeight) * element->textElement.textScale) + padding.down;
 
-        dims->actualWidth  = max(dims->actualWidth ,  textW);
-        dims->actualHeight = max(dims->actualHeight, textH);
+        dims->worldWidth  = max(dims->worldWidth ,  textW);
+        dims->worldHeight = max(dims->worldHeight, textH);
     }
 
     Element* elements[16];
@@ -174,14 +187,15 @@ Vec2i updateLayout(Element* element, const Vec2i parentCursor, const Vec2i paren
 
         Vec2i childDimensions = updateLayout(child, cursor, dims->worldPos, font);
 
-        if (element->flags.fixedHeight && cursor.y + childDimensions.y > dims->height) {
-            cursor.y = padding.up;
-            cursor.x = extendRight + element->childGap;
-            childDimensions = updateLayout(child, cursor, dims->worldPos, font);
-        }
+        // if current element has fixed dims, but child elements in the next row
         if (element->flags.fixedWidth && cursor.x + childDimensions.x > dims->width) {
             cursor.y = extendDown + element->childGap;
             cursor.x = padding.left;
+            childDimensions = updateLayout(child, cursor, dims->worldPos, font);
+        }
+        if (element->flags.fixedHeight && cursor.y + childDimensions.y > dims->height) {
+            cursor.y = padding.up;
+            cursor.x = extendRight + element->childGap;
             childDimensions = updateLayout(child, cursor, dims->worldPos, font);
         }
 
@@ -199,17 +213,30 @@ Vec2i updateLayout(Element* element, const Vec2i parentCursor, const Vec2i paren
         if (child->flags.wantGrowHorizontal || child->flags.wantGrowVertical) elements[numGrowingElements++] = child;
     }
 
-    dims->actualWidth = max(dims->actualWidth, extendRight + padding.right);
-    dims->actualHeight = max(dims->actualHeight, extendDown + padding.down);
+    dims->worldWidth = max(dims->worldWidth, extendRight + padding.right);
+    dims->worldHeight = max(dims->worldHeight, extendDown + padding.down);
 
     //TODO fix
+    bool dirty = false;
     for (int i = 0; i < numGrowingElements; i++) {
         Element* child = elements[i];
-        if (child->flags.wantGrowHorizontal) child->dims.actualWidth = dims->actualWidth - padding.left - padding.right;
-        if (child->flags.wantGrowVertical) child->dims.actualHeight = dims->actualHeight - padding.up - padding.down;
+        if (child->flags.wantGrowHorizontal) {
+            const int newWidth = dims->worldWidth - padding.left - padding.right;
+            if (newWidth == child->dims.width) continue;
+            child->dims.width = newWidth;
+            dirty = true;
+        }
+        if (child->flags.wantGrowVertical) {
+            const int newHeight = dims->worldHeight - padding.up - padding.down;
+            if (newHeight == child->dims.height) continue;
+            child->dims.height = newHeight;
+            dirty = true;
+        }
     }
+    if (dirty) return updateLayout(element, parentCursor, parentPos, font);
 
-    return (Vec2i){dims->actualWidth, dims->actualHeight};
+
+    return (Vec2i){dims->worldWidth, dims->worldHeight};
 }
 
 inline bool isMousePressed(GLFWwindow* window, const int mouseButton) {

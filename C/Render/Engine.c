@@ -17,12 +17,10 @@
 
 #include "../GuiInterface.h"
 #include "GUI/Update.h"
+#include "Utils/Makros.h"
 
 #define WIDTH 4096
 #define HEIGHT 600
-
-#define SELF_HOSTED
-
 
 pthread_mutex_t guiMutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t  guiInitCond = PTHREAD_COND_INITIALIZER;
@@ -35,14 +33,14 @@ static void updateState(Renderer *renderer);
 static bool updateStateRecursively(Element *element, Renderer *renderer);
 static bool dragElement(const Renderer *renderer);
 
-void threadExecute() {
+static void threadExecute() {
     do {
         const Task t = popTask();
         t.func(t.userdata);
     } while (1);
 }
 
-void* workerThreadInit(void* args) {
+static void* workerThreadInit(void* args) {
     pthread_mutex_lock(&guiMutex);
     while (!guiInitialized) {
         pthread_cond_wait(&guiInitCond, &guiMutex);
@@ -64,19 +62,19 @@ void gui_init(GLFWwindow* window, const int width, const int height, void (*gene
     guiInitialized = true;
     pthread_cond_broadcast(&guiInitCond);
 
-
     pthread_create(&workerThreadID, nullptr, workerThreadInit, nullptr);
 }
 
 void gui_update() {
     dragElement(&g_Renderer);
-    updateLayout(g_Renderer.guiRoot, (Vec2i){0, 0}, (Vec2i){0, 0}, &g_Renderer.font);
+    Renderer_updateLayout(&g_Renderer);
     gui_popUpdate();
     updateState(&g_Renderer);
+    gui_processDebug();
 }
 
 void gui_render() {
-    Renderer_render2(&g_Renderer);
+    Renderer_render(&g_Renderer);
 }
 
 void f_gui_loadTextures(char* first, ...) {
@@ -122,10 +120,28 @@ void gui_setCornerRadius(const char* name, const int radius) {
     getElement(name)->dims.cornerRadius = radius;
 }
 
-[[Todo]]
+void gui_processDebug() {
+    const Element* bar = getElement("panel");
+    if (bar) {
+        only_every(
+        printf("World pos is: %i, %i, Relative pos is: %i, %i\n dims = %i, %i, worldDims = %i, %i\n",
+               bar->dims.worldPos.x,
+               bar->dims.worldPos.y,
+               bar->dims.pos.x,
+               bar->dims.pos.y,
+               bar->dims.width,
+               bar->dims.height,
+               bar->dims.worldWidth,
+               bar->dims.worldWidth
+           ),
+        100);
+    }
+}
+
+//TODO
 void startEngine(void (*generateGUI)(Element* guiRoot)) {
-    int width = 512;
-    int height = 512;
+    constexpr int width = 512;
+    constexpr int height = 512;
     gui_init(initWindow(width, height, "Chess"), width, height, generateGUI);
 
     Basic_Texture* graphTexture = newEmptyTexture(WIDTH, HEIGHT);
@@ -190,8 +206,18 @@ static bool dragElement(const Renderer *renderer) {
             dragging = true;
         } else {
             element->positionMode = POS_ABSOLUTE;
-            element->dims.pos.x = (renderer->mousePos.x - parentWorldPos.x) - offset.x - ((element->parentElement)?element->parentElement->padding.left:0);
-            element->dims.pos.y = (renderer->mousePos.y - parentWorldPos.y) - offset.y - ((element->parentElement)?element->parentElement->padding.up:0);
+            element->dims.pos.x = (renderer->mousePos.x - parentWorldPos.x) - offset.x - 0;
+            element->dims.pos.y = (renderer->mousePos.y - parentWorldPos.y) - offset.y - 0;
+
+
+            // only_every(
+            //     printf("World pos is: %i, %i, Relative pos is: %i, %i\n",
+            //         element->dims.worldPos.x,
+            //         element->dims.worldPos.y,
+            //         element->dims.pos.x,
+            //         element->dims.pos.y
+            //     ),
+            // 100);
         }
         return true;
     }

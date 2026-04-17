@@ -8,14 +8,14 @@
 
 #if 1
 int main() {
-    return test();
+    //return test();
     JPH::RegisterDefaultAllocator();
 
     Game::BaseGame game{};
     Game::Game2D game2D{};
 
-    GameEngine& gameEngine = GameEngine::New(game2D);
-    //GameEngine& gameEngine = GameEngine::New(game);
+    //GameEngine& gameEngine = GameEngine::New(game2D);
+    GameEngine& gameEngine = GameEngine::New(game);
     gameEngine.init();
     gameEngine.loop();
 

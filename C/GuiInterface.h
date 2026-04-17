@@ -39,6 +39,8 @@ struct Element;
     void gui_resetColor(const char* name);
     void gui_setCornerRadius(const char* name, int radius);
 
+    void gui_processDebug();
+
 #ifdef __cplusplus
 }
 #endif

@@ -673,12 +673,12 @@ static void createChessBoard(Element* root) {
                 (ElementSettings){
                     .color = COOL_COLOR,
                     .pos = {0,0},
-                    .draggable = true,
                     .posMode = POS_ABSOLUTE,
                     .name = "game board",
                     .padding = (Padding){10,10,10,10},
                     .childGap = 10,
-                    .cornerRadius = 10
+                    .cornerRadius = 10,
+                    .draggable = true,
                 }
             ),
             addChildrenAsGridWithGenerator(
@@ -687,6 +687,7 @@ static void createChessBoard(Element* root) {
                     .onUpdate = updateColorRainbow,
                     .width = 400,
                     .height = 400,
+                    .draggable = true,
                     .fixedWidth = true,
                     .fixedHeight = true,
                     .padding = {10,10,10,10}
@@ -728,7 +729,8 @@ static void createChessBoard(Element* root) {
                         .layoutDirection = L_right,
                         .notSelectable = true,
                         .wantGrowHorizontal = true,
-                        .cornerRadius = 10
+                        .cornerRadius = 10,
+                        .name = "panel"
                     }
                 ),
                 createElement(
