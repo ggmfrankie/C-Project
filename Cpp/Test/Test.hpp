@@ -97,7 +97,7 @@ namespace awesome_shit::jej {
 
                 return "toolarge"; // placeholder
             };
-            return os << static_cast<int>(d);
+            return os << to_words(d);
         }
     };
 }
