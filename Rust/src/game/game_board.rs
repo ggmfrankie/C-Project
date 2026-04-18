@@ -43,11 +43,15 @@ impl GameBoard {
     pub fn merge_horizontal(&mut self, x:i32, y:i32, dir:i32) {
         let mut column:i32 = if dir == -1 { (self.board[0].len() - 1) as i32 } else { 0 };
 
-        let prev:i32 = -1;
-        for row in self.board {
-            for _ in 0..4 {
-                let curr = row[column as usize];
-
+        for row in &mut self.board {
+            let mut prev: Option<u32> = None;
+            for i in 0..4 {
+                let mut curr = &mut row[column as usize];
+                if *curr == 0 {
+                    *curr = prev;
+                    if i != 0 {}
+                }
+                if curr == prev
                 column += dir;
             }
 
