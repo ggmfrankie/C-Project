@@ -48,10 +48,8 @@ impl GameBoard {
             for i in 0..4 {
                 let mut curr = &mut row[column as usize];
                 if *curr == 0 {
-                    *curr = prev;
                     if i != 0 {}
                 }
-                if curr == prev
                 column += dir;
             }
 
