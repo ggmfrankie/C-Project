@@ -46,7 +46,7 @@ GLFWwindow* initWindow(const int width, const int height, const char* name) {
     return window;
 }
 
-void GUIRenderer_init(Renderer *renderer) {
+void Renderer_init(Renderer *renderer) {
     //ComputeShader_createUniform(&renderer->computeShader, ("dataSize"));
     //ComputeShader_createUniform(&renderer->computeShader, ("thickness"));
     //ComputeShader_update(&renderer->computeShader, graphingFunction);
@@ -57,7 +57,7 @@ void GUIRenderer_init(Renderer *renderer) {
 }
 
 
-void beginScissor(const Element* e, const int screenHeight) {
+static void beginScissor(const Element* e, const int screenHeight) {
     glEnable(GL_SCISSOR_TEST);
 
     const int x = e->dims.worldPos.x;
@@ -68,7 +68,7 @@ void beginScissor(const Element* e, const int screenHeight) {
     glScissor(x, y, w, h);
 }
 
-void endScissor() {
+static void endScissor() {
     glDisable(GL_SCISSOR_TEST);
 }
 
@@ -216,25 +216,23 @@ static Vec2i updateLayout(Element* element, const Vec2i parentCursor, const Vec2
     dims->worldWidth = max(dims->worldWidth, extendRight + padding.right);
     dims->worldHeight = max(dims->worldHeight, extendDown + padding.down);
 
-    //TODO fix
-    bool dirty = false;
+    //TODO fi
+
     for (int i = 0; i < numGrowingElements; i++) {
         Element* child = elements[i];
         if (child->flags.wantGrowHorizontal) {
             const int newWidth = dims->worldWidth - padding.left - padding.right;
             if (newWidth == child->dims.width) continue;
-            child->dims.width = newWidth;
-            dirty = true;
+            child->dims.worldWidth = newWidth;
         }
         if (child->flags.wantGrowVertical) {
             const int newHeight = dims->worldHeight - padding.up - padding.down;
             if (newHeight == child->dims.height) continue;
-            child->dims.height = newHeight;
-            dirty = true;
+            child->dims.worldHeight = newHeight;
         }
     }
-    if (dirty) return updateLayout(element, parentCursor, parentPos, font);
 
+    //if (dirty) return updateLayout(element, parentCursor, parentPos, font);
 
     return (Vec2i){dims->worldWidth, dims->worldHeight};
 }

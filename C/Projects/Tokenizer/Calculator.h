@@ -5,6 +5,7 @@
 #ifndef C_CALCULATOR_H
 #define C_CALCULATOR_H
 
-void runParser();
+void Calculator_runParserTest();
+double Calculator_parseMathExpression(const char* input);
 
 #endif //C_CALCULATOR_H

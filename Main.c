@@ -16,13 +16,14 @@
 #include "C/Projects/Chess/ChessGame.h"
 #include "C/Projects/ChessNewandImproved/ChessBetter2.h"
 #include "C/Projects/Tokenizer/Calculator.h"
-#define WINADAPT
-#ifndef WINADAPT
+
+#if 0
 int main(){
     SetConsoleOutputCP(CP_UTF8);
     //startEngine(chess_createChessBoard);
     //startEngine(generateTestGUI);
-    startEngine(createChessGUI);
+    //startEngine(createChessGUI);
+    Calculator_runParserTest();
 
     return 0;
 }

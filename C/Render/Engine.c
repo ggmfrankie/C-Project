@@ -54,7 +54,7 @@ void gui_init(GLFWwindow* window, const int width, const int height, void (*gene
 
     g_Renderer = newGUIRenderer(window, width, height, "ARIAL.TTF");
 
-    GUIRenderer_init(&g_Renderer);
+    Renderer_init(&g_Renderer);
     initElements();
 
     generateGUI(g_Renderer.guiRoot);
@@ -122,6 +122,7 @@ void gui_setCornerRadius(const char* name, const int radius) {
 
 void gui_processDebug() {
     const Element* bar = getElement("panel");
+    bar = nullptr;
     if (bar) {
         only_every(
         printf("World pos is: %i, %i, Relative pos is: %i, %i\n dims = %i, %i, worldDims = %i, %i\n",

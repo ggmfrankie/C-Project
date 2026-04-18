@@ -30,7 +30,7 @@ typedef struct Renderer {
 } Renderer;
 
 Renderer newGUIRenderer(GLFWwindow* window, int width, int height, char *fontFile);
-void GUIRenderer_init(Renderer *renderer);
+void Renderer_init(Renderer *renderer);
 
 void Renderer_render(const Renderer *renderer);
 void Renderer_updateLayout(const Renderer *renderer);

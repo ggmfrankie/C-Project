@@ -477,8 +477,7 @@ static void runMarking(const ChessPiece piece, const int row, const int column, 
     markerFun[abs(piece)](sig(piece), row, column, type);
 }
 
-static void resetBoard(void* nix) {
-
+static void resetBoard(void*) {
     turn = boardDirection ? 1 : -1;
     turnPosCanCastle = true;
     turnNegCanCastle = true;
@@ -488,7 +487,6 @@ static void resetBoard(void* nix) {
     setActive(getElement("end screen"), false);
 
     syncGui();
-
 }
 
 static Vec2i getPosition(const Element* element) {
@@ -499,7 +497,7 @@ static Vec2i getPosition(const Element* element) {
     };
 }
 
-static void closeProgram(void* nix) {
+static void closeProgram(void*) {
     exit(69);
 }
 
@@ -598,14 +596,13 @@ static void setUpPiecesForTest() {
 static void syncGui() {
     for (int i = 0; i < 8; i++) {
         for (int ii = 0; ii < 8; ii++) {
-
             gui_setTexture(pieceSlots[i][ii], getTextureForPiece(board[i][ii].piece));
 
             Vec3f d = pieceSlots[i][ii]->parentElement->visuals.defaultColor;
             Vec3f defaultColor = (Vec3f){d.x,d.y,d.z};
             Vec3f color = board[i][ii].isMarked ? Vec3f_Add(COLOR_DARKYELLOW, Vec3f_Mul(defaultColor, 0.2f)) : defaultColor;
             Element_setColor(pieceSlots[i][ii]->parentElement, color);
-            }
+        }
     }
 }
 
@@ -687,7 +684,6 @@ static void createChessBoard(Element* root) {
                     .onUpdate = updateColorRainbow,
                     .width = 400,
                     .height = 400,
-                    .draggable = true,
                     .fixedWidth = true,
                     .fixedHeight = true,
                     .padding = {10,10,10,10}
