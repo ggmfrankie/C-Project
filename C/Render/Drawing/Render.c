@@ -144,7 +144,7 @@ void Renderer_updateLayout(const Renderer *renderer) {
 }
 
 
-//TODO maybe pass available size to the child element
+//TODO maybe pass available size to the child element or maybe change the layout function if the element has fixed width?
 
 // @brief traverses the gui_element tree and updates positions and dimensions of children and then parents
 static Vec2i updateLayout(Element* element, const Vec2i parentCursor, const Vec2i parentPos, const Font* font) {
