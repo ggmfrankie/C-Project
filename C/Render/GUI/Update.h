@@ -2,8 +2,8 @@
 // Created by ertls on 02.03.2026.
 //
 
-#ifndef MIXEDPROJECT_GUIUPDATETASK_H
-#define MIXEDPROJECT_GUIUPDATETASK_H
+#pragma once
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -14,7 +14,7 @@ typedef struct {
     GuiUpdate func;
     void *userdata;
     bool isBlocked;
-} gui_Update;
+} GUI_Update;
 
 void gui_pushUpdate(GuiUpdate gt, void* data);
 void gui_popUpdate();
@@ -22,4 +22,3 @@ void gui_popUpdate();
 #ifdef __cplusplus
     }
 #endif
-#endif //MIXEDPROJECT_GUIUPDATETASK_H

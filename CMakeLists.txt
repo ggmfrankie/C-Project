@@ -208,6 +208,7 @@ add_executable(C-Project
         Dependencies/RustGame/TFE.h
         C/Projects/TFE/TFE.c
         C/Projects/TFE/TFE.h
+        C/GuiTypes.h
 
 )
 target_compile_definitions(C-Project PRIVATE

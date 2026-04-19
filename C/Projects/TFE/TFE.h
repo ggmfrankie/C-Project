@@ -3,5 +3,7 @@
 //
 
 #pragma once
+struct Element;
 
 void TFE_run();
+void TFE_createGUI(struct Element* root);

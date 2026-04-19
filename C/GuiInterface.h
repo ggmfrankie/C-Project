@@ -8,6 +8,8 @@
 extern "C" {
 #endif
 #include <GLFW/glfw3.h>
+#include "GuiTypes.h"
+
 typedef struct {
     GLFWkeyfun keyCallback;
     GLFWcharfun charCallback;
@@ -16,7 +18,7 @@ typedef struct {
 
 } GUI_callbackFunctions;
 
-struct Element;
+typedef void (*GUI_onKeyPressAction)(int key, int scancode, int action, int mods);
 
     void gui_init(GLFWwindow* window, int width, int height, void (*generateGUI)(Element* guiRoot));
 
@@ -38,6 +40,9 @@ struct Element;
     void gui_setColor(const char* name, float r, float g, float b);
     void gui_resetColor(const char* name);
     void gui_setCornerRadius(const char* name, int radius);
+    void gui_onKeyPressCallback(GUI_onKeyPressAction action);
+
+    bool gui_getActive(const char* name);
 
     void gui_processDebug();
 

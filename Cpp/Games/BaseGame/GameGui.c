@@ -4,11 +4,10 @@
 
 #include "GameGui.h"
 
-#include "Projects/Test/TestGUI.h"
 #include "Render/GUI/CallbackFunctions.h"
 #include "GuiTasks.hpp"
-#include "GuiInterface.h"
 #include "Projects/Chess/ChessGame.h"
+#include "Projects/TFE/TFE.h"
 
 
 void quitTask(void*) {
@@ -107,6 +106,15 @@ void generateMainMenuGui(Element* guiRoot) {
                 .cornerRadius = 10
             }),
             createElement((ElementSettings){
+                .text = "Start 2048",
+                .padding = {10,10,10,10},
+                .color = {0.88f, 0.88f, 0.91f},
+                .onHover = defaultHoverFun,
+                .onClick = runTaskFun,
+                .task = {TFE_gameCreate},
+                .cornerRadius = 10
+            }),
+            createElement((ElementSettings){
                 .text = "Quit",
                 .padding = {10,10,10,10},
                 .color = {0.88f, 0.88f, 0.91f},
@@ -125,4 +133,5 @@ void generateGUI(Element* guiRoot) {
     generateDebugGui(guiRoot);
     generateMainMenuGui(guiRoot);
     createChessGUI(guiRoot);
+    TFE_createGUI(guiRoot);
 }

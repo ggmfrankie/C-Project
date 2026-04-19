@@ -1,41 +1,31 @@
 //
 // Created by Stefan on 28.10.2025.
 //
-
-#ifndef C_GUIELEMENT_H
-#define C_GUIELEMENT_H
-#include <stdbool.h>
-
-
+#pragma once
+#include "GuiTypes.h"
 #include "Tasks.h"
-#include "../Drawing/TextDisplaying.h"
-#include "../GUI/Texture.h"
+
 #include "../../Utils/HashMap.h"
 #include "../../Utils/Vector.h"
 
-struct Renderer;
-typedef Renderer Renderer;
-struct Element;
-typedef Element Element;
-
-typedef struct {
+typedef struct Padding {
     int left;
     int up;
     int right;
     int down;
 } Padding;
 
-typedef enum {
+typedef enum PositionMode {
     POS_FIT = 0,
     POS_ABSOLUTE = 1,
 } PositionMode;
 
-typedef enum {
+typedef enum LayoutDirection {
     L_down,
     L_right
 } LayoutDirection;
 
-typedef enum {
+typedef enum ElementType {
     t_defaultElement,
     t_slider,
     t_textField
@@ -115,7 +105,7 @@ ARRAY_LIST(Element, Element)
 
 HASH_MAP(Element, char*, Element*)
 
-typedef struct {
+typedef struct ElementSettings {
     char* name;
     Vec2i pos;
     PositionMode posMode;
@@ -206,4 +196,3 @@ Element *guiAddElement(
 
 Element *createElement(ElementSettings es);
 Element *createTextFieldElement( ElementSettings elementSettings, bool (*onEnterCallback)(Element* element, Renderer *renderer));
-#endif //C_GUIELEMENT_H

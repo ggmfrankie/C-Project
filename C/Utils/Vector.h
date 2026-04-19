@@ -4,7 +4,6 @@
 
 #ifndef C_VECTOR_H
 #define C_VECTOR_H
-#include <stdbool.h>
 
 #include "../Utils/ArrayList.h"
 #include "../Utils/SimpleArray.h"

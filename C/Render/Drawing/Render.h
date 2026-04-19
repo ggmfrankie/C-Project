@@ -7,7 +7,6 @@
 #define C_RENDER_H
 
 #include "../ComputeShader.h"
-#include "../GUI/GuiElement.h"
 #include "../Shader.h"
 #include "../../../Dependencies/include/GLFW/glfw3.h"
 #include "TextDisplaying.h"

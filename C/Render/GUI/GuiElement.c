@@ -317,11 +317,15 @@ Element *createElement(const ElementSettings es) {
     );
 }
 
-Element* addChildrenAsGrid(const ElementSettings parentData, const ElementSettings es, const int numX, const int numY) {
-    return nullptr;
+static Element* defaultGenerator(int, int, ElementSettings es) {
+    return createElement(es);
 }
 
-Element* addChildrenAsGridWithGenerator(const ElementSettings parentData, ElementSettings es, const int numX, const int numY, Element* (*generateElement)(int row, int col, ElementSettings)) {
+Element* addChildrenAsGrid(const ElementSettings parentData, const ElementSettings es, const int numX, const int numY) {
+    return addChildrenAsGridWithGenerator(parentData, es, numX, numY, defaultGenerator);
+}
+
+Element* addChildrenAsGridWithGenerator(const ElementSettings parentData, ElementSettings es, const int numX, const int numY, Element* (*generateElement)(int, int, ElementSettings)) {
     Element* parent = createElement(parentData);
     const int childWidth = parent->dims.width/numX;
     const int childHeight = parent->dims.height/numY;
@@ -334,8 +338,8 @@ Element* addChildrenAsGridWithGenerator(const ElementSettings parentData, Elemen
 
     for (int i = 0; i < numX; i++) {
         for (int ii = 0; ii < numY; ii++) {
-            es.pos.x = childWidth * i + parent->padding.left;
-            es.pos.y = childHeight * ii + parent->padding.up;
+            es.pos.x = (parentData.childGap + childWidth) * i + parent->padding.left;
+            es.pos.y = (parentData.childGap + childHeight) * ii + parent->padding.up;
             addChildElements(parent, generateElement(i, ii, es));
         }
     }

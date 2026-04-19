@@ -46,3 +46,7 @@ extern "C" void Engine_changeFOV(void* FOV) {
 extern "C" void update_chessGame(void*) {
     gui_setActive("start screen", true);
 }
+
+extern "C" void TFE_gameCreate(void*) {
+    gui_setActive("TFE_board", true);
+}

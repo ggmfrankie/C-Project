@@ -6,7 +6,7 @@
 
 #define UPDATE_QUEUE_MAX 64
 
-gui_Update updateQueue[UPDATE_QUEUE_MAX];
+GUI_Update updateQueue[UPDATE_QUEUE_MAX];
 int updateHead = 0;
 int updateTail = 0;
 

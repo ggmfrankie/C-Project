@@ -1,9 +1,8 @@
 //
 // Created by Stefan on 10.10.2025.
 //
+#pragma once
 
-#ifndef C_SHADER_H
-#define C_SHADER_H
 #include "../Utils/Map.h"
 #include "../Utils/HashMap.h"
 #include "../Utils/CString.h"
@@ -57,4 +56,3 @@ String readShaderFile(const String *fileName);
 int createShader(const GLchar** shaderSource, int shaderType, int programId);
 
 extern ShaderFunction Shaders;
-#endif //C_SHADER_H

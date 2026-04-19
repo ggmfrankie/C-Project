@@ -1,11 +1,10 @@
 //
 // Created by Stefan on 29.10.2025.
 //
+#pragma once
 
-#ifndef C_GRAPHINGSHADER_H
-#define C_GRAPHINGSHADER_H
 #include "Shader.h"
-#include "GUI/Texture.h"
+#include "GuiTypes.h"
 #include "../../Dependencies/include/glad/gl.h"
 
 typedef struct ComputeShader {
@@ -23,6 +22,3 @@ ComputeShader newComputeShader(Basic_Texture *texture, int size);
 void ComputeShader_update(const ComputeShader *computeShader, double (*func)(double x));
 void ComputeShader_createUniform(ComputeShader *shader, const char* name);
 void ComputeShader_run(const ComputeShader *computeShader);
-
-
-#endif //C_GRAPHINGSHADER_H

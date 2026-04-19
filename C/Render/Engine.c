@@ -3,21 +3,18 @@
 //
 #include "Engine.h"
 
-#include <math.h>
 #include <windows.h>
 
 #include "GUI/GuiElement.h"
 #include "Drawing/Render.h"
 #include "GUI/CallbackFunctions.h"
 #include "../Extern/Informatik/Spannungsteiler_A3.h"
-#include "../Utils/Network.h"
 
-#include "../Utils/TimeMeasurenments.h"
 #include "GUI/GuiElementData.h"
 
-#include "../GuiInterface.h"
 #include "GUI/Update.h"
 #include "Utils/Makros.h"
+#include "Render/Drawing/TextDisplaying.h"
 
 #define WIDTH 4096
 #define HEIGHT 600
@@ -26,12 +23,20 @@ pthread_mutex_t guiMutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t  guiInitCond = PTHREAD_COND_INITIALIZER;
 pthread_t workerThreadID;
 
+typedef void (*GUI_onKeyPressAction)(int key, int scancode, int action, int mods);
+
+typedef struct {
+    GUI_onKeyPressAction onKeyPress;
+} UserCallbacks;
+
 bool guiInitialized = false;
 Renderer g_Renderer;
+UserCallbacks g_Callbacks;
 
 static void updateState(Renderer *renderer);
 static bool updateStateRecursively(Element *element, Renderer *renderer);
 static bool dragElement(const Renderer *renderer);
+void gui_processDebug();
 
 static void threadExecute() {
     do {
@@ -121,8 +126,8 @@ void gui_setCornerRadius(const char* name, const int radius) {
 }
 
 void gui_processDebug() {
+    return;
     const Element* bar = getElement("panel");
-    bar = nullptr;
     if (bar) {
         only_every(
         printf("World pos is: %i, %i, Relative pos is: %i, %i\n dims = %i, %i, worldDims = %i, %i\n",
@@ -137,6 +142,14 @@ void gui_processDebug() {
            ),
         100);
     }
+}
+
+void gui_onKeyPressCallback(GUI_onKeyPressAction action) {
+    g_Callbacks.onKeyPress = action;
+}
+
+bool gui_getActive(const char* name) {
+    return getElement(name)->flags.isActive;
 }
 
 //TODO
@@ -155,11 +168,11 @@ void startEngine(void (*generateGUI)(Element* guiRoot)) {
 
     //initSockets();
 
-    glfwSetFramebufferSizeCallback(g_Renderer.window, gui_resizeCallback);
-    glfwSetCursorPosCallback(g_Renderer.window, gui_cursorPositionCallback);
+    //glfwSetFramebufferSizeCallback(g_Renderer.window, gui_resizeCallback);
+    //glfwSetCursorPosCallback(g_Renderer.window, gui_cursorPositionCallback);
 
-    glfwSetCharCallback(g_Renderer.window, gui_charCallback);
-    glfwSetKeyCallback(g_Renderer.window, gui_keyCallback);
+    //glfwSetCharCallback(g_Renderer.window, gui_charCallback);
+    //glfwSetKeyCallback(g_Renderer.window, gui_keyCallback);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -269,6 +282,7 @@ void gui_charCallback(GLFWwindow* window, const unsigned int codepoint) {
 }
 
 void gui_keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+    g_Callbacks.onKeyPress(key, scancode, action, mods);
     if (focusedElement == NULL || focusedElement->type == t_defaultElement) return;
     if (key == GLFW_KEY_ESCAPE) {
         focusedElement = nullptr;
@@ -324,9 +338,8 @@ Vec2i getWindowSize() {
     return windowSize;
 }
 
-Font* getFont() {
-    Font* font = &g_Renderer.font;
-    return font;
+Font *getFont() {
+    return &g_Renderer.font;
 }
 
 double graphingFunction(const double x) {

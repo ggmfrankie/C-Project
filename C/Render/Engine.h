@@ -2,13 +2,12 @@
 // Created by Stefan on 10.10.2025.
 //
 
-#ifndef C_ENGINE_H
-#define C_ENGINE_H
-#ifdef __cplusplus
-extern "C" {
-#endif
+#pragma once
+
 #include <pthread.h>
-#include "GUI/GuiElement.h"
+
+#include "Utils/Vector.h"
+#include "GuiTypes.h"
 
 extern pthread_mutex_t guiMutex;
 extern pthread_cond_t  guiInitCond;
@@ -19,9 +18,5 @@ Vec2i getMousePos();
 Vec2i getWindowSize();
 Font* getFont();
 double graphingFunction(double x);
-void* workerThread(void* args);
 
-#ifdef __cplusplus
-    }
-#endif
-#endif //C_ENGINE_H
+

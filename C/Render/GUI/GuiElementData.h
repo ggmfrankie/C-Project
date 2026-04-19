@@ -2,11 +2,12 @@
 // Created by Stefan on 16.12.2025.
 //
 
-#ifndef C_GUIELEMENTDATA_H
-#define C_GUIELEMENTDATA_H
+#pragma once
+
 #include <pthread.h>
 
 #include "../../Utils/CString.h"
+
 struct Element;
 struct Renderer;
 
@@ -40,5 +41,3 @@ typedef struct {
 
     bool (*onEnterCallback)(struct Element* element, struct Renderer *renderer);
 } TextFieldData;
-
-#endif //C_GUIELEMENTDATA_H

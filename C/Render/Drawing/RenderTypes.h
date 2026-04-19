@@ -6,7 +6,7 @@
 #define MIXEDPROJECT_RENDERTYPES_H
 #include "Utils/Vector.h"
 
-typedef struct {
+typedef struct GuiVertex {
     Vec2f pos;
     Vec2f uv;
     int ID;
@@ -14,7 +14,7 @@ typedef struct {
     char _pad[8];
 } GuiVertex;
 
-typedef struct {
+typedef struct InstanceData {
     float brightness;
     float transparency;
     int   hasTexture;
