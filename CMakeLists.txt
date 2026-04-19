@@ -205,6 +205,9 @@ add_executable(C-Project
         Cpp/Render/Objects/Objects2D/Physics/PhysicsFactory2D.hpp
         Cpp/Render/Objects/Objects2D/Render/RenderObjectRef2D.hpp
         Cpp/Engine/Core/PhysixBox2D/Collision.hpp
+        Dependencies/RustGame/TFE.h
+        C/Projects/TFE/TFE.c
+        C/Projects/TFE/TFE.h
 
 )
 target_compile_definitions(C-Project PRIVATE
@@ -226,6 +229,20 @@ set_target_properties(Jolt PROPERTIES
 
 find_package(TBB REQUIRED)
 
+add_library(RustGame SHARED IMPORTED)
+
+set_target_properties(RustGame PROPERTIES
+        IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/Dependencies/RustGame/game.dll"
+        IMPORTED_IMPLIB   "${CMAKE_SOURCE_DIR}/Dependencies/RustGame/game.dll.lib"
+        INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_SOURCE_DIR}/Dependencies/RustGame"
+)
+
+add_custom_command(TARGET C-Project POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${CMAKE_SOURCE_DIR}/Dependencies/RustGame/game.dll"
+        $<TARGET_FILE_DIR:C-Project>
+)
+
 target_link_libraries(C-Project
         glfw
         opengl32     # OpenGL (needed by GLFW)
@@ -237,4 +254,5 @@ target_link_libraries(C-Project
         Jolt
         winpthread
         TBB::tbb
+        RustGame
 )
