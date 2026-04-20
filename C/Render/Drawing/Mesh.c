@@ -7,7 +7,10 @@
 #include <math.h>
 
 #include <bemapiset.h>
+
+#include "RenderTypes.h"
 #include "Render/GUI/GuiElement.h"
+#include "Render/GUI/Texture.h"
 #include "Utils/Vector.h"
 
 inline float deg2rad(const float d) { return d * (M_PI / 180.0f); }
@@ -51,7 +54,7 @@ static struct ArcInfo Mesh_triangulate(const Vec2f corner, const float radius, G
     return (struct ArcInfo){startIndex, *vt-1, cornerIndex};
 }
 
-void Mesh_connectFans(struct ArcInfo* a1, struct ArcInfo* a2, int* indices, int* id) {
+void Mesh_connectFans(const struct ArcInfo* a1, const struct ArcInfo* a2, int* indices, int* id) {
     indices[(*id)++] = a1->end;
     indices[(*id)++] = a1->corner;
     indices[(*id)++] = a2->start;

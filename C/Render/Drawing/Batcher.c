@@ -1,6 +1,7 @@
 #include "glad/gl.h"
 #include "Batcher.h"
 #include "../GUI/GuiElement.h"
+#include "RenderTypes.h"
 //
 // Created by ertls on 04.03.2026.
 //
@@ -76,7 +77,7 @@ void uploadBatchedQuads(const GuiVertex *vertices, const int vt, const int* indi
 }
 
 static InstanceData instanceFromElement(const Element* e) {
-    InstanceData out;
+    InstanceData out = {};
     out.brightness      = e->visuals.brightness;
     out.worldPos        = toVec2f(e->dims.worldPos);
     out.color           = e->visuals.color;

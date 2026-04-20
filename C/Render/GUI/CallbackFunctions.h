@@ -2,10 +2,9 @@
 // Created by Stefan on 12.11.2025.
 //
 
-#ifndef C_CALLBACKFUNCTIONS_H
-#define C_CALLBACKFUNCTIONS_H
-#include "GuiElement.h"
-#include "../../../Dependencies/include/GLFW/glfw3.h"
+#pragma once
+#include "GuiTypes.h"
+
 
 bool dragFun(Element *element, const Renderer *renderer);
 bool runTaskFun(Element *element, Renderer *renderer);
@@ -31,5 +30,3 @@ bool textField_onClick(Element *element, Renderer *renderer);
 .elementData = (color),\
 .onHover = changeColorOnHoverFunction,
 
-
-#endif //C_CALLBACKFUNCTIONS_H

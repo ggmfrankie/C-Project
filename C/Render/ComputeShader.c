@@ -7,6 +7,7 @@
 #include <math.h>
 
 #include "Shader.h"
+#include "Render/GUI/Texture.h"
 #include "../Utils/CString.h"
 #include "../Utils/DataStructures.h"
 #include "../Utils/Vector.h"
@@ -61,7 +62,7 @@ ComputeShader newComputeShader(Basic_Texture *texture, const int size) {
     char infoLog[512];
     glGetProgramiv(programId, GL_LINK_STATUS, &success);
     if (!success) {
-        glGetProgramInfoLog(programId, 512, NULL, infoLog);
+        glGetProgramInfoLog(programId, 512, nullptr, infoLog);
         printf("Shader Program Link Error:\n%s\n", infoLog);
     }
     glDeleteShader(graphingId);

@@ -22,6 +22,10 @@ static int f(int x) {
     return x + x;
 }
 
+inline void javalike() {
+#define public public:
+}
+
 #include <algorithm>
 #include <iostream>
 #include <thread>
@@ -103,7 +107,8 @@ namespace awesome_shit::jej {
 }
 
 inline int test() {
-
+#define let auto
+    #define cauto const auto
     namespace standard = std;
 
     auto& c_output = standard::cout;
@@ -112,16 +117,15 @@ inline int test() {
     int* ptr = nullptr;
     int** o = &ptr;
     int* zeroPtr = reinterpret_cast<int *>(o);
-    int zero = *zeroPtr;
+    cauto zero = *zeroPtr;
 
 #define IotaARGS Numbers.begin(), Numbers.end(), zero
-
-    int one = exp(zero);
-    int two = one << one;
-    int ten = (two*two*two) +two;
+    const int one = standard::exp(zero);
+    let two = one << one;
+    let ten = (two*two*two) +two;
 
     int oneHundred = ten*ten;
-    auto cursed_callable = callable_wrapper{
+    let cursed_callable = callable_wrapper{
         [](std::ostream& os) -> std::ostream& {
             return os << "cursed\n";
         }
@@ -147,6 +151,7 @@ inline int test() {
 
     U u = {{ 1 }};
 
-    X *p = new (&u.x) X {2};
+    let *p = new (&u.x) X {2};
     return 0;
 #include "ClosingBrace.cpp"
+

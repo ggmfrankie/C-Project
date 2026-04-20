@@ -46,7 +46,6 @@ void GameEngine::loop() {
 }
 
 void GameEngine::init() {
-    JPH::RegisterDefaultAllocator();
     JPH::Factory::sInstance = new JPH::Factory();
     JPH::RegisterTypes();
     game.preInit({screen.getInput(), screen, commandRegistry});

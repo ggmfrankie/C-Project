@@ -2,15 +2,11 @@
 // Created by Stefan on 10.10.2025.
 //
 
-
-#ifndef C_RENDER_H
-#define C_RENDER_H
-
+#pragma once
 #include "../ComputeShader.h"
 #include "../Shader.h"
 #include "../../../Dependencies/include/GLFW/glfw3.h"
 #include "TextDisplaying.h"
-#include "../GUI/Texture.h"
 
 typedef struct Renderer {
     int screenWidth;
@@ -38,4 +34,3 @@ void Renderer_destroy(const Renderer *renderer);
 bool isMousePressed(GLFWwindow* window, int mouseButton);
 GLFWwindow* initWindow(int width, int height, const char* name);
 
-#endif //C_RENDER_H

@@ -209,6 +209,8 @@ add_executable(C-Project
         C/Projects/TFE/TFE.c
         C/Projects/TFE/TFE.h
         C/GuiTypes.h
+        Cpp/Test/Java.cpp
+        Cpp/Test/Java.hpp
 
 )
 target_compile_definitions(C-Project PRIVATE
@@ -228,7 +230,7 @@ set_target_properties(Jolt PROPERTIES
         IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/Dependencies/JoltPhysics/Build/MinGW_Debug/libJolt.a"
 )
 
-find_package(TBB REQUIRED)
+#find_package(TBB REQUIRED)
 
 add_library(RustGame SHARED IMPORTED)
 
@@ -254,6 +256,6 @@ target_link_libraries(C-Project
         GUI
         Jolt
         winpthread
-        TBB::tbb
+        #TBB::tbb
         RustGame
 )

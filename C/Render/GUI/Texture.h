@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "../../../Dependencies/include/glad/gl.h"
+
 #include "../../Utils/CString.h"
 #include "../../Utils/Vector.h"
 #include "../../Utils/HashMap.h"
@@ -19,7 +19,7 @@ typedef struct NinePatchData {
 typedef struct Basic_Texture {
     int width;
     int height;
-    GLuint ID;
+    uint32_t ID;
 
     NinePatchData npd;
 } Basic_Texture;
@@ -32,12 +32,12 @@ typedef struct Texture {
 HASH_MAP(AtlasTextures, char*, Texture);
 
 typedef struct TextureAtlas {
-    GLuint ID;
-    GLuint width, height;
+    uint32_t ID;
+    uint32_t width, height;
     Hashmap_AtlasTextures textures;
 } TextureAtlas;
 
-Basic_Texture newTexture(int width, int height, GLuint textureId);
+Basic_Texture newTexture(int width, int height, uint32_t textureId);
 
 Basic_Texture *newEmptyTexture(int width, int height);
 

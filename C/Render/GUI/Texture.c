@@ -8,6 +8,8 @@
 #include <stb/stb_image.h>
 #include <stb/stb_rect_pack.h>
 
+#include "glad/gl.h"
+
 #define MAX_ATLAS_TEXTURES 512
 
 typedef struct {

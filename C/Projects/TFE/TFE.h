@@ -3,7 +3,14 @@
 //
 
 #pragma once
-struct Element;
+#ifdef __cplusplus
+extern "C" {
+#endif
+#include "GuiTypes.h"
 
-void TFE_run();
-void TFE_createGUI(struct Element* root);
+void TFE_newGame();
+void TFE_createGUI(Element* root);
+
+#ifdef __cplusplus
+}
+#endif

@@ -7,25 +7,26 @@
 
 #include <stdio.h>
 
-#include "Render/GUI/CallbackFunctions.h"
+#include "GuiInterface.h"
 #include "Render/GUI/GuiElement.h"
 
 void* game = nullptr;
 
 static void TFE_onKeyPress(int key, int scancode, int action, int mods) {
-
+    puts("some key pressed");
 }
 
-void TFE_createGame() {
+void TFE_newGame() {
+    if (game) game_destroy(game);
     game = game_create();
-
+    gui_onKeyPressCallback(TFE_onKeyPress);
 }
 
 Element* TFE_createSquare(int, int, ElementSettings es) {
     return addChildElements(
         createElement(es),
         createElement((ElementSettings){
-            .text = "110",
+            .text = "test",
             .pos = {20, 30},
             .posMode = POS_ABSOLUTE,
             .transparency = 1.0f
@@ -34,6 +35,7 @@ Element* TFE_createSquare(int, int, ElementSettings es) {
 }
 
 void TFE_createGUI(Element* root) {
+
     addChildElements(root,
         addChildElements(
             createElement((ElementSettings){
@@ -58,7 +60,6 @@ void TFE_createGUI(Element* root) {
                     .padding = {10,10,10,10},
                     .childGap = 10
                 },
-
                 (ElementSettings){
                     .color = {0.3, 0.3, 0.3},
                     .cornerRadius = 20

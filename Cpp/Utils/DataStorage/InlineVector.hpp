@@ -2,8 +2,7 @@
 // Created by ertls on 23.02.2026.
 //
 
-#ifndef MIXEDPROJECT_ARRAYLIST_H
-#define MIXEDPROJECT_ARRAYLIST_H
+#pragma once
 
 #include <cstdlib>
 #include <iostream>
@@ -11,7 +10,7 @@
 #include "../Math/ggmdef.hpp"
 
 namespace ggm {
-    template <typename T, u64 InlineCapacity>
+    template <typename T, u64 InlineCapacity = 0>
     class InlineVector {
     public:
         explicit InlineVector(u64 capacity = InlineCapacity) {
@@ -234,5 +233,3 @@ namespace ggm {
         const_reverse_iterator crend()   const noexcept { return const_reverse_iterator(begin()); }
     };
 } // ggm
-
-#endif //MIXEDPROJECT_ARRAYLIST_H

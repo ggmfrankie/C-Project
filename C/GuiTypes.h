@@ -10,3 +10,5 @@ typedef struct Basic_Texture Basic_Texture;
 typedef struct Texture Texture;
 typedef struct GUI_Update GUI_Update;
 typedef struct GuiVertex GuiVertex;
+typedef struct Renderer Renderer;
+typedef struct GLFWwindow GLFWwindow;

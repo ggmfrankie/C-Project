@@ -4,10 +4,14 @@
 
 #include "GameGui.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "Render/GUI/CallbackFunctions.h"
 #include "GuiTasks.hpp"
 #include "Projects/Chess/ChessGame.h"
 #include "Projects/TFE/TFE.h"
+#include "Render/GUI/GuiElement.h"
 
 
 void quitTask(void*) {

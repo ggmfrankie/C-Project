@@ -1,6 +1,8 @@
 //
 // Created by ertls on 16.02.2026.
 //
+#include "Dependencies/JoltPhysics/Jolt/Jolt.h"
+
 #include "Cpp/GameEngine.hpp"
 #include "Cpp/Games/BaseGame/BaseGame.hpp"
 #include "Games/Game2D/Game2D.hpp"
@@ -8,7 +10,6 @@
 
 #if 1
 int main() {
-    //return test();
     JPH::RegisterDefaultAllocator();
 
     Game::BaseGame game{};

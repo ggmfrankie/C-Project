@@ -7,6 +7,7 @@
 
 #include "../../Utils/HashMap.h"
 #include "../../Utils/Vector.h"
+#include "Render/Drawing/TextDisplaying.h"
 
 typedef struct Padding {
     int left;
@@ -17,11 +18,11 @@ typedef struct Padding {
 
 typedef enum PositionMode {
     POS_FIT = 0,
-    POS_ABSOLUTE = 1,
+    POS_ABSOLUTE
 } PositionMode;
 
 typedef enum LayoutDirection {
-    L_down,
+    L_down = 0,
     L_right
 } LayoutDirection;
 
@@ -66,11 +67,13 @@ typedef struct Element {
     } dims;
 
     struct {
-        float transparency;
-        float brightness;
         Texture texture;
+
         Vec3f color;
         Vec3f defaultColor;
+
+        float transparency;
+        float brightness;
     } visuals;
 
     int ID;

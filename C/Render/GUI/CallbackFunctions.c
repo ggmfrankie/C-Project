@@ -10,6 +10,7 @@
 #include "../../Utils/UtilityFun.h"
 #include <windows.h>
 
+#include "GuiElement.h"
 #include "../Engine.h"
 #include "Utils/DataStructures.h"
 

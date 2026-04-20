@@ -8,9 +8,10 @@
 #include <math.h>
 
 #include "Batcher.h"
-#include "../Engine.h"
+#include "RenderTypes.h"
 #include "../../Utils/Vector.h"
 #include "../GUI/CallbackFunctions.h"
+#include "Render/GUI/GuiElement.h"
 
 static void accumulateMeshes(Element *element, const Renderer *renderer, GuiVertex *vertices, int *vt, int *indices, int *id);
 static Vec2i updateLayout(Element* element, Vec2i parentCursor, Vec2i parentPos, const Font* font);

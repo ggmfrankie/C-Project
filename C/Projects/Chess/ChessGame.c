@@ -11,6 +11,7 @@
 #include <psdk_inc/_socket_types.h>
 
 #include "GuiInterface.h"
+#include "Render/GUI/GuiElement.h"
 #define COOL_COLOR (Vec3f){.2, .3, .3}
 #define COLOR_WHITE (Vec3f){1, 1, 1}
 #define COLOR_BLACK (Vec3f){0, 0, 0}

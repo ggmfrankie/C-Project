@@ -10,7 +10,7 @@ extern "C" {
 
 typedef void (*GuiUpdate)(void* userData);
 
-typedef struct {
+typedef struct GUI_Update {
     GuiUpdate func;
     void *userdata;
     bool isBlocked;

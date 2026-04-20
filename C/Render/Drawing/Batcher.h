@@ -2,10 +2,9 @@
 // Created by ertls on 04.03.2026.
 //
 
-#ifndef MIXEDPROJECT_BATCHER_H
-#define MIXEDPROJECT_BATCHER_H
-typedef struct Element Element;
-#include "RenderTypes.h"
+#pragma once
+
+#include "GuiTypes.h"
 
 #define MAX_GUI_VERTICES 163840
 #define MAX_GUI_INDICES 163840
@@ -13,5 +12,3 @@ typedef struct Element Element;
 void initBatchedRendering();
 void uploadBatchedQuads(const GuiVertex *vertices, int vt, const int* indices, int id);
 void uploadElementData(Element* element);
-
-#endif //MIXEDPROJECT_BATCHER_H

@@ -6,7 +6,7 @@
 
 #include <pthread.h>
 #include <stdarg.h>
-
+#include "Render/Drawing/TextDisplaying.h"
 #include "CallbackFunctions.h"
 #include "../Drawing/Render.h"
 #include "../Engine.h"
@@ -47,14 +47,14 @@ Element* newElement(const Vec2i pos, const int width, const int height) {
             .texture = {},
             .transparency = 0,
         },
-        .textElement = {.charQuads = Character_newList(16), .forceResize = false, .hasText = false, .pos = {}, .text = NULL, .textColor = {}, .textScale = 1.0f, .width = 0},
+        .textElement = {.charQuads = Character_newList(16), .textScale = 1.0f},
         .parentElement = nullptr,
         .childElements = ChildElements_newList(8),
         .padding = {0,0,0,0},
         .flags = {.isActive = true, .autoFit = true, .needsDeletion = true},
         .task = (Task){nullptr, nullptr},
         .childGap = 0,
-        .elementData = NULL,
+        .elementData = nullptr,
         .positionMode = POS_FIT,
         .layoutDirection = 0,
         .type = 0,

@@ -10,8 +10,10 @@
 #include <minwindef.h>
 #include <stb/stb_truetype.h>
 #include "Render.h"
+#include "RenderTypes.h"
 #include "../../Utils/DataStructures.h"
 #include "../../Utils/CString.h"
+#include "Render/GUI/GuiElement.h"
 #define FONT_ATLAS_SIZE 2048
 #define FONT_SIZE 32.0f
 

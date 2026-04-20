@@ -105,7 +105,9 @@ void gui_setActive(const char* name, const bool b) {
 }
 
 void gui_toggleVisible(const char* name) {
-    toggleVisible(getElement(name));
+    auto e = getElement(name);
+    if (!e) puts("no element found");
+    toggleVisible(e);
 }
 
 void gui_setText(const char* name, const char* text) {
@@ -282,7 +284,7 @@ void gui_charCallback(GLFWwindow* window, const unsigned int codepoint) {
 }
 
 void gui_keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-    g_Callbacks.onKeyPress(key, scancode, action, mods);
+    if (g_Callbacks.onKeyPress) { g_Callbacks.onKeyPress(key, scancode, action, mods);}
     if (focusedElement == NULL || focusedElement->type == t_defaultElement) return;
     if (key == GLFW_KEY_ESCAPE) {
         focusedElement = nullptr;

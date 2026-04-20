@@ -6,6 +6,7 @@
 #include "GameEngine.hpp"
 #include "GuiInterface.h"
 #include "../Scene/3D/Scene3D.hpp"
+#include "Projects/TFE/TFE.h"
 #include "Render/GUI/Update.h"
 
 
@@ -48,5 +49,6 @@ extern "C" void update_chessGame(void*) {
 }
 
 extern "C" void TFE_gameCreate(void*) {
+    TFE_newGame();
     gui_setActive("TFE_board", true);
 }
