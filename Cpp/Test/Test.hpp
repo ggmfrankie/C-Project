@@ -22,10 +22,6 @@ static int f(int x) {
     return x + x;
 }
 
-inline void javalike() {
-#define public public:
-}
-
 #include <algorithm>
 #include <iostream>
 #include <thread>

@@ -15,15 +15,20 @@
 
 using String = std::string;
 
+inline struct {
+    struct {
+        void println(String s = "");
+    } out;
+} System;
+
 Public interface IPrintable {
 
 };
 
-
 package spam {
     Public class Java {
-        public int a;
-        public String name;
+        private int a = 0;
+        private String name;
 
         public Java(String name) {
             this->name = name;
@@ -32,5 +37,18 @@ package spam {
         public String getName() {
             return this->name;
         }
+
+        public void print() {
+            System.out.println(name);
+        }
     };
 } // spam
+
+#undef package
+#undef public
+#undef private
+#undef Public
+#undef var
+#undef interface
+#undef extends
+#undef implements
