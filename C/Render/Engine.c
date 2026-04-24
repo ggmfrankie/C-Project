@@ -100,13 +100,12 @@ void gui_setTexture(Element* e, const char* name) {
 }
 
 void gui_setActive(const char* name, const bool b) {
-
     setActive(getElement(name), b);
 }
 
 void gui_toggleVisible(const char* name) {
-    auto e = getElement(name);
-    if (!e) puts("no element found");
+    const auto e = getElement(name);
+    if (!e){ puts("no element found"); return;}
     toggleVisible(e);
 }
 
@@ -131,7 +130,7 @@ void gui_processDebug() {
     return;
     const Element* bar = getElement("panel");
     if (bar) {
-        only_every(
+        only_every(100,
         printf("World pos is: %i, %i, Relative pos is: %i, %i\n dims = %i, %i, worldDims = %i, %i\n",
                bar->dims.worldPos.x,
                bar->dims.worldPos.y,
@@ -141,8 +140,8 @@ void gui_processDebug() {
                bar->dims.height,
                bar->dims.worldWidth,
                bar->dims.worldWidth
-           ),
-        100);
+           )
+        );
     }
 }
 
@@ -271,7 +270,7 @@ static bool updateStateRecursively(Element *element, Renderer *renderer) {
 }
 
 void gui_charCallback(GLFWwindow* window, const unsigned int codepoint) {
-    if (focusedElement == NULL || focusedElement->type == t_defaultElement) return;
+    if (focusedElement == nullptr || focusedElement->type == t_defaultElement) return;
 
     if (focusedElement->type == t_textField) {
         TextFieldData* tfd = focusedElement->elementData;

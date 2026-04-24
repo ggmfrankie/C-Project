@@ -278,7 +278,7 @@ void str_recalculateLength(String* string) {
 void str_delete(String* string){
     if (!string->content) return;
     if (string->isHeap)free(string->content);
-    string->content = NULL;
+    string->content = nullptr;
     string->length = 0;
     string->capacity = 0;
     string->isHeap = false;
@@ -330,7 +330,7 @@ List_String str_split(const String* string, const char *key) {
         if (current == key[j]) {
             j++;
             if (j == keyLength) {
-                strList.add(&strList, sb.toString(&sb));
+                String_ListAdd(&strList, sb.toString(&sb));
                 j = 0;
             }
         } else {
@@ -338,7 +338,7 @@ List_String str_split(const String* string, const char *key) {
             sb.add(&sb, current);
         }
     }
-    strList.add(&strList, sb.toString(&sb));
+    String_ListAdd(&strList, sb.toString(&sb));
     return strList;
 }
 

@@ -13,10 +13,6 @@ typedef struct {
     GLuint SSBO;
 } GraphicsData;
 
-struct asd {
-    InstanceData instanceData;
-};
-
 #define MAX_GUI_INSTANCES 81920
 
 static GraphicsData graphicsData;

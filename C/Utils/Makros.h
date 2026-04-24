@@ -15,7 +15,7 @@
 #define min(a, b) (((a) < (b)) ? (a) : (b))
 #define max(a, b) (((a) > (b)) ? (a) : (b))
 
-#define only_every(args, num) do {\
+#define only_every(num, args) do {\
     static int count = 0;\
     if (count++ >= (num)) {\
         {\

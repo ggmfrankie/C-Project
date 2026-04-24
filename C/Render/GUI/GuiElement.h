@@ -8,6 +8,7 @@
 #include "../../Utils/HashMap.h"
 #include "../../Utils/Vector.h"
 #include "Render/Drawing/TextDisplaying.h"
+#include "Utils/Network.h"
 
 typedef struct Padding {
     int left;
@@ -16,17 +17,17 @@ typedef struct Padding {
     int down;
 } Padding;
 
-typedef enum PositionMode {
+typedef enum PositionMode: byte {
     POS_FIT = 0,
     POS_ABSOLUTE
 } PositionMode;
 
-typedef enum LayoutDirection {
+typedef enum LayoutDirection: byte {
     L_down = 0,
     L_right
 } LayoutDirection;
 
-typedef enum ElementType {
+typedef enum ElementType: byte {
     t_defaultElement,
     t_slider,
     t_textField

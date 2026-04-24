@@ -257,7 +257,7 @@ Element *guiAddSimpleSlider(
     sliderPos.x = width/2;
     sliderPos.y = 0;
     Element* sliderElement = guiAddElement(nullptr, sliderPos, width, height, colorSlider, (Padding){10, 10, 10, 10}, 10, isSelected_Quad, hoverAndDragFun, sliderCallbackFun, (Task){}, NULL, true, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false, 0.0f, NULL, true, 0);
-    element->childElements.add(&element->childElements, sliderElement);
+    ChildElements_ListAdd(&element->childElements, sliderElement);
     element->elementData = sliderData;
     return element;
 }

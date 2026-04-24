@@ -19,14 +19,14 @@ typedef struct LinkedList_##name{\
     void (*delete_)(struct LinkedList_##name* list, unsigned int index);\
 } LinkedList_##name;\
 \
-static inline Node_##name* createNode_##name(type data){\
+inline Node_##name* createNode_##name(type data){\
     Node_##name* node = malloc(sizeof(Node_##name));\
     node->data = malloc(sizeof(type));\
     *node->data = data;\
     node->next = NULL;\
     return node;\
 }\
-static inline void addData_##name(LinkedList_##name* list, type data){\
+inline void addData_##name(LinkedList_##name* list, type data){\
     Node_##name* node = createNode_##name(data);\
     if(list->head == NULL){\
         list->head = node;\
@@ -40,7 +40,7 @@ static inline void addData_##name(LinkedList_##name* list, type data){\
     list->length++;\
 }\
 \
-static inline type* getDataAt_##name(LinkedList_##name* list, unsigned int index){\
+inline type* getDataAt_##name(LinkedList_##name* list, unsigned int index){\
     if(index >= list->length){\
         printf("Index was out of bounds");\
         exit(1);\
@@ -56,7 +56,7 @@ static inline type* getDataAt_##name(LinkedList_##name* list, unsigned int index
     return NULL;\
 }                                                                               \
 \
-static inline Node_##name* extractNode_##name(LinkedList_##name* list, unsigned int index){                \
+inline Node_##name* extractNode_##name(LinkedList_##name* list, unsigned int index){                \
     if(list->head == NULL || index >= list->length){                            \
         printf("List was not initialized or Index out of bounds");\
         exit(1);                                                                \
@@ -79,19 +79,19 @@ static inline Node_##name* extractNode_##name(LinkedList_##name* list, unsigned 
     return current;\
 }\
 \
-static inline type* pop_##name(LinkedList_##name* list, unsigned int index){\
+inline type* pop_##name(LinkedList_##name* list, unsigned int index){\
     Node_##name* lastNode = extractNode_##name(list, index);\
     type* data = lastNode->data;\
     free(lastNode);\
     return data;\
 }\
 \
-static inline void delete_##name(LinkedList_##name* list, unsigned int index){\
+inline void delete_##name(LinkedList_##name* list, unsigned int index){\
     Node_##name* node = extractNode_##name(list, index);\
     free(node->data);\
     free(node);\
 }\
-static inline LinkedList_##name newList_##name(){\
+inline LinkedList_##name newList_##name(){\
     return (LinkedList_##name){\
         .head = NULL,\
         .length = 0,\

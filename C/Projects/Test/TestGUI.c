@@ -5,7 +5,6 @@
 #include "TestGUI.h"
 
 #include "../../Render/GUI/GuiElement.h"
-#include "../../Extern/Informatik/Namensliste.h"
 #include "../../Render/GUI/CallbackFunctions.h"
 
 void generateTestGUI(Element *guiRoot) {
