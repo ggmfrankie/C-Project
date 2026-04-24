@@ -677,6 +677,8 @@ static void createChessBoard(Element* root) {
                     .childGap = 10,
                     .cornerRadius = 10,
                     .draggable = true,
+                    .wantGrowHorizontal = true,
+                    .wantGrowVertical = true
                 }
             ),
             addChildrenAsGridWithGenerator(

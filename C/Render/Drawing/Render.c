@@ -14,7 +14,7 @@
 #include "Render/GUI/GuiElement.h"
 
 static void accumulateMeshes(Element *element, const Renderer *renderer, GuiVertex *vertices, int *vt, int *indices, int *id);
-static Vec2i updateLayout(Element* element, Vec2i parentCursor, Vec2i parentPos, const Font* font);
+static Vec2i updateLayout(Element* self, Vec2i parentCursor, Vec2i remainingSpace, Vec2i parentPos, const Font* font);
 
 Element* createRootElement();
 
@@ -141,20 +141,21 @@ void Renderer_updateLayout(const Renderer *renderer) {
     root->dims.width = renderer->screenWidth;
     root->dims.height = renderer->screenHeight;
 
-    updateLayout(root, (Vec2i){0, 0}, (Vec2i){0, 0}, &renderer->font);
+    updateLayout(root, (Vec2i){0, 0}, (Vec2i){renderer->screenWidth, renderer->screenHeight},  (Vec2i){0, 0}, &renderer->font);
 }
 
-
 //TODO maybe pass available size to the child element or maybe change the layout function if the element has fixed width?
-
 // @brief traverses the gui_element tree and updates positions and dimensions of children and then parents
-static Vec2i updateLayout(Element* element, const Vec2i parentCursor, const Vec2i parentPos, const Font* font) {
-    if (!element || !element->flags.isActive) return (Vec2i){0,0};
-    const auto cb = &element->callbacks;
-    const auto dims = &element->dims;
-    if (cb->reset) cb->reset(element);
+static Vec2i updateLayout(Element* self, const Vec2i parentCursor, const Vec2i remainingSpace, const Vec2i parentPos, const Font* font) {
+    if (!self || !self->flags.isActive) return (Vec2i){0,0};
+    const auto cb = &self->callbacks;
+    const auto dims = &self->dims;
+    const auto padding = &self->padding;
+    const auto flags = &self->flags;
 
-    if (element->positionMode == POS_FIT) {
+    if (cb->reset) cb->reset(self);
+
+    if (self->positionMode == POS_FIT) {
         dims->pos.x = parentCursor.x;
         dims->pos.y = parentCursor.y;
     }
@@ -164,76 +165,64 @@ static Vec2i updateLayout(Element* element, const Vec2i parentCursor, const Vec2
     dims->worldWidth = dims->width;
     dims->worldHeight = dims->height;
 
-    auto cursor = (Vec2i){element->padding.left, element->padding.up};
-    const LayoutDirection layoutDirection = element->layoutDirection;
+    auto cursor = (Vec2i){padding->left, padding->up};
+    const LayoutDirection layoutDirection = self->layoutDirection;
 
-    int extendRight = element->padding.left;
-    int extendDown = element->padding.up;
+    int extendRight = self->padding.left;
+    int extendDown = self->padding.up;
 
-    const Padding padding = element->padding;
-
-    if (element->textElement.hasText) {
-        const int textW = padding.left + (int)element->textElement.width + padding.right;
-        const int textH = padding.up + (int)((float)(font->maxCharHeight) * element->textElement.textScale) + padding.down;
+    if (self->textElement.hasText) {
+        const int textW = padding->left + (int)self->textElement.width + padding->right;
+        const int textH = padding->up + (int)((float)(font->maxCharHeight) * self->textElement.textScale) + padding->down;
 
         dims->worldWidth  = max(dims->worldWidth ,  textW);
         dims->worldHeight = max(dims->worldHeight, textH);
     }
 
-    Element* elements[16];
-    int numGrowingElements = 0;
+    const Vec2i maxSpace = {
+        .x = flags->fixedWidth ? dims->worldWidth : self->flags.wantGrowHorizontal ? remainingSpace.x : 0,
+        .y = flags->fixedHeight ? dims->worldHeight : self->flags.wantGrowVertical ? remainingSpace.y : 0
+    };
 
-    for (int i = 0; i < element->childElements.size; i++) {
-        Element *child = element->childElements.content[i];
+    for (int i = 0; i < self->childElements.size; i++) {
+        Element *child = self->childElements.content[i];
+        Vec2i currSpace = {.x = maxSpace.x - cursor.x, .y = maxSpace.y - cursor.y};
 
-        Vec2i childDimensions = updateLayout(child, cursor, dims->worldPos, font);
+        Vec2i childDimensions = updateLayout(child, cursor, currSpace, dims->worldPos, font);
 
         // if current element has fixed dims, but child elements in the next row
-        if (element->flags.fixedWidth && cursor.x + childDimensions.x > dims->width) {
-            cursor.y = extendDown + element->childGap;
-            cursor.x = padding.left;
-            childDimensions = updateLayout(child, cursor, dims->worldPos, font);
+        // advance the cursor to the next column
+        if (flags->fixedWidth && cursor.x + childDimensions.x + padding->right > dims->width) {
+            cursor.y = extendDown + self->childGap;
+            cursor.x = padding->left;
+            currSpace.y = dims->height + padding->up + padding->down;
+            childDimensions = updateLayout(child, cursor, currSpace, dims->worldPos, font);
         }
-        if (element->flags.fixedHeight && cursor.y + childDimensions.y > dims->height) {
-            cursor.y = padding.up;
-            cursor.x = extendRight + element->childGap;
-            childDimensions = updateLayout(child, cursor, dims->worldPos, font);
+        // advance the cursor to the next row
+        if (flags->fixedHeight && cursor.y + childDimensions.y + padding->down > dims->height) {
+            cursor.y = padding->up;
+            cursor.x = extendRight + self->childGap;
+            currSpace.x = dims->width + padding->left + padding->right;
+            childDimensions = updateLayout(child, cursor, currSpace, dims->worldPos, font);
         }
 
         extendRight = max(extendRight, child->dims.pos.x + childDimensions.x);
         extendDown  = max(extendDown,  child->dims.pos.y + childDimensions.y);
 
         if (child->positionMode == POS_FIT) {
-            if (layoutDirection == L_down) cursor.y += childDimensions.y + element->childGap;
-            else if (layoutDirection == L_right) cursor.x += childDimensions.x + element->childGap;
+            if (layoutDirection == L_down) cursor.y += childDimensions.y + self->childGap;
+            else if (layoutDirection == L_right) cursor.x += childDimensions.x + self->childGap;
         } else {
-            if (layoutDirection == L_down) cursor.y = extendDown + element->childGap;
-            else if (layoutDirection == L_right) cursor.x = extendRight + element->childGap;
-        }
-
-        if (child->flags.wantGrowHorizontal || child->flags.wantGrowVertical) elements[numGrowingElements++] = child;
-    }
-
-    dims->worldWidth = max(dims->worldWidth, extendRight + padding.right);
-    dims->worldHeight = max(dims->worldHeight, extendDown + padding.down);
-
-    //TODO fi
-
-    for (int i = 0; i < numGrowingElements; i++) {
-        Element* child = elements[i];
-        if (child->flags.wantGrowHorizontal) {
-            const int newWidth = dims->worldWidth - padding.left - padding.right;
-            if (newWidth == child->dims.width) continue;
-            child->dims.worldWidth = newWidth;
-        }
-        if (child->flags.wantGrowVertical) {
-            const int newHeight = dims->worldHeight - padding.up - padding.down;
-            if (newHeight == child->dims.height) continue;
-            child->dims.worldHeight = newHeight;
+            if (layoutDirection == L_down) cursor.y = extendDown + self->childGap;
+            else if (layoutDirection == L_right) cursor.x = extendRight + self->childGap;
         }
     }
 
-    //if (dirty) return updateLayout(element, parentCursor, parentPos, font);
+    dims->worldWidth = max(dims->worldWidth, extendRight + padding->right);
+    dims->worldHeight = max(dims->worldHeight, extendDown + padding->down);
+
+    if (self->flags.wantGrowHorizontal) self->dims.worldWidth = max(dims->worldWidth, remainingSpace.x);
+    if (self->flags.wantGrowHorizontal) self->dims.worldHeight = max(dims->worldHeight, remainingSpace.y);
 
     return (Vec2i){dims->worldWidth, dims->worldHeight};
 }
