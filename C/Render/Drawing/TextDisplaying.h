@@ -4,10 +4,14 @@
 
 #pragma once
 
+#include <stdint.h>
+
 #include "GuiTypes.h"
-#include "../GUI/Texture.h"
+
 #include "../../../Dependencies/include/stb/stb_truetype.h"
 #include "../../Utils/Vector.h"
+#include "Render/GUI/Texture.h"
+#include "Utils/CString.h"
 
 typedef struct Font {
     Basic_Texture fontAtlas;
@@ -32,8 +36,6 @@ typedef struct Character {
     char value;
 } Character;
 
-ARRAY_LIST(Character, Character)
-
 typedef struct TextElement {
     Vec2f pos;
     float width;
@@ -44,8 +46,7 @@ typedef struct TextElement {
     Vec3f textColor;
     float textScale;
 
-    List_Character charQuads;
-
+    Character* aCharQuads;
 } TextElement;
 
 Font loadFontAtlas(char* file);

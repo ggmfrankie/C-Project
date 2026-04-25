@@ -31,7 +31,6 @@ add_library(GUI STATIC
         C/Render/Engine.h
         C/Utils/Vector.c
         C/Utils/Vector.h
-        C/Utils/DataStructures.h
         C/Render/Shader.c
         C/Render/Shader.h
         C/Utils/HashMap.h
@@ -51,7 +50,6 @@ add_library(GUI STATIC
         C/Extern/Informatik/Spannungsteiler_A3.h
         C/Extern/Informatik/DrunkenBishop.c
         C/Extern/Informatik/DrunkenBishop.h
-        C/Utils/Matrix.h
         C/Extern/Informatik/GameBoard.c
         C/Extern/Informatik/GameBoard.h
         C/Utils/Makros.h

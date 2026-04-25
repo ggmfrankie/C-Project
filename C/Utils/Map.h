@@ -2,9 +2,8 @@
 // Created by Stefan on 17.10.2025.
 //
 
-#ifndef C_MAP_H
-#define C_MAP_H
-#include <stdbool.h>
+#pragma once
+
 #include <stdlib.h>
 
 #define MAP(name, Key, Value)\
@@ -61,5 +60,3 @@ static inline Map_##name newMap_##name(const size_t capacity, bool (*equals)(con
         .delete = name##_Map_delete\
     };\
 }\
-
-#endif //C_MAP_H

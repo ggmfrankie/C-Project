@@ -4,11 +4,12 @@
 
 #include "StringBuilder.h"
 
+#include <stdlib.h>
 
 
 StringBuilder newStringBuilder() {
     return (StringBuilder){
-        .content = NULL,
+        .content = nullptr,
         .length = 0,
         .capacity = 0,
         .clear = StrBuilder_clear,
@@ -41,14 +42,14 @@ String StrBuilder_toString(StringBuilder *sb) {
 }
 
 void StrBuilder_clear(StringBuilder *sb) {
-    sb->content = NULL;
+    sb->content = nullptr;
     sb->capacity = 0;
     sb->length = 0;
 }
 
 void StrBuilder_delete(StringBuilder *sb) {
     free(sb->content);
-    sb->content = NULL;
+    sb->content = nullptr;
     sb->capacity = 0;
     sb->length = 0;
 }

@@ -354,18 +354,18 @@ static void joinGame(const char* ip) {
 #endif
 
 static void startChessGameTask(void* nix) {
-    Element* mainMenu = getElement("start screen");
-    Element* chessBoard = getElement("game board");
-    setActive(mainMenu, false);
-    setActive(chessBoard, true);
+    Element* mainMenu = Element_getElement("start screen");
+    Element* chessBoard = Element_getElement("game board");
+    Element_setActive(mainMenu, false);
+    Element_setActive(chessBoard, true);
 }
 
 static void showWinnerScreen(const bool winner) {
-    Element* endScreen = getElement("end screen");
-    setActive(endScreen, true);
-    Element* colorDisplay = getElement("color display");
+    Element* endScreen = Element_getElement("end screen");
+    Element_setActive(endScreen, true);
+    Element* colorDisplay = Element_getElement("color display");
     Element_setColor(colorDisplay, winner ? COLOR_WHITE : COLOR_GRAY);
-    setText(colorDisplay, winner ? "White won" : "Black won");
+    Element_setText(colorDisplay, winner ? "White won" : "Black won");
 }
 
 static void onSquareClicked2(void* el) {
@@ -485,7 +485,7 @@ static void resetBoard(void*) {
     setUpPieces();
     unmarkAll(0,0,0,0);
 
-    setActive(getElement("end screen"), false);
+    Element_setActive(Element_getElement("end screen"), false);
 
     syncGui();
 }
@@ -775,7 +775,7 @@ static void createChessBoard(Element* root) {
             )
         )
     );
-    Element* chessBoard = getElement("game board");;
+    Element* chessBoard = Element_getElement("game board");;
     chessBoard->flags.isActive = false;
 }
 
@@ -860,6 +860,6 @@ static void createEndScreen(Element* root) {
             )
         )
     );
-    Element* endScreen = getElement("end screen");
+    Element* endScreen = Element_getElement("end screen");
     endScreen->flags.isActive = false;
 }

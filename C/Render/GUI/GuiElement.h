@@ -33,8 +33,6 @@ typedef enum ElementType: byte {
     t_textField
 } ElementType;
 
-ARRAY_LIST(ChildElements, Element*)
-
 typedef struct Element {
     char* name;
     ElementType type;
@@ -98,14 +96,12 @@ typedef struct Element {
 
     Task task;
     Element* parentElement;
-    List_ChildElements childElements;
+    Element** aChildElements;
     int childGap;
 
     void* elementData;
 
 } Element;
-
-ARRAY_LIST(Element, Element)
 
 HASH_MAP(Element, char*, Element*)
 
@@ -148,33 +144,32 @@ typedef struct ElementSettings {
 
 void initElements();
 
-Element* newElement(Vec2i pos, int width, int height);
+Element* Element_new(Vec2i pos, int width, int height);
 Element* f_addChildElements(Element* parent, ...);
 
 Element* addChildrenAsGrid(ElementSettings parentData, ElementSettings es, int numX, int numY);
 Element* addChildrenAsGridWithGenerator(ElementSettings parentData, ElementSettings es, int numX, int numY, Element* (*generateElement)(int row, int col, ElementSettings));
 
-void setOnClickCallback(Element* element, bool (*onClick)(Element* element, Renderer* renderer));
-void setOnHoverCallback(Element* element, bool (*onHover)(Element* element, Renderer* renderer));
-void setBoundingBox(Element* element, bool (*isMouseOver)(const Element *element, Vec2i mousePos));
+void Element_setOnClickCallback(Element* element, bool (*onClick)(Element* element, Renderer* renderer));
+void Element_setOnHoverCallback(Element* element, bool (*onHover)(Element* element, Renderer* renderer));
+void Element_setBoundingBox(Element* element, bool (*isMouseOver)(const Element *element, Vec2i mousePos));
 void defaultReset(Element* element);
 
-void setText(Element* element, const char* text);
-void setText_noLock(Element* element, const char* text);
-void setText_int(Element* element, int i);
-void setActive(Element* element, bool b);
-void toggleVisible(Element* element);
+void Element_setText(Element* element, const char* text);
+void Element_setText_int(Element* element, int i);
+void Element_setActive(Element* element, bool b);
+void Element_toggleVisible(Element* element);
 void Element_setColor(Element* element, Vec3f color);
-Element* getElement(const char* name);
+Element* Element_getElement(const char* name);
 
-bool isSelected_Quad(const Element *element, Vec2i mousePos);
+bool Element_isQuadBB(const Element *element, Vec2i mousePos);
 
 #define addChildElements(parent, ...) f_addChildElements(parent, __VA_ARGS__, NULL)
 
 #define addChildElementsN(parent, count, ...) f_addChildElementsN(parent, count, __VA_ARGS__)
 #define fitMode (Vec2i){-1, -1}
 
-Element *guiAddElement(
+Element *Element_addElement(
     char *name,
     Vec2i pos,
     int width,
@@ -195,7 +190,7 @@ Element *guiAddElement(
     bool fixedWidth,
     bool fixedHeight,
     void (*whileSelected)(Element *element), bool draggable, void (*onUpdate)(Element *element), bool wantGrowHorizontal, bool
-    wantGrowVertical, float transparency, char *texture, bool invisible, int cornerRadius
+    wantGrowVertical, float transparency, const char *texture, bool invisible, int cornerRadius
 );
 
 Element *createElement(ElementSettings es);

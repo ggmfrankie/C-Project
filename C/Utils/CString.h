@@ -1,13 +1,5 @@
-#ifndef CSTRING_H
-#define CSTRING_H
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#include <stdbool.h>
-#include "ArrayList.h"
-#include "GenericLinkedList.h"
+#pragma once
+#include <stddef.h>
 
 typedef struct List_String List_String;
 typedef struct StringFunctions StringFunctions;
@@ -36,7 +28,7 @@ typedef struct StringFunctions {
     bool (*equals)(const String* string, const String* key);
     bool (*startsWith)(const String* string, const String* key);
     bool (*isEmpty)(const String* s);
-    List_String (*split)(const String* string, const char* key);
+    String* (*split)(const String* string, const char* key);
     void (*setCharAt)(const String* string, int index, char value);
     void (*appendChar)(String* string, char value);
     void (*appendCharAt)(String* string, char value, int index);
@@ -44,10 +36,6 @@ typedef struct StringFunctions {
     void (*setAll)(const String* string, char key);
 
 } StringFunctions;
-
-ARRAY_LIST(String, String)
-DEFINE_LINKED_LIST(String, String)
-
 
 String stringOf(char* content);
 String newString_c(const char* content);
@@ -67,7 +55,7 @@ void str_println(const String* string);
 bool str_equals(const String* string, const String* key);
 bool str_startsWith(const String* string, const String* key);
 bool str_isEmpty(const String* s);
-List_String str_split(const String* string, const char* key);
+String* str_split(const String* string, const char* key);
 void str_setCharAt(const String* string, int index, char value);
 void str_appendChar(String* string, char value);
 void str_appendCharAt(String* string, char value, int index);
@@ -76,11 +64,4 @@ char str_popCharAt(String* string, int index);
 void str_setAll(const String* string, char key);
 char str_getCharAt(const String* string, int index);
 
-
 extern StringFunctions Strings;
-
-#ifdef __cplusplus
-} // extern "C"
-#endif
-
-#endif

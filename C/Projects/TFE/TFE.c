@@ -67,7 +67,7 @@ void TFE_createGUI(Element* root) {
             )
         )
     );
-    setActive(getElement("TFE_board"), false);
+    Element_setActive(Element_getElement("TFE_board"), false);
 }
 
 void TFE_run() {

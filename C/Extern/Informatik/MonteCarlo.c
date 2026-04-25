@@ -6,7 +6,9 @@
 
 #include <bemapiset.h>
 #include <math.h>
+#include <stdio.h>
 #include <time.h>
+
 
 #include "libminibmp.h"
 #include "../../Utils/Vector.h"
@@ -56,7 +58,7 @@ void drawRandomPoints(const bmp *image, const Vec2i* polygon, const Vec2i dimens
         }
         setPixel(image, point.x, point.y, pixCol);
     }
-    int pointsOutside = numOfPoints-pointsInside;
+    const int pointsOutside = numOfPoints-pointsInside;
     printf("Zi: \t%i\n", pointsInside);
     printf("Za: \t%i\n", pointsOutside);
     printf("Verhältnis: \t%f\n", (float) pointsInside/pointsOutside);

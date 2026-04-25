@@ -2,13 +2,13 @@
 // Created by Stefan on 10.10.2025.
 //
 
-#ifndef C_ARRAYLIST_H
-#define C_ARRAYLIST_H
+#pragma once
+
 
 #include <stdio.h>
 #include <stdlib.h>
 
-#define ARRAY_LIST(name, type) \
+#define ARRAY_LIST(name, type)\
 typedef struct List_##name { \
     type *content; \
     size_t size; \
@@ -82,7 +82,3 @@ inline List_##name name##_newList(int capacity) {\
         .capacity = capacity,\
     }; \
 }
-
-
-
-#endif // C_ARRAYLIST_H

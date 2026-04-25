@@ -11,6 +11,7 @@
 #include "../../Utils/FileIO.h"
 #include "../../Utils/HashMap.h"
 #include "../../Utils/TimeMeasurenments.h"
+#include "Utils/CArrayList.h"
 
 #define MAX_ELEMENTS 500
 #define MAX_NAME 15100
@@ -51,8 +52,7 @@ void namensliste_Aufgabe(void* userdata) {
 void namensliste_langsam() {
     const String path = stringOf("../Extern/Informatik/Data/vornamen.txt");
     String nameList = readFile(&path);
-    List_String names = Strings.split(&nameList, "\n");
-    names.size--;
+    String* names = Strings.split(&nameList, "\n");
 
     Strings.delete_(&nameList);
 
@@ -75,7 +75,7 @@ void namensliste_langsam() {
     enterName(&nameCounterMap);
 
     free(nameCounterMap.content);
-    String_ListFree(&names);
+    arrDel(names);
 }
 
 void addOrIncrement(NameCounterMap *ncm, char *key) {
@@ -146,9 +146,8 @@ void enterName(const NameCounterMap *ncm) {
 void namensliste_schnell() {
     const String path = stringOf("../Extern/Informatik/Data/vornamen.txt");
     const String nameList = readFile(&path);
-    List_String names = Strings.split(&nameList, "\n");
+    String* names = Strings.split(&nameList, "\n");
     Hashmap_NameCounter nameCounter = newHashmap_NameCounter(512);
-    names.size--;
 
     const u_int64 startNs = now_ns();
 

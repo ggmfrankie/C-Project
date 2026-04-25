@@ -11,9 +11,9 @@
 #include <stb/stb_truetype.h>
 #include "Render.h"
 #include "RenderTypes.h"
-#include "../../Utils/DataStructures.h"
 #include "../../Utils/CString.h"
 #include "Render/GUI/GuiElement.h"
+#include "Utils/CArrayList.h"
 #define FONT_ATLAS_SIZE 2048
 #define FONT_SIZE 32.0f
 
@@ -69,7 +69,7 @@ Font loadFontAtlas(char* file) {
     temp_bitmap
     );
 
-    const GLint swizzle[] = { GL_ONE, GL_ONE, GL_ONE, GL_RED };
+    constexpr GLint swizzle[] = { GL_ONE, GL_ONE, GL_ONE, GL_RED };
     glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_RGBA, swizzle);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -92,36 +92,36 @@ Font loadFontAtlas(char* file) {
 }
 
 void accumulateTextQuads(const Element *element, GuiVertex *vertices, int *vt, int *indices, int *id, const Font *font) {
-    const List_Character* charQuads = &element->textElement.charQuads;
-    if (charQuads->size == 0) return;
+    const auto aCharQuads = element->textElement.aCharQuads;
+    if (arrIsEmpty(aCharQuads)) return;
 
     const float xOffset = (float)element->padding.left;
     const float yOffset = (float)font->maxCharHeight * element->textElement.textScale + (float)element->padding.up;
 
     const int ID = element->ID;
 
-    for (int i = 0; i < charQuads->size; i++) {
+    for_eachArr(c, aCharQuads, {
         constexpr int texID = 1;
-        const Character* c = &charQuads->content[i];
 
         const float x = c->pos.x + xOffset;
         const float y = c->pos.y + yOffset;
         const float w = c->width;
         const float h = c->height;
 
-        Vec2f start = c->texPosStart;
-        Vec2f end = c->texPosEnd;
+        const Vec2f start = c->texPosStart;
+        const Vec2f end   = c->texPosEnd;
 
         const Vec2f uv0 = start;
-        const Vec2f uv1 = (Vec2f){end.x, start.y};
+        const Vec2f uv1 = (Vec2f){ end.x, start.y };
         const Vec2f uv2 = end;
-        const Vec2f uv3 = (Vec2f){start.x, end.y};
+        const Vec2f uv3 = (Vec2f){ start.x, end.y };
 
         const int v0 = *vt;
-        vertices[*vt] = (GuiVertex){ {x,   y},   uv0, ID, texID}; (*vt)++;
-        vertices[*vt] = (GuiVertex){ {x+w, y},   uv1, ID, texID}; (*vt)++;
-        vertices[*vt] = (GuiVertex){ {x+w, y+h}, uv2, ID, texID }; (*vt)++;
-        vertices[*vt] = (GuiVertex){ {x,   y+h}, uv3, ID, texID }; (*vt)++;
+
+        vertices[(*vt)++] = (GuiVertex){{x,   y},   uv0, ID, texID};
+        vertices[(*vt)++] = (GuiVertex){{x+w, y},   uv1, ID, texID};
+        vertices[(*vt)++] = (GuiVertex){{x+w, y+h}, uv2, ID, texID};
+        vertices[(*vt)++] = (GuiVertex){{x,   y+h}, uv3, ID, texID};
 
         const int v1 = v0 + 1;
         const int v2 = v0 + 2;
@@ -129,7 +129,7 @@ void accumulateTextQuads(const Element *element, GuiVertex *vertices, int *vt, i
 
         indices[(*id)++] = v0; indices[(*id)++] = v1; indices[(*id)++] = v2;
         indices[(*id)++] = v0; indices[(*id)++] = v2; indices[(*id)++] = v3;
-    }
+    });
 }
 
 Vec2i measureElementText(const Font *font, const TextElement* textElement) {
@@ -172,7 +172,8 @@ Vec2i measureText(const Font *font, const String *text) {
 
 void reloadTextQuads(const Font* font, Element *element) {
     TextElement *textElement = &element->textElement;
-    Character_ListClear(&textElement->charQuads);
+    arrClear(textElement->aCharQuads);
+
     if (textElement->text.length == 0) {
         textElement->width = 10;
         return;
@@ -180,11 +181,11 @@ void reloadTextQuads(const Font* font, Element *element) {
 
     const float textScale = textElement->textScale;
 
-    const Vec2i startPos = (Vec2i){
+    const auto startPos = (Vec2i){
         .x = 0,
         .y = 0
     };
-    Vec2f cursor = (Vec2f){
+    auto cursor = (Vec2f){
         .x = (float)startPos.x,
         .y = (float)startPos.y
     };
@@ -196,8 +197,8 @@ void reloadTextQuads(const Font* font, Element *element) {
     for (int i = 0; i < textElement->text.length; i++) {
         const char c = textElement->text.content[i];
         if (c < 32 || c > 126) continue;
-        Character_ListAdd(&textElement->charQuads, (Character){});
-        Character* character = Character_ListGetLast(&textElement->charQuads);
+        arrPush(textElement->aCharQuads, (Character){});
+        Character* character = arrGetLast(textElement->aCharQuads);
         stbtt_aligned_quad q;
         stbtt_GetPackedQuad(font->glyphs,
                             font->fontAtlas.width,

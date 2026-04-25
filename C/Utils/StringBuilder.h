@@ -2,8 +2,8 @@
 // Created by Stefan on 22.10.2025.
 //
 
-#ifndef C_STRINGBUILDER_H
-#define C_STRINGBUILDER_H
+#pragma once
+
 #include "CString.h"
 
 typedef struct StringBuilder {
@@ -20,5 +20,3 @@ String StrBuilder_toString(StringBuilder *sb);
 void StrBuilder_add(StringBuilder *sb, char c);
 StringBuilder newStringBuilder();
 void StrBuilder_delete(StringBuilder *sb);
-
-#endif //C_STRINGBUILDER_H

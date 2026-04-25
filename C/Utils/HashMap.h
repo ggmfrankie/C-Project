@@ -2,11 +2,13 @@
 // Created by Stefan on 17.10.2025.
 //
 
-#ifndef C_HASHMAP_H
-#define C_HASHMAP_H
+#pragma once
+
 #define HASH_KEY 0
 #include <stdint.h>
 #include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <_bsd_types.h>
 
 #include "CString.h"
@@ -103,7 +105,3 @@ static inline Value* Hashmap_##Name##_get(const Hashmap_##Name* map, const Key k
     }\
     return &map->content[index].value;\
 }
-
-
-
-#endif //C_HASHMAP_H

@@ -36,7 +36,6 @@ static struct ArcInfo Mesh_triangulate(const Vec2f corner, const float radius, G
 
     for (int i = 1 ; i <= (radius > 0 ? numTriangles : 1); i++) {
 
-
         verts[*vt].pos = (Vec2f){
             corner.x + cosf(startAngle + i * radStep)*radius,
             corner.y + sinf(startAngle + i * radStep)*radius,
@@ -72,9 +71,9 @@ void Mesh_loadRoundedCornerMesh2(const Element* element, GuiVertex *vertices, in
     constexpr float r90 = (float)M_PI * 0.5f;
     constexpr int numTriangles = 12;
 
-    int start = *vt;
+    const int start = *vt;
 
-    auto tl = Mesh_triangulate(
+    const auto tl = Mesh_triangulate(
         (Vec2f){radius, radius},
         radius,
         vertices,
@@ -86,7 +85,7 @@ void Mesh_loadRoundedCornerMesh2(const Element* element, GuiVertex *vertices, in
         numTriangles
     );
 
-    auto tr = Mesh_triangulate(
+    const auto tr = Mesh_triangulate(
         (Vec2f){width-radius, radius},
         radius,
         vertices,
@@ -98,7 +97,7 @@ void Mesh_loadRoundedCornerMesh2(const Element* element, GuiVertex *vertices, in
         numTriangles
     );
 
-    auto br = Mesh_triangulate(
+    const auto br = Mesh_triangulate(
         (Vec2f){width-radius, height-radius},
         radius,
         vertices,
@@ -110,7 +109,7 @@ void Mesh_loadRoundedCornerMesh2(const Element* element, GuiVertex *vertices, in
         numTriangles
     );
 
-    auto bl = Mesh_triangulate(
+    const auto bl = Mesh_triangulate(
         (Vec2f){radius, height-radius},
         radius,
         vertices,

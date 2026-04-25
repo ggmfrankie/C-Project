@@ -2,8 +2,8 @@
 // Created by ertls on 26.11.2025.
 //
 
-#ifndef C_MEMORYARENA_H
-#define C_MEMORYARENA_H
+#pragma once
+
 #include <stddef.h>
 
 typedef struct {
@@ -28,5 +28,3 @@ static ArenaFunctions Arenas = {
     .alloc = alloc,
     .free = freeArena
 };
-
-#endif //C_MEMORYARENA_H

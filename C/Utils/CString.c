@@ -1,8 +1,11 @@
 
 #include "CString.h"
 
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
+#include "CArrayList.h"
 #include "StringBuilder.h"
 
 StringFunctions Strings = {
@@ -314,14 +317,10 @@ bool str_startsWith(const String* string, const String* key){
     return true;
 }
 
-List_String str_split(const String* string, const char *key) {
-    int keyLength = 0;
+String* str_split(const String* string, const char *key) {
+    const int keyLength = (int)strlen(key);
 
-    while (key[keyLength] != '\0') {
-        keyLength++;
-    }
-
-    List_String strList = String_newList(16);
+    String* strList = nullptr;
     int j = 0;
     StringBuilder sb = newStringBuilder();
 
@@ -330,7 +329,7 @@ List_String str_split(const String* string, const char *key) {
         if (current == key[j]) {
             j++;
             if (j == keyLength) {
-                String_ListAdd(&strList, sb.toString(&sb));
+                arrPush(strList, sb.toString(&sb));
                 j = 0;
             }
         } else {
@@ -338,7 +337,7 @@ List_String str_split(const String* string, const char *key) {
             sb.add(&sb, current);
         }
     }
-    String_ListAdd(&strList, sb.toString(&sb));
+    arrPush(strList, sb.toString(&sb));
     return strList;
 }
 

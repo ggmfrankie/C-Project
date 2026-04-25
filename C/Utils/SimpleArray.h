@@ -2,8 +2,8 @@
 // Created by Stefan on 28.10.2025.
 //
 
-#ifndef C_ARRAY_H
-#define C_ARRAY_H
+#pragma once
+
 #include <stdlib.h>
 
 
@@ -47,6 +47,3 @@ static inline name##_Array name##_newArray(type* content, size_t size){\
         .size = size\
     };\
 }
-
-
-#endif //C_ARRAY_H

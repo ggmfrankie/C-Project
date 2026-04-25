@@ -10,8 +10,8 @@ GUI_Update updateQueue[UPDATE_QUEUE_MAX];
 int updateHead = 0;
 int updateTail = 0;
 
-void gui_pushUpdate(GuiUpdate gu, void* data) {
-    updateQueue[updateTail].func = gu;
+void gui_pushUpdate(GuiUpdate gt, void* data) {
+    updateQueue[updateTail].func = gt;
     updateQueue[updateTail].userdata = data;
     updateTail = (updateTail + 1) % UPDATE_QUEUE_MAX;
 }

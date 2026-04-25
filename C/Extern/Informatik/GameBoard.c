@@ -6,8 +6,8 @@
 
 #include <bemapiset.h>
 #include <stdio.h>
-#include "../../Utils/CString.h"
-#include "../../Utils/DataStructures.h"
+
+#include "Utils/CArrayList.h"
 #pragma GCC diagnostic ignored "-Wsign-compare"
 
 bool moveBishopTo(GameBoard *board, int x, int y);
@@ -125,11 +125,13 @@ char getBoard(const GameBoard *board, const size_t x, const size_t y) {
 void printBoard(const GameBoard *board) {
     const size_t size = board->sizeX + 1;
     char wall[size];
-    char_Array horizontalWall = char_newArray(wall, size);
-    char_Array_setAll(&horizontalWall, '-');
-    char_Array_set(&horizontalWall, board->sizeX, '\0');
 
-    printf("+%s+\n", horizontalWall.content);
+    for (int i = 0; i < sizeof(wall); i++) {
+        wall[i] = '-';
+    }
+    wall[board->sizeX] = '\0';
+
+    printf("+%s+\n", wall);
 
     for (size_t i = 0; i < board->sizeY; i++) {
         printf("|");
@@ -139,5 +141,5 @@ void printBoard(const GameBoard *board) {
         printf("|\n");
     }
 
-    printf("+%s+\n", horizontalWall.content);
+    printf("+%s+\n", wall);
 }

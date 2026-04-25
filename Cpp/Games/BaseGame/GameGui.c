@@ -130,7 +130,7 @@ void generateMainMenuGui(Element* guiRoot) {
         )
     );
 
-    setActive(getElement("Home Screen"), false);
+    Element_setActive(Element_getElement("Home Screen"), false);
 }
 
 void generateGUI(Element* guiRoot) {

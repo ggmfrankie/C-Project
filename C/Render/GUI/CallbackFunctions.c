@@ -12,7 +12,8 @@
 
 #include "GuiElement.h"
 #include "../Engine.h"
-#include "Utils/DataStructures.h"
+#include "Utils/CArrayList.h"
+#include "Utils/Makros.h"
 
 bool dragFun(Element *element, const Renderer *renderer) {
     static Vec2i offset;
@@ -87,7 +88,7 @@ bool click(GLFWwindow *window, const int mouseButton) {
 }
 
 bool sliderCallbackFun(Element *element, Renderer *renderer) {
-    SliderData* sliderDate = (SliderData*)element->elementData;
+    auto sliderDate = (SliderData*)element->elementData;
 
     return false;
 }
@@ -98,15 +99,15 @@ bool textField_onClick(Element *element, Renderer *renderer) {
     TextFieldData* data = element->elementData;
     if (Strings.isEmpty(&data->text)) return false;
 
-    List_Character* charQuads = &element->textElement.charQuads;
+    Character* charQuads = element->textElement.aCharQuads;
     Vec2i mousePos = getMousePos();
 
-    Vec2f relMousePos = {(float)(mousePos.x - element->dims.pos.x), (float)(mousePos.y - element->dims.pos.y)};
+    const Vec2f relMousePos = {(float)(mousePos.x - element->dims.pos.x), (float)(mousePos.y - element->dims.pos.y)};
     mousePos.x -= element->dims.pos.x;
     mousePos.y -= element->dims.pos.y;
     int i = 0;
-    for (; i < charQuads->size; i++) {
-        Character* currentChar = &charQuads->content[i];
+    for (; i < arrLen(charQuads); i++) {
+        const Character* currentChar = &charQuads[i];
         if (relMousePos.x < currentChar->pos.x + currentChar->width/2) {
             data->cursor.byteIndex = i;
             return true;
@@ -127,7 +128,7 @@ bool textField_runTask(Element *element, Renderer *renderer) {
 
     str_clear(&data->text);
     data->cursor.byteIndex = 0;
-    setText_noLock(element,"");
+    Element_setText(element,"");
 
     if (element->task.func && !element->task.isBlocked) {
         pushTask(element->task.func, newBuffer);
@@ -155,7 +156,7 @@ void displayCurrentTime(Element *element) {
            t.wHour,
            t.wMinute,
            t.wSecond);
-    setText(element, time);
+    Element_setText(element, time);
 }
 
 void syncWithScreen(Element *element) {
@@ -204,12 +205,10 @@ void incrementHeight(Element *element) {
 }
 
 void shiftPosition(Element *element) {
-    static int calls = 0;
-    calls++;
-    if (calls < 100) return;
-    calls = 0;
-    element->dims.pos.x += 20;
-    element->dims.pos.y += 20;
+    only_every(100, {
+        element->dims.pos.x += 20;
+        element->dims.pos.y += 20;
+    });
 }
 
 void changeTextSize(Element *element) {

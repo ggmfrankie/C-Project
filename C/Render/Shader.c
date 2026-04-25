@@ -37,14 +37,14 @@ Shader newShader(char* vertexShaderFile, char* fragmentShaderFile) {
 
     glGetShaderiv(vertexId, GL_COMPILE_STATUS, &success);
     if (!success) {
-        glGetShaderInfoLog(vertexId, 512, NULL, infoLog);
+        glGetShaderInfoLog(vertexId, 512, nullptr, infoLog);
         printf("Vertex Shader Compile Error:\n%s\n", infoLog);
     }
 
     // --- DEBUG: Check fragment shader compile status ---
     glGetShaderiv(fragmentId, GL_COMPILE_STATUS, &success);
     if (!success) {
-        glGetShaderInfoLog(fragmentId, 512, NULL, infoLog);
+        glGetShaderInfoLog(fragmentId, 512, nullptr, infoLog);
         printf("Fragment Shader Compile Error:\n%s\n", infoLog);
     }
 
@@ -53,7 +53,7 @@ Shader newShader(char* vertexShaderFile, char* fragmentShaderFile) {
     // --- DEBUG: Check program link status ---
     glGetProgramiv(programId, GL_LINK_STATUS, &success);
     if (!success) {
-        glGetProgramInfoLog(programId, 512, NULL, infoLog);
+        glGetProgramInfoLog(programId, 512, nullptr, infoLog);
         printf("Shader Program Link Error:\n%s\n", infoLog);
     } else {
         printf("Shader Program linked successfully! ID: %d\n", programId);
@@ -106,7 +106,7 @@ String readShaderFile(const String *fileName) {
 
 int createShader(const GLchar** shaderSource, const int shaderType, const int programId) {
     const int shaderId = glCreateShader(shaderType);
-    glShaderSource(shaderId, 1, shaderSource, NULL);
+    glShaderSource(shaderId, 1, shaderSource, nullptr);
     glCompileShader(shaderId);
     glAttachShader(programId, shaderId);
     return shaderId;

@@ -4,8 +4,6 @@
 
 #pragma once
 
-
-#include "../../Utils/CString.h"
 #include "../../Utils/Vector.h"
 #include "../../Utils/HashMap.h"
 
@@ -33,11 +31,11 @@ HASH_MAP(AtlasTextures, char*, Texture);
 
 typedef struct TextureAtlas {
     uint32_t ID;
-    uint32_t width, height;
+    int width, height;
     Hashmap_AtlasTextures textures;
 } TextureAtlas;
 
-Basic_Texture newTexture(int width, int height, uint32_t textureId);
+Basic_Texture *newTexture(int width, int height, uint32_t textureId);
 
 Basic_Texture *newEmptyTexture(int width, int height);
 

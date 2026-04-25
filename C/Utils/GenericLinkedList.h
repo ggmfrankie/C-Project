@@ -1,5 +1,5 @@
-#ifndef GENERIC_LINKEDLIST_H
-#define GENERIC_LINKEDLIST_H
+#pragma once
+
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -102,4 +102,3 @@ inline LinkedList_##name newList_##name(){\
     };\
 }
 
-#endif

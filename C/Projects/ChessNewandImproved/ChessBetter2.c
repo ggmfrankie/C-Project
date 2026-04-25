@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "../../Render/GUI/CallbackFunctions.h"
+#include "Utils/CArrayList.h"
 
 #define COOL_COLOR (Vec3f){.2, .3, .3}
 #define COLOR_WHITE (Vec3f){1, 1, 1}
@@ -277,12 +278,12 @@ void chess_getMoves (ChessPiece piece, int row, int col) {
 }
 
 void chess_loadChessPosition(char* fen) {
-    String fenString = stringOf(fen);
-    List_String fenPieces = str_split(&fenString, " ");
+    const String fenString = stringOf(fen);
+    String* aFenPieces = str_split(&fenString, " ");
 
-    List_String ranks = str_split(String_ListGet(&fenPieces, 0), "/");
-    for (int i = 0; i < ranks.size; i++) {
-        String* rank = &ranks.content[i];
+    String* aRanks = str_split(&aFenPieces[0], "/");
+    for (int i = 0; i < arrLen(aRanks); i++) {
+        const String* rank = &aRanks[i];
         int col = 0;
         for (int j = 0; j < rank->length; j++) {
             char c = rank->content[j];
@@ -311,10 +312,10 @@ void chess_loadChessPosition(char* fen) {
             }
         }
     }
-    chess_board.turn = String_ListGet(&fenPieces, 1)->content[0] == 'b' ? Black : White;
+    chess_board.turn = aFenPieces[1].content[0] == 'b' ? Black : White;
 
-    String_ListFree(&fenPieces);
-    String_ListFree(&ranks);
+    arrDel(aFenPieces);
+    arrDel(aRanks);
 }
 
 void chess_loadTextures() {

@@ -9,8 +9,8 @@
 #include "Shader.h"
 #include "Render/GUI/Texture.h"
 #include "../Utils/CString.h"
-#include "../Utils/DataStructures.h"
 #include "../Utils/Vector.h"
+#include "Utils/CArrayList.h"
 
 static GLuint generateGraphSSBO(const size_t size) {
     GLuint graphSSBO;
@@ -79,14 +79,14 @@ ComputeShader newComputeShader(Basic_Texture *texture, const int size) {
     };
 }
 
-static void setBufferData_Vec2f(const ComputeShader *computeShader, const vec2_Array *data) {
+static void setBufferData_Vec2f(const ComputeShader *computeShader, const Vec2f *data, int len) {
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, computeShader->SSBO);
-    glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, (long long) (data->size * sizeof(Vec2f)), data->content);
+    glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, (long long) (len * sizeof(Vec2f)), data);
 }
 
 void ComputeShader_update(const ComputeShader *computeShader, double (*func)(double x)) {
     const int size = (int) computeShader->ssboSize;
-    vec2_Array data = vec2_newArray(malloc(sizeof(Vec2f)* size), size);
+    Vec2f* data = malloc(sizeof(Vec2f)* size);
 
     const float xStart = computeShader->startX;
     const float xEnd = computeShader->endX;
@@ -109,11 +109,10 @@ void ComputeShader_update(const ComputeShader *computeShader, double (*func)(dou
         Vec2f normPos;
         normPos.x = (float)i / (float)(size - 1);
         normPos.y = (float)((y - minVal) / (maxVal - minVal));
-        vec2_Array_set(&data, i, normPos);
+        data[i] = normPos;
     }
 
-    setBufferData_Vec2f(computeShader, &data);
-    vec2_Array_delete(&data);
+    setBufferData_Vec2f(computeShader, data, size);
 }
 
 void ComputeShader_run(const ComputeShader *computeShader) {
@@ -121,7 +120,7 @@ void ComputeShader_run(const ComputeShader *computeShader) {
     glUseProgram(computeShader->programId);
     glBindImageTexture(
         0,                          // image unit index in shader (binding = 0)
-        texture->ID,         // texture ID you created (your "empty" graph texture)
+        texture->ID,                // texture ID you created (your "empty" graph texture)
         0,                          // mip level
         GL_FALSE,                   // not layered (2D texture)
         0,                          // layer index (ignored for 2D)

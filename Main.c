@@ -17,6 +17,7 @@
 #include "C/Projects/ChessNewandImproved/ChessBetter2.h"
 #include "C/Projects/Tokenizer/Calculator.h"
 #include "C/Projects/TFE/TFE.h"
+#include "Utils/CArrayList.h"
 
 #if 0
 int main(){
@@ -24,7 +25,6 @@ int main(){
     //startEngine(chess_createChessBoard);
     //startEngine(generateTestGUI);
     //startEngine(createChessGUI);
-    TFE_run();
     //Calculator_runParserTest();
 
     return 0;

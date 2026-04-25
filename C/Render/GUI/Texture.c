@@ -13,29 +13,25 @@
 #define MAX_ATLAS_TEXTURES 512
 
 typedef struct {
-    int width, height;
-    u_char *pixels;
-} RawTexture;
-
-ARRAY_LIST(Texture, Basic_Texture)
+    Basic_Texture m[256];
+    size_t capacity;
+    size_t size;
+} TextureList;
 
 static GLuint uploadTextureToGPU(int width, int height, int channels, const unsigned char* pixels);
 
-static Basic_Texture textureArray[256];
-static Hashmap_AtlasTextures g_textureMap;
-static auto g_Textures = (List_Texture){.content = textureArray, .capacity = 256, .size = 0};
+static Hashmap_AtlasTextures g_TextureMap;
+static auto g_Textures = (TextureList){.capacity = 256, .size = 0};
 
-Basic_Texture newTexture(const int width, const int height, const GLuint textureId) {
-    return (Basic_Texture){
-        .width = width,
-        .height = height,
-        .ID = textureId
-    };
+Basic_Texture* newTexture(const int width, const int height, const GLuint textureId) {
+    assert(g_Textures.size < g_Textures.capacity);
+    g_Textures.m[g_Textures.size] = (Basic_Texture){.width = width, .height = height, .ID = textureId};
+    return &g_Textures.m[g_Textures.size++];
 }
 
 void f_loadTextures(TextureAtlas *atlas, const char *first, va_list args) {
 
-    g_textureMap = newHashmap_AtlasTextures(64);
+    g_TextureMap = newHashmap_AtlasTextures(64);
     stbrp_rect rects[MAX_ATLAS_TEXTURES];
     u_char* pixels[MAX_ATLAS_TEXTURES];
     const char* names[MAX_ATLAS_TEXTURES];
@@ -92,10 +88,10 @@ void f_loadTextures(TextureAtlas *atlas, const char *first, va_list args) {
         }
     }
 
-    atlas->ID = uploadTextureToGPU((int)atlas->width, (int)atlas->height, 4, data);
+    atlas->ID = uploadTextureToGPU(atlas->width, atlas->height, 4, data);
 
     for (int i = 0; i < index; i++) {
-        Hashmap_AtlasTextures_add(&g_textureMap, names[i], (Texture){
+        Hashmap_AtlasTextures_add(&g_TextureMap, names[i], (Texture){
             .uv0 = {(float)rects[i].x/(float)atlas->width, (float)rects[i].y/(float)atlas->height},
             .uv1 = {(float)(rects[i].x + rects[i].w)/(float)atlas->width, (float)(rects[i].y + rects[i].h)/(float)atlas->height}
         });
@@ -109,9 +105,9 @@ void f_loadTextures(TextureAtlas *atlas, const char *first, va_list args) {
 }
 
 Basic_Texture *newEmptyTexture(const int width, const int height) {
-    GLuint tex;
-    glGenTextures(1, &tex);
-    glBindTexture(GL_TEXTURE_2D, tex);
+    GLuint ID;
+    glGenTextures(1, &ID);
+    glBindTexture(GL_TEXTURE_2D, ID);
 
     glTexImage2D(
         GL_TEXTURE_2D,
@@ -131,10 +127,7 @@ Basic_Texture *newEmptyTexture(const int width, const int height) {
 
     glBindTexture(GL_TEXTURE_2D, 0);
 
-
-    Texture_ListAdd(&g_Textures, (Basic_Texture){.width = width, .height = height, .ID = tex});
-
-    return Texture_ListGetLast(&g_Textures);
+    return newTexture(width, height, ID);
 }
 
 Basic_Texture *loadTextureFromPng(char *fileName) {
@@ -151,12 +144,10 @@ Basic_Texture *loadTextureFromPng(char *fileName) {
         printf("Failed to load image\n");
         exit(-3) ;
     }
-    const GLuint texture = uploadTextureToGPU(width, height, channels, data);
+    const GLuint ID = uploadTextureToGPU(width, height, channels, data);
 
     stbi_image_free(data);
-    Texture_ListAdd(&g_Textures, (Basic_Texture){.width = width, .height = height, .ID = texture});
-
-    return Texture_ListGetLast(&g_Textures);
+    return newTexture(width, height, ID);
 }
 
 Texture getTexture(const char* name) {
@@ -164,7 +155,7 @@ Texture getTexture(const char* name) {
         puts("Error loading texture: no name provided");
         return (Texture){};
     }
-    const Texture* texture = Hashmap_AtlasTextures_get(&g_textureMap, name);
+    const Texture* texture = Hashmap_AtlasTextures_get(&g_TextureMap, name);
     return *texture;
 }
 

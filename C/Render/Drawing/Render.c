@@ -12,6 +12,7 @@
 #include "../../Utils/Vector.h"
 #include "../GUI/CallbackFunctions.h"
 #include "Render/GUI/GuiElement.h"
+#include "Utils/CArrayList.h"
 
 static void accumulateMeshes(Element *element, const Renderer *renderer, GuiVertex *vertices, int *vt, int *indices, int *id);
 static Vec2i updateLayout(Element* self, Vec2i parentCursor, Vec2i remainingSpace, Vec2i parentPos, const Font* font);
@@ -102,15 +103,16 @@ void Renderer_render(const Renderer *renderer) {
 
     const Element* guiRoot = renderer->guiRoot;
 
-    for (int i = 0; i < guiRoot->childElements.size; i++) {
-        accumulateMeshes(guiRoot->childElements.content[i],
-                         renderer,
-                         vertices,
-                         &numVertices,
-                         indices,
-                         &numIndices
+    for_eachArr(element, guiRoot->aChildElements, {
+        accumulateMeshes(*element,
+                    renderer,
+                    vertices,
+                    &numVertices,
+                    indices,
+                    &numIndices
         );
-    }
+    });
+
     uploadBatchedQuads(vertices, numVertices, indices, numIndices);
     glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, nullptr);
     glBindVertexArray(0);
@@ -129,10 +131,10 @@ static void accumulateMeshes(Element *element, const Renderer *renderer, GuiVert
     uploadElementData(element);
     accumulateTextQuads(element, vertices, vt, indices, id, &renderer->font);
 
-    for (int i = 0; i < element->childElements.size; i++) {
-        Element* childElement = element->childElements.content[i];
-        accumulateMeshes(childElement, renderer, vertices, vt, indices, id);
-    }
+    for_eachArr(childElement, element->aChildElements, {
+        accumulateMeshes(*childElement, renderer, vertices, vt, indices, id);
+    });
+
     endScissor();
 }
 
@@ -184,8 +186,8 @@ static Vec2i updateLayout(Element* self, const Vec2i parentCursor, const Vec2i r
         .y = flags->fixedHeight ? dims->worldHeight : self->flags.wantGrowVertical ? remainingSpace.y : 0
     };
 
-    for (int i = 0; i < self->childElements.size; i++) {
-        Element *child = self->childElements.content[i];
+    for_eachArr(childPtr, self->aChildElements, {
+        Element *child = *childPtr;
         Vec2i currSpace = {.x = maxSpace.x - cursor.x, .y = maxSpace.y - cursor.y};
 
         Vec2i childDimensions = updateLayout(child, cursor, currSpace, dims->worldPos, font);
@@ -216,7 +218,7 @@ static Vec2i updateLayout(Element* self, const Vec2i parentCursor, const Vec2i r
             if (layoutDirection == L_down) cursor.y = extendDown + self->childGap;
             else if (layoutDirection == L_right) cursor.x = extendRight + self->childGap;
         }
-    }
+    });
 
     dims->worldWidth = max(dims->worldWidth, extendRight + padding->right);
     dims->worldHeight = max(dims->worldHeight, extendDown + padding->down);
@@ -244,11 +246,9 @@ Renderer newGUIRenderer(GLFWwindow* window, const int width, const int height, c
 }
 
 Element* createRootElement() {
-    return newElement((Vec2i){}, 0, 0);
+    return Element_new((Vec2i){}, 0, 0);
 }
 
 void Renderer_destroy(const Renderer *renderer) {
     glfwDestroyWindow(renderer->window);
 }
-
-

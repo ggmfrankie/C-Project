@@ -2,47 +2,86 @@
 // Created by ertls on 27.02.2026.
 //
 
-#ifndef MIXEDPROJECT_CARRAYLIST_H
-#define MIXEDPROJECT_CARRAYLIST_H
-
-#ifdef __cplusplus
-extern "C" {
-#endif
+#pragma once
+#include <assert.h>
+#include <stdio.h>
 
 #include <stdint.h>
 #include <stdlib.h>
 
-    typedef struct {
-        size_t size;
-        size_t capacity;
-    } Array_Header;
+typedef struct {
+    size_t size;
+    size_t capacity;
+} __Array_Header_;
 
-#define _initArray(x)
+#define ArrayInitCapacity 16
 
-    inline int* initArray(const size_t capacity) {
-        Array_Header* header = malloc(sizeof(int)*capacity + sizeof(Array_Header));
-        header->capacity = capacity;
-        header->size = 0;
+#define _getHead(array) (((__Array_Header_*)(array))[-1])
 
-        return (int*) header+1;
-    }
+#define arrLen(array) ((array) ? (_getHead(array).size) : 0)
 
-    inline void arrayPush(int* arr, const int x) {
-        Array_Header* header = ((Array_Header*) arr)-1;
-        if (header->capacity <= header->size) {
-            const size_t newCapacity = header->capacity*2 + sizeof(Array_Header);
-            Array_Header* newHeader = realloc(header, newCapacity);
-            if (newHeader) {
-                header = newHeader;
-                header->capacity = newCapacity;
-                arr = (int*) header+1;
-            }
-        }
-        arr[header->size++] = x;
-    }
+#define arrIsEmpty(array) (arrLen(array) == 0)
 
-#ifdef __cplusplus
-}
-#endif
+#define arrPush(array, x) \
+    do {\
+        if((array) == nullptr) {\
+            __Array_Header_* header = malloc(sizeof(*(array)) * ArrayInitCapacity + sizeof(__Array_Header_));\
+            assert(header != nullptr);\
+            header->capacity = ArrayInitCapacity;\
+            header->size = 0;\
+            (array) = (void*) (header+1);\
+        }\
+        __Array_Header_* header = &_getHead(array);\
+        if (header->capacity <= header->size) {\
+            assert(header->capacity != 0);\
+            const size_t newCapacity = header->capacity * 2;\
+            __Array_Header_* newHeader = realloc(header, sizeof(__Array_Header_) + sizeof(*(array)) * newCapacity);\
+            if (newHeader) {\
+                header = newHeader;\
+                header->capacity = newCapacity;\
+                (array) = (void*) (header+1);\
+            } else {\
+                puts("Failed to realloc ArrayList");\
+            }\
+        }\
+        (array)[header->size++] = x;\
+    } while (0)
 
-#endif //MIXEDPROJECT_CARRAYLIST_H
+#define arrTryGet(array, index) (((array) == nullptr) ? nullptr : (_getHead(array).size <= (index)) ? nullptr : &(array)[index])
+
+#define arrGetLast(array) (array) ? &(array)[arrLen(array)-1]: nullptr;
+
+#define arrClear(array)\
+    do {\
+        if ((array) == nullptr) break;\
+        _getHead(array).size = 0;\
+    } while (0)
+
+#define arrDel(array) \
+    do {\
+        assert((array) != nullptr);\
+        free(&_getHead(array));\
+        (array) = nullptr;\
+    } while (0)
+
+#define for_eachArr(item, array, ...)\
+    do {\
+        if ((array) == nullptr) break;\
+       \
+        size_t len = arrLen(array);\
+        for (size_t i = 0; i < len; ++i) {\
+            auto (item) = &(array)[i];\
+            __VA_ARGS__\
+        }\
+    } while (0)
+
+#define for_eachRevArr(item, array, ...)\
+    do {\
+        if ((array) == nullptr) break;\
+        \
+        size_t len = arrLen(array);\
+        for (size_t i = len; i-- > 0;) {\
+            auto (item) = &(array)[i];\
+            __VA_ARGS__\
+        }\
+    } while (0)

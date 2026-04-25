@@ -1,12 +1,8 @@
 //
 // Created by Stefan on 10.10.2025.
 //
+#pragma once
 
-#ifndef C_VECTOR_H
-#define C_VECTOR_H
-
-#include "../Utils/ArrayList.h"
-#include "../Utils/SimpleArray.h"
     typedef struct {
         float x,y,z,w;
     } Vec4f;
@@ -28,12 +24,6 @@
     } Vec4i;
 
 
-ARRAY_LIST(vec3, Vec3f)
-ARRAY_LIST(vec2, Vec2f)
-
-SIMPLEARRAY(vec2, Vec2f)
-
-
 int Vec2i_Cross(Vec2i v1, Vec2i v2);
 Vec2i Vec2i_Sub(Vec2i v1, Vec2i v2);
 bool Vec2i_Equals(Vec2i a, Vec2i b);
@@ -53,7 +43,6 @@ Vec4f Vec4f_Mul(Vec4f v1, float factor);
 Vec2f newVec2f(float x, float y);
 Vec2f toVec2f(Vec2i vec);
 
-
 #define v_sub(vec1, vec2) _Generic((vec1),\
 Vec2i: Vec2i_Sub,\
 Vec2f: Vec2f_Sub\
@@ -69,5 +58,3 @@ Vec2i: Vec2i_Add,\
 Vec3f: Vec3f_Add,\
 Vec4f: Vec4f_Add\
 )(vec1, factor)
-
-#endif //C_VECTOR_H

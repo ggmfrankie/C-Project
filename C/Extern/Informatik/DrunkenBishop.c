@@ -3,6 +3,9 @@
 //
 
 #include "DrunkenBishop.h"
+
+#include <stdio.h>
+
 #include "GameBoard.h"
 #include "../../Utils/Makros.h"
 
@@ -22,12 +25,12 @@ void runTest() {
     moveAndPrintBoard(&board, right_down);
     moveAndPrintBoard(&board, right_up);
     moveAndPrintBoard(&board, right_up);
-    REPEAT(moveAndPrintBoard(&board, right_down), 10)
+    REPEAT(10, moveAndPrintBoard(&board, right_down));
 }
 
 void drawWithBishop(unsigned long long input) {
     const time_t startingTime = now_ns();
-    const int steps = sizeof input * 4;
+    constexpr int steps = sizeof input * 4;
     GameBoard board = createBoard();
     initBoard(&board);
 

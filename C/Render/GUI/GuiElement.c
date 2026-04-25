@@ -13,18 +13,23 @@
 #include "GuiElementData.h"
 #include "Render/Drawing/Mesh.h"
 #include "Utils/Makros.h"
+#include "Utils/CArrayList.h"
+static constexpr int MAX_ELEMENTS = 1024;
+typedef struct {
+    Element m[MAX_ELEMENTS];
+    size_t capacity;
+    size_t size;
+} ElementList;
 
-
-Element elementArray[1024];
-auto g_Elements = (List_Element){.content = elementArray, .capacity = 1024, .size = 0};
-Hashmap_Element g_Hashmap = {};
+static Hashmap_Element g_Hashmap = {};
+static ElementList g_Elements = {.capacity = MAX_ELEMENTS, .size = 0};
 
 void initElements() {
     g_Hashmap = newHashmap_Element(512);
 }
 
-Element* newElement(const Vec2i pos, const int width, const int height) {
-    g_Elements.content[g_Elements.size] = (Element){
+Element* Element_new(const Vec2i pos, const int width, const int height) {
+    g_Elements.m[g_Elements.size] = (Element){
         .name = nullptr,
         .dims = {
             .width = width,
@@ -47,9 +52,9 @@ Element* newElement(const Vec2i pos, const int width, const int height) {
             .texture = {},
             .transparency = 0,
         },
-        .textElement = {.charQuads = Character_newList(16), .textScale = 1.0f},
+        .textElement = {.aCharQuads = nullptr, .textScale = 1.0f},
         .parentElement = nullptr,
-        .childElements = ChildElements_newList(8),
+        .aChildElements = nullptr,
         .padding = {0,0,0,0},
         .flags = {.isActive = true, .autoFit = true, .needsDeletion = true},
         .task = (Task){nullptr, nullptr},
@@ -61,82 +66,77 @@ Element* newElement(const Vec2i pos, const int width, const int height) {
         .ID = (int)g_Elements.size,
         .generateMesh = Mesh_loadRoundedCornerMesh2,
     };
-    return &g_Elements.content[g_Elements.size++];
+    assert(g_Elements.size < MAX_ELEMENTS);
+    return &g_Elements.m[g_Elements.size++];
 }
 
 Element* f_addChildElements(Element* parent, ...) {
     va_list args;
     va_start(args, parent);
-
+    assert(parent != nullptr);
     while (1) {
         Element* child = va_arg(args, Element*);
         if (child == NULL) {
             break;
         }
         child->parentElement = parent;
-        ChildElements_ListAdd(&parent->childElements, child);
+        arrPush(parent->aChildElements, child);
     }
 
     va_end(args);
     return parent;
 }
 
-void setOnClickCallback(Element* element, bool (*onClick)(Element* element, Renderer* renderer)) {
+void Element_setOnClickCallback(Element* element, bool (*onClick)(Element* element, Renderer* renderer)) {
+    assert(element != nullptr);
     element->callbacks.onClick = onClick;
 }
 
-void setOnHoverCallback(Element* element, bool (*onHover)(Element* element, Renderer* renderer)) {
+void Element_setOnHoverCallback(Element* element, bool (*onHover)(Element* element, Renderer* renderer)) {
+    assert(element != nullptr);
     element->callbacks.onHover = onHover;
 }
 
-void setBoundingBox(Element* element, bool (*isMouseOver)(const Element *element, Vec2i mousePos)) {
+void Element_setBoundingBox(Element* element, bool (*isMouseOver)(const Element *element, Vec2i mousePos)) {
+    assert(element != nullptr);
     element->callbacks.isMouseOver = isMouseOver;
 }
 
-void setText(Element* element, const char* text) {
-    pthread_mutex_lock(&guiMutex);
-    Strings.copyInto(&element->textElement.text, text);
-    element->textElement.hasText = true;
-    reloadTextQuads(getFont(), element);
-    pthread_mutex_unlock(&guiMutex);
-}
-
-void setText_noLock(Element* element, const char* text) {
+void Element_setText(Element* element, const char* text) {
+    assert(element != nullptr);
     Strings.copyInto(&element->textElement.text, text);
     element->textElement.hasText = true;
     reloadTextQuads(getFont(), element);
 }
 
-void setText_int(Element* element, const int i) {
+void Element_setText_int(Element* element, const int i) {
+    assert(element != nullptr);
     char tempText[512];
     Strings.fromInt(tempText, 512, i);
-
-    setText(element, tempText);
+    Element_setText(element, tempText);
 }
 
-void setActive(Element* element, const bool b) {
-    pthread_mutex_lock(&guiMutex);
+void Element_setActive(Element* element, const bool b) {
+    assert(element != nullptr);
     element->flags.isActive = b;
-    pthread_mutex_unlock(&guiMutex);
 }
 
-void toggleVisible(Element* element) {
-    pthread_mutex_lock(&guiMutex);
+void Element_toggleVisible(Element* element) {
+    assert(element != nullptr);
     element->flags.isActive = !element->flags.isActive;
-    pthread_mutex_unlock(&guiMutex);
 }
 
 void Element_setColor(Element* element, const Vec3f color) {
-    pthread_mutex_lock(&guiMutex);
+    assert(element != nullptr);
     element->visuals.color = color;
-    pthread_mutex_unlock(&guiMutex);
 }
 
-Element* getElement(const char* name) {
+Element* Element_getElement(const char* name) {
+    assert(name != nullptr);
     return *Hashmap_Element_get(&g_Hashmap, name);
 }
 
-bool isSelected_Quad(const Element *element, const Vec2i mousePos) {
+bool Element_isQuadBB(const Element *element, const Vec2i mousePos) {
     if (mousePos.x <= element->dims.worldPos.x+element->dims.worldWidth && mousePos.x >= element->dims.worldPos.x &&
         mousePos.y <= element->dims.worldPos.y+element->dims.worldHeight && mousePos.y >= element->dims.worldPos.y) {
         return true;
@@ -144,7 +144,7 @@ bool isSelected_Quad(const Element *element, const Vec2i mousePos) {
     return false;
 }
 
-Element *guiAddElement(
+Element *Element_addElement(
     char *name,
     const Vec2i pos,
     const int width,
@@ -170,12 +170,12 @@ Element *guiAddElement(
     bool wantGrowHorizontal,
     bool wantGrowVertical,
     float transparency,
-    char *texture,
+    const char *texture,
     bool invisible,
     int cornerRadius
 )
 {
-    Element* lastElement = newElement(pos, width, height);
+    Element* lastElement = Element_new(pos, width, height);
     if (mouseOver) {
         lastElement->callbacks.isMouseOver = mouseOver;
         if (hover) lastElement->callbacks.onHover = hover;
@@ -231,13 +231,13 @@ Element *guiAddElement(
     if (text) {
         const auto t = &lastElement->textElement;
         t->hasText = true;
-        t->charQuads = Character_newList(16);
+        t->aCharQuads = nullptr;
         t->text = newReservedString(128),
         t->textColor = (Vec3f){.0f, .0f, .0f};
         t->forceResize = forceResize,
         t->pos = (Vec2f){};
         t->width = 0;
-        setText_noLock(lastElement, text);
+        Element_setText(lastElement, text);
         reloadTextQuads(getFont(), lastElement);
     }
     return lastElement;
@@ -252,12 +252,12 @@ Element *guiAddSimpleSlider(
     SliderData* sliderData
 )
 {
-    Element* element = guiAddElement(nullptr, pos, width, height, colorBackground, (Padding){10, 10, 10, 10}, 10, isSelected_Quad, hoverAndDragFun, NULL, (Task){}, NULL, true, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false, 0.0f, NULL, true, 0);
+    Element* element = Element_addElement(nullptr, pos, width, height, colorBackground, (Padding){10, 10, 10, 10}, 10, Element_isQuadBB, hoverAndDragFun, NULL, (Task){}, NULL, true, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false, 0.0f, NULL, true, 0);
     Vec2i sliderPos = {};
     sliderPos.x = width/2;
     sliderPos.y = 0;
-    Element* sliderElement = guiAddElement(nullptr, sliderPos, width, height, colorSlider, (Padding){10, 10, 10, 10}, 10, isSelected_Quad, hoverAndDragFun, sliderCallbackFun, (Task){}, NULL, true, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false, 0.0f, NULL, true, 0);
-    ChildElements_ListAdd(&element->childElements, sliderElement);
+    Element* sliderElement = Element_addElement(nullptr, sliderPos, width, height, colorSlider, (Padding){10, 10, 10, 10}, 10, Element_isQuadBB, hoverAndDragFun, sliderCallbackFun, (Task){}, NULL, true, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false, 0.0f, NULL, true, 0);
+    arrPush(element->aChildElements, sliderElement);
     element->elementData = sliderData;
     return element;
 }
@@ -286,14 +286,14 @@ Element *createTextFieldElement(const ElementSettings elementSettings, bool (*on
 }
 
 Element *createElement(const ElementSettings es) {
-    return guiAddElement(es.name,
+    return Element_addElement(es.name,
                          es.pos,
                          es.width,
                          es.height,
                          es.color,
                          es.padding,
                          es.childGap,
-                         isSelected_Quad,
+                         Element_isQuadBB,
                          es.onHover,
                          es.onClick,
                          es.task,
@@ -329,8 +329,6 @@ Element* addChildrenAsGridWithGenerator(const ElementSettings parentData, Elemen
     Element* parent = createElement(parentData);
     const int childWidth = parent->dims.width/numX;
     const int childHeight = parent->dims.height/numY;
-
-    printf("childWidth>: %i childHeight>: %i\n", childWidth, childHeight);
 
     es.posMode = POS_ABSOLUTE;
     es.width = childWidth;
