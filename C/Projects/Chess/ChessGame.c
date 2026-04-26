@@ -4,7 +4,6 @@
 
 #include "ChessGame.h"
 
-#include "../../Render/Engine.h"
 #include "../../Render/GUI/CallbackFunctions.h"
 #include "../../Utils/Makros.h"
 #include "../../Utils/Network.h"
@@ -12,13 +11,15 @@
 
 #include "GuiInterface.h"
 #include "Render/GUI/GuiElement.h"
-#define COOL_COLOR (Vec3f){.2, .3, .3}
-#define COLOR_WHITE (Vec3f){1, 1, 1}
-#define COLOR_BLACK (Vec3f){0, 0, 0}
-#define COLOR_GRAY (Vec3f){0.2, 0.2, 0.2}
-#define COLOR_LIGHTGREY (Vec3f){0.8, 0.8, 0.8}
-#define COLOR_DARKYELLOW (Vec3f){0.5, 0.5, 0.0}
-#define COLOR_HOVER (Vec3f){0.8, 0.8, 1}
+
+
+static constexpr Vec3f COOL_COLOR =  {.2f, .3f, .3f};
+static constexpr Vec3f COLOR_WHITE  = {1.f, 1.f, 1.f};
+static constexpr Vec3f COLOR_BLACK = {0, 0, 0};
+static constexpr Vec3f COLOR_GRAY = {0.2f, 0.2f, 0.2f};
+static constexpr Vec3f COLOR_LIGHTGREY = {0.8f, 0.8f, 0.8f};
+static constexpr Vec3f COLOR_DARKYELLOW = {0.5f, 0.5f, 0.0f};
+static constexpr Vec3f COLOR_HOVER = {0.8f, 0.8f, 1.0f};
 #define CHESS_PORT 52345
 
 typedef enum {
@@ -775,8 +776,7 @@ static void createChessBoard(Element* root) {
             )
         )
     );
-    Element* chessBoard = Element_getElement("game board");;
-    chessBoard->flags.isActive = false;
+    gui_setActive("game board", false);
 }
 
 static void createStartScreen(Element* root) {
@@ -790,7 +790,8 @@ static void createStartScreen(Element* root) {
                     .padding = {10,10,10,10},
                     .pos = {200, 200},
                     .name = "start screen",
-                    .cornerRadius = 10
+                    .cornerRadius = 10,
+                    .draggable = true
                 }
             ),
             createElement(

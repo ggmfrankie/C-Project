@@ -12,6 +12,7 @@
 
 #include "GuiElement.h"
 #include "../Engine.h"
+#include "GLFW/glfw3.h"
 #include "Utils/CArrayList.h"
 #include "Utils/Makros.h"
 
@@ -123,7 +124,7 @@ bool textField_runTask(Element *element, Renderer *renderer) {
     if (data->text.length == 0) return false;
 
     char* newBuffer = malloc(data->text.length + 1);
-    memcpy(newBuffer, data->text.content, data->text.length);
+    memcpy(newBuffer, data->text.m, data->text.length);
     newBuffer[data->text.length] = '\0';
 
     str_clear(&data->text);
@@ -205,7 +206,7 @@ void incrementHeight(Element *element) {
 }
 
 void shiftPosition(Element *element) {
-    only_every(100, {
+    only_every_do(100, {
         element->dims.pos.x += 20;
         element->dims.pos.y += 20;
     });

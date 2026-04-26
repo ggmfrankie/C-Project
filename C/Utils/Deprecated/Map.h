@@ -59,4 +59,4 @@ static inline Map_##name newMap_##name(const size_t capacity, bool (*equals)(con
         .get = name##_Map_get,\
         .delete = name##_Map_delete\
     };\
-}\
+}

@@ -3,7 +3,7 @@
 //
 
 #pragma once
-
+#include "GuiDefines.h"
 #include <stdint.h>
 
 #include "GuiTypes.h"

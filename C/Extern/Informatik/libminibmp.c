@@ -60,7 +60,7 @@ void save_BMP(char * name, const bmp *image)
     const String fileName = stringOf(name);
     const String defaultPath = stringOf("../Extern/Informatik/Data/");
     String fullPath = Strings.combine(&defaultPath, &fileName);
-    FILE* f = fopen(fullPath.content,"wb");
+    FILE* f = fopen(fullPath.m,"wb");
     fwrite(image, HEADERSIZE, 1, f);
     fwrite(image->img, image->SizeImage, 1, f);
     fclose(f);

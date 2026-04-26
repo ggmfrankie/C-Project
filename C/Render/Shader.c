@@ -78,7 +78,7 @@ void Shader_createUniform(Shader *shader, const char* name) {
 
 int createVertexShader(const String *fileName, const int programId) {
     String shaderSource = readShaderFile(fileName);
-    const GLchar* source = (GLchar*)shaderSource.content;
+    const GLchar* source = (GLchar*)shaderSource.m;
 
     const int shaderId = createShader(&source, GL_VERTEX_SHADER, programId);
     Strings.delete_(&shaderSource);
@@ -88,7 +88,7 @@ int createVertexShader(const String *fileName, const int programId) {
 
 int createFragmentShader(const String *fileName, const int programId) {
     String shaderSource = readShaderFile(fileName);
-    const GLchar* source = (GLchar*)shaderSource.content;
+    const GLchar* source = (GLchar*)shaderSource.m;
 
     const int shaderId = createShader(&source, GL_FRAGMENT_SHADER, programId);
     Strings.delete_(&shaderSource);

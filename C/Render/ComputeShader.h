@@ -2,7 +2,7 @@
 // Created by Stefan on 29.10.2025.
 //
 #pragma once
-
+#include "GuiDefines.h"
 #include "Shader.h"
 #include "GuiTypes.h"
 #include "../../Dependencies/include/glad/gl.h"

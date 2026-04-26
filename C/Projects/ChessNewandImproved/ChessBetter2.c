@@ -286,7 +286,7 @@ void chess_loadChessPosition(char* fen) {
         const String* rank = &aRanks[i];
         int col = 0;
         for (int j = 0; j < rank->length; j++) {
-            char c = rank->content[j];
+            char c = rank->m[j];
             switch (c) {
                 case 'p': chess_board.squares[i][col++].piece = blackPawn; break;
                 case 'n': chess_board.squares[i][col++].piece = blackKing; break;
@@ -312,7 +312,7 @@ void chess_loadChessPosition(char* fen) {
             }
         }
     }
-    chess_board.turn = aFenPieces[1].content[0] == 'b' ? Black : White;
+    chess_board.turn = aFenPieces[1].m[0] == 'b' ? Black : White;
 
     arrDel(aFenPieces);
     arrDel(aRanks);

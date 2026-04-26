@@ -3,6 +3,6 @@
 //
 
 #pragma once
-
+#include "GuiDefines.h"
 typedef long long TimeNs;
 TimeNs now_ns();

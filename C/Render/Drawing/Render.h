@@ -3,9 +3,9 @@
 //
 
 #pragma once
+#include "GuiDefines.h"
 #include "../ComputeShader.h"
 #include "../Shader.h"
-#include "../../../Dependencies/include/GLFW/glfw3.h"
 #include "TextDisplaying.h"
 
 typedef struct Renderer {

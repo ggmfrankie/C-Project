@@ -32,7 +32,7 @@ StringFunctions Strings = {
 };
 
 void str_grow(String * string, const size_t newCapacity) {
-    char* oldContent = string->content;
+    char* oldContent = string->m;
     char* newContent;
     if (string->isHeap) {
         newContent = realloc(oldContent, newCapacity);
@@ -46,7 +46,7 @@ void str_grow(String * string, const size_t newCapacity) {
         }
     }
     if (newContent) {
-        string->content = newContent;
+        string->m = newContent;
         string->capacity = newCapacity;
     } else {
         puts("String growing failed, keeping old Buffer");
@@ -60,7 +60,7 @@ String stringOf(char* content){
         length++;
     }
     return (String){
-        .content = content,
+        .m = content,
         .length = length,
         .capacity = length,
         .isHeap = false
@@ -72,7 +72,7 @@ String newEmptyString(const size_t length) {
     content[length] = '\0';
 
     return (String){
-        .content = content,
+        .m = content,
         .length = length,
         .capacity = length,
         .isHeap = true
@@ -83,7 +83,7 @@ String newReservedString(const size_t capacity) {
     char* content = malloc(sizeof(char) * capacity);
 
     return (String){
-        .content = content,
+        .m = content,
         .length = 0,
         .capacity = capacity,
         .isHeap = true
@@ -100,26 +100,26 @@ void str_setContent_c(String* string, const char* content) {
     }
 
     for (int i = 0; i < length; ++i) {
-        string->content[i] = content[i];
+        string->m[i] = content[i];
     }
-    string->content[length] = '\0';
+    string->m[length] = '\0';
     string->length = length;
 }
 
 char str_getCharAt(const String* string, const int index){
     if(index >= string->length || index < 0) return '\0';
-    return string->content[index];
+    return string->m[index];
 }
 
 void str_setCharAt(const String* string, const int index, const char value){
     if(index >= string->length || index < 0) return;
-    string->content[index] = value;
+    string->m[index] = value;
 }
 
 void str_appendChar(String* string, const char value) {
     if (string->length+1 >= string->capacity) str_grow(string, string->capacity*2 + 1);
-    string->content[string->length++] = value;
-    string->content[string->length] = '\0';
+    string->m[string->length++] = value;
+    string->m[string->length] = '\0';
 }
 
 void str_appendCharAt(String* string, const char value, int index) {
@@ -127,27 +127,27 @@ void str_appendCharAt(String* string, const char value, int index) {
     if (string->length+1 >= string->capacity) str_grow(string, string->capacity*2 + 1);
     size_t i = string->length;
     for (; i > index; i--) {
-        string->content[i] = string->content[i-1];
+        string->m[i] = string->m[i-1];
     }
-    string->content[i] = value;
-    string->content[++string->length] = '\0';
+    string->m[i] = value;
+    string->m[++string->length] = '\0';
 }
 
 char str_popChar(String* string) {
     if (string->length < string->capacity/3) str_grow(string, string->capacity/2);
-    const char c = string->content[string->length--];
-    string->content[string->length] = '\0';
+    const char c = string->m[string->length--];
+    string->m[string->length] = '\0';
     return c;
 }
 
 char str_popCharAt(String* string, int index) {
     if (index < 0) index = 0;
     if (string->length < string->capacity/3) str_grow(string, string->capacity/2);
-    const char c = string->content[index];
+    const char c = string->m[index];
     for (size_t i = index; i < string->length; i++) {
-        string->content[i] = string->content[i+1];
+        string->m[i] = string->m[i+1];
     }
-    string->content[string->length] = '\0';
+    string->m[string->length] = '\0';
     return c;
 }
 
@@ -161,12 +161,12 @@ String str_substring(const String* string, int start_index, int end_index){
     char* content = malloc(length + 1);
     int j = 0;
     for(int i = start_index; i <= end_index; i++){
-        content[j] = string->content[i];
+        content[j] = string->m[i];
         j++;
     }
     content[j] = '\0';
     return (String){
-        .content = content,
+        .m = content,
         .length = length,
         .capacity = length,
         .isHeap = true
@@ -186,7 +186,7 @@ String newString_c(const char* content){
 
     con[length] = '\0';
     return (String){
-        .content = con,
+        .m = con,
         .length = length,
         .capacity = length,
         .isHeap = true
@@ -195,7 +195,7 @@ String newString_c(const char* content){
 
 String newString_array(char* content, const size_t capacity) {
     return (String){
-        .content = content,
+        .m = content,
         .length = 0,
         .capacity = capacity,
         .isHeap = false
@@ -207,14 +207,14 @@ String str_combine(const String *string1, const String *string2) {
     char* content = malloc(length + 1);
     int i;
     for (i = 0; i < string1->length; i++) {
-        content[i] = string1->content[i];
+        content[i] = string1->m[i];
     }
     for (int j = 0; j < string2->length; j++) {
-        content[i+j] = string2->content[j];
+        content[i+j] = string2->m[j];
     }
     content[length] = '\0';
     return (String){
-        .content = content,
+        .m = content,
         .length = length,
         .capacity = length,
         .isHeap = true
@@ -279,9 +279,9 @@ void str_recalculateLength(String* string) {
 }
 
 void str_delete(String* string){
-    if (!string->content) return;
-    if (string->isHeap)free(string->content);
-    string->content = nullptr;
+    if (!string->m) return;
+    if (string->isHeap)free(string->m);
+    string->m = nullptr;
     string->length = 0;
     string->capacity = 0;
     string->isHeap = false;
@@ -289,11 +289,11 @@ void str_delete(String* string){
 
 void str_clear(String* string) {
     string->length = 0;
-    string->content[0] = '\0';
+    string->m[0] = '\0';
 }
 
 void str_println(const String* string){
-    printf("%s \n",string->content);
+    printf("%s \n",string->m);
 }
 
 bool str_isEmpty(const String* s) {
@@ -304,7 +304,7 @@ bool str_equals(const String* string,const String* key){
     if(string->length != key->length) return false;
 
     for(int i = 0; i < string->length; i++){
-        if(string->content[i] != key->content[i]) return false;
+        if(string->m[i] != key->m[i]) return false;
     }
     return true;
 }
@@ -312,7 +312,7 @@ bool str_equals(const String* string,const String* key){
 bool str_startsWith(const String* string, const String* key){
     if(key->length > string->length) return false;
     for(int i = 0; i < string->length; i++) {
-        if(string->content[i] != key->content[i]) return false;
+        if(string->m[i] != key->m[i]) return false;
     }
     return true;
 }
@@ -343,6 +343,6 @@ String* str_split(const String* string, const char *key) {
 
 void str_setAll(const String* string, const char key) {
     for (int i = 0; i < string->length; i++) {
-        string->content[i] = key;
+        string->m[i] = key;
     }
 }

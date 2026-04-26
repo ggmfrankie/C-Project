@@ -10,7 +10,7 @@
 
 #include "glad/gl.h"
 
-#define MAX_ATLAS_TEXTURES 512
+static constexpr int MAX_ATLAS_TEXTURES = 512;
 
 typedef struct {
     Basic_Texture m[256];
@@ -45,7 +45,7 @@ void f_loadTextures(TextureAtlas *atlas, const char *first, va_list args) {
         String fullPath = Strings.combine(&defaultPath, &fileNameString);
         int width, height, channels;
 
-        pixels[index] = stbi_load(fullPath.content, &width, &height, &channels, 4);
+        pixels[index] = stbi_load(fullPath.m, &width, &height, &channels, 4);
         if (!pixels[index]) puts("Error loading texture for Atlas");
 
         rects[index].w = width;
@@ -137,7 +137,7 @@ Basic_Texture *loadTextureFromPng(char *fileName) {
 
     int width, height, channels;
 
-    unsigned char* data = stbi_load(fullPath.content, &width, &height, &channels, 0);
+    unsigned char* data = stbi_load(fullPath.m, &width, &height, &channels, 0);
 
     Strings.delete_(&fullPath);
     if (!data) {
@@ -151,7 +151,7 @@ Basic_Texture *loadTextureFromPng(char *fileName) {
 }
 
 Texture getTexture(const char* name) {
-    if (name == NULL) {
+    if (name == nullptr) {
         puts("Error loading texture: no name provided");
         return (Texture){};
     }

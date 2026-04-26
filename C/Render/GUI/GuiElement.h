@@ -2,6 +2,7 @@
 // Created by Stefan on 28.10.2025.
 //
 #pragma once
+#include "GuiDefines.h"
 #include "GuiTypes.h"
 #include "Tasks.h"
 
@@ -155,12 +156,14 @@ void Element_setOnHoverCallback(Element* element, bool (*onHover)(Element* eleme
 void Element_setBoundingBox(Element* element, bool (*isMouseOver)(const Element *element, Vec2i mousePos));
 void defaultReset(Element* element);
 
+Element* Element_getElement(const char* name);
 void Element_setText(Element* element, const char* text);
 void Element_setText_int(Element* element, int i);
 void Element_setActive(Element* element, bool b);
 void Element_toggleVisible(Element* element);
 void Element_setColor(Element* element, Vec3f color);
-Element* Element_getElement(const char* name);
+
+void Element_printDebug(const Element* element);
 
 bool Element_isQuadBB(const Element *element, Vec2i mousePos);
 

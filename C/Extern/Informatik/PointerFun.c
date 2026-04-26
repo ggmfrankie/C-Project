@@ -97,7 +97,7 @@ void pointerFun() {
 
     decrypt(&file, &key);
 
-    printf("%s\n", file.content);
+    printf("%s\n", file.m);
     writeFile(&destinationFile, &file);
     puts("finito");
 }
@@ -132,20 +132,20 @@ void decrypt(String* text, const String* key) {
     const size_t length = text->length;
     int keyIndex = 0;
     for (int i = 0; i < length; i++) {
-        char c = text->content[i];
+        char c = text->m[i];
 
         if (c < 32) {
             if (c == '\n') keyIndex = 0;
             continue;
         }
 
-        u_char kLow = (u_char) (key->content[keyIndex % key->length] & 0x0F);
+        u_char kLow = (u_char) (key->m[keyIndex % key->length] & 0x0F);
         keyIndex++;
         u_char cLow = (u_char) (c & 0x0F);
 
         u_char newC = (u_char)((kLow ^ cLow) & 0x0F);
 
-        text->content[i] = (char)((c & 0xF0) | newC);
+        text->m[i] = (char)((c & 0xF0) | newC);
     }
 }
 

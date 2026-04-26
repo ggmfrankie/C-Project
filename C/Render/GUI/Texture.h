@@ -3,7 +3,7 @@
 //
 
 #pragma once
-
+#include "GuiDefines.h"
 #include "../../Utils/Vector.h"
 #include "../../Utils/HashMap.h"
 

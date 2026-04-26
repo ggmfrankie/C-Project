@@ -5,7 +5,7 @@
 #ifndef C_PERSONALVERWALTUNG_H
 #define C_PERSONALVERWALTUNG_H
 
-#include "../../Utils/ArrayList.h"
+#include "../../Utils/Deprecated/ArrayList.h"
 
 typedef struct Personal {
     char name[64];

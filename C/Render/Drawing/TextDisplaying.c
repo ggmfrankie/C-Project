@@ -14,10 +14,8 @@
 #include "../../Utils/CString.h"
 #include "Render/GUI/GuiElement.h"
 #include "Utils/CArrayList.h"
-#define FONT_ATLAS_SIZE 2048
-#define FONT_SIZE 32.0f
-
-#define MAX_TEXT_VERTICES 16384
+static constexpr int FONT_ATLAS_SIZE = 2048;
+static constexpr float FONT_SIZE = 32.0f;
 
 void measureFont(Font *font);
 
@@ -28,11 +26,10 @@ Font loadFontAtlas(char* file) {
 
     Strings.println(&completePath);
 
-    unsigned char* ttf_buffer = malloc(1 << 20);
-    unsigned char* temp_bitmap = malloc(FONT_ATLAS_SIZE * FONT_ATLAS_SIZE);
-    unsigned char* rgbaBuffer = malloc(FONT_ATLAS_SIZE * FONT_ATLAS_SIZE*4);
+    byte* ttf_buffer = malloc(1 << 20);
+    byte* temp_bitmap = malloc(FONT_ATLAS_SIZE * FONT_ATLAS_SIZE);
 
-    FILE* f = fopen(completePath.content, "rb");
+    FILE* f = fopen(completePath.m, "rb");
     const size_t bytesRead = fread(ttf_buffer, 1, 1<<20, f);
     if (bytesRead == 0) {
         printf("Failed to read font file\n");
@@ -55,6 +52,7 @@ Font loadFontAtlas(char* file) {
     GLuint tex;
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glGenTextures(1, &tex);
+    assert(tex != 0);
     glBindTexture(GL_TEXTURE_2D, tex);
 
     glTexImage2D(
@@ -87,7 +85,6 @@ Font loadFontAtlas(char* file) {
 
     free(temp_bitmap);
     free(ttf_buffer);
-    free(rgbaBuffer);
     return font;
 }
 
@@ -146,18 +143,19 @@ Vec2i measureText(const Font *font, const String *text) {
     float maxHeight = 0.0f;
 
     for (int i = 0; i < text->length; i++) {
-        const char c = text->content[i];
+        const char c = text->m[i];
         if (c < 32 || c > 126) continue;
 
         stbtt_aligned_quad q;
-        stbtt_GetPackedQuad(font->glyphs,
-                            font->fontAtlas.width,
-                            font->fontAtlas.height,
-                            c - 32,
-                            &x,
-                            &y,
-                            &q,
-                            0);
+        stbtt_GetPackedQuad(
+            font->glyphs,
+            font->fontAtlas.width,
+            font->fontAtlas.height,
+            c - 32,
+            &x,
+            &y,
+            &q,0
+        );
 
         const float glyphHeight = (q.y1 - q.y0);
 
@@ -195,7 +193,7 @@ void reloadTextQuads(const Font* font, Element *element) {
     float prevX = 0.0f;
 
     for (int i = 0; i < textElement->text.length; i++) {
-        const char c = textElement->text.content[i];
+        const char c = textElement->text.m[i];
         if (c < 32 || c > 126) continue;
         arrPush(textElement->aCharQuads, (Character){});
         Character* character = arrGetLast(textElement->aCharQuads);

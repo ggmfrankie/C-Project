@@ -25,7 +25,6 @@ add_library(GUI STATIC
         C/Render/Drawing/Render.h
         C/Render/Drawing/Mesh.c
         C/Render/Drawing/Mesh.h
-        C/Utils/ArrayList.h
         Dependencies/GL/gl.c
         C/Render/Engine.c
         C/Render/Engine.h
@@ -34,14 +33,12 @@ add_library(GUI STATIC
         C/Render/Shader.c
         C/Render/Shader.h
         C/Utils/HashMap.h
-        C/Utils/Map.h
         C/Utils/FileIO.c
         C/Utils/FileIO.h
         C/Utils/StringBuilder.c
         C/Utils/StringBuilder.h
         C/Render/GUI/GuiElement.c
         C/Render/GUI/GuiElement.h
-        C/Utils/SimpleArray.h
         C/Render/ComputeShader.c
         C/Render/ComputeShader.h
         C/Render/GUI/Texture.c
@@ -95,6 +92,7 @@ add_library(GUI STATIC
         C/Render/Drawing/Batcher.c
         C/Render/Drawing/Batcher.h
         C/Render/Drawing/RenderTypes.h
+        C/GuiDefines.h
 )
 
 set_target_properties(GUI PROPERTIES LINKER_LANGUAGE C)

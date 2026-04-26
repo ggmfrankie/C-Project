@@ -3,7 +3,7 @@
 //
 
 #pragma once
-
+#include "GuiDefines.h"
 #include "GuiTypes.h"
 
 #define MAX_GUI_VERTICES 163840

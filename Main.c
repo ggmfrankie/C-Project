@@ -3,7 +3,7 @@
 #include <windows.h>
 
 #include "C/Render/Engine.h"
-#include "C/Utils/Map.h"
+#include "C/Utils/Deprecated/Map.h"
 #include "C/Utils/CString.h"
 #include "C/Extern/Informatik/Spannungsteiler_A3.h"
 #include "C/Extern/Informatik/DrunkenBishop.h"

@@ -7,6 +7,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+#include "GuiDefines.h"
 #include <GLFW/glfw3.h>
 #include "GuiTypes.h"
 

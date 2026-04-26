@@ -11,9 +11,9 @@
 
 String readFile(const String *fileName) {
 
-    FILE *file = fopen(fileName->content, "rb");
+    FILE *file = fopen(fileName->m, "rb");
     if (!file) {
-        printf("Failed to open file: %s\n", fileName->content);
+        printf("Failed to open file: %s\n", fileName->m);
         exit(1);
     }
 
@@ -36,8 +36,8 @@ String readFile(const String *fileName) {
 }
 
 void writeFile(const String *fileName, const String *content) {
-    FILE *file = fopen(fileName->content, "wb");
-    const size_t writtenChars = fwrite(content->content, 1, content->length, file);
+    FILE *file = fopen(fileName->m, "wb");
+    const size_t writtenChars = fwrite(content->m, 1, content->length, file);
     if (writtenChars != content->length) {
         perror("Failed to write complete data");
         fclose(file);

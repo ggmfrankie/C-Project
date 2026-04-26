@@ -3,7 +3,7 @@
 //
 
 #pragma once
-
+#include "GuiDefines.h"
 #include <pthread.h>
 
 #include "../../Utils/CString.h"

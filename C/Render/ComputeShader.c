@@ -23,7 +23,7 @@ static GLuint generateGraphSSBO(const size_t size) {
 
 static GLuint createGraphingShader(const String *fileName, const int programId) {
     String shaderSource = readShaderFile(fileName);
-    const GLchar* source = (GLchar*)shaderSource.content;
+    const GLchar* source = (GLchar*)shaderSource.m;
 
     const int shaderId = createShader(&source, GL_COMPUTE_SHADER, programId);
 

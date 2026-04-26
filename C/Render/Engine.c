@@ -1,6 +1,7 @@
 //
 // Created by Stefan on 10.10.2025.
 //
+#include "GuiDefines.h"
 #include "Engine.h"
 
 #include <windows.h>
@@ -9,6 +10,7 @@
 #include "Drawing/Render.h"
 #include "GUI/CallbackFunctions.h"
 #include "../Extern/Informatik/Spannungsteiler_A3.h"
+#include "GLFW/glfw3.h"
 
 #include "GUI/GuiElementData.h"
 
@@ -31,7 +33,7 @@ static bool isMainThread();
         const bool _lock = !isMainThread();\
         if (_lock) pthread_mutex_lock(&guiMutex);\
         {\
-            __VA_ARGS__;\
+            __VA_ARGS__\
         }\
         if (_lock) pthread_mutex_unlock(&guiMutex);\
     } while (0);
@@ -50,7 +52,7 @@ static Renderer g_Renderer;
 static UserCallbacks g_Callbacks;
 
 static void processInput(Renderer *renderer);
-static bool updateStateRecursively(Element *element, Renderer *renderer);
+static bool processInputRec(Element *element, Renderer *renderer);
 static bool dragElement(const Renderer *renderer);
 void gui_processDebug();
 
@@ -92,7 +94,9 @@ void gui_update() {
     Renderer_updateLayout(&g_Renderer);
     gui_popUpdate();
     processInput(&g_Renderer);
+#ifdef GUI_DEBUG
     gui_processDebug();
+#endif
     unlock();
 }
 
@@ -111,7 +115,6 @@ void f_gui_loadTextures(char* first, ...) {
 
 void gui_setTexture(Element* e, const char* name) {
     assert(e != nullptr);
-    assert(name != nullptr);
     Thread_Locked(
         if (name) {
             e->visuals.texture = getTexture(name);
@@ -133,20 +136,22 @@ void gui_setActive(const char* name, const bool b) {
 void gui_toggleVisible(const char* name) {
     assert(name != nullptr);
     Thread_Locked(
-        const auto e = Element_getElement(name);
-        if (!e){ puts("no element found"); return;}
-        Element_toggleVisible(e);
+        Element_toggleVisible(Element_getElement(name));
     )
 }
 
 void gui_setText(const char* name, const char* text) {
     assert(name != nullptr);
-    Thread_Locked(Element_setText(Element_getElement(name), text);)
+    Thread_Locked(
+        Element_setText(Element_getElement(name), text);
+    )
 }
 
 void gui_setColor(const char* name, const float r, const float g, const float b) {
     assert(name != nullptr);
-    Thread_Locked(Element_setColor(Element_getElement(name), (Vec3f){r, g, b});)
+    Thread_Locked(
+        Element_setColor(Element_getElement(name), (Vec3f){r, g, b});
+    )
 }
 
 void gui_resetColor(const char* name) {
@@ -159,39 +164,32 @@ void gui_resetColor(const char* name) {
 }
 
 void gui_setCornerRadius(const char* name, const int radius) {
-    Thread_Locked(Element_getElement(name)->dims.cornerRadius = radius;)
+    Thread_Locked(
+        Element_getElement(name)->dims.cornerRadius = radius;
+    )
 }
 
 void gui_processDebug() {
-    return;
-    const Element* bar = Element_getElement("panel");
-    if (bar) {
-        only_every(100,{
-        printf("World pos is: %i, %i, Relative pos is: %i, %i\n dims = %i, %i, worldDims = %i, %i\n",
-               bar->dims.worldPos.x,
-               bar->dims.worldPos.y,
-               bar->dims.pos.x,
-               bar->dims.pos.y,
-               bar->dims.width,
-               bar->dims.height,
-               bar->dims.worldWidth,
-               bar->dims.worldWidth
-           );
-        });
-    }
+    const Element* gameBoard = Element_getElement("game board");
+    const Element* parent = gameBoard->parentElement;
+    assert(strcmp(parent->name, "GUI_ROOT") == 0);
 }
 
 void gui_onKeyPressCallback(GUI_onKeyPressAction action) {
-    Thread_Locked(g_Callbacks.onKeyPress = action;)
+    Thread_Locked(
+        g_Callbacks.onKeyPress = action;
+    )
 }
 
 bool gui_getActive(const char* name) {
     bool status = false;
-    Thread_Locked(status = Element_getElement(name)->flags.isActive;)
+    Thread_Locked(
+        status = Element_getElement(name)->flags.isActive;
+    )
     return status;
 }
 
-//TODO
+[[deprecated]]
 void startEngine(void (*generateGUI)(Element* guiRoot)) {
     constexpr int width = 512;
     constexpr int height = 512;
@@ -221,11 +219,7 @@ void startEngine(void (*generateGUI)(Element* guiRoot)) {
 
         gui_update();
 
-        //pthread_mutex_lock(&guiMutex);
-
         gui_render();
-
-        //pthread_mutex_unlock(&guiMutex);
 
         Sleep(1);
     }
@@ -262,15 +256,17 @@ static bool dragElement(const Renderer *renderer) {
             element->dims.pos.x = (renderer->mousePos.x - parentWorldPos.x) - offset.x - 0;
             element->dims.pos.y = (renderer->mousePos.y - parentWorldPos.y) - offset.y - 0;
 
+#if GUI_DEBUG_TRACE_DRAGGING
+            only_every_do(100, {
+                printf("World pos is: %i, %i, Relative pos is: %i, %i\n",
+                    element->dims.worldPos.x,
+                    element->dims.worldPos.y,
+                    element->dims.pos.x,
+                    element->dims.pos.y
+                );
+            });
+#endif
 
-            // only_every(100, {
-            //     printf("World pos is: %i, %i, Relative pos is: %i, %i\n",
-            //         element->dims.worldPos.x,
-            //         element->dims.worldPos.y,
-            //         element->dims.pos.x,
-            //         element->dims.pos.y
-            //     )
-            // });
         }
         return true;
     }
@@ -281,18 +277,18 @@ static void processInput(Renderer *renderer) {
     renderer->guiRoot->dims.width = renderer->screenWidth;
     renderer->guiRoot->dims.height = renderer->screenHeight;
 
-    const bool consumed = updateStateRecursively(renderer->guiRoot, renderer);
+    const bool consumed = processInputRec(renderer->guiRoot, renderer);
 
     if (click(renderer->window, GLFW_MOUSE_BUTTON_LEFT) && !consumed) focusedElement = nullptr;
     if (focusedElement && focusedElement->callbacks.whileSelected) focusedElement->callbacks.whileSelected(focusedElement);
 }
 
-static bool updateStateRecursively(Element *element, Renderer *renderer) {
+static bool processInputRec(Element *element, Renderer *renderer) {
     if (element == NULL || !element->flags.isActive) return false;
     if (element->callbacks.onUpdate) element->callbacks.onUpdate(element);
 
     for_eachRevArr(child, element->aChildElements,
-        if (updateStateRecursively(*child, renderer)) return true;
+        if (processInputRec(*child, renderer)) return true;
     );
 
     if (dragging) return false;
@@ -316,7 +312,7 @@ void gui_charCallback(GLFWwindow* window, const unsigned int codepoint) {
         if (codepoint < 128) {
             str_appendCharAt(&tfd->text, (char) codepoint, tfd->cursor.byteIndex++);
 
-            Element_setText(focusedElement, tfd->text.content);
+            Element_setText(focusedElement, tfd->text.m);
         }
     }
 }
@@ -335,7 +331,7 @@ void gui_keyCallback(GLFWwindow* window, int key, int scancode, int action, int 
             TextFieldData* tfd = focusedElement->elementData;
             if (key == GLFW_KEY_BACKSPACE && tfd->cursor.byteIndex != 0) {
                 str_popCharAt(&tfd->text, --tfd->cursor.byteIndex);
-                Element_setText(focusedElement,  tfd->text.content);
+                Element_setText(focusedElement,  tfd->text.m);
             }
             else if (key == GLFW_KEY_LEFT && tfd->cursor.byteIndex != 0) {
                 tfd->cursor.byteIndex--;
@@ -365,12 +361,10 @@ void gui_cursorPositionCallback(GLFWwindow* window, const double xPos, const dou
 }
 
 Vec2i getMousePos() {
-    const bool lock = !isMainThread();
-
-    if (lock) pthread_mutex_lock(&guiMutex);
-    const Vec2i mousePos = g_Renderer.mousePos;
-    if (lock) pthread_mutex_unlock(&guiMutex);
-
+    Vec2i mousePos;
+    Thread_Locked(
+        mousePos = g_Renderer.mousePos;
+    )
     return mousePos;
 }
 

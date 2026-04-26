@@ -2,7 +2,7 @@
 // Created by ertls on 04.03.2026.
 //
 #pragma once
-
+#include "GuiDefines.h"
 #include "Utils/Vector.h"
 
 typedef struct GuiVertex {

@@ -347,3 +347,16 @@ Element* addChildrenAsGridWithGenerator(const ElementSettings parentData, Elemen
 void defaultReset(Element* element) {
     element->visuals.brightness = 1.0f;
 }
+
+void Element_printDebug(const Element* element) {
+    printf("World pos is: %i, %i, Relative pos is: %i, %i\n dims = %i, %i, worldDims = %i, %i\n",
+           element->dims.worldPos.x,
+           element->dims.worldPos.y,
+           element->dims.pos.x,
+           element->dims.pos.y,
+           element->dims.width,
+           element->dims.height,
+           element->dims.worldWidth,
+           element->dims.worldWidth
+    );
+}

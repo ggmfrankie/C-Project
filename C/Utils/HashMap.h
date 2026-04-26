@@ -3,7 +3,7 @@
 //
 
 #pragma once
-
+#include "GuiDefines.h"
 #define HASH_KEY 0
 #include <stdint.h>
 #include <string.h>

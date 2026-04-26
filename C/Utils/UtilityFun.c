@@ -25,3 +25,12 @@ Vec3f hsv_to_rgb(const float h, const float s, const float v)
 
     return (Vec3f){ r + m, g + m, b + m };
 }
+
+bool only_every(int n) {
+    static int counter = 0;
+    if (counter++ >= n) {
+        counter = 0;
+        return true;
+    }
+    return false;
+}

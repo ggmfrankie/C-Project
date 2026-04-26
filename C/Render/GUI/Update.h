@@ -3,7 +3,7 @@
 //
 
 #pragma once
-
+#include "GuiDefines.h"
 #ifdef __cplusplus
 extern "C" {
 #endif

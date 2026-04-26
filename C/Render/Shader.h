@@ -2,8 +2,8 @@
 // Created by Stefan on 10.10.2025.
 //
 #pragma once
-
-#include "../Utils/Map.h"
+#include "GuiDefines.h"
+#include "../Utils/Deprecated/Map.h"
 #include "../Utils/HashMap.h"
 #include "../Utils/CString.h"
 #include "../Utils/Vector.h"
@@ -25,9 +25,9 @@ typedef struct OtherShaders {
 } OtherShaders;
 
 typedef struct ShaderFunction {
-    void (*bind)(const struct Shader*);
+    void (*bind)(const Shader*);
     void (*unbind)();
-    void (*createUniform)(struct Shader *shader, const char* name);
+    void (*createUniform)(Shader *shader, const char* name);
     void (*setUniform_f)(const Shader *shader, const char* name, float value);
     void (*setUniform_Vec2)(const Shader *shader, const char* name, Vec2f value);
     void (*setUniform_i)(const Shader *shader, const char* name, int value);

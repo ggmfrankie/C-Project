@@ -3,7 +3,7 @@
 //
 
 #pragma once
-
+#include "GuiDefines.h"
 #include <pthread.h>
 
 #define TASK_QUEUE_MAX 128

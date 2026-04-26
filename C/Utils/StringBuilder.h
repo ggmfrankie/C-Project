@@ -3,7 +3,7 @@
 //
 
 #pragma once
-
+#include "GuiDefines.h"
 #include "CString.h"
 
 typedef struct StringBuilder {

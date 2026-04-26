@@ -3,7 +3,7 @@
 //
 
 #pragma once
-
+#include "GuiDefines.h"
 
 #include <winsock.h>
 #include <psdk_inc/_socket_types.h>

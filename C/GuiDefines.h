@@ -1,0 +1,12 @@
+//
+// Created by Stefan on 26.04.2026.
+//
+
+#pragma once
+
+#define GUI_DEBUG 1
+
+#define GUI_DEBUG_RENDER 0
+#define GUI_DEBUG_TRACE_DRAGGING 0
+#define GUI_DEBUG_OBSERVE_ELEMENT_UPDATE 1
+#define GUI_DEBUG_OBSERVE_ELEMENT_UPDATE_ELEMENT "game board"

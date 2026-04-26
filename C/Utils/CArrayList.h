@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include "GuiDefines.h"
 #include <assert.h>
 #include <stdio.h>
 
