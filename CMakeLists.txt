@@ -207,6 +207,7 @@ add_executable(C-Project
         C/GuiTypes.h
         Cpp/Test/Java.cpp
         Cpp/Test/Java.hpp
+        Cpp/Utils/DataStorage/Stream.hpp
 
 )
 target_compile_definitions(C-Project PRIVATE

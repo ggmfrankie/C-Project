@@ -24,3 +24,5 @@
     }\
     \
 } while (0);
+
+#define printIf(condition, text, ...) do {if (condition) printf(text, ##__VA_ARGS__);} while(0)

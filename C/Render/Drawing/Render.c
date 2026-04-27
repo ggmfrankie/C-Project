@@ -233,8 +233,6 @@ static Vec2i updateLayout(Element* self, const Vec2i parentCursor, const Vec2i r
     return (Vec2i){dims->worldWidth, dims->worldHeight};
 }
 
-#define DebugPrint(text, ...) do {if (print) printf(text, __VA_ARGS__);} while(0)
-
 static Vec2i updateLayoutDebug(Element* self, const Vec2i parentCursor, const Vec2i remainingSpace, const Vec2i parentPos, const Font* font) {
     if (!self || !self->flags.isActive) return (Vec2i){0,0};
     const auto cb = &self->callbacks;
@@ -248,7 +246,7 @@ static Vec2i updateLayoutDebug(Element* self, const Vec2i parentCursor, const Ve
 
     if (cb->reset) cb->reset(self);
 
-    DebugPrint(
+    printIf(print,
         "---------------------\n"
         "Current Element: \"%s\"\n"
         "Remaining space:\n"
