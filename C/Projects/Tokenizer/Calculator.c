@@ -91,11 +91,8 @@ void Calculator_runParserTest() {
         tokenList.length = -1;
         memset(tokenList.m, 0, sizeof(tokenList.m));
         puts("Enter an expression:");
-#if 1
+
         scanf("%511s", input);
-#else
-        strcpy(input, "22-44*(12--4.99)");
-#endif
         const auto length = strlen(input);
         for (int i = 0; i <= length; i++ ) {
             procChar(input[i]);

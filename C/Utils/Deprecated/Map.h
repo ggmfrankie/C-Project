@@ -7,7 +7,6 @@
 #include <stdlib.h>
 
 #define MAP(name, Key, Value)\
-\
 typedef struct MapEntry_##name {\
     Key key;\
     Value value;\
@@ -60,3 +59,5 @@ static inline Map_##name newMap_##name(const size_t capacity, bool (*equals)(con
         .delete = name##_Map_delete\
     };\
 }
+
+

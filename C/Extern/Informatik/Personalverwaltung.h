@@ -13,7 +13,6 @@ typedef struct Personal {
     int wage;
 } Personal;
 
-ARRAY_LIST(Personal, Personal)
 
 void personalVerwaltung();
 

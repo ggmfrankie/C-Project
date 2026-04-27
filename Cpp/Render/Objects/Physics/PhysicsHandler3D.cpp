@@ -5,7 +5,6 @@
 #include "PhysicsHandler3D.hpp"
 #include "Jolt/Physics/Body/BodyCreationSettings.h"
 #include "Jolt/Physics/Collision/Shape/BoxShape.h"
-#include <unordered_map>
 
 #include "Render/Objects/Physics/PhysicsFactory.hpp"
 

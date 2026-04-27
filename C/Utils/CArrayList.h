@@ -77,12 +77,13 @@ typedef struct {
     } while (0)
 
 #define for_eachRevArr(item, array, ...)\
-    do {\
-        if ((array) == nullptr) break;\
-        \
-        size_t len = arrLen(array);\
-        for (size_t i = len; i-- > 0;) {\
-            auto (item) = &(array)[i];\
-            __VA_ARGS__\
-        }\
+    do { \
+        if ((array) == nullptr) break; \
+        size_t len = arrLen(array); \
+        for (size_t i = len; i-- > 0;) { \
+            auto item = &(array)[i]; \
+            __VA_ARGS__ \
+        } \
     } while (0)
+
+

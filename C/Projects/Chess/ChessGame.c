@@ -682,8 +682,6 @@ static void createChessBoard(Element* root) {
                     .childGap = 10,
                     .cornerRadius = 10,
                     .draggable = true,
-                    .wantGrowHorizontal = true,
-                    .wantGrowVertical = true
                 }
             ),
             addChildrenAsGridWithGenerator(
@@ -729,10 +727,10 @@ static void createChessBoard(Element* root) {
                         .padding = {5,5,5,5},
                         .childGap = 10,
                         .width = 400,
-                        .fixedWidth = true,
                         .layoutDirection = L_right,
                         .notSelectable = true,
                         .wantGrowHorizontal = true,
+                        .fixedWidth = true,
                         .cornerRadius = 10,
                         .name = "panel"
                     }

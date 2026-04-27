@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.20 FATAL_ERROR)
 project(JoltPhysics VERSION 5.5.1 LANGUAGES CXX)
 
 # When turning this option on, the library will be compiled using assertions. By default asserts are enabled in Debug build.
-option(USE_ASSERTS "Enable asserts" OFF)
+option(USE_ASSERTS "Enable asserts" ON)
 
 # When turning this option on, the library will be compiled using doubles for positions. This allows for much bigger worlds.
 option(DOUBLE_PRECISION "Use double precision math" OFF)
@@ -82,7 +82,7 @@ option(TRACK_NARROWPHASE_STATS "Track Narrowphase Stats" OFF)
 option(JPH_TRACK_SIMULATION_STATS "Track Simulation Stats" OFF)
 
 # Enable the debug renderer in the Debug and Release builds. Note that DEBUG_RENDERER_IN_DISTRIBUTION will override this setting.
-option(DEBUG_RENDERER_IN_DEBUG_AND_RELEASE "Enable debug renderer in Debug and Release builds" ON)
+option(DEBUG_RENDERER_IN_DEBUG_AND_RELEASE "Enable debug renderer in Debug and Release builds" OFF)
 
 # Setting to enable the debug renderer in all builds.
 # Note that enabling this reduces the performance of the library even if you're not drawing anything.
@@ -119,16 +119,16 @@ include(CMakeDependentOption)
 cmake_dependent_option(USE_STATIC_MSVC_RUNTIME_LIBRARY "Use the static MSVC runtime library" ON "MSVC;NOT WINDOWS_STORE" OFF)
 
 # Option to compile with DirectX 12 compute
-option(JPH_USE_DX12 "Use DirectX" ON)
+option(JPH_USE_DX12 "Use DirectX" OFF)
 
 # Use DXC compiler to compile shaders, when off falls back to FXC
-option(JPH_USE_DXC "Use DXC shader compiler" ON)
+option(JPH_USE_DXC "Use DXC shader compiler" OFF)
 
 # Option to compile with Vulkan compute
 option(JPH_USE_VK "Use Vulkan" ON)
 
 # Option to compile with Metal compute
-option(JPH_USE_MTL "Use Metal" ON)
+option(JPH_USE_MTL "Use Metal" OFF)
 
 # Option to compile with CPU fallback compute
 option(JPH_USE_CPU_COMPUTE "Use CPU Compute" ON)

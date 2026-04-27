@@ -6,6 +6,9 @@
       <excludeFolder url="file://$MODULE_DIR$/Dependencies/JoltPhysics/Build/MinGW_Debug/CMakeFiles" />
       <excludeFolder url="file://$MODULE_DIR$/Dependencies/JoltPhysics/Build/VS2022_CL" />
       <excludeFolder url="file://$MODULE_DIR$/Rust/target" />
+      <excludeFolder url="file://$MODULE_DIR$/Learning" />
+      <excludeFolder url="file://$MODULE_DIR$/Learning/Rust/rustlings/.vscode" />
+      <excludeFolder url="file://$MODULE_DIR$/Learning/Rust/rustlings/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

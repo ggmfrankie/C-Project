@@ -7,7 +7,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
-
+/*
 Personal createPersonal() {
     Personal personal = {};
 
@@ -72,3 +72,4 @@ void personalVerwaltung() {
     const float durchschnitt = durchschnittsGehalt(&personalList);
     printf("Durchschnittsgehalt: %.2f\n", durchschnitt);
 }
+*/

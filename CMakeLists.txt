@@ -9,6 +9,10 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+add_subdirectory(Dependencies/JoltPhysics/Build)
+target_compile_definitions(Jolt PUBLIC JPH_ENABLE_ASSERTS)
+target_compile_options(Jolt PRIVATE -fno-lto -Wno-array-bounds)
+
 include_directories(
         "${CMAKE_SOURCE_DIR}/Dependencies/include"
         "${CMAKE_SOURCE_DIR}/C"
@@ -86,7 +90,10 @@ add_library(GUI STATIC
         C/Utils/CArrayList.c
         C/Utils/CArrayList.h
 
-        Cpp/Games/BaseGame/GameGui.c
+        C/Projects/TFE/TFE.c
+        C/Projects/TFE/TFE.h
+        C/GuiTypes.h
+
         C/Render/GUI/Update.c
         C/Render/GUI/Update.h
         C/Render/Drawing/Batcher.c
@@ -202,29 +209,19 @@ add_executable(C-Project
         Cpp/Render/Objects/Objects2D/Render/RenderObjectRef2D.hpp
         Cpp/Engine/Core/PhysixBox2D/Collision.hpp
         Dependencies/RustGame/TFE.h
-        C/Projects/TFE/TFE.c
-        C/Projects/TFE/TFE.h
-        C/GuiTypes.h
         Cpp/Test/Java.cpp
         Cpp/Test/Java.hpp
         Cpp/Utils/DataStorage/Stream.hpp
+        Cpp/Games/BaseGame/GameGui.c
+)
 
-)
-target_compile_definitions(C-Project PRIVATE
-        JPH_DEBUG_RENDERER
-        JPH_PROFILE_ENABLED
-        JPH_OBJECT_STREAM
-)
+target_compile_definitions(C-Project PUBLIC JPH_ENABLE_ASSERTS)
 
 set(GLFW_LIB "${CMAKE_SOURCE_DIR}/Dependencies/lib-mingw-w64/libglfw3.a")
 
 add_library(glfw STATIC IMPORTED)
 set_target_properties(glfw PROPERTIES
         IMPORTED_LOCATION "${GLFW_LIB}"
-)
-add_library(Jolt STATIC IMPORTED)
-set_target_properties(Jolt PROPERTIES
-        IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/Dependencies/JoltPhysics/Build/MinGW_Debug/libJolt.a"
 )
 
 #find_package(TBB REQUIRED)
@@ -243,7 +240,7 @@ add_custom_command(TARGET C-Project POST_BUILD
         $<TARGET_FILE_DIR:C-Project>
 )
 
-target_link_libraries(C-Project
+target_link_libraries(C-Project PRIVATE
         glfw
         opengl32     # OpenGL (needed by GLFW)
         gdi32        # Windows GDI
@@ -256,3 +253,4 @@ target_link_libraries(C-Project
         #TBB::tbb
         RustGame
 )
+
