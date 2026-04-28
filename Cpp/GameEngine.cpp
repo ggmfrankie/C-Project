@@ -8,17 +8,17 @@
 #include "GameEngine.hpp"
 #include "GuiInterface.h"
 #include "Games/IGame.hpp"
-
+#include "Utils/Makros.h"
 
 
 GameEngine* GameEngine::engineInstance = nullptr;
 
-GameEngine::GameEngine(Game::IGame& game) : game(game), screen("My Window", 800, 600) {
-}
+GameEngine::GameEngine(Game::IGame& game) :
+    game(game),
+    screen("My Window", 800, 600)
+{}
 
 void GameEngine::loop() {
-
-    int i = 0;
     double lastFrameTime = glfwGetTime();
     while(!glfwWindowShouldClose(screen.getWindowHandle()))
     {
@@ -34,11 +34,10 @@ void GameEngine::loop() {
 
         const auto currentTime = glfwGetTime() - frameStart;
 
-        if (i > 100) {
+        only_every_do(100, {
             gui_setText("fps display", std::to_string(1.0/currentTime).c_str());
-            i = 0;
-        }
-        i++;
+        });
+
         lastFrameTime = frameStart;
         screen.endFrame();
     }
@@ -49,7 +48,14 @@ void GameEngine::init() {
     JPH::Factory::sInstance = new JPH::Factory();
     JPH::RegisterTypes();
     game.preInit({screen.getInput(), screen, commandRegistry});
-    screen.init();
+
+    try {
+        screen.init();
+    } catch (Render::Screen::GlException e) {
+        std::cerr << e.what();
+        return;
+    }
+
     game.postInit();
 }
 

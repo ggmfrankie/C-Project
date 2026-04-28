@@ -22,13 +22,13 @@ namespace Render {
         ~Screen();
 
         void init();
-        void render() const;
+        void render() const noexcept;
         void attachScene(Game::IScene* scene);
 
         [[nodiscard]] int getWidth() const;
         [[nodiscard]] int getHeight() const;
 
-        void update(float dt) const;
+        void update(float dt) const noexcept;
         [[nodiscard]] GLFWwindow *getWindowHandle() const;
         Input &getInput();
 
@@ -36,8 +36,13 @@ namespace Render {
 
         [[nodiscard]] Game::IScene& getScene() const;
 
+        class GlException: public std::runtime_error {
+        public:
+            explicit GlException(const std::string& msg)
+                : std::runtime_error(msg) {}
+        };
     private:
-        static void framebufferSizeCallback(GLFWwindow *window, int width, int height);
+        static void framebufferSizeCallback(GLFWwindow *window, int width, int height) noexcept;
 
         GLFWwindow* windowHandle;
         int width, height;

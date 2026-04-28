@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <assert.h>
 #include <cstdlib>
 #include <iostream>
 
@@ -126,18 +127,12 @@ namespace ggm {
         }
 
         T& operator[](u64 index) noexcept {
-            if (index >= mSize) {
-                std::cerr << "index out of bounds in ArrayList\n";
-                exit(-1);
-            }
+            assert(index < mCapacity);
             return mData[index];
         }
 
         T& get(u64 index) {
-            if (index >= mSize) {
-                std::cerr << "index out of bounds in ArrayList\n";
-                exit(-1);
-            }
+            if (index >= mSize) throw std::out_of_range("index out of bounds in ArrayList");
             return mData[index];
         }
 

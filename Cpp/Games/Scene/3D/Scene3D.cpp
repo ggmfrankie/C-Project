@@ -15,10 +15,11 @@ namespace Game {
         mPhysicsHandler.init();
     }
 
+    //! @brief Creates a RenderObject from an .obj file and creates a PhysicsObject from the settings given. Creates a Game Object that reference both.
     GameObject& Scene3D::addObject(const std::string& objFile, float scale, const PhysicsSettings& settings) {
         auto ro = mRenderLayer.newObject(objFile);
         ro.get().scaleTo(scale);
-        auto po = mPhysicsHandler.newObj(settings);
+        auto po = mPhysicsHandler.newObject(settings);
 
         mGameObjects.push(ro, po);
         return mGameObjects.back();

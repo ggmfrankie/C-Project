@@ -77,7 +77,7 @@ namespace Game {
         void init() ;
 
         JPH::PhysicsSystem& getPhysicsSystem();
-        Obj3D::PhysicsObjectRef newObj(const Obj3D::PhysicsSettings& s);
+        Obj3D::PhysicsObjectRef newObject(const Obj3D::PhysicsSettings& s);
     };
 } // Game
 

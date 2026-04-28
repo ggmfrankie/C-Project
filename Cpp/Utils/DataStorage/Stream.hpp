@@ -8,16 +8,27 @@
 namespace ggm {
     template<typename T>
     class Stream {
-        InlineVector<T, 8> mData;
+        InlineVector<T> mData;
 
+        template<typename S>
         class StreamBuilder {
+            InlineVector<T> mData;
+        public:
+            StreamBuilder() = default;
 
+
+            void append(T&& thing) {
+                mData.add(std::move(thing));
+            }
         };
     public:
-        Stream(){}
-        virtual ~Stream();
+        Stream()= default;
+        explicit Stream(InlineVector<T>&& data) : mData(std::move(data))
+        {}
+        ~Stream() = default;
 
         template<typename Mapper>
+        requires std::invocable<Mapper&, const T&> && (!std::same_as<std::invoke_result_t<Mapper&, const T&>, void>)
         auto map(Mapper&& m) {
 
         }

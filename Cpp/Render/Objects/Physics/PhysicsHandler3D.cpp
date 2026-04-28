@@ -42,7 +42,7 @@ namespace Game {
         return mPhysicsSystem;
     }
 
-    Obj3D::PhysicsObjectRef PhysicsHandler3D::newObj(const Obj3D::PhysicsSettings &s) {
+    Obj3D::PhysicsObjectRef PhysicsHandler3D::newObject(const Obj3D::PhysicsSettings &s) {
         const BodyCreationSettings settings {
             s.shape,
             Vec3(s.pos.x, s.pos.y, s.pos.z),
@@ -62,7 +62,6 @@ namespace Game {
         // Create a mapping table from object to broad phase layer
         mObjectToBroadPhase[Layers::NON_MOVING] = BroadPhaseLayers::NON_MOVING;
         mObjectToBroadPhase[Layers::MOVING] = BroadPhaseLayers::MOVING;
-
     }
 
     bool PhysicsHandler3D::ObjectVsBroadPhaseLayerFilterImpl::ShouldCollide(ObjectLayer inLayer1, BroadPhaseLayer inLayer2) const {
@@ -82,7 +81,7 @@ namespace Game {
         switch (inObject1)
         {
             case Layers::NON_MOVING:
-                return inObject2 == Layers::MOVING; // Non moving only collides with moving
+                return inObject2 == Layers::MOVING; // Non-moving only collides with moving
             case Layers::MOVING:
                 return true; // Moving collides with everything
             default:
