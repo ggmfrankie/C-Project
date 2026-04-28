@@ -87,7 +87,7 @@ namespace Render {
             glGetProgramInfoLog(programId, 512, nullptr, infoLog);
             printf("Shader Program Link Error:\n%s\n", infoLog);
         } else {
-            printf("Shader Program linked successfully! ID: %d\n", programId);
+            //printf("Shader Program linked successfully! ID: %d\n", programId);
         }
         glGetShaderiv(fragmentId, GL_COMPILE_STATUS, &success);
         if (!success) {
@@ -95,7 +95,6 @@ namespace Render {
             printf("Fragment Shader Compile Error:\n%s\n", infoLog);
         }
         glValidateProgram(programId);
-        puts("linked shader program");
     }
 
     GLuint Shader::createVertexShader(const std::string &fileVert) const {

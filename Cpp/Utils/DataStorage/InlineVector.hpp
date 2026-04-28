@@ -226,5 +226,31 @@ namespace ggm {
 
         const_reverse_iterator crbegin() const noexcept { return const_reverse_iterator(end()); }
         const_reverse_iterator crend()   const noexcept { return const_reverse_iterator(begin()); }
+
+        iterator erase(iterator first, iterator last) {
+            if (first == last) return first;
+            iterator curr = first;
+
+            size_t count = 0;
+            while (curr != last) {
+                std::destroy_at(&(*curr));
+                ++curr;
+                ++count;
+            }
+
+            std::move(end() - (last - first), end(), first);
+            mSize -= count;
+            return first;
+        }
+        iterator erase(iterator pos) {
+            if (pos == end() - 1) {
+                --mSize;
+                return end();
+            }
+
+            *pos = std::move(*(end()-1));
+            --mSize;
+            return pos;
+        }
     };
 } // ggm

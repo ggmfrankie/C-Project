@@ -8,6 +8,8 @@
 #include <ranges>
 #include <cmath>
 
+#include "Utils/DataStorage/Stream.hpp"
+
 template<class F>
 auto calculate(F f) -> int
     requires std::invocable<F, int> {
@@ -28,6 +30,17 @@ static int f(int x) {
 #include <chrono>
 #include <vector>
 #include <execution>
+#include <print>
+
+inline void streamTest() {
+    std::vector<int> nums(10,5);
+
+    auto result = ggm::Stream<int>(nums).map([](const auto& a){return std::to_string(a);}).map([](const auto& a){return stof(a) + 0.4f;}).toVector();
+
+    for (auto num: result) {
+        std::cout << std::format("Number is: {}\n", num);
+    }
+}
 
 inline void Log(int Number){
     using namespace std::chrono_literals;
@@ -150,4 +163,7 @@ inline int test() {
     let *p = new (&u.x) X {2};
     return 0;
 #include "ClosingBrace.cpp"
+
+
+
 

@@ -137,8 +137,8 @@ add_executable(C-Project
         Cpp/Utils/DataStorage/InlineVector.hpp
         Cpp/Utils/Math/ggmdef.hpp
         Cpp/Games/IGame.hpp
-        Cpp/Render/IO/Input.cpp
-        Cpp/Render/IO/Input.hpp
+        Cpp/Engine/IO/Input.cpp
+        Cpp/Engine/IO/Input.hpp
         Cpp/Games/BaseGame/BaseGame.cpp
         Cpp/Games/BaseGame/BaseGame.hpp
         Cpp/Games/BaseGame/GameGui.h

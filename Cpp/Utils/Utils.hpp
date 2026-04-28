@@ -2,8 +2,7 @@
 // Created by ertls on 18.02.2026.
 //
 
-#ifndef MIXEDPROJECT_UTILS_H
-#define MIXEDPROJECT_UTILS_H
+#pragma once
 #include <string>
 #include <vector>
 #include <ranges>
@@ -29,5 +28,3 @@ namespace ggm {
 
     double getDouble(const char *start, size_t length);
 }
-
-#endif //MIXEDPROJECT_UTILS_H

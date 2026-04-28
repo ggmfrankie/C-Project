@@ -2,17 +2,15 @@
 // Created by ertls on 16.02.2026.
 //
 
-#ifndef MIXEDPROJECT_WINDOW_H
-#define MIXEDPROJECT_WINDOW_H
+#pragma once
+
 #include <string>
 
-#include "IO/Input.hpp"
-
+#include "Engine/IO/Input.hpp"
 
 namespace Game {
     class IScene;
 }
-
 
 namespace Render {
     class Screen {
@@ -52,7 +50,3 @@ namespace Render {
         Input mInput;
     };
 }
-
-
-
-#endif //MIXEDPROJECT_WINDOW_H

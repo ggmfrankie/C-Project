@@ -10,6 +10,8 @@
 #include <charconv>
 
 #include "../Render/Mesh.hpp"
+#include "Utils/TimeMeasurenments.h"
+#include "Utils/DataStorage/Stream.hpp"
 
 using std::string;
 using std::string_view;
@@ -22,7 +24,13 @@ namespace Obj3D::OBJLoader {
     OBJObject::OBJObject(const std::string &fileName) {
         namespace fs = std::filesystem;
 
-        const auto filePath = fs::path("..\\Resources\\Objects") / fileName;
+        fs::path filePath{};
+        try {
+            filePath = fs::path("..\\Resources\\Objects") / fileName;
+        } catch (std::runtime_error& e) {
+            std::cerr << e.what() << "inside ObjLoader\n";
+        }
+
         m_folderPath = filePath.parent_path().string() + "\\";
 
         m_objFile = ggm::FileIO::readFile(filePath.string());
@@ -76,11 +84,25 @@ namespace Obj3D::OBJLoader {
     }
 
     void OBJObject::load() {
-        m_lines = ggm::split(m_objFile, '\n') | std::views::filter([](auto s){return !s.empty() && !s.starts_with("#"); }) | ggm::to_vector;
+        using namespace ggm;
 
-        for (auto& line : m_lines) {
-            if (!line.empty() && line.back() == '\r') line.remove_suffix(1);
-        }
+        auto start = now_ns();
+        m_lines = split(m_objFile, '\n')
+            | std::views::filter([](auto s){return !s.empty() && !s.starts_with("#"); })
+            | std::views::transform([](std::string_view s) {
+                if (!s.empty() && s.back() == '\r')
+                    s.remove_suffix(1);
+                return s;
+            })
+            | ggm::to_vector;
+        std::cout << now_ns() - start << " for Ranges\n";
+
+        start = now_ns();
+        m_lines = Stream<std::string_view>(split(m_objFile, '\n'))
+            .filter([](auto& s) {return !s.empty() && !s.starts_with("#");})
+            .transform([](auto& line){if (!line.empty() && line.back() == '\r') line.remove_suffix(1);})
+            .toVector();
+        std::cout << now_ns() - start << " for Stream\n";
 
         m_allVertices = convertToVec3f(getLinesWith("v "));
         m_allUv = convertToVec2f(getLinesWith("vt "));
@@ -161,7 +183,14 @@ namespace Obj3D::OBJLoader {
     void OBJObject::loadMaterial() {
         if (m_materialLib.empty()) return;
         const auto fullPath = m_folderPath + std::string(m_materialLib);
-        const auto s = ggm::FileIO::readFile(fullPath);
+
+        std::string s;
+        try {
+            s = ggm::FileIO::readFile(fullPath);
+        } catch (std::runtime_error& e) {
+            std::cerr << e.what() << " with path " << fullPath << "\n";
+        }
+
 
         for (auto _lines = ggm::split(s, '\n');
             auto& line: _lines) {
