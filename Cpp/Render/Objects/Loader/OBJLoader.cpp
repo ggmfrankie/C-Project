@@ -89,11 +89,7 @@ namespace Obj3D::OBJLoader {
         auto start = now_ns();
         m_lines = split(m_objFile, '\n')
             | std::views::filter([](auto s){return !s.empty() && !s.starts_with("#"); })
-            | std::views::transform([](std::string_view s) {
-                if (!s.empty() && s.back() == '\r')
-                    s.remove_suffix(1);
-                return s;
-            })
+            | std::views::transform([](std::string_view s) {if (!s.empty() && s.back() == '\r') s.remove_suffix(1); return s;})
             | ggm::to_vector;
         std::cout << now_ns() - start << " for Ranges\n";
 
