@@ -86,19 +86,10 @@ namespace Obj3D::OBJLoader {
     void OBJObject::load() {
         using namespace ggm;
 
-        auto start = now_ns();
-        m_lines = split(m_objFile, '\n')
-            | std::views::filter([](auto s){return !s.empty() && !s.starts_with("#"); })
-            | std::views::transform([](std::string_view s) {if (!s.empty() && s.back() == '\r') s.remove_suffix(1); return s;})
-            | ggm::to_vector;
-        std::cout << now_ns() - start << " for Ranges\n";
-
-        start = now_ns();
-        m_lines = Stream<std::string_view>(split(m_objFile, '\n'))
+        m_lines = Stream(split(m_objFile, '\n'))
             .filter([](auto& s) {return !s.empty() && !s.starts_with("#");})
             .transform([](auto& line){if (!line.empty() && line.back() == '\r') line.remove_suffix(1);})
             .toVector();
-        std::cout << now_ns() - start << " for Stream\n";
 
         m_allVertices = convertToVec3f(getLinesWith("v "));
         m_allUv = convertToVec2f(getLinesWith("vt "));
@@ -187,18 +178,11 @@ namespace Obj3D::OBJLoader {
             std::cerr << e.what() << " with path " << fullPath << "\n";
         }
 
-
-        for (auto _lines = ggm::split(s, '\n');
-            auto& line: _lines) {
-            if (line.empty()) continue;
-            if (line.back() == '\r') line.remove_suffix(1);
-            if (line.starts_with("map_Kd ")) {
-                m_textureName = line;
-                m_textureName.erase(0, strlen("map_Kd "));
-
-                break;
-            }
-        }
+        m_textureName = ggm::Stream(ggm::split(s, '\n'))
+            .filter([](auto& line){return line.starts_with("map_Kd ");})
+            .map([](auto line){if (line.back() == '\r') line.remove_suffix(1); return line;})
+            .map([](auto& line){return std::string(line).erase(0, strlen("map_Kd "));})
+            .getFirst();
     }
 
     Mesh OBJObject::getMesh() {
@@ -215,6 +199,11 @@ namespace Obj3D::OBJLoader {
                 output.push_back(newLine);
             }
         }
+
+        ggm::Stream(m_lines)
+            .filter([token](auto& s){return s.starts_with(token);})
+            .map([token](auto s){s.remove_prefix(token.size()); return s;})
+            .toVector();
         return output;
     }
 
