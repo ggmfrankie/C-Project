@@ -52,7 +52,7 @@ namespace ggm {
             return out;
         }
 
-        InlineVector<T> toInlineVector() &&{
+        InlineVector<T> toInlineVector() {
             return std::move(mData);
         }
 

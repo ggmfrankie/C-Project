@@ -4,48 +4,66 @@
 
 #pragma once
 
-#include <assert.h>
+#include <cassert>
 #include <cstdlib>
-#include <iostream>
 
 #include "../Math/ggmdef.hpp"
 
 namespace ggm {
     template <typename T, u64 InlineCapacity = 0>
+    requires std::movable<T>
     class InlineVector {
     public:
         explicit InlineVector(u64 capacity = InlineCapacity) {
-            if (capacity <= InlineCapacity) {
-                mData = inlinePtr();
-                this->mCapacity = InlineCapacity;
-                mIsHeap = false;
-            } else {
+            if constexpr (InlineCapacity == 0) {
                 mData = static_cast<T *>(operator new(capacity * sizeof(T)));
                 this->mCapacity = capacity;
                 mIsHeap = true;
+            } else {
+                if (capacity <= InlineCapacity) {
+                    mData = inlinePtr();
+                    this->mCapacity = InlineCapacity;
+                    mIsHeap = false;
+                } else {
+                    mData = static_cast<T *>(operator new(capacity * sizeof(T)));
+                    this->mCapacity = capacity;
+                    mIsHeap = true;
+                }
             }
             mSize = 0;
         }
 
         InlineVector(InlineVector&& other)  noexcept {
-            if (other.mIsHeap) {
+            if constexpr (InlineCapacity == 0) {
                 mData = other.mData;
-                other.mIsHeap = false;
+                mSize = other.mSize;
+                mCapacity = other.mCapacity;
                 mIsHeap = true;
-            } else {
-                mData = inlinePtr();
-                for (u64 i = 0; i < other.mSize; ++i) {
-                    std::construct_at(&mData[i], std::move(other.mData[i]));
-                    std::destroy_at(&other.mData[i]);
-                }
-                mIsHeap = false;
-            }
-            mCapacity = other.mCapacity;
-            mSize = other.mSize;
 
-            other.mData = other.inlinePtr();
-            other.mCapacity = InlineCapacity;
-            other.mSize = 0;
+                other.mData = nullptr;
+                other.mSize = 0;
+                other.mCapacity = 0;
+                other.mIsHeap = false;
+            } else {
+                if (other.mIsHeap) {
+                    mData = other.mData;
+                    other.mIsHeap = false;
+                    mIsHeap = true;
+                } else {
+                    mData = inlinePtr();
+                    for (u64 i = 0; i < other.mSize; ++i) {
+                        std::construct_at(&mData[i], std::move(other.mData[i]));
+                        std::destroy_at(&other.mData[i]);
+                    }
+                    mIsHeap = false;
+                }
+                mCapacity = other.mCapacity;
+                mSize = other.mSize;
+
+                other.mData = other.inlinePtr();
+                other.mCapacity = InlineCapacity;
+                other.mSize = 0;
+            }
         }
 
         InlineVector(const InlineVector& other) {
@@ -64,31 +82,45 @@ namespace ggm {
         }
 
         ~InlineVector() {
-            for (u64 i = 0; i < mSize; ++i)
-                std::destroy_at(&mData[i]);
-            if (mIsHeap) operator delete(mData);
+            if constexpr (InlineCapacity == 0) {
+                operator delete(mData);
+            } else {
+                for (u64 i = 0; i < mSize; ++i)
+                    std::destroy_at(&mData[i]);
+                if (mIsHeap) operator delete(mData);
+            }
         }
 
         InlineVector& operator=(InlineVector&& other)  noexcept {
-            if (other.mIsHeap) {
+            if constexpr (InlineCapacity == 0) {
                 mData = other.mData;
                 other.mIsHeap = false;
                 mIsHeap = true;
-            } else {
-                mData = inlinePtr();
-                for (u64 i = 0; i < other.mSize; ++i) {
-                    std::construct_at(&mData[i], std::move(other.mData[i]));
-                    std::destroy_at(&other.mData[i]);
-                }
-                mIsHeap = false;
-            }
-            mCapacity = other.mCapacity;
-            mSize = other.mSize;
+                mCapacity = other.mCapacity;
+                mSize = other.mSize;
 
-            other.mData = other.inlinePtr();
-            other.mCapacity = InlineCapacity;
-            other.mSize = 0;
-            return *this;
+                return *this;
+            } else {
+                if (other.mIsHeap) {
+                    mData = other.mData;
+                    other.mIsHeap = false;
+                    mIsHeap = true;
+                } else {
+                    mData = inlinePtr();
+                    for (u64 i = 0; i < other.mSize; ++i) {
+                        std::construct_at(&mData[i], std::move(other.mData[i]));
+                        std::destroy_at(&other.mData[i]);
+                    }
+                    mIsHeap = false;
+                }
+                mCapacity = other.mCapacity;
+                mSize = other.mSize;
+
+                other.mData = other.inlinePtr();
+                other.mCapacity = InlineCapacity;
+                other.mSize = 0;
+                return *this;
+            }
         }
 
         T& add(const T& thing) {
@@ -132,7 +164,7 @@ namespace ggm {
         }
 
         T& get(u64 index) {
-            if (index >= mSize) throw std::out_of_range("index out of bounds in ArrayList");
+            if (index >= mSize) throw std::out_of_range("Index out of bounds in ArrayList");
             return mData[index];
         }
 
@@ -196,6 +228,7 @@ namespace ggm {
         }
 
         T* inlinePtr() noexcept {
+            static_assert(InlineCapacity > 0);
             return std::launder(reinterpret_cast<T*>(_inlineRaw_));
         }
 
