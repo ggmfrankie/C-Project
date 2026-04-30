@@ -8,8 +8,9 @@
 #include "InlineVector.hpp"
 
 
-// TODO Make them lazy
+// TODO Make them lazy and fix erasure
 namespace ggm {
+
     template<typename T>
     class Stream {
         InlineVector<T> mData{};
@@ -54,6 +55,10 @@ namespace ggm {
 
         InlineVector<T> toInlineVector() {
             return std::move(mData);
+        }
+
+        T getFirst() {
+            return std::move(mData[0]);
         }
 
         template<typename Mapper>
@@ -110,4 +115,6 @@ namespace ggm {
             return mData.size();
         }
     };
+    template<std::ranges::input_range R>
+    Stream(R&&) -> Stream<std::ranges::range_value_t<R>>;
 }
