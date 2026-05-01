@@ -6,13 +6,10 @@
 #include <optional>
 #include <vector>
 
-#include "InlineVector.hpp"
-
 namespace ggm {
     template<typename F>
         struct Filter {
         F fn;
-        static constexpr bool IS_FILTER = true;
     };
 
     template<typename F>
@@ -23,6 +20,7 @@ namespace ggm {
     class LazyStream {
         const Container& mContainer;
         std::tuple<Ops...> mOps;
+        size_t mTakeLimit = SIZE_MAX;
 
         template<typename Op, typename Input>
         struct GetType;
@@ -55,19 +53,20 @@ namespace ggm {
         using FinalT = PipelineResult<DataType, Ops...>::type;
 
         template<std::size_t I, typename T, typename Tuple>
-        auto process(const T& value, Tuple& ops) {
+        std::optional<FinalT> process(const T& value, Tuple& ops) {
             if constexpr (I >= std::tuple_size_v<std::remove_reference_t<Tuple>>) {
                 return std::optional<FinalT>{value};
+                static_assert(std::is_same_v<T, FinalT>, "Type mismatch at pipeline end");
             } else {
                 auto& op = std::get<I>(ops);
-                if constexpr (requires {decltype(op)::IS_FILTER; }) {
+                if constexpr (std::is_same_v<std::decay_t<decltype(op)>, Filter<decltype(op.fn)>>) {
                     // Filter
                     if (!op.fn(value)) return std::optional<FinalT>{std::nullopt};
-                    return process<I + 1, T, Tuple>(value, ops);
+                    return process<I + 1, T>(value, ops);
                 } else {
                     // Mapper
                     auto result = op.fn(value);
-                    return process<I + 1, decltype(result), Tuple>(result, ops);
+                    return process<I + 1, decltype(result)>(result, ops);
                 }
             }
         }
@@ -77,22 +76,33 @@ namespace ggm {
 
         LazyStream(const Container& container, std::tuple<Ops...> o) : mContainer(container), mOps(std::move(o)){}
 
-        auto toVector() {
-
+        std::vector<FinalT> toVector() {
             std::vector<FinalT> out{};
             out.reserve(mContainer.size());
 
+            size_t taken = 0;
             for (const auto& thing: mContainer) {
-                std::optional<FinalT> value = process<0, DataType, std::tuple<Ops...>>(thing, mOps);
-                if (value) out.push_back(std::move(*value));
+                if (taken >= mTakeLimit) break;
+                std::optional<FinalT> value = process<0, DataType>(thing, mOps);
+                if (value) {
+                    out.push_back(std::move(*value));
+                    ++taken;
+                }
             }
-
             return out;
+        }
+
+        FinalT getFirst() {
+            for (const auto& thing: mContainer) {
+                std::optional<FinalT> value = process<0, DataType>(thing, mOps);
+                if (value) return *value;
+            }
+            throw std::runtime_error("Stream::getFirst() on empty result");
         }
 
         template<typename Map>
         auto map(Map&& m) {
-            using MOp = Mapper<std::decay_t<Map>>;
+            using MOp = Mapper<Map>;
 
             auto newOps = std::tuple_cat(
                 mOps,
@@ -104,7 +114,7 @@ namespace ggm {
 
         template<typename Filt>
         auto filter(Filt&& f) {
-            using FOp = Filter<std::decay_t<Filt>>;
+            using FOp = Filter<Filt>;
 
             auto newOps = std::tuple_cat(
                 mOps,
@@ -114,5 +124,10 @@ namespace ggm {
             return LazyStream<Container, Ops..., FOp>(mContainer, newOps);
         }
 
+        auto take(size_t n) {
+            auto copy = *this;
+            copy.mTakeLimit = n;
+            return copy;
+        }
     };
 } // ggm

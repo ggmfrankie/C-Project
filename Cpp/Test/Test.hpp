@@ -34,9 +34,9 @@ static int f(int x) {
 #include <print>
 
 inline void streamTest() {
-    std::vector<int> nums(10,5);
+    std::vector nums(10,5);
 
-    auto result = ggm::Stream<int>(nums).map([](const auto& a){return std::to_string(a);}).map([](const auto& a){return stof(a) + 0.4f;}).toVector();
+    auto result = ggm::Stream(nums).map([](const auto& a){return std::to_string(a);}).map([](const auto& a){return stof(a) + 0.4f;}).toVector();
 
     // for (auto num: result) {
     //     std::cout << std::format("Number is: {}\n", num);

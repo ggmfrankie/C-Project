@@ -44,24 +44,24 @@ namespace Obj3D::OBJLoader {
             }
         };
 
-        std::string m_folderPath{};
+        std::string mFolderPath{};
 
-        std::string m_objFile{};
+        std::string mObjFile{};
         std::string m_materialFile{};
         std::string m_textureName{};
-        std::string_view m_materialLib{};
+        std::string_view mMaterialLib{};
 
-        std::vector<std::string_view> m_lines{};
+        std::vector<std::string_view> mLines{};
 
-        std::vector<ggm::Vector3f> m_allVertices{};
-        std::vector<ggm::Vector3f> m_allNormals{};
-        std::vector<ggm::Vector2f> m_allUv{};
+        std::vector<ggm::Vector3f> mAllVertices{};
+        std::vector<ggm::Vector3f> mAllNormals{};
+        std::vector<ggm::Vector2f> mAllUv{};
 
-        std::vector<ggm::Vector3f> m_glVertices{};
-        std::vector<ggm::Vector3f> m_glNormals{};
-        std::vector<ggm::Vector2f> m_glUv{};
+        std::vector<ggm::Vector3f> mGlVertices{};
+        std::vector<ggm::Vector3f> mGlNormals{};
+        std::vector<ggm::Vector2f> mGlUv{};
 
-        std::vector<GLuint> m_indices{};
+        std::vector<GLuint> mIndices{};
 
         [[nodiscard]] std::vector<std::string_view> getLinesWith(const std::string_view &token) const;
 
