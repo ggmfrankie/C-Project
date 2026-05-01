@@ -5,13 +5,12 @@
 #pragma once
 
 #include <cassert>
-#include <cstdlib>
+#include <stdexcept>
 
 #include "../Math/ggmdef.hpp"
 
 namespace ggm {
     template <typename T, u64 InlineCapacity = 0>
-    requires std::movable<T>
     class InlineVector {
     public:
         explicit InlineVector(u64 capacity = InlineCapacity) {
@@ -38,12 +37,10 @@ namespace ggm {
                 mData = other.mData;
                 mSize = other.mSize;
                 mCapacity = other.mCapacity;
-                mIsHeap = true;
 
                 other.mData = nullptr;
                 other.mSize = 0;
                 other.mCapacity = 0;
-                other.mIsHeap = false;
             } else {
                 if (other.mIsHeap) {
                     mData = other.mData;
@@ -67,18 +64,27 @@ namespace ggm {
         }
 
         InlineVector(const InlineVector& other) {
-            if (other.mIsHeap) {
-                mData = static_cast<T *>(operator new(other.mCapacity * sizeof(T)));
-                mIsHeap = true;
+            if constexpr (InlineCapacity == 0) {
+                mData = static_cast<T*>(operator new(other.mCapacity * sizeof(T)));
+                for (u64 i = 0; i < other.mSize; ++i) {
+                    std::construct_at(&mData[i], other.mData[i]);
+                }
+                mCapacity = other.mCapacity;
+                mSize = other.mSize;
             } else {
-                mData = inlinePtr();
-                mIsHeap = false;
+                if (other.mIsHeap) {
+                    mData = static_cast<T*>(operator new(other.mCapacity * sizeof(T)));
+                    mIsHeap = true;
+                } else {
+                    mData = inlinePtr();
+                    mIsHeap = false;
+                }
+                for (u64 i = 0; i < other.mSize; ++i) {
+                    std::construct_at(&mData[i], other.mData[i]);
+                }
+                mCapacity = other.mCapacity;
+                mSize = other.mSize;
             }
-            for (u64 i = 0; i < other.mSize; ++i) {
-                std::construct_at(&mData[i], other.mData[i]);
-            }
-            mCapacity = other.mCapacity;
-            mSize = other.mSize;
         }
 
         ~InlineVector() {
@@ -94,10 +100,12 @@ namespace ggm {
         InlineVector& operator=(InlineVector&& other)  noexcept {
             if constexpr (InlineCapacity == 0) {
                 mData = other.mData;
-                other.mIsHeap = false;
-                mIsHeap = true;
                 mCapacity = other.mCapacity;
                 mSize = other.mSize;
+
+                other.mData = nullptr;
+                other.mCapacity = 0;
+                other.mSize = 0;
 
                 return *this;
             } else {
@@ -125,13 +133,15 @@ namespace ggm {
 
         T& add(const T& thing) {
             if (mCapacity <= mSize) grow(mCapacity*2+1);
-            T* ptr = std::construct_at(&mData[mSize++], thing);
+            T* ptr = std::construct_at(&mData[mSize], thing);
+            ++mSize;
             return *ptr;
         }
 
         T& add(T&& thing) {
             if (mCapacity <= mSize) grow(mCapacity*2+1);
-            T* ptr = std::construct_at(&mData[mSize++], std::move(thing));
+            T* ptr = std::construct_at(&mData[mSize], std::move(thing));
+            ++mSize;
             return *ptr;
         }
 
@@ -147,6 +157,10 @@ namespace ggm {
         InlineVector& operator<<(U&& thing) {
             add(std::forward<U>(thing));
             return *this;
+        }
+
+        T& front() {
+            return mData[0];
         }
 
         T& back() {
@@ -233,11 +247,11 @@ namespace ggm {
         }
 
     public:
-        using iterator = T*;
+        using Iterator = T*;
         using const_iterator = const T*;
 
-        iterator begin() noexcept {return mData;}
-        iterator end() noexcept {return mData + mSize;}
+        Iterator begin() noexcept {return mData;}
+        Iterator end() noexcept {return mData + mSize;}
 
         const_iterator begin() const noexcept {return mData;}
         const_iterator end() const noexcept {return mData + mSize;}
@@ -246,7 +260,7 @@ namespace ggm {
         const_iterator cend() noexcept {return mData + mSize;}
 
 
-        using reverse_iterator = std::reverse_iterator<iterator>;
+        using reverse_iterator = std::reverse_iterator<Iterator>;
         using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
 
@@ -260,28 +274,58 @@ namespace ggm {
         const_reverse_iterator crbegin() const noexcept { return const_reverse_iterator(end()); }
         const_reverse_iterator crend()   const noexcept { return const_reverse_iterator(begin()); }
 
-        iterator erase(iterator first, iterator last) {
+        Iterator erase_fast(Iterator first, Iterator last) {
             if (first == last) return first;
-            iterator curr = first;
+            auto newEnd = end()- (last - first);
 
-            size_t count = 0;
-            while (curr != last) {
+            std::move(newEnd, end(), first);
+
+            for (auto curr = newEnd; curr != end(); ++curr) {
                 std::destroy_at(&(*curr));
-                ++curr;
-                ++count;
             }
+            mSize -= last-first;
 
-            std::move(end() - (last - first), end(), first);
-            mSize -= count;
             return first;
         }
-        iterator erase(iterator pos) {
-            if (pos == end() - 1) {
+
+        Iterator erase_fast(Iterator pos) {
+            auto last = end()-1;
+            if (pos == last) {
+                std::destroy_at(&(*last));
                 --mSize;
                 return end();
             }
 
-            *pos = std::move(*(end()-1));
+            *pos = std::move(*last);
+            std::destroy_at(&*last);
+            --mSize;
+            return pos;
+        }
+
+        Iterator erase(Iterator first, Iterator last) {
+            if (first == last) return first;
+
+            std::move(last, end(), first);
+            auto newEnd = end()- (last - first);
+
+            for (auto curr = newEnd; curr != end(); ++curr) {
+                std::destroy_at(&(*curr));
+            }
+            mSize -= last-first;
+
+            return first;
+        }
+
+        Iterator erase(Iterator pos) {
+            auto last = end()-1;
+            if (pos == last) {
+                std::destroy_at(&(*last));
+                --mSize;
+                return end();
+            }
+
+            std::move(pos+1, end(), pos);
+            std::destroy_at(&*last);
             --mSize;
             return pos;
         }

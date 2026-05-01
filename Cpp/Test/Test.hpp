@@ -8,6 +8,7 @@
 #include <ranges>
 #include <cmath>
 
+#include "Utils/DataStorage/LazyStream.hpp"
 #include "Utils/DataStorage/Stream.hpp"
 
 template<class F>
@@ -37,7 +38,12 @@ inline void streamTest() {
 
     auto result = ggm::Stream<int>(nums).map([](const auto& a){return std::to_string(a);}).map([](const auto& a){return stof(a) + 0.4f;}).toVector();
 
-    for (auto num: result) {
+    // for (auto num: result) {
+    //     std::cout << std::format("Number is: {}\n", num);
+    // }
+
+    auto result2 = ggm::LazyStream(nums).map([](const auto& a){return std::to_string(a);}).map([](const auto& a){return stof(a) + 0.4f;}).toVector();
+    for (auto num: result2) {
         std::cout << std::format("Number is: {}\n", num);
     }
 }

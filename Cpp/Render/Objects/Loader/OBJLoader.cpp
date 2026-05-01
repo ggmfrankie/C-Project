@@ -190,21 +190,10 @@ namespace Obj3D::OBJLoader {
     }
 
     [[nodiscard]] vector<string_view> OBJObject::getLinesWith(const string_view &token) const {
-        vector<string_view> output;
-
-        for (auto& line: m_lines) {
-            if (line.starts_with(token)) {
-                auto newLine = line;
-                newLine.remove_prefix(token.size());
-                output.push_back(newLine);
-            }
-        }
-
-        ggm::Stream(m_lines)
+        return ggm::Stream(m_lines)
             .filter([token](auto& s){return s.starts_with(token);})
             .map([token](auto s){s.remove_prefix(token.size()); return s;})
             .toVector();
-        return output;
     }
 
     [[nodiscard]] string_view OBJObject::getMaterialLib() const {

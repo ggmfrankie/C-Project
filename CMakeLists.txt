@@ -213,6 +213,7 @@ add_executable(C-Project
         Cpp/Test/Java.hpp
         Cpp/Utils/DataStorage/Stream.hpp
         Cpp/Games/BaseGame/GameGui.c
+        Cpp/Utils/DataStorage/LazyStream.hpp
 )
 
 target_compile_definitions(C-Project PUBLIC JPH_ENABLE_ASSERTS)

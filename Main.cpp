@@ -11,7 +11,8 @@
 #if 1
 int main() {
     JPH::RegisterDefaultAllocator();
-
+    streamTest();
+    return 0;
     Game::BaseGame game{};
     Game::Game2D game2D{};
 
