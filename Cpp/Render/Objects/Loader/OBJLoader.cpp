@@ -68,7 +68,8 @@ namespace Obj3D::OBJLoader {
         return output;
     }
 
-    std::vector<ggm::Vector2f> OBJObject::convertToVec2f(const vector<string_view>& lineList) {
+    std::vector<ggm::Vector2f>
+    OBJObject::convertToVec2f(const vector<string_view>& lineList) {
         vector<ggm::Vector2f> output;
         output.reserve(lineList.size());
         for (const auto& line : lineList) {
@@ -141,7 +142,8 @@ namespace Obj3D::OBJLoader {
         }
     }
 
-    std::vector<OBJObject::IdxGroup> OBJObject::loadIdxGroups(const std::string_view &faceLine) {
+    std::vector<OBJObject::IdxGroup>
+    OBJObject::loadIdxGroups(const std::string_view &faceLine) {
         vector<IdxGroup> output;
         for (const auto& token:  ggm::split(faceLine, ' ')) {
             if (token.empty()) continue;
@@ -187,23 +189,30 @@ namespace Obj3D::OBJLoader {
 
         m_textureName = ggm::LazyStream(ggm::split(s, '\n'))
             .filter([](auto& line){return line.starts_with("map_Kd ");})
-            .map([](auto line){if (line.back() == '\r') line.remove_suffix(1); return line;})
-            .map([](auto line){line.remove_prefix(strlen("map_Kd ")); return std::string{line};})
+            .map([](auto line) {
+                if (line.back() == '\r') line.remove_suffix(1); return line;
+            })
+            .map([](auto line) {
+                line.remove_prefix(strlen("map_Kd ")); return std::string{line};
+            })
             .getFirst();
     }
 
-    Mesh OBJObject::getMesh() {
+    Mesh
+    OBJObject::getMesh() {
         return {std::move(mGlVertices), std::move(mGlUv), std::move(mGlNormals), std::move(mIndices), Texture(mFolderPath + m_textureName)};
     }
 
-    [[nodiscard]] vector<string_view> OBJObject::getLinesWith(const string_view &token) const {
+    [[nodiscard]] vector<string_view>
+    OBJObject::getLinesWith(const string_view &token) const {
         return ggm::LazyStream(mLines)
             .filter([token](auto& s){return s.starts_with(token);})
             .map([token](auto s){s.remove_prefix(token.size()); return s;})
             .toVector();
     }
 
-    [[nodiscard]] string_view OBJObject::getMaterialLib() const {
+    [[nodiscard]] string_view
+    OBJObject::getMaterialLib() const {
         return ggm::LazyStream(mLines)
             .filter([](auto& s){return s.starts_with("mtllib ");})
             .map([](auto s){s.remove_prefix(strlen("mtllib ")); return s;})
