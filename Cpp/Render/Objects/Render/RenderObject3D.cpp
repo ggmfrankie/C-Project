@@ -46,6 +46,12 @@ namespace Obj3D {
         mUuid = other.mUuid;
     }
 
+    RenderObject3D&
+    RenderObject3D::operator=(RenderObject3D&& other) noexcept {
+        mMeshes = std::move(other.mMeshes);
+        return *this;
+    }
+
     RenderObject3D::~RenderObject3D() = default;
 
     void RenderObject3D::init() {
@@ -103,15 +109,11 @@ namespace Obj3D {
         mScale = scale;
     }
 
-    RenderObject3D RenderObject3D::getDummyObject() {
+    RenderObject3D
+    RenderObject3D::getDummyObject() {
         RenderObject3D dummy{};
         dummy.mMeshes << Mesh::getDummyMesh();
         return dummy;
-    }
-
-    RenderObject3D& RenderObject3D::operator=(RenderObject3D&& other) noexcept {
-        mMeshes = std::move(other.mMeshes);
-        return *this;
     }
 
     const Matrix4f& RenderObject3D::getModelMatrix() {

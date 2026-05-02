@@ -8,9 +8,7 @@
 #include "InlineVector.hpp"
 
 
-// TODO Make them lazy and fix erasure
 namespace ggm {
-
     template<typename T>
     class Stream {
         InlineVector<T> mData{};

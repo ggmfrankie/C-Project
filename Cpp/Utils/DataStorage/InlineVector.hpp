@@ -13,7 +13,7 @@ namespace ggm {
     template <typename T, u64 InlineCapacity = 0>
     class InlineVector {
     public:
-        explicit InlineVector(u64 capacity = InlineCapacity) {
+        explicit InlineVector(u64 capacity = InlineCapacity) noexcept {
             if constexpr (InlineCapacity == 0) {
                 mData = static_cast<T *>(operator new(capacity * sizeof(T)));
                 this->mCapacity = capacity;
@@ -32,7 +32,7 @@ namespace ggm {
             mSize = 0;
         }
 
-        InlineVector(InlineVector&& other)  noexcept {
+        InlineVector(InlineVector&& other) noexcept {
             if constexpr (InlineCapacity == 0) {
                 mData = other.mData;
                 mSize = other.mSize;
@@ -63,7 +63,7 @@ namespace ggm {
             }
         }
 
-        InlineVector(const InlineVector& other) {
+        InlineVector(const InlineVector& other) noexcept {
             if constexpr (InlineCapacity == 0) {
                 mData = static_cast<T*>(operator new(other.mCapacity * sizeof(T)));
                 for (u64 i = 0; i < other.mSize; ++i) {
@@ -87,7 +87,7 @@ namespace ggm {
             }
         }
 
-        ~InlineVector() {
+        ~InlineVector() noexcept {
             if constexpr (InlineCapacity == 0) {
                 operator delete(mData);
             } else {
@@ -97,8 +97,9 @@ namespace ggm {
             }
         }
 
-        InlineVector& operator=(InlineVector&& other)  noexcept {
+        InlineVector& operator=(InlineVector&& other) noexcept {
             if constexpr (InlineCapacity == 0) {
+                operator delete(mData);
                 mData = other.mData;
                 mCapacity = other.mCapacity;
                 mSize = other.mSize;
@@ -106,9 +107,9 @@ namespace ggm {
                 other.mData = nullptr;
                 other.mCapacity = 0;
                 other.mSize = 0;
-
                 return *this;
             } else {
+                if (mIsHeap) operator delete(mData);
                 if (other.mIsHeap) {
                     mData = other.mData;
                     other.mIsHeap = false;
@@ -221,7 +222,7 @@ namespace ggm {
 
     private:
         bool mIsHeap = false;
-        T* mData{};
+        T* mData = nullptr;
         u64 mSize = 0;
         u64 mCapacity = 0;
         alignas(T) std::byte _inlineRaw_[sizeof(T) * InlineCapacity]{};
@@ -259,14 +260,11 @@ namespace ggm {
         const_iterator cbegin() noexcept {return mData;}
         const_iterator cend() noexcept {return mData + mSize;}
 
-
         using reverse_iterator = std::reverse_iterator<Iterator>;
         using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
-
         reverse_iterator rbegin() noexcept { return reverse_iterator(end()); }
         reverse_iterator rend()   noexcept { return reverse_iterator(begin()); }
-
 
         const_reverse_iterator rbegin() const noexcept { return const_reverse_iterator(end()); }
         const_reverse_iterator rend()   const noexcept { return const_reverse_iterator(begin()); }
@@ -290,6 +288,7 @@ namespace ggm {
 
         Iterator erase_fast(Iterator pos) {
             auto last = end()-1;
+
             if (pos == last) {
                 std::destroy_at(&(*last));
                 --mSize;
@@ -318,6 +317,7 @@ namespace ggm {
 
         Iterator erase(Iterator pos) {
             auto last = end()-1;
+
             if (pos == last) {
                 std::destroy_at(&(*last));
                 --mSize;

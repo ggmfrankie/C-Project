@@ -13,87 +13,86 @@
 namespace ggm {
     template <typename T>
     class SparseSet {
-        InlineVector<T> mDense;
-        InlineVector<u64> mSparse;
-        InlineVector<u64> mDenseToSparse;
+        InlineVector<T> mData;
+        InlineVector<u64> mIndices;
+        InlineVector<u64> mReverseIndices;
 
         u64 updateIndices() {
-            if (mSparse.size() < mDense.size()) {
-                mDenseToSparse.growTo(mDense.capacity());
-                mSparse.growTo(mDense.capacity());
+            if (mIndices.size() < mData.size()) {
+                mReverseIndices.growTo(mData.capacity());
+                mIndices.growTo(mData.capacity());
 
-                auto idx = mDense.size()-1;
-                mSparse.add(idx);
-                //mDenseToSparse[idx] = mSparse.size()-1;
+                auto idx = mData.size()-1;
+                mIndices.add(idx);
+                //mReverseIndices[idx] = mData.size()-1;
             }
-            return mSparse.size()-1;
+            return mIndices.size()-1;
         }
 
     public:
-
         explicit SparseSet(u64 capacity) :
-            mDense(capacity),
-            mSparse(capacity),
-            mDenseToSparse(capacity)
+            mData(capacity),
+            mIndices(capacity),
+            mReverseIndices(capacity)
         {
         }
 
         u64 add(const T& thing) {
-            mDense.add(thing);
+            mData.add(thing);
             return updateIndices();
         }
 
         u64 add(T&& thing) {
-            mDense.add(std::move(thing));
+            mData.add(std::move(thing));
             return updateIndices();
         }
 
         template<typename... Args>
         u64 push(Args&&... args) {
-            mDense.push(std::forward<Args>(args)...);
+            mData.push(std::forward<Args>(args)...);
             return updateIndices();
         }
 
         T& get(u64 index) {
-            if (index >= mDense.size()) {
-                std::cerr << "index: " << index <<" out of bounds in SparseSet\n";
-                exit(-3);
+            if (index >= mData.size()) {
+                std::ostringstream error;
+                error << "Index: "<< index <<" out of bounds in SparseSet with size: "<< mData.size() <<"\n";
+                throw std::out_of_range(error.str());
             }
-            return mDense[mSparse[index]];
+            return mData[mIndices[index]];
         }
 
         T& operator[](u64 index) {
-            return mDense[mSparse[index]];
+            return mData[mIndices[index]];
         }
 
-        [[nodiscard]] u64 size() const {
-            return mDense.size();
+        [[nodiscard]] u64
+        size() const {
+            return mData.size();
         }
 
-        [[nodiscard]] u64 capacity() const {
-            return mDense.capacity();
+        [[nodiscard]] u64
+        capacity() const {
+            return mData.capacity();
         }
 
         using iterator = T*;
         using const_iterator = const T*;
 
-        iterator begin() noexcept {return mDense.begin();}
-        iterator end() noexcept {return mDense.end();}
+        iterator begin() noexcept {return mData.begin();}
+        iterator end() noexcept {return mData.end();}
 
-        const_iterator begin() const noexcept {return mDense.begin();}
-        const_iterator end() const noexcept {return mDense.end();}
+        const_iterator begin() const noexcept {return mData.begin();}
+        const_iterator end() const noexcept {return mData.end();}
 
-        const_iterator cbegin() noexcept {return mDense.cbegin();}
-        const_iterator cend() noexcept {return mDense.cend();}
-
-
+        const_iterator cbegin() noexcept {return mData.cbegin();}
+        const_iterator cend() noexcept {return mData.cend();}
 
         using reverse_iterator = std::reverse_iterator<iterator>;
         using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
         reverse_iterator rbegin() noexcept { return reverse_iterator(end()); }
         reverse_iterator rend()   noexcept { return reverse_iterator(begin()); }
-
 
         const_reverse_iterator rbegin() const noexcept { return const_reverse_iterator(end()); }
         const_reverse_iterator rend()   const noexcept { return const_reverse_iterator(begin()); }

@@ -6,13 +6,11 @@
 #define MIXEDPROJECT_MESH_H
 #include <vector>
 #include <array>
-#include <memory>
 
 #include "Material.hpp"
 #include "Texture.hpp"
 #include "../../../Utils/Math/Vector.hpp"
 #include "glad/gl.h"
-#include "../../Shader/Shader.hpp"
 
 namespace Obj3D {
     class Mesh {

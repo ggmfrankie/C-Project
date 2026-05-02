@@ -47,8 +47,7 @@ namespace Obj3D::OBJLoader {
 
 
     std::vector<ggm::Vector3f>
-    OBJObject::convertToVec3f(const std::vector<std::string_view>& lineList)
-    {
+    OBJObject::convertToVec3f(const std::vector<std::string_view>& lineList) {
         vector<ggm::Vector3f> output;
         output.reserve(lineList.size());
         for (const auto& line : lineList) {
@@ -90,8 +89,7 @@ namespace Obj3D::OBJLoader {
     }
 
     void OBJObject::load() {
-        using namespace ggm;
-        mLines = LazyStream(split(mObjFile, '\n'))
+        mLines = ggm::LazyStream(ggm::split(mObjFile, '\n'))
                 .filter([](auto &s) {return !s.empty() && !s.starts_with("#"); })
                 .map([](auto line) {
                     if (!line.empty() && line.back() == '\r') line.remove_suffix(1);
@@ -198,7 +196,7 @@ namespace Obj3D::OBJLoader {
             .getFirst();
     }
 
-    Mesh
+    [[nodiscard]] Mesh
     OBJObject::getMesh() {
         return {std::move(mGlVertices), std::move(mGlUv), std::move(mGlNormals), std::move(mIndices), Texture(mFolderPath + m_textureName)};
     }
@@ -207,7 +205,9 @@ namespace Obj3D::OBJLoader {
     OBJObject::getLinesWith(const string_view &token) const {
         return ggm::LazyStream(mLines)
             .filter([token](auto& s){return s.starts_with(token);})
-            .map([token](auto s){s.remove_prefix(token.size()); return s;})
+            .map([token](auto s) {
+                s.remove_prefix(token.size()); return s;
+            })
             .toVector();
     }
 
@@ -215,7 +215,9 @@ namespace Obj3D::OBJLoader {
     OBJObject::getMaterialLib() const {
         return ggm::LazyStream(mLines)
             .filter([](auto& s){return s.starts_with("mtllib ");})
-            .map([](auto s){s.remove_prefix(strlen("mtllib ")); return s;})
+            .map([](auto s) {
+                s.remove_prefix(strlen("mtllib ")); return s;
+            })
             .getFirst();
     }
 } // Loader

@@ -2,16 +2,12 @@
 // Created by ertls on 17.02.2026.
 //
 
-#ifndef MIXEDPROJECT_OBJECT_H
-#define MIXEDPROJECT_OBJECT_H
-#include <vector>
+#pragma once
 
 #include "../../../Utils/DataStorage/InlineVector.hpp"
 #include "../../../Utils/Math/Quaternion.hpp"
 #include "../../../Utils/Math/Matrix.hpp"
 #include "Mesh.hpp"
-#include "../../Shader/Shader.hpp"
-
 
 
 namespace Obj3D {
@@ -56,5 +52,3 @@ namespace Obj3D {
         ggm::InlineVector<Mesh, 1> mMeshes{};
     };
 } // Core
-
-#endif //MIXEDPROJECT_OBJECT_H
