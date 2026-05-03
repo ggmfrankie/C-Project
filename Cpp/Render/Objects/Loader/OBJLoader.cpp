@@ -57,12 +57,10 @@ namespace Obj3D::OBJLoader {
                         ggm::getDouble(s.data(), s.size())
                     );
                 })
-                .take(3)
-                .toVector();
+                .take<3>()
+                .toArray();
 
-            if (nums.size() == 3) {
-                output.emplace_back(nums[0], nums[1], nums[2]);
-            }
+            output.emplace_back(nums[0], nums[1], nums[2]);
         }
         return output;
     }
@@ -78,19 +76,17 @@ namespace Obj3D::OBJLoader {
                         ggm::getDouble(s.data(), s.size())
                     );
                 })
-                .take(2)
-                .toVector();
+                .take<2>()
+                .toArray();
 
-            if (nums.size() == 2) {
-                output.emplace_back(nums[0], nums[1]);
-            }
+            output.emplace_back(nums[0], nums[1]);
         }
         return output;
     }
 
     void OBJObject::load() {
         mLines = ggm::LazyStream(ggm::split(mObjFile, '\n'))
-                .filter([](auto &s) {return !s.empty() && !s.starts_with("#"); })
+                .filter([](auto& s) {return !s.empty() && !s.starts_with("#"); })
                 .map([](auto line) {
                     if (!line.empty() && line.back() == '\r') line.remove_suffix(1);
                     return line;

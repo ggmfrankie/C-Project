@@ -5,6 +5,7 @@
 #pragma once
 
 #include "RenderObjectRef3D.hpp"
+#include "Render/Shader/Shader.hpp"
 #include "Utils/DataStorage/SparseSet.hpp"
 
 namespace Render {

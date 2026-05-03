@@ -5,8 +5,23 @@
 #pragma once
 #include <optional>
 #include <vector>
+#include <functional>
+#include "Utils/Math/ggmdef.hpp"
 
 namespace ggm {
+
+    template<typename Function, typename ReturnType, typename... Args>
+    concept returns = std::same_as<std::invoke_result_t<Function&, Args...>, ReturnType>;
+
+    template<typename Filter, typename Type>
+    concept isFilterFor = std::invocable<Filter&, const Type&> && returns<Filter, bool, const Type&>;
+
+    template<typename Mapper, typename Type>
+    concept isMapperFor = std::invocable<Mapper&, const Type&> && !returns<Mapper, void, const Type&>;
+
+    template<typename Consumer, typename Type>
+    concept isConsumerFor = std::invocable<Consumer&, const Type&> && returns<Consumer, void, const Type&>;
+
     template<typename F>
         struct Filter {
         F fn;
@@ -16,13 +31,13 @@ namespace ggm {
     struct Mapper {
         F fn;
     };
-    template<typename Container, typename... Ops>
+
+    template<typename Container, u64 TAKE_LIMIT = SIZE_MAX,  typename... Ops>
     class LazyStream {
         const Container& mContainer;
         std::tuple<Ops...> mOps;
-        size_t mTakeLimit = SIZE_MAX;
 
-        template<typename Op, typename Input>
+        template<typename F, typename Input>
         struct GetType;
 
         template<typename F, typename Input>
@@ -49,19 +64,20 @@ namespace ggm {
             using type = PipelineResult<Next, Rest...>::type;
         };
 
-        using DataType = std::iterator_traits<decltype(std::begin(mContainer))>::value_type;
-        using FinalT = PipelineResult<DataType, Ops...>::type;
+        using InitialType = std::iterator_traits<decltype(std::begin(mContainer))>::value_type;
+        using FinalType = PipelineResult<InitialType, Ops...>::type;
 
-        template<std::size_t I, typename T, typename Tuple>
-        std::optional<FinalT> process(const T& value, Tuple& ops) {
+        /// @brief Applies the accumulated functions to the value and returns an empty optional if filtered out
+        template<u64 I, typename T, typename Tuple> constexpr
+        auto process(const T &value, Tuple &ops) -> std::optional<FinalType> {
             if constexpr (I >= std::tuple_size_v<std::remove_reference_t<Tuple>>) {
-                return std::optional<FinalT>{value};
-                static_assert(std::is_same_v<T, FinalT>, "Type mismatch at pipeline end");
+                // End of function stack
+                static_assert(std::is_same_v<T, FinalType>, "Type mismatch at pipeline end");
+                return std::optional<FinalType>{value};
             } else {
-                auto& op = std::get<I>(ops);
-                if constexpr (std::is_same_v<std::decay_t<decltype(op)>, Filter<decltype(op.fn)>>) {
+                if constexpr (auto& op = std::get<I>(ops); std::is_same_v<std::decay_t<decltype(op)>, Filter<decltype(op.fn)>>) {
                     // Filter
-                    if (!op.fn(value)) return std::optional<FinalT>{std::nullopt};
+                    if (!op.fn(value)) return std::optional<FinalType>{std::nullopt};
                     return process<I + 1, T>(value, ops);
                 } else {
                     // Mapper
@@ -72,36 +88,69 @@ namespace ggm {
         }
 
     public:
-        explicit LazyStream(const Container& container) : mContainer(container), mOps(){}
+        constexpr explicit LazyStream(const Container& container) :
+            mContainer(container),
+            mOps()
+        {}
+        constexpr LazyStream(const Container& container, std::tuple<Ops...> o) :
+            mContainer(container),
+            mOps(std::move(o))
+        {}
 
-        LazyStream(const Container& container, std::tuple<Ops...> o) : mContainer(container), mOps(std::move(o)){}
-
-        std::vector<FinalT> toVector() {
-            std::vector<FinalT> out{};
+        auto toVector() -> std::vector<FinalType> {
+            std::vector<FinalType> out{};
             out.reserve(mContainer.size());
 
             size_t taken = 0;
             for (const auto& thing: mContainer) {
-                if (taken >= mTakeLimit) break;
-                std::optional<FinalT> value = process<0, DataType>(thing, mOps);
-                if (value) {
+                if constexpr (TAKE_LIMIT < SIZE_MAX) if (taken >= TAKE_LIMIT) break;
+                if (std::optional<FinalType> value = process<0, InitialType>(thing, mOps)) {
                     out.push_back(std::move(*value));
-                    ++taken;
+                    if constexpr (TAKE_LIMIT < SIZE_MAX) ++taken;
                 }
             }
             return out;
         }
 
-        FinalT getFirst() {
+        auto toArray() -> std::array<FinalType, TAKE_LIMIT> {
+            static_assert(TAKE_LIMIT != SIZE_MAX, "Array size is not known. Use take() first or consider toVector()");
+            std::array<FinalType, TAKE_LIMIT> out;
+
+            u64 taken = 0;
             for (const auto& thing: mContainer) {
-                std::optional<FinalT> value = process<0, DataType>(thing, mOps);
+                if constexpr (TAKE_LIMIT < SIZE_MAX) if (taken >= TAKE_LIMIT) break;
+                if (std::optional<FinalType> value = process<0, InitialType>(thing, mOps)) {
+                    out[taken] = std::move(*value);
+                    if constexpr (TAKE_LIMIT < SIZE_MAX) ++taken;
+                }
+            }
+            return out;
+        }
+
+        auto getFirst() -> FinalType {
+            for (const auto& thing: mContainer) {
+                std::optional<FinalType> value = process<0, InitialType>(thing, mOps);
                 if (value) return *value;
             }
             throw std::runtime_error("Stream::getFirst() on empty result");
         }
 
+        template<typename Consumer>
+        requires isConsumerFor<Consumer, FinalType>
+        void forEach(Consumer&& c) {
+            u64 taken = 0;
+            for (const auto& thing: mContainer) {
+                if constexpr (TAKE_LIMIT < SIZE_MAX) if (taken >= TAKE_LIMIT) break;
+                if (std::optional<FinalType> value = process<0, InitialType>(thing, mOps)) {
+                    std::invoke(c, value);
+                    if constexpr (TAKE_LIMIT < SIZE_MAX) ++taken;
+                }
+            }
+        }
+
         template<typename Map>
-        auto map(Map&& m) {
+        requires isMapperFor<Map, FinalType>
+        constexpr auto map(Map&& m) {
             using MOp = Mapper<Map>;
 
             auto newOps = std::tuple_cat(
@@ -109,11 +158,12 @@ namespace ggm {
                 std::tuple{MOp{std::forward<Map>(m)}}
             );
 
-            return LazyStream<Container, Ops..., MOp>(mContainer, newOps);
+            return LazyStream<Container, TAKE_LIMIT, Ops..., MOp>(mContainer, newOps);
         }
 
         template<typename Filt>
-        auto filter(Filt&& f) {
+        requires isFilterFor<Filt, FinalType>
+        constexpr auto filter(Filt&& f) {
             using FOp = Filter<Filt>;
 
             auto newOps = std::tuple_cat(
@@ -121,13 +171,12 @@ namespace ggm {
                 std::tuple{FOp{std::forward<Filt>(f)}}
             );
 
-            return LazyStream<Container, Ops..., FOp>(mContainer, newOps);
+            return LazyStream<Container, TAKE_LIMIT, Ops..., FOp>(mContainer, newOps);
         }
 
-        auto take(size_t n) {
-            auto copy = *this;
-            copy.mTakeLimit = n;
-            return copy;
+        template<u64 n>
+        constexpr auto take() {
+            return LazyStream<Container, n, Ops...>(mContainer, mOps);
         }
     };
 } // ggm
