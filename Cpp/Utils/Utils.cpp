@@ -12,17 +12,24 @@ namespace ggm {
 
     using std::vector, std::string_view, std::ranges::distance;
 
-    vector<string_view> split(string_view s, char delim) {
-        vector<string_view> out{};
-        out.reserve(s.size());
+    std::vector<std::string_view> split(std::string_view s, char delim) {
+        std::vector<std::string_view> out;
+        out.reserve(s.size() / 10);
 
         for (auto&& part : s | std::views::split(delim)) {
-            if (distance(part) != 0) {
-                auto sv = string_view(part.begin(), distance(part));
-                out.push_back(sv);
-            }
+            const auto it = part.begin();
+            if (it == part.end())
+                continue;
 
+            auto* ptr = &*it;
+
+            size_t len = 0;
+            for (auto jt = it; jt != part.end(); ++jt)
+                ++len;
+
+            out.emplace_back(ptr, len);
         }
+
         return out;
     }
 
@@ -60,7 +67,7 @@ namespace ggm {
                     if (std::isdigit(*next)) {
                         Digit:
                         result += (*next - '0') * pow(10, factor);
-                        factor--;
+                        --factor;
                         state = State::Digit;
                     }
                     break;

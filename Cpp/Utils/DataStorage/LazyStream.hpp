@@ -69,7 +69,7 @@ namespace ggm {
 
         /// @brief Applies the accumulated functions to the value and returns an empty optional if filtered out
         template<u64 I, typename T, typename Tuple> constexpr
-        auto process(const T &value, Tuple &ops) -> std::optional<FinalType> {
+        auto process(const T& value, Tuple& ops) -> std::optional<FinalType> {
             if constexpr (I >= std::tuple_size_v<std::remove_reference_t<Tuple>>) {
                 // End of function stack
                 static_assert(std::is_same_v<T, FinalType>, "Type mismatch at pipeline end");

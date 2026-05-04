@@ -2,10 +2,11 @@
 // Created by ertls on 18.02.2026.
 //
 
-#ifndef MIXEDPROJECT_OBJLOADER_H
-#define MIXEDPROJECT_OBJLOADER_H
+#pragma once
+
 #include "../../../Utils/Utils.hpp"
 #include <iostream>
+#include <filesystem>
 
 #include "../../../Utils/Math/Matrix.hpp"
 #include "../../../Utils/Math/Vector.hpp"
@@ -19,7 +20,6 @@ namespace Obj3D::OBJLoader {
 
         void load();
 
-        friend std::ostream& operator<<(std::ostream& os, const OBJObject& o);
         Mesh getMesh();
 
     private:
@@ -28,34 +28,14 @@ namespace Obj3D::OBJLoader {
             int vt = 0;
             int vn = 0;
 
-            bool operator==(const IdxGroup& other) const noexcept {
-                return v == other.v && vt == other.vt && vn == other.vn;
-            }
+            bool operator==(const IdxGroup& other) const noexcept;
         };
 
         struct IdxGroupHash {
-            std::size_t operator()(const IdxGroup& idx) const noexcept {
-
-                const std::size_t h1 = std::hash<int>{}(idx.v);
-                const std::size_t h2 = std::hash<int>{}(idx.vt);
-                const std::size_t h3 = std::hash<int>{}(idx.vn);
-
-                return h1 ^ (h2 << 1) ^ (h3 << 2);
-            }
+            std::size_t operator()(const IdxGroup& idx) const noexcept;
         };
 
-        std::string mFolderPath{};
-
-        std::string mObjFile{};
-        std::string m_materialFile{};
-        std::string m_textureName{};
-        std::string_view mMaterialLib{};
-
-        std::vector<std::string_view> mLines{};
-
-        std::vector<ggm::Vector3f> mAllVertices{};
-        std::vector<ggm::Vector3f> mAllNormals{};
-        std::vector<ggm::Vector2f> mAllUv{};
+        std::filesystem::path mFolderPath{};
 
         std::vector<ggm::Vector3f> mGlVertices{};
         std::vector<ggm::Vector3f> mGlNormals{};
@@ -63,22 +43,31 @@ namespace Obj3D::OBJLoader {
 
         std::vector<GLuint> mIndices{};
 
-        [[nodiscard]] std::vector<std::string_view> getLinesWith(const std::string_view &token) const;
+        Texture mTexture{};
 
-        [[nodiscard]] std::string_view getMaterialLib() const;
+        using Token = std::string_view;
+        using Lines = std::vector<Token>;
 
-        static std::vector<ggm::Vector3f> convertToVec3f(const std::vector<std::string_view> &lineList);
+        [[nodiscard]] static std::vector<std::string_view>
+            getLinesWith(const Lines& lines, const Token &token);
 
-        static std::vector<ggm::Vector2f> convertToVec2f(const std::vector<std::string_view> &lineList);
+        [[nodiscard]] static std::string_view
+            getMaterialLib(const Lines& lines);
 
-        void loadMeshData();
+        [[nodiscard]] static std::vector<ggm::Vector3f>
+            convertToVec3f(const Lines &lineList);
 
-        static std::vector<IdxGroup> loadIdxGroups(const std::string_view &faceLine);
+        [[nodiscard]] static std::vector<ggm::Vector2f>
+            convertToVec2f(const Lines &lineList);
 
-        void loadMaterial();
+        [[nodiscard]] static std::vector<IdxGroup>
+            loadIdxGroups(const Token &faceLine);
 
+        [[nodiscard]] static std::string
+            loadMaterial(const std::filesystem::path& path, const Token &lib);
+
+        void loadMeshData(const Lines &lines);
     };
 
 }
 
-#endif //MIXEDPROJECT_OBJLOADER_H

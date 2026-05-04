@@ -14,7 +14,10 @@
 
 namespace Render {
     using std::string;
-    Shader::Shader(string fileVert, string fileFrag): vertPath(std::move(fileVert)), fragPath(std::move(fileFrag)) {
+    Shader::Shader(string fileVert, string fileFrag):
+        vertPath(std::move(fileVert)),
+        fragPath(std::move(fileFrag))
+    {
         programId = 0;
         vertexId = 0;
         fragmentId = 0;
@@ -81,13 +84,10 @@ namespace Render {
         char infoLog[512];
         glLinkProgram(programId);
 
-        // --- DEBUG: Check program link status ---
         glGetProgramiv(programId, GL_LINK_STATUS, &success);
         if (!success) {
             glGetProgramInfoLog(programId, 512, nullptr, infoLog);
             printf("Shader Program Link Error:\n%s\n", infoLog);
-        } else {
-            //printf("Shader Program linked successfully! ID: %d\n", programId);
         }
         glGetShaderiv(fragmentId, GL_COMPILE_STATUS, &success);
         if (!success) {

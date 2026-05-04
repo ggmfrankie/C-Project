@@ -25,7 +25,7 @@ void runTest() {
     moveAndPrintBoard(&board, right_down);
     moveAndPrintBoard(&board, right_up);
     moveAndPrintBoard(&board, right_up);
-    REPEAT(10, moveAndPrintBoard(&board, right_down));
+    repeat_for(10, moveAndPrintBoard(&board, right_down));
 }
 
 void drawWithBishop(unsigned long long input) {

@@ -4,22 +4,38 @@
 
 #include "FileIO.hpp"
 
+#include <filesystem>
 #include <fstream>
 #include <stdexcept>
 
 namespace ggm::FileIO {
     std::string readFile(const std::string& filePath) {
-
         std::ifstream file(filePath, std::ios::binary);
         if (!file) {
-            printf("Tried to open file %s\n", filePath.c_str());
-            throw std::runtime_error("Failed to open file");
+            std::ostringstream error;
+            error << "Failed to open file at " << filePath << "\n";
+            throw std::runtime_error(error.str());
         }
 
-        return std::string(
-            std::istreambuf_iterator<char>(file),
+        return {
+        std::istreambuf_iterator(file),
+        std::istreambuf_iterator<char>()
+        };
+
+    }
+
+    std::string readFile(const std::filesystem::path& filePath) {
+        std::ifstream file(filePath, std::ios::binary);
+        if (!file) {
+            std::ostringstream error;
+            error << "Failed to open file at " << filePath << "\n";
+            throw std::runtime_error(error.str());
+        }
+
+        return {
+            std::istreambuf_iterator(file),
             std::istreambuf_iterator<char>()
-        );
+        };
 
     }
 }

@@ -21,7 +21,7 @@ namespace Game {
         mRenderObj(createPlayerRenderObject()),
         mPos(pos)
     {
-        JPH::Ref settings = new JPH::CharacterSettings{};
+        const JPH::Ref settings = new JPH::CharacterSettings{};
         settings->mMass = 10;
         settings->mLayer = Layers::MOVING;
         settings->mMaxSlopeAngle = JPH::DegreesToRadians(45.0f);

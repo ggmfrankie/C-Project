@@ -164,7 +164,7 @@ static Vec2i updateLayout(Element* self, const Vec2i parentCursor, const Vec2i r
     if (cb->reset) cb->reset(self);
 
 #if GUI_DEBUG
-    printIf(print,
+    print_if(print,
         "---------------------\n"
         "Current Element: \"%s\"\n"
         "Remaining space:\n"
