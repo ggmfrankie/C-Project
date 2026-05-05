@@ -18,16 +18,16 @@ namespace Obj2D::PhysicsFactory2D {
 
         ps.points.emplace_back(pos + r*Vector2f{-a, -b});
         ps.points.emplace_back(pos + r*Vector2f{a, -b});
-        ps.points.emplace_back(pos + r*Vector2f{-a, b});
         ps.points.emplace_back(pos + r*Vector2f{a, b});
+        ps.points.emplace_back(pos + r*Vector2f{-a, b});
 
         ps.connections.emplace_back(0, 1);
-        ps.connections.emplace_back(0, 2);
         ps.connections.emplace_back(1, 2);
-        ps.connections.emplace_back(1, 3);
         ps.connections.emplace_back(2, 3);
         ps.connections.emplace_back(3, 0);
 
+        ps.connections.emplace_back(0, 2);
+        ps.connections.emplace_back(1, 3);
         return ps;
     }
     PhysicsSettings newSoftBall(int segments, float radius, Vector2f pos) {

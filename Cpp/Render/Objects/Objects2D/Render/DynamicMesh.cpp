@@ -46,7 +46,7 @@ namespace Obj2D {
         //glBindTexture(GL_TEXTURE_2D, mTexture.id());
 
         glBindVertexArray(mVAO);
-        glDrawArrays(GL_TRIANGLE_STRIP, 0, mNumVerts);
+        glDrawArrays(GL_TRIANGLE_FAN, 0, mNumVerts);
         glBindVertexArray(0);
     }
 

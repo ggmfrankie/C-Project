@@ -66,13 +66,6 @@ namespace PhysixBox {
 
         for (auto& point: mPoints) {
             point.pos += point.vel * dt;
-            static int iterations = 0;
-            //iterations++;
-            if (iterations >= 100) {
-                std::cout << "Position is: " << point.pos << '\n';
-                iterations = 0;
-            }
-
         }
     }
 
@@ -91,6 +84,10 @@ namespace PhysixBox {
     }
 
     InlineVector<PointMass, 16>& SoftBody2D::getPoints() {
+        return mPoints;
+    }
+
+    const InlineVector<PointMass, 16>& SoftBody2D::getPoints() const {
         return mPoints;
     }
 } // PhysicsBox

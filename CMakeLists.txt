@@ -214,6 +214,8 @@ add_executable(C-Project
         Cpp/Utils/DataStorage/Stream.hpp
         Cpp/Games/BaseGame/GameGui.c
         Cpp/Utils/DataStorage/LazyStream.hpp
+        Cpp/Extern/Sudoku/SudokuBoard.cpp
+        Cpp/Extern/Sudoku/SudokuBoard.hpp
 )
 
 target_compile_definitions(C-Project PUBLIC JPH_ENABLE_ASSERTS)

@@ -178,6 +178,11 @@ namespace ggm {
             return mData[index];
         }
 
+        const T& operator[](u64 index) const noexcept{
+            assert(index < mCapacity);
+            return mData[index];
+        }
+
         T& get(u64 index) {
             if (index >= mSize) throw std::out_of_range("Index out of bounds in ArrayList");
             return mData[index];

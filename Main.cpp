@@ -5,6 +5,7 @@
 
 #include "Cpp/GameEngine.hpp"
 #include "Cpp/Games/BaseGame/BaseGame.hpp"
+#include "Extern/Sudoku/SudokuBoard.hpp"
 #include "Games/Game2D/Game2D.hpp"
 #include "Test/Test.hpp"
 
@@ -14,8 +15,8 @@ int main() {
     Game::BaseGame game{};
     Game::Game2D game2D{};
 
-    //GameEngine& gameEngine = GameEngine::New(game2D);
-    GameEngine& gameEngine = GameEngine::New(game);
+    GameEngine& gameEngine = GameEngine::New(game2D);
+    //GameEngine& gameEngine = GameEngine::New(game);
     gameEngine.init();
     gameEngine.loop();
 

@@ -6,6 +6,7 @@
 
 #include <cmath>
 
+#include "Collision.hpp"
 #include "Render/Objects/Objects2D/Physics/PhysicsFactory2D.hpp"
 
 namespace PhysixBox {
@@ -25,9 +26,18 @@ namespace PhysixBox {
 
                 for (auto& point : obj.getPoints()) {
                     if (constexpr float groundY = 0.0f; point.pos.y < groundY) {
+                        // 1. Position correction (MANDATORY)
+                        point.pos.y = groundY;
 
-                        //TODO fix
-                        point.vel = -point.vel;
+                        // 2. Only react if moving INTO the ground
+                        if (point.vel.y < 0.0f) {
+                            constexpr float restitution = 0.3f; // 0 = sticky, 1 = bouncy
+                            point.vel.y = -point.vel.y * restitution;
+                        }
+
+                        // 3. Friction (tangential damping)
+                        constexpr float friction = 0.8f;
+                        point.vel.x *= friction;
                     }
                 }
             }
@@ -37,51 +47,57 @@ namespace PhysixBox {
     void PhysicsSystem::checkIntersection(SoftBody2D &a, SoftBody2D &b) {
         using vec2 = ggm::Vector2f;
         for (auto& point : b.getPoints()) {
-            if (auto& p = point.pos; isInside(a, p)) {
+            if (auto& p = point.pos; isInsideV2(a, p)) {
                 Collision c = getCollision(a, p);
-                float allMass = c.a->mass + c.b->mass + point.mass;
-
-                float factorA = c.a->mass/allMass;
-                float factorB = c.b->mass/allMass;
-
-                float factorP = point.mass/allMass;
-
-                vec2 displacement = c.normal * c.distance;
-
-                c.a->pos -= displacement * factorA;
-                c.b->pos -= displacement * factorB;
-                point.pos += displacement * factorP;
-
-                c.a->vel -= displacement * (factorA/10);
-                c.b->vel -= displacement * (factorB/10);
-                point.vel += displacement * (factorP/10);
-
-                puts("collision");
+                resolveCollision(c, point);
             }
         }
 
         for (auto& point : a.getPoints()) {
-            if (auto& p = point.pos; isInside(b, p)) {
+            if (auto& p = point.pos; isInsideV2(b, p)) {
                 Collision c = getCollision(b, p);
-                float allMass = c.a->mass + c.b->mass + point.mass;
-
-                float factorA = c.a->mass/allMass;
-                float factorB = c.b->mass/allMass;
-
-                float factorP = point.mass/allMass;
-
-                vec2 displacement = c.normal * c.distance;
-
-                c.a->pos -= displacement * factorA;
-                c.b->pos -= displacement * factorB;
-                point.pos += displacement * factorP;
-
-                c.a->vel -= displacement * (factorA/10);
-                c.b->vel -= displacement * (factorB/10);
-                point.vel += displacement * (factorP/10);
-                puts("collision");
+                resolveCollision(c, point);
             }
         }
+    }
+
+    void PhysicsSystem::resolveCollision(const Collision& c, PointMass& p) {
+
+        using vec2 = ggm::Vector2f;
+
+        const float invA = 1.0f / c.a->mass;
+        const float invB = 1.0f / c.b->mass;
+        const float invP = 1.0f / p.mass;
+
+        const float invSum = invA + invB + invP;
+        if (invSum == 0) return;
+
+        const vec2 correction = c.normal * c.distance;
+
+        c.a->pos -= correction * (invA / invSum);
+        c.b->pos -= correction * (invB / invSum);
+        p.pos    += correction * (invP / invSum);
+
+    }
+
+    bool PhysicsSystem::isInsideV2(const SoftBody2D& a, const ggm::Vector2f& point) {
+        using namespace ggm;
+        using vec2 = Vector2f;
+
+        const auto& points = a.getPoints();
+        const u64 length = points.size();
+        bool inside = false;
+
+        for (int i = 0; i < length; ++i) {
+            const vec2 p0 = points[i].pos;
+            const vec2 p1 = points[(i+1)%length].pos;
+
+            if (const bool yCheck = (p0.y > point.y) != (p1.y > point.y);
+                !yCheck) continue;
+            if (const float xIntersect = (p1.x - p0.x) * (point.y - p0.y) / (p1.y - p0.y) + p0.x;
+                point.x < xIntersect) inside = !inside;
+        }
+        return inside;
     }
 
     bool PhysicsSystem::isInside(SoftBody2D& a, const ggm::Vector2f& point) {
@@ -92,7 +108,7 @@ namespace PhysixBox {
         const u64 length = points.size();
         int intersections = 0;
 
-        for (int i = 0; i < length; i++) {
+        for (int i = 0; i < length; ++i) {
             vec2 p0 = points[i].pos;
             vec2 p1 = points[(i+1)%length].pos;
 
@@ -123,7 +139,7 @@ namespace PhysixBox {
         using vec2 = Vector2f;
 
         Collision result{};
-        float minDistance = std::numeric_limits<float>::max();
+        float minDistSq = std::numeric_limits<float>::max();
 
         auto& points = body.getPoints();
         const u64 length = points.size();
@@ -149,8 +165,8 @@ namespace PhysixBox {
             else if (d >= 1) pointOnLine = b;
             else pointOnLine = a + ab * d;
 
-            if (const float distSq = vec2::distanceSquared(pointOnLine, p); distSq < minDistance) {
-                minDistance = distSq;
+            if (const float distSq = vec2::distanceSquared(pointOnLine, p); distSq < minDistSq) {
+                minDistSq = distSq;
 
                 result.a = &pma;
                 result.b = &pmb;
@@ -158,7 +174,7 @@ namespace PhysixBox {
                 result.point = pointOnLine;
             }
         }
-        result.distance = std::sqrt(minDistance);
+        result.distance = std::sqrt(minDistSq);
         return result;
     }
 
@@ -176,7 +192,7 @@ namespace PhysixBox {
 
             float length = (first.pos - second.pos).length();
 
-            body.addSpring(first, second, 2000.0f, length, 2.0f);
+            body.addSpring(first, second, 20000.0f, length, 10.0f);
         }
 
         return {id, mBodies};
