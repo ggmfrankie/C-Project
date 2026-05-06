@@ -5,11 +5,10 @@
 #pragma once
 #include "glad/gl.h"
 #include "Render/Objects/Render/Texture.hpp"
-#include "Utils/DataStorage/InlineVector.hpp"
 #include "Utils/Math/Vector.hpp"
 #include <vector>
 
-namespace Obj2D {
+namespace Game2D {
     class DynamicMesh {
         GLuint mVAO = 0;
         GLuint mEBO = 0;
@@ -29,6 +28,13 @@ namespace Obj2D {
         void init();
         void render() const;
 
-        void update(const std::vector<ggm::Vector2f> &newVerts);
+        void update(const std::vector<ggm::Vector2f> &newVerts) const;
+
+        struct VBOHandles {
+            GLuint vao;
+            const std::array<GLuint, 2>& vbos;
+            GLint vertexCount;
+        };
+        [[nodiscard]] VBOHandles getGlData() const;
     };
 } // Obj

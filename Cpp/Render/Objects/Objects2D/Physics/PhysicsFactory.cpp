@@ -2,11 +2,11 @@
 // Created by Stefan on 05.04.2026.
 //
 
-#include "PhysicsFactory2D.hpp"
+#include "PhysicsFactory.hpp"
 
 #include "Utils/Math/Matrix.hpp"
 
-namespace Obj2D::PhysicsFactory2D {
+namespace Game2D::PhysicsFactory2D {
     using namespace ggm;
     PhysicsSettings newQuad(float x, float y, Vector2f pos, float rot) {
         PhysicsSettings ps;

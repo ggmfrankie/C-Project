@@ -3,19 +3,21 @@
 //
 
 #include "Scene2D.hpp"
-#include "Render/Objects/Objects2D/Physics/PhysicsFactory2D.hpp"
+#include "Render/Objects/Objects2D/Physics/PhysicsFactory.hpp"
 
-namespace Game {
-    using namespace Obj2D;
-    using namespace Obj2D::PhysicsFactory2D;
-    Scene2D::Scene2D() = default;
+namespace Game2D {
+    Scene2D::Scene2D() :
+        mLayerStack(mObjects)
+    {}
 
     void Scene2D::init() {
         mRenderer.init(&mCamera);
+        mLayerStack.initAll();
     }
 
     void Scene2D::render(int width, int height) {
         mRenderer.render(width, height);
+        mLayerStack.renderAll(width, height);
     }
 
     void Scene2D::update(float dt) {
@@ -23,16 +25,21 @@ namespace Game {
         for (auto& obj : mObjects) {
             obj.update();
         }
+        mLayerStack.updateAll(dt);
     }
 
     Render::Camera& Scene2D::getCamera() {
         return mCamera;
     }
 
-    GameObject2D& Scene2D::addObject(const ggm::Vector3f &color, const PhysicsSettings &settings) {
+    ggm::u64 Scene2D::addObject(const ggm::Vector3f &color, const PhysicsFactory2D::PhysicsSettings &settings) {
         auto ro = mRenderer.newObject(color, settings.points);
         auto po = mPhysicsSystem.addBody(settings);
 
         return mObjects.push(ro, po);
     }
-} // Game
+
+    void Scene2D::addLayer(std::unique_ptr<ILayer> layer) {
+        mLayerStack.pushLayer(std::move(layer));
+    }
+}

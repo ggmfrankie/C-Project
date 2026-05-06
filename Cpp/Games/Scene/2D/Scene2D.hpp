@@ -3,29 +3,36 @@
 //
 
 #pragma once
+#include "LayerStack.hpp"
 #include "Engine/Core/PhysixBox2D/PhysicsSystem.hpp"
 #include "Games/Scene/IScene.hpp"
-#include "Render/Objects/Objects2D/GameObject2D.hpp"
-#include "Render/Objects/Objects2D/Render/Renderer2D.hpp"
+#include "Render/Objects/Objects2D/GameObject.hpp"
+#include "Render/Objects/Objects2D/Render/Renderer.hpp"
 #include "Render/Transformation/Camera.hpp"
 
 
-namespace Game {
-    class Scene2D final : public IScene {
+namespace Game2D {
+    class Scene2D final : public Game::IScene {
         Render::Camera mCamera{};
         PhysixBox::PhysicsSystem mPhysicsSystem{};
-        Renderer2D mRenderer{};
+        Renderer mRenderer{};
 
-        ggm::InlineVector<Obj2D::GameObject2D, 16> mObjects{};
+        ggm::SparseSet<GameObject> mObjects{16};
+        LayerStack mLayerStack;
 
     public:
         Scene2D();
+        Scene2D(const Scene2D&) = delete;
+        Scene2D& operator=(const Scene2D&) = delete;
+        Scene2D(Scene2D&&) = delete;
+        Scene2D& operator=(Scene2D&&) = delete;
 
         void init() override;
         void render(int width, int height) override;
         void update(float dt) override;
         Render::Camera & getCamera() override;
 
-        Obj2D::GameObject2D& addObject(const ggm::Vector3f& color, const Obj2D::PhysicsFactory2D::PhysicsSettings& settings);
+        ggm::u64 addObject(const ggm::Vector3f& color, const PhysicsFactory2D::PhysicsSettings& settings);
+        void addLayer(std::unique_ptr<ILayer> layer);
     };
-} // Game
+}

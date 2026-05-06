@@ -8,7 +8,7 @@
 #include "Utils/Math/ggmdef.hpp"
 #include "Utils/Math/Vector.hpp"
 
-namespace Obj2D::PhysicsFactory2D {
+namespace Game2D::PhysicsFactory2D {
     struct PhysicsSettings {
         std::vector<ggm::Vector2f> points;
         std::vector<std::pair<ggm::u64, ggm::u64>> connections;

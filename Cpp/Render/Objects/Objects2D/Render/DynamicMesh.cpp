@@ -7,7 +7,7 @@
 #include <cassert>
 #include <vector>
 
-namespace Obj2D {
+namespace Game2D {
     using namespace ggm;
 
     DynamicMesh::DynamicMesh(const std::vector<Vector2f>& pos) :
@@ -50,7 +50,7 @@ namespace Obj2D {
         glBindVertexArray(0);
     }
 
-    void DynamicMesh::update(const std::vector<Vector2f>& newVerts) {
+    void DynamicMesh::update(const std::vector<Vector2f>& newVerts) const {
         assert(newVerts.size() == mNumVerts);
         glBindBuffer(GL_ARRAY_BUFFER, mVBOs[0]);
         glBufferSubData(
@@ -59,5 +59,9 @@ namespace Obj2D {
             sizeof(Vector2f) * newVerts.size(),
             newVerts.data()
         );
+    }
+
+    DynamicMesh::VBOHandles DynamicMesh::getGlData() const {
+        return {mVAO, mVBOs, mNumVerts};
     }
 } // Obj

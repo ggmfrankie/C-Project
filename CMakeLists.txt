@@ -159,9 +159,6 @@ add_executable(C-Project
         Cpp/Render/Shader/Lighting/PointLight.hpp
         Cpp/Render/Shader/DeferredShader.cpp
         Cpp/Render/Shader/DeferredShader.hpp
-        Cpp/Games/IGameLayer.hpp
-        Cpp/Games/Scene/LayerStack.cpp
-        Cpp/Games/Scene/LayerStack.hpp
         Cpp/Render/Objects/Render/Renderer3D.cpp
         Cpp/Render/Objects/Render/Renderer3D.hpp
         Cpp/Render/Objects/Physics/PhysicsHandler3D.cpp
@@ -176,20 +173,14 @@ add_executable(C-Project
         Cpp/Utils/Time.cpp
         Cpp/Utils/Time.hpp
         Cpp/Engine/Core/PhysixBox2D/PointMass.hpp
-        Cpp/Render/Objects/Objects2D/Render/RenderObject2D.cpp
-        Cpp/Render/Objects/Objects2D/Render/RenderObject2D.hpp
         Cpp/Engine/Core/PhysixBox2D/PhysicsSystem.cpp
         Cpp/Engine/Core/PhysixBox2D/PhysicsSystem.hpp
         Cpp/Engine/Core/PhysixBox2D/SoftBody2D.cpp
         Cpp/Engine/Core/PhysixBox2D/SoftBody2D.hpp
         Cpp/Engine/Core/PhysixBox2D/Constrains/Spring.cpp
         Cpp/Engine/Core/PhysixBox2D/Constrains/Spring.hpp
-        Cpp/Render/Objects/Objects2D/GameObject2D.cpp
-        Cpp/Render/Objects/Objects2D/GameObject2D.hpp
         Cpp/Render/Objects/Objects2D/Render/DynamicMesh.cpp
         Cpp/Render/Objects/Objects2D/Render/DynamicMesh.hpp
-        Cpp/Render/Objects/Objects2D/Render/Renderer2D.cpp
-        Cpp/Render/Objects/Objects2D/Render/Renderer2D.hpp
         Cpp/Test/Test.cpp
         Cpp/Test/Test.hpp
         Cpp/Games/Scene/3D/Scene3D.cpp
@@ -199,14 +190,9 @@ add_executable(C-Project
         Cpp/Games/Scene/IScene.hpp
         Cpp/Games/Scene/2D/Scene2D.cpp
         Cpp/Games/Scene/2D/Scene2D.hpp
-        Cpp/Render/Objects/Objects2D/Physics/PhysicsObjectRef2d.cpp
-        Cpp/Render/Objects/Objects2D/Physics/PhysicsObjectRef2d.hpp
         Cpp/Render/Objects/Render/RenderObjectRef3D.hpp
         Cpp/Games/Game2D/Game2D.cpp
         Cpp/Games/Game2D/Game2D.hpp
-        Cpp/Render/Objects/Objects2D/Physics/PhysicsFactory2D.cpp
-        Cpp/Render/Objects/Objects2D/Physics/PhysicsFactory2D.hpp
-        Cpp/Render/Objects/Objects2D/Render/RenderObjectRef2D.hpp
         Cpp/Engine/Core/PhysixBox2D/Collision.hpp
         Dependencies/RustGame/TFE.h
         Cpp/Test/Java.cpp
@@ -216,6 +202,16 @@ add_executable(C-Project
         Cpp/Utils/DataStorage/LazyStream.hpp
         Cpp/Extern/Sudoku/SudokuBoard.cpp
         Cpp/Extern/Sudoku/SudokuBoard.hpp
+        Cpp/Games/Scene/2D/LayerStack.cpp
+        Cpp/Games/Scene/2D/LayerStack.hpp
+        Cpp/Games/Scene/2D/ILayer.hpp
+        Cpp/Games/Game2D/DebugLayer.cpp
+        Cpp/Games/Game2D/DebugLayer.hpp
+        Cpp/Render/Objects/Objects2D/Render/Renderer.cpp
+        Cpp/Render/Objects/Objects2D/GameObject.cpp
+        Cpp/Render/Objects/Objects2D/Render/RenderObject.cpp
+        Cpp/Render/Objects/Objects2D/Physics/PhysicsObjectRef.cpp
+        Cpp/Render/Objects/Objects2D/Physics/PhysicsFactory.cpp
 )
 
 target_compile_definitions(C-Project PUBLIC JPH_ENABLE_ASSERTS)

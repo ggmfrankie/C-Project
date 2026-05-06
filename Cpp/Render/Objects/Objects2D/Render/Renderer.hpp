@@ -3,8 +3,8 @@
 //
 
 #pragma once
-#include "RenderObject2D.hpp"
-#include "RenderObjectRef2D.hpp"
+#include "RenderObject.hpp"
+#include "RenderObjectRef.hpp"
 #include "Render/Shader/Shader.hpp"
 #include "Utils/DataStorage/SparseSet.hpp"
 
@@ -12,22 +12,22 @@ namespace Render {
     class Camera;
 }
 
-namespace Game {
-    class Renderer2D {
+namespace Game2D {
+    class Renderer {
         Render::Shader mShader;
         Render::Camera* mCamera = nullptr;
 
-        ggm::SparseSet<Obj2D::RenderObject2D> mObjects;
+        ggm::SparseSet<RenderObject> mObjects;
 
     public:
-        Renderer2D();
-        ~Renderer2D();
+        Renderer();
+        ~Renderer();
 
         void init(Render::Camera* camera);
         void render(int width, int height);
 
         template<typename... Args>
-        Obj2D::RenderObjRef2D newObject(Args &&... args) {
+        RenderObjRef2D newObject(Args &&... args) {
             return {mObjects.push(std::forward<Args>(args)...), mObjects};
         }
     };

@@ -9,8 +9,8 @@
 #include "Utils/Math/Quaternion.hpp"
 #include "Utils/Math/Vector.hpp"
 
-namespace Obj2D {
-    class RenderObject2D {
+namespace Game2D {
+    class RenderObject {
         ggm::i64 uuid{};
         ggm::Vector2f mPos{};
 
@@ -19,8 +19,8 @@ namespace Obj2D {
         ggm::Vector3f mColor{};
 
     public:
-        RenderObject2D(const ggm::Vector3f& color, const std::vector<ggm::Vector2f> &pos);
-        ~RenderObject2D();
+        RenderObject(const ggm::Vector3f& color, const std::vector<ggm::Vector2f> &pos);
+        ~RenderObject();
 
         void init();
         void render() const;

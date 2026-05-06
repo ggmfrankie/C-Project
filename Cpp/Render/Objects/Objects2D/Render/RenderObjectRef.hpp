@@ -3,23 +3,23 @@
 //
 
 #pragma once
-#include "RenderObject2D.hpp"
+#include "RenderObject.hpp"
 #include "Utils/DataStorage/SparseSet.hpp"
 #include "Utils/Math/ggmdef.hpp"
 
-namespace Obj2D {
+namespace Game2D {
 
     struct RenderObjRef2D {
     private:
         ggm::u64 id = INVALID_ID;
-        ggm::SparseSet<RenderObject2D>& objects;
+        ggm::SparseSet<RenderObject>& objects;
 
     public:
-        RenderObjRef2D(ggm::u64 id, ggm::SparseSet<RenderObject2D>& objects) :
+        RenderObjRef2D(ggm::u64 id, ggm::SparseSet<RenderObject>& objects) :
             id(id), objects(objects)
         {}
 
-        [[nodiscard]] RenderObject2D& get() const {
+        [[nodiscard]] RenderObject& get() const {
             return objects.get(id);
         };
         [[nodiscard]] bool empty() const {

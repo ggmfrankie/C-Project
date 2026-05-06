@@ -2,10 +2,10 @@
 //
 
 #pragma once
-#include "Render/Objects/Objects2D/Physics/PhysicsObjectRef2D.hpp"
+#include "Render/Objects/Objects2D/Physics/PhysicsObjectRef.hpp"
 #include "Utils/DataStorage/SparseSet.hpp"
 
-namespace Obj2D::PhysicsFactory2D {
+namespace Game2D::PhysicsFactory2D {
     struct PhysicsSettings;
 }
 
@@ -37,7 +37,7 @@ namespace PhysixBox {
             return mBodies.push(std::forward<Args>(args)...);
         }
 
-        Obj2D::PhysicsObjectRef2D addBody(const Obj2D::PhysicsFactory2D::PhysicsSettings &settings);
+        Game2D::PhysicsObjectRef addBody(const Game2D::PhysicsFactory2D::PhysicsSettings &settings);
 
     };
 } // PhysicsBox

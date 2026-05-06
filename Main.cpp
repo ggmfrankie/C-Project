@@ -13,7 +13,7 @@
 int main() {
     JPH::RegisterDefaultAllocator();
     Game::BaseGame game{};
-    Game::Game2D game2D{};
+    Game2D::Game2D game2D{};
 
     GameEngine& gameEngine = GameEngine::New(game2D);
     //GameEngine& gameEngine = GameEngine::New(game);

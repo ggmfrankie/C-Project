@@ -9,7 +9,6 @@
 #include <Jolt/Core/JobSystemThreadPool.h>
 #include "Render/Objects/Physics/PhysicsObjectRef.hpp"
 #include "Utils/Math/ggmdef.hpp"
-#include "Games/IGameLayer.hpp"
 
 namespace Obj3D {
     struct PhysicsSettings;

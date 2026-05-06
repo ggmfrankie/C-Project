@@ -7,8 +7,8 @@
 #include "Games/IGame.hpp"
 #include "Games/Scene/2D/Scene2D.hpp"
 
-namespace Game {
-    class Game2D final : public IGame{
+namespace Game2D {
+    class Game2D final : public Game::IGame{
         Scene2D mScene{};
 
         Render::Camera* mCamera = nullptr;
@@ -17,7 +17,8 @@ namespace Game {
         Engine::CommandRegistry* mCommandRegistry = nullptr;
 
     public:
-        void preInit(EngineContext &&e) override;
+        /// @brief Use this to create Objects. OpenGL is NOT initialized here
+        void preInit(Game::EngineContext &&e) override;
 
         void postInit() override;
 

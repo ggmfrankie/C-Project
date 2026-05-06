@@ -7,7 +7,7 @@
 #include <cmath>
 
 #include "Collision.hpp"
-#include "Render/Objects/Objects2D/Physics/PhysicsFactory2D.hpp"
+#include "Render/Objects/Objects2D/Physics/PhysicsFactory.hpp"
 
 namespace PhysixBox {
 
@@ -178,7 +178,7 @@ namespace PhysixBox {
         return result;
     }
 
-    Obj2D::PhysicsObjectRef2D PhysicsSystem::addBody(const Obj2D::PhysicsFactory2D::PhysicsSettings& settings) {
+    Game2D::PhysicsObjectRef PhysicsSystem::addBody(const Game2D::PhysicsFactory2D::PhysicsSettings& settings) {
         const auto id = mBodies.push();
         auto& body = mBodies.get(id);
 

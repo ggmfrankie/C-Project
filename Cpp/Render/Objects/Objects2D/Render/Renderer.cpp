@@ -2,19 +2,19 @@
 // Created by Stefan on 29.03.2026.
 //
 
-#include "Renderer2D.hpp"
-#include "Render/Objects/Objects2D/Render/RenderObject2D.hpp"
+#include "Renderer.hpp"
+#include "Render/Objects/Objects2D/Render/RenderObject.hpp"
 
-namespace Game {
-    Renderer2D::Renderer2D() :
+namespace Game2D {
+    Renderer::Renderer() :
         mShader("2D/Shader2D.vert", "2D/Shader2D.frag"),
         mObjects(64)
     {
     }
 
-    Renderer2D::~Renderer2D() = default;
+    Renderer::~Renderer() = default;
 
-    void Renderer2D::init(Render::Camera* camera) {
+    void Renderer::init(Render::Camera* camera) {
         mShader.compile();
         mShader.link();
 
@@ -30,12 +30,12 @@ namespace Game {
         }
     }
 
-    void Renderer2D::render(int width, int height) {
+    void Renderer::render(int width, int height) {
         glDisable(GL_DEPTH_TEST);
         mShader.bind();
+        mShader.setUniform("screenWidth", static_cast<float>(width));
+        mShader.setUniform("screenHeight", static_cast<float>(height));
         for (auto& obj: mObjects) {
-            mShader.setUniform("screenWidth", static_cast<float>(width));
-            mShader.setUniform("screenHeight", static_cast<float>(height));
             mShader.setUniform("color", obj.getColor());
             obj.render();
         }
