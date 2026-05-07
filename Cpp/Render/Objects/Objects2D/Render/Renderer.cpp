@@ -9,23 +9,15 @@ namespace Game2D {
     Renderer::Renderer() :
         mShader("2D/Shader2D.vert", "2D/Shader2D.frag"),
         mObjects(64)
-    {
-    }
+    {}
 
     Renderer::~Renderer() = default;
 
     void Renderer::init(Render::Camera* camera) {
-        mShader.compile();
-        mShader.link();
-
-        mShader.createUniform("color");
-        mShader.createUniform("screenWidth");
-        mShader.createUniform("screenHeight");
-
+        mShader.compileAndLink();
         mCamera = camera;
 
         for (auto& obj: mObjects) {
-            puts("init objects");
             obj.init();
         }
     }

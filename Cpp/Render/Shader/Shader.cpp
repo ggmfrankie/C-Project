@@ -29,7 +29,6 @@ namespace Render {
     }
 
     void Shader::typeCheck(UniformType a, UniformType b) {
-        return;
         if (a == UniformType::Unknown || b == UniformType::Unknown) return;
         if (a == b) return;
         std::ostringstream error;
@@ -119,7 +118,8 @@ namespace Render {
                 a.remove_prefix(strlen("uniform "));
                 size_t pos = a.find_first_of(" ");
                 sv type = a.substr(0, pos);
-                sv name = a.substr(pos+1);
+                const size_t end = a.find_first_of(";");
+                sv name = a.substr(pos + 1, end - (pos + 1));
 
                 return GLUniform{type, name};
             })
@@ -128,7 +128,7 @@ namespace Render {
         return out;
     }
 
-    void Shader::compile() {
+    void Shader::compileAndLink() {
         mProgramId = glCreateProgram();
         int success;
         char infoLog[512];
@@ -155,17 +155,6 @@ namespace Render {
             throw ShaderException(error.str());
         }
 
-        auto uniformsV = getUniforms(vertShader);
-        auto uniformsF = getUniforms(fragShader);
-
-        for (auto[name, type]: uniformsV) {
-            createUniform(string(name), type);
-        }
-    }
-
-    void Shader::link() const {
-        int success;
-        char infoLog[512];
         glLinkProgram(mProgramId);
 
         glGetProgramiv(mProgramId, GL_LINK_STATUS, &success);
@@ -177,6 +166,17 @@ namespace Render {
         }
 
         glValidateProgram(mProgramId);
+
+        auto uniformsV = getUniforms(vertShader);
+        auto uniformsF = getUniforms(fragShader);
+
+        for (auto[name, type]: uniformsV) {
+            createUniform(string(name), type);
+        }
+
+        for (auto[name, type]: uniformsF) {
+            createUniform(string(name), type);
+        }
     }
 
     GLuint Shader::createVertexShader(const std::string &shaderSource) const {

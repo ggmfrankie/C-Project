@@ -12,7 +12,7 @@ namespace Render {
 
     public:
         DeferredShader(const std::string&  fileVert, const std::string&  fileFrag);
-        void compile() override;
+        void compileAndLink() override;
     };
 } // Render
 

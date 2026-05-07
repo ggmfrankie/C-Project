@@ -15,13 +15,7 @@ namespace Game {
     Renderer3D::~Renderer3D() = default;
 
     void Renderer3D::init(Render::Camera* camera) {
-        mShader.compile();
-        mShader.link();
-
-        mShader.createUniform("textureSampler");
-        mShader.createUniform("modelViewMatrix");
-        mShader.createUniform("projectionMatrix");
-
+        mShader.compileAndLink();
         mCamera = camera;
 
         for (auto& obj : mObjects) {
@@ -33,7 +27,6 @@ namespace Game {
         glEnable(GL_DEPTH_TEST);
         glDisable(GL_CULL_FACE);
         mShader.bind();
-        mShader.setUniform("textureSampler", 0);
         mShader.setUniform("projectionMatrix",
                               ggm::Matrix4f::Perspective(
                                   mCamera->getFOV(),

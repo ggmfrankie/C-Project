@@ -58,8 +58,7 @@ namespace Render {
         void createUniform(const std::string &name, UniformType type);
         void createUniform(const std::string &name);
 
-        virtual void compile();
-        void link() const;
+        virtual void compileAndLink();
 
         struct ShaderException : std::runtime_error{
             explicit ShaderException(const std::string &msg);

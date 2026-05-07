@@ -55,8 +55,6 @@ Shader newShader(char* vertexShaderFile, char* fragmentShaderFile) {
     if (!success) {
         glGetProgramInfoLog(programId, 512, nullptr, infoLog);
         printf("Shader Program Link Error:\n%s\n", infoLog);
-    } else {
-        printf("Shader Program linked successfully! ID: %d\n", programId);
     }
 
     return (Shader){

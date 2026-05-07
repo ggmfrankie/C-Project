@@ -9,7 +9,8 @@
 namespace Game2D {
 
     // TODO: FIX
-    DebugLayer::DebugLayer() : mShader("2D/Shader2D.vert", "2D/Shader2D.frag")
+    DebugLayer::DebugLayer() :
+        mShader("2D/Shader2D.vert", "2D/Shader2D.frag")
     {}
 
     void DebugLayer::onUpdate(float dt) {}
@@ -20,7 +21,7 @@ namespace Game2D {
         mShader.setUniform("screenWidth", static_cast<float>(width));
         mShader.setUniform("screenHeight", static_cast<float>(height));
         mShader.setUniform("color", ggm::Vector3f{});
-        glPointSize(10.0f);
+        glPointSize(5.0f);
         for (auto& object: *mObjects) {
             auto& rO = object.getRenderObj();
             auto[vao, vbos, vCount] = rO.getMesh().getGlData();
@@ -34,12 +35,7 @@ namespace Game2D {
     }
 
     void DebugLayer::onInit() {
-        mShader.compile();
-        mShader.link();
-
-        mShader.createUniform("color");
-        mShader.createUniform("screenWidth");
-        mShader.createUniform("screenHeight");
+        mShader.compileAndLink();
     }
 
     void DebugLayer::onAttach(ggm::SparseSet<GameObject>& data) {

@@ -24,8 +24,6 @@ Font loadFontAtlas(char* file) {
     const String defaultPath = stringOf("../Resources/Fonts/");
     String completePath = Strings.combine(&defaultPath, &fileName);
 
-    Strings.println(&completePath);
-
     byte* ttf_buffer = malloc(1 << 20);
     byte* temp_bitmap = malloc(FONT_ATLAS_SIZE * FONT_ATLAS_SIZE);
 
