@@ -3,12 +3,13 @@
 //
 
 #pragma once
+#include "../EngineDefines.hpp"
 #include "Games/Scene/2D/ILayer.hpp"
 #include "Render/Shader/Shader.hpp"
 
 namespace Game2D {
 
-class DebugLayer : public ILayer {
+class DebugLayer final : public ILayer {
     Render::Shader mShader;
     ggm::SparseSet<GameObject>* mObjects = nullptr;
 public:

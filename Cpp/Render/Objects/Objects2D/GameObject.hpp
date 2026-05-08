@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include "../EngineDefines.hpp"
 #include "Physics/PhysicsObjectRef.hpp"
 #include "Render/RenderObjectRef.hpp"
 

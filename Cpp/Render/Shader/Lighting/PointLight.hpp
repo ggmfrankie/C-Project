@@ -2,8 +2,8 @@
 // Created by ertls on 11.03.2026.
 //
 
-#ifndef MIXEDPROJECT_POINTLIGHT_HPP
-#define MIXEDPROJECT_POINTLIGHT_HPP
+#pragma once
+
 #include "Utils/Math/Vector.hpp"
 
 namespace Render {
@@ -12,6 +12,4 @@ namespace Render {
         ggm::Vector3f color{};
 
     };
-} // Render
-
-#endif //MIXEDPROJECT_POINTLIGHT_HPP
+}

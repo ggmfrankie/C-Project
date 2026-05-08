@@ -3,7 +3,7 @@
 //
 
 #pragma once
-
+#include "../EngineDefines.hpp"
 #include <filesystem>
 #include <string>
 #include <vector>
@@ -58,9 +58,14 @@ namespace Render {
         void createUniform(const std::string &name, UniformType type);
         void createUniform(const std::string &name);
 
+        template<typename Name, typename Value>
+        void setUniform() {
+
+        }
+
         virtual void compileAndLink();
 
-        struct ShaderException : std::runtime_error{
+        struct ShaderException final : std::runtime_error{
             explicit ShaderException(const std::string &msg);
         };
 

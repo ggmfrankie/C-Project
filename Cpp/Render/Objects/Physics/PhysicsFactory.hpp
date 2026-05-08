@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include "../EngineDefines.hpp"
 #include <Jolt/Jolt.h>
 
 #include "Jolt/Core/Reference.h"

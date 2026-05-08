@@ -3,9 +3,9 @@
 //
 
 #pragma once
+#include "../EngineDefines.hpp"
 #include <string>
 #include <vector>
-#include <bits/chrono.h>
 
 namespace Engine {
     class Logger {

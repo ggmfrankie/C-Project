@@ -3,7 +3,7 @@
 //
 
 #pragma once
-
+#include "../EngineDefines.hpp"
 #include "Games/IGame.hpp"
 #include "Games/Scene/2D/Scene2D.hpp"
 

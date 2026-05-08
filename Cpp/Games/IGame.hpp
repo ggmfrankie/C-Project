@@ -3,7 +3,7 @@
 //
 
 #pragma once
-
+#include "../EngineDefines.hpp"
 
 namespace Engine {
     class CommandRegistry;

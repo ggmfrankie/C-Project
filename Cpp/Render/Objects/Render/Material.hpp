@@ -2,8 +2,8 @@
 // Created by ertls on 17.02.2026.
 //
 
-#ifndef MIXEDPROJECT_MATERIAL_H
-#define MIXEDPROJECT_MATERIAL_H
+#pragma once
+
 
 namespace Obj3D {
     class Material {
@@ -14,6 +14,4 @@ namespace Obj3D {
 
         [[nodiscard]] bool hasData() const;
     };
-} // Geometry
-
-#endif //MIXEDPROJECT_MATERIAL_H
+}

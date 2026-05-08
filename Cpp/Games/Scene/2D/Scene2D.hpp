@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include "../EngineDefines.hpp"
 #include "LayerStack.hpp"
 #include "Engine/Core/PhysixBox2D/PhysicsSystem.hpp"
 #include "Games/Scene/IScene.hpp"

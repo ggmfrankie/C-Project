@@ -212,6 +212,7 @@ add_executable(C-Project
         Cpp/Render/Objects/Objects2D/Render/RenderObject.cpp
         Cpp/Render/Objects/Objects2D/Physics/PhysicsObjectRef.cpp
         Cpp/Render/Objects/Objects2D/Physics/PhysicsFactory.cpp
+        EngineDefines.hpp
 )
 
 target_compile_definitions(C-Project PUBLIC JPH_ENABLE_ASSERTS)

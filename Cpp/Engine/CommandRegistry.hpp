@@ -2,10 +2,10 @@
 // Created by ertls on 05.03.2026.
 //
 
-#ifndef MIXEDPROJECT_COMMANDPARSER_HPP
-#define MIXEDPROJECT_COMMANDPARSER_HPP
+#pragma once
+#include "../EngineDefines.hpp"
 #include <memory>
-#include <variant>
+
 
 #include "Task.hpp"
 #include "Utils/DataStorage/InlineVector.hpp"
@@ -99,6 +99,4 @@ namespace Engine {
             it->second->run(rawArgs);
         }
     };
-} // Engine
-
-#endif //MIXEDPROJECT_COMMANDPARSER_HPP
+}

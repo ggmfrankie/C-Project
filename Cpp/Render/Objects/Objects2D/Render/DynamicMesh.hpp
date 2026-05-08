@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include "../EngineDefines.hpp"
 #include "glad/gl.h"
 #include "Render/Objects/Render/Texture.hpp"
 #include "Utils/Math/Vector.hpp"

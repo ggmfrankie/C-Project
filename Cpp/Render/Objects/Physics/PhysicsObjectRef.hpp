@@ -3,9 +3,7 @@
 //
 
 #pragma once
-#define JPH_PLATFORM_WINDOWS
-#define JPH_CPU_X64
-#define JPH_COMPILER_GCC
+#include "../EngineDefines.hpp"
 #include <Jolt/Jolt.h>
 #include "Jolt/Physics/Body/BodyID.h"
 #include "Jolt/Physics/Body/BodyInterface.h"

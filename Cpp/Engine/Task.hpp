@@ -2,10 +2,9 @@
 // Created by ertls on 02.03.2026.
 //
 
-#ifndef MIXEDPROJECT_COMMAND_HPP
-#define MIXEDPROJECT_COMMAND_HPP
+#pragma once
+#include "../EngineDefines.hpp"
 #include <functional>
-
 
 namespace Engine {
     class Task {
@@ -16,6 +15,4 @@ namespace Engine {
         void execute() const;
     };
 
-} // Engine
-
-#endif //MIXEDPROJECT_COMMAND_HPP
+}

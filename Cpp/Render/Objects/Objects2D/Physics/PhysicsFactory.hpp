@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include "../EngineDefines.hpp"
 #include <vector>
 
 #include "Utils/Math/ggmdef.hpp"

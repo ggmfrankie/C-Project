@@ -2,14 +2,13 @@
 // Created by ertls on 26.02.2026.
 //
 
-#ifndef MIXEDPROJECT_BASEGAME_H
-#define MIXEDPROJECT_BASEGAME_H
+#pragma once
+#include "../EngineDefines.hpp"
 #include "../IGame.hpp"
 
 #include "Games/Scene/3D/Scene3D.hpp"
 
-struct GLFWwindow {
-};
+struct GLFWwindow;
 
 
 namespace Game {
@@ -43,6 +42,4 @@ namespace Game {
 
         static void toggleCursorMode(GLFWwindow *window, bool guiMode);
     };
-} // Render
-
-#endif //MIXEDPROJECT_BASEGAME_H
+}

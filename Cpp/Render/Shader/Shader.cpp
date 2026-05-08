@@ -3,7 +3,6 @@
 //
 
 #include "Shader.hpp"
-#include "Shader.hpp"
 
 #include <cassert>
 #include <cstring>
@@ -209,7 +208,8 @@ namespace Render {
         glUseProgram(mProgramId);
     }
 
-    void Shader::unbind() const {
+    // ReSharper disable once CppMemberFunctionMayBeStatic
+    void Shader::unbind() const { // NOLINT(*-convert-member-functions-to-static)
         glUseProgram(0);
     }
 

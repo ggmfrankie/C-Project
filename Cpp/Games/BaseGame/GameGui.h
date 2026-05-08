@@ -2,8 +2,8 @@
 // Created by Stefan on 27.02.2026.
 //
 
-#ifndef MIXEDPROJECT_GAMEGUI_H
-#define MIXEDPROJECT_GAMEGUI_H
+#pragma once
+#include "../EngineDefines.hpp"
 
 #ifdef __cplusplus
 extern "C" {
@@ -13,12 +13,6 @@ struct Element;
 
     void generateGUI(struct Element* guiRoot);
 
-
-
-
-
 #ifdef __cplusplus
 }
 #endif
-
-#endif //MIXEDPROJECT_GAMEGUI_H

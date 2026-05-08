@@ -3,7 +3,7 @@
 //
 
 #pragma once
-
+#include "../EngineDefines.hpp"
 #include "../../../Utils/DataStorage/InlineVector.hpp"
 #include "../../../Utils/Math/Quaternion.hpp"
 #include "../../../Utils/Math/Matrix.hpp"

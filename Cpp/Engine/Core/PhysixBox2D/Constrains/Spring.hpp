@@ -3,7 +3,7 @@
 //
 
 #pragma once
-
+#include "../EngineDefines.hpp"
 
 namespace PhysixBox {
     struct  PointMass;

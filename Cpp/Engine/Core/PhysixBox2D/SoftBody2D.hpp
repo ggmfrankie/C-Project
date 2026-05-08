@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include "../EngineDefines.hpp"
 #include "PointMass.hpp"
 #include "Utils/DataStorage/InlineVector.hpp"
 #include <vector>

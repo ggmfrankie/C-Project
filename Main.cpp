@@ -1,6 +1,7 @@
 //
 // Created by ertls on 16.02.2026.
 //
+#include "EngineDefines.hpp"
 #include "Dependencies/JoltPhysics/Jolt/Jolt.h"
 
 #include "Cpp/GameEngine.hpp"
@@ -12,13 +13,11 @@
 #if 1
 int main() {
     JPH::RegisterDefaultAllocator();
-Games::Sudoku();
-    return 0;
     Game::BaseGame game{};
     Game2D::Game2D game2D{};
 
-    GameEngine& gameEngine = GameEngine::New(game2D);
-    //GameEngine& gameEngine = GameEngine::New(game);
+    //GameEngine& gameEngine = GameEngine::New(game2D);
+    GameEngine& gameEngine = GameEngine::New(game);
     gameEngine.init();
     gameEngine.loop();
 

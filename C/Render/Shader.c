@@ -4,9 +4,6 @@
 
 
 #include "Shader.h"
-
-#include <string.h>
-
 #include "../Utils/FileIO.h"
 
 ShaderFunction Shaders = {
@@ -23,9 +20,7 @@ ShaderFunction Shaders = {
 int createVertexShader(const String *fileName, int programId);
 int createFragmentShader(const String *fileName, int programId);
 
-
 Shader newShader(char* vertexShaderFile, char* fragmentShaderFile) {
-
     const int programId = glCreateProgram();
     int success;
     char infoLog[512];
@@ -76,7 +71,7 @@ void Shader_createUniform(Shader *shader, const char* name) {
 
 int createVertexShader(const String *fileName, const int programId) {
     String shaderSource = readShaderFile(fileName);
-    const GLchar* source = (GLchar*)shaderSource.m;
+    const GLchar* source = shaderSource.m;
 
     const int shaderId = createShader(&source, GL_VERTEX_SHADER, programId);
     Strings.delete_(&shaderSource);
@@ -86,7 +81,7 @@ int createVertexShader(const String *fileName, const int programId) {
 
 int createFragmentShader(const String *fileName, const int programId) {
     String shaderSource = readShaderFile(fileName);
-    const GLchar* source = (GLchar*)shaderSource.m;
+    const GLchar* source = shaderSource.m;
 
     const int shaderId = createShader(&source, GL_FRAGMENT_SHADER, programId);
     Strings.delete_(&shaderSource);

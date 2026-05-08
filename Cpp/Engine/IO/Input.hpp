@@ -2,8 +2,8 @@
 // Created by ertls on 26.02.2026.
 //
 
-#ifndef MIXEDPROJECT_MOUSEINPUT_H
-#define MIXEDPROJECT_MOUSEINPUT_H
+#pragma once
+#include "../EngineDefines.hpp"
 #include "../../Utils/Math/Matrix.hpp"
 #include "glad/gl.h"
 #include "GLFW/glfw3.h"
@@ -59,6 +59,4 @@ namespace Render {
 
         void endFrame();
     };
-} // Render
-
-#endif //MIXEDPROJECT_MOUSEINPUT_H
+}

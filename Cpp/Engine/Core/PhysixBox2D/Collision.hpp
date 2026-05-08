@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include "../EngineDefines.hpp"
 #include "Utils/Math/Matrix.hpp"
 
 namespace PhysixBox {

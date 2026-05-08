@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include "../EngineDefines.hpp"
 #include <memory>
 
 #include "ILayer.hpp"

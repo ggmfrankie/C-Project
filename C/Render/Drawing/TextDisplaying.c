@@ -54,15 +54,15 @@ Font loadFontAtlas(char* file) {
     glBindTexture(GL_TEXTURE_2D, tex);
 
     glTexImage2D(
-    GL_TEXTURE_2D,
-    0,
-    GL_R8,
-    FONT_ATLAS_SIZE,
-    FONT_ATLAS_SIZE,
-    0,
-    GL_RED,
-    GL_UNSIGNED_BYTE,
-    temp_bitmap
+        GL_TEXTURE_2D,
+        0,
+        GL_R8,
+        FONT_ATLAS_SIZE,
+        FONT_ATLAS_SIZE,
+        0,
+        GL_RED,
+        GL_UNSIGNED_BYTE,
+        temp_bitmap
     );
 
     constexpr GLint swizzle[] = { GL_ONE, GL_ONE, GL_ONE, GL_RED };

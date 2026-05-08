@@ -3,7 +3,7 @@
 //
 
 #pragma once
-
+#include "../EngineDefines.hpp"
 #include "DynamicMesh.hpp"
 #include "Utils/Math/ggmdef.hpp"
 #include "Utils/Math/Quaternion.hpp"

@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include "Render/Renderer3D.hpp"
+#include "../EngineDefines.hpp"
 #include "Physics/PhysicsObjectRef.hpp"
 #include "Render/RenderObjectRef3D.hpp"
-#include "Utils/DataStorage/SparseSet.hpp"
+
 
 namespace Obj3D {
     class GameObject {

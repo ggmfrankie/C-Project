@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include "../EngineDefines.hpp"
 #include "GameEngine.hpp"
 #include "Jolt/Physics/PhysicsSystem.h"
 #include "Jolt/Physics/Character/Character.h"

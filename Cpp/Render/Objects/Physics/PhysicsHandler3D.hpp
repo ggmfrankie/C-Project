@@ -3,7 +3,7 @@
 //
 
 #pragma once
-
+#include "../EngineDefines.hpp"
 #include <Jolt/Jolt.h>
 #include <Jolt/Physics/PhysicsSystem.h>
 #include <Jolt/Core/JobSystemThreadPool.h>
@@ -34,6 +34,7 @@ namespace Game {
 
         class BPLayerInterfaceImpl final : public JPH::BroadPhaseLayerInterface {
             JPH::BroadPhaseLayer mObjectToBroadPhase[Layers::NUM_LAYERS]{};
+        public:
             [[nodiscard]] ggm::u32 GetNumBroadPhaseLayers() const override;
             [[nodiscard]] JPH::BroadPhaseLayer GetBroadPhaseLayer(JPH::ObjectLayer inLayer) const override;
 
@@ -41,7 +42,6 @@ namespace Game {
             [[nodiscard]] const char * GetBroadPhaseLayerName(JPH::BroadPhaseLayer inLayer) const override;
         #endif // JPH_EXTERNAL_PROFILE || JPH_PROFILE_ENABLED
 
-        public:
             BPLayerInterfaceImpl();
         };
 

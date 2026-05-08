@@ -3,7 +3,7 @@
 //
 
 #pragma once
-
+#include "../EngineDefines.hpp"
 #include <string>
 
 #include "Engine/IO/Input.hpp"

@@ -2,7 +2,7 @@
 // Created by ertls on 16.02.2026.
 //
 #pragma once
-
+#include "../EngineDefines.hpp"
 #include <queue>
 
 #include "Engine/CommandRegistry.hpp"

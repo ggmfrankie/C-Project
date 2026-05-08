@@ -2,8 +2,8 @@
 // Created by ertls on 17.02.2026.
 //
 
-#ifndef MIXEDPROJECT_TEXTURE_H
-#define MIXEDPROJECT_TEXTURE_H
+#pragma once
+
 #include <string>
 
 #include "glad/gl.h"
@@ -35,6 +35,4 @@ namespace Obj3D {
         unsigned char* m_data;
         int m_width{}, m_height{}, m_channels{};
     };
-} // Geometry
-
-#endif //MIXEDPROJECT_TEXTURE_H
+}

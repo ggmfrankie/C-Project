@@ -2,12 +2,12 @@
 // Created by ertls on 11.03.2026.
 //
 
-#ifndef MIXEDPROJECT_DEFERREDSHADER_HPP
-#define MIXEDPROJECT_DEFERREDSHADER_HPP
+#pragma once
+#include "../EngineDefines.hpp"
 #include "Shader.hpp"
 
 namespace Render {
-    class DeferredShader: public Shader {
+    class DeferredShader final : public Shader {
         GLuint gBufferId = 0;
 
     public:
@@ -15,5 +15,3 @@ namespace Render {
         void compileAndLink() override;
     };
 } // Render
-
-#endif //MIXEDPROJECT_DEFERREDSHADER_HPP

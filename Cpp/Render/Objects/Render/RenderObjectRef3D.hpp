@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include "../EngineDefines.hpp"
 #include "RenderObject3D.hpp"
 #include "Utils/DataStorage/SparseSet.hpp"
 #include "Utils/Math/ggmdef.hpp"

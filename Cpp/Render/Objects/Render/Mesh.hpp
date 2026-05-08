@@ -2,8 +2,8 @@
 // Created by ertls on 16.02.2026.
 //
 
-#ifndef MIXEDPROJECT_MESH_H
-#define MIXEDPROJECT_MESH_H
+#pragma once
+#include "../EngineDefines.hpp"
 #include <vector>
 #include <array>
 
@@ -54,5 +54,3 @@ namespace Obj3D {
         std::vector<GLuint> indices{};
     };
 }
-
-#endif //MIXEDPROJECT_MESH_H
