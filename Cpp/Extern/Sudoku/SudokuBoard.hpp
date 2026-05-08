@@ -15,8 +15,15 @@ namespace Games {
 
         void print() const;
         void createBoard();
+
+        int check3by3(int u, int w, ggm::u8 num) const;
+
+        int canPlace(int row, int col, ggm::u8 num) const;
+
         void solveBoard();
         void addNumbersRand(int count);
+
+        void initBoard();
     };
 
     void Sudoku();

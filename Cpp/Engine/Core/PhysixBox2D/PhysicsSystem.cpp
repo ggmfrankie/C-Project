@@ -78,6 +78,10 @@ namespace PhysixBox {
         c.b->pos -= correction * (invB / invSum);
         p.pos    += correction * (invP / invSum);
 
+        c.a->vel -= correction * (invA / invSum) *100;
+        c.b->vel -= correction * (invB / invSum) *100;
+        p.vel    += correction * (invP / invSum) *100;
+
     }
 
     bool PhysicsSystem::isInsideV2(const SoftBody2D& a, const ggm::Vector2f& point) {
@@ -192,7 +196,7 @@ namespace PhysixBox {
 
             float length = (first.pos - second.pos).length();
 
-            body.addSpring(first, second, 20000.0f, length, 10.0f);
+            body.addSpring(first, second, 200.0f, length, 10.0f);
         }
 
         return {id, mBodies};

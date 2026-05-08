@@ -12,11 +12,13 @@
 #if 1
 int main() {
     JPH::RegisterDefaultAllocator();
+Games::Sudoku();
+    return 0;
     Game::BaseGame game{};
     Game2D::Game2D game2D{};
 
-    //GameEngine& gameEngine = GameEngine::New(game2D);
-    GameEngine& gameEngine = GameEngine::New(game);
+    GameEngine& gameEngine = GameEngine::New(game2D);
+    //GameEngine& gameEngine = GameEngine::New(game);
     gameEngine.init();
     gameEngine.loop();
 
