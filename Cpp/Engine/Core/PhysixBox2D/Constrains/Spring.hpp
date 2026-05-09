@@ -18,4 +18,4 @@ namespace PhysixBox {
         float length = 0;
         float damping = 0;
     };
-} // PhysixBox
+}

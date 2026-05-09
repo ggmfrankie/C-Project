@@ -8,6 +8,8 @@
 #include "Utils/DataStorage/InlineVector.hpp"
 #include <vector>
 
+#include "Constrains/Spring.hpp"
+
 namespace PhysixBox {
     class SoftBody2D {
         ggm::InlineVector<PointMass, 16> mPoints{};
@@ -36,4 +38,4 @@ namespace PhysixBox {
         ggm::InlineVector<PointMass, 16>& getPoints();
         [[nodiscard]] const ggm::InlineVector<PointMass, 16>& getPoints() const;
     };
-} // PhysicsBox
+}

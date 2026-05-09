@@ -27,38 +27,6 @@ namespace Render {
         glDeleteProgram(mProgramId);
     }
 
-    void Shader::typeCheck(UniformType a, UniformType b) {
-        if (a == UniformType::Unknown || b == UniformType::Unknown) return;
-        if (a == b) return;
-        std::ostringstream error;
-        error << "[Warning] Uniform type '" << a << "' not matching with Uniform type '" << b << "' in shader program.\n";
-        throw ShaderException(error.str());
-    }
-
-    void Shader::setUniform(const string &name, const float value) const {
-        auto[loc, type] = getUniform(name);
-        typeCheck(type, UniformType::Float);
-        glUniform1f(loc, value);
-    }
-
-    void Shader::setUniform(const string &name, const int value) const {
-        auto[loc, type] = getUniform(name);
-        typeCheck(type, UniformType::Int);
-        glUniform1i(loc, value);
-    }
-
-    void Shader::setUniform(const string &name, const ggm::Vector3f& value) const {
-        auto[loc, type] = getUniform(name);
-        typeCheck(type, UniformType::Vec3);
-        glUniform3f(loc, value.x, value.y, value.z);
-    }
-
-    void Shader::setUniform(const string &name, const ggm::Matrix4f& value) const {
-        auto[loc, type] = getUniform(name);
-        typeCheck(type, UniformType::Mat4);
-        glUniformMatrix4fv(loc,1, false, value.getDataPtr());
-    }
-
     void Shader::createUniform(const string &name, UniformType type) {
         const GLint loc = glGetUniformLocation(mProgramId, name.c_str());
         if (loc == -1) {
@@ -67,10 +35,6 @@ namespace Render {
             throw ShaderException(error.str());
         }
         mUniformLocationMap.try_emplace(name, Uniform{loc, type});
-    }
-
-    void Shader::createUniform(const string &name) {
-       createUniform(name, UniformType::Unknown);
     }
 
     const Shader::Uniform& Shader::getUniform(const std::string& name) const {
@@ -87,18 +51,19 @@ namespace Render {
         name(name),
         type([](auto v) {
             using namespace std::literals;
+            using enum UniformType;
             using std::pair;
             constexpr std::array pairs{
-                pair{"int"sv, UniformType::Int},
-                pair{"float"sv, UniformType::Float},
-                pair{"bool"sv, UniformType::Bool},
-                pair{"vec2"sv, UniformType::Vec2},
-                pair{"vec3"sv, UniformType::Vec3},
-                pair{"vec4"sv, UniformType::Vec4},
-                pair{"mat3"sv, UniformType::Mat3},
-                pair{"mat4"sv, UniformType::Mat4},
-                pair{"sampler2D"sv, UniformType::Sampler2D},
-                pair{"samplerCube"sv, UniformType::SamplerCube}
+                pair{"int"sv, Int},
+                pair{"float"sv, Float},
+                pair{"bool"sv, Bool},
+                pair{"vec2"sv, Vec2},
+                pair{"vec3"sv, Vec3},
+                pair{"vec4"sv, Vec4},
+                pair{"mat3"sv, Mat3},
+                pair{"mat4"sv, Mat4},
+                pair{"sampler2D"sv, Sampler2D},
+                pair{"samplerCube"sv, SamplerCube}
             };
 
             for (auto[V, T]: pairs) {
@@ -109,7 +74,8 @@ namespace Render {
         }(type))
     {}
 
-    std::vector<Shader::GLUniform> Shader::getUniforms(const std::string& shaderFile) {
+    std::vector<Shader::GLUniform>
+    Shader::getUniforms(const std::string& shaderFile) {
         using sv = const std::string_view;
         auto out = ggm::LazyStream(ggm::split(shaderFile, '\n'))
             .filter([](auto& a){ return a.starts_with("uniform ");})
@@ -179,13 +145,11 @@ namespace Render {
     }
 
     GLuint Shader::createVertexShader(const std::string &shaderSource) const {
-        const GLuint shaderId = createShader(shaderSource.c_str(), GL_VERTEX_SHADER);
-        return shaderId;
+        return  createShader(shaderSource.c_str(), GL_VERTEX_SHADER);
     }
 
     GLuint Shader::createFragmentShader(const std::string &shaderSource) const {
-        const GLuint shaderId = createShader(shaderSource.c_str(), GL_FRAGMENT_SHADER);
-        return shaderId;
+        return createShader(shaderSource.c_str(), GL_FRAGMENT_SHADER);
     }
 
     std::string Shader::readShaderFile(const path& fileName) {
@@ -218,9 +182,9 @@ namespace Render {
     {}
 
     constexpr std::string_view
-    uniformTypeToString(Shader::UniformType type)
+    uniformTypeToString(UniformType type)
     {
-        using enum Shader::UniformType;
+        using enum UniformType;
 
         switch (type) {
             case Int:           return "int";
@@ -241,7 +205,7 @@ namespace Render {
         }
     }
 
-    std::ostream& operator<<(std::ostream& lhs, Shader::UniformType rhs) {
+    std::ostream& operator<<(std::ostream& lhs, UniformType rhs) {
         lhs << uniformTypeToString(rhs);
         return lhs;
     }
