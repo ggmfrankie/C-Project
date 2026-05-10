@@ -87,34 +87,51 @@ namespace Render {
                 error << "[Warning] Uniform type '" << a << "' not matching with Uniform type '" << b << "' in shader program.\n";
                 throw ShaderException(error.str());
             };
-
+            {
             if constexpr (std::is_same_v<V, float>) {
+
                 static bool _ = typeCheck(u.type, Float);
                 glUniform1f(u.location, value);
+
             } else if constexpr (std::is_same_v<V, int>) {
+
                 static bool _ = typeCheck(u.type, Int);
                 glUniform1i(u.location, value);
+
             } else if constexpr (std::is_same_v<V, bool>) {
+
                 static bool _ = typeCheck(u.type, Bool);
                 glUniform1i(u.location, value ? 1 : 0);
+
             } else if constexpr (std::is_same_v<V, ggm::Vector2f>) {
+
                 static bool _ = typeCheck(u.type, Vec2);
                 glUniform2f(u.location, value.x, value.y);
+
             } else if constexpr (std::is_same_v<V, ggm::Vector3f>) {
+
                 static bool _ = typeCheck(u.type, Vec3);
                 glUniform3f(u.location, value.x, value.y, value.z);
+
             } else if constexpr (std::is_same_v<V, ggm::Vector4f>) {
+
                 static bool _ = typeCheck(u.type, Vec4);
                 static_assert(false, "Unsupported uniform type");
+
             } else if constexpr (std::is_same_v<V, ggm::Matrix3f>) {
+
                 static bool _ = typeCheck(u.type, Mat3);
                 static_assert(false, "Unsupported uniform type");
+
             } else if constexpr (std::is_same_v<V, ggm::Matrix4f>) {
+
                 static bool _ = typeCheck(u.type, Mat4);
                 glUniformMatrix4fv(u.location,1, false, value.getDataPtr());
+
             } else {
                 static_assert(false, "Unsupported uniform type");
             }
+        }
         }
 
         struct ShaderException final : std::runtime_error{
@@ -144,7 +161,9 @@ namespace Render {
         static std::vector<GLUniform>
             getUniforms(const std::string& shaderFile);
 
-        const Uniform& getUniform(const std::string &name) const;
+        const Uniform&
+            getUniform(const std::string &name) const;
+
         void createUniform(const std::string &name, UniformType type);
     };
 
