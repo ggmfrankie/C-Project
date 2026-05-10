@@ -144,7 +144,6 @@ void Renderer_updateLayout(const Renderer *renderer) {
     root->dims.height = renderer->screenHeight;
 
     updateLayout(root, (Vec2i){0, 0}, (Vec2i){renderer->screenWidth, renderer->screenHeight},  (Vec2i){0, 0}, &renderer->font);
-
 }
 
 //TODO maybe pass available size to the child element or maybe change the layout function if the element has fixed width?
