@@ -1,0 +1,44 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "compile vhdl",
+      "type": "shell",
+      "command": "ghdl",
+      "args": ["-a", "NOR_AND.vhdl", "NOR_AND-test.vhdl"]
+    },
+    {
+      "label": "elaborate",
+      "type": "shell",
+      "command": "ghdl",
+      "args": ["-e", "testbench"],
+      "dependsOn": "compile vhdl"
+    },
+    {
+      "label": "run simulation",
+      "type": "shell",
+      "command": "ghdl",
+      "args": ["-r", "testbench", "--vcd=wave.vcd"],
+      "dependsOn": "elaborate"
+    },
+    {
+      "label": "open waveform",
+      "type": "shell",
+      "command": "gtkwave",
+      "args": ["wave.vcd"],
+      "dependsOn": "run simulation"
+    },
+
+    {
+      "label": "FULL VHDL RUN",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "compile vhdl",
+        "elaborate",
+        "run simulation",
+        "open waveform"
+      ],
+      "problemMatcher": []
+    }
+  ]
+}

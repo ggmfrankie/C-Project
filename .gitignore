@@ -856,3 +856,5 @@
 /build/Dependencies/JoltPhysics/Build/CMakeFiles/Jolt.dir/__/Jolt/Physics/Vehicle/WheeledVehicleController.cpp.obj.d
 /build/CMakeFiles/GUI.dir/C/Extern/Libraries/WinAdapt.c.obj
 /build/CMakeFiles/GUI.dir/C/Extern/Libraries/WinAdapt.c.obj.d
+/build/
+/.zig-cache/

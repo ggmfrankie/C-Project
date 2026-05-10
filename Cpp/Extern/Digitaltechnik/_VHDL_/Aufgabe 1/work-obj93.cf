@@ -1,0 +1,7 @@
+v 4
+file . "NOR_AND-test.vhdl" "5ce64863c14dc2a47c223b98d6f57a9702fad749" "20260510140100.520":
+  entity testbench at 6( 250) + 0 on 29;
+  architecture rtl of testbench at 12( 336) + 0 on 30;
+file . "NOR_AND.vhdl" "bae294736ac4d25b6dce6f2704431bd3dedfdbbc" "20260510140100.485":
+  entity nor_and at 1( 0) + 0 on 27;
+  architecture rtl of nor_and at 11( 139) + 0 on 28;

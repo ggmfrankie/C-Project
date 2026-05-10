@@ -1,0 +1,67 @@
+$date
+  Sun May 10 16:01:01 2026
+$end
+$version
+  GHDL v0
+$end
+$timescale
+  1 fs
+$end
+$scope module standard $end
+$upscope $end
+$scope module std_logic_1164 $end
+$upscope $end
+$scope module testbench $end
+$var reg 1 ! in1 $end
+$var reg 1 " in2 $end
+$var reg 1 # out1 $end
+$scope module port_inst $end
+$var reg 1 $ a $end
+$var reg 1 % b $end
+$var reg 1 & q $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+#0
+0!
+0"
+1#
+0$
+0%
+1&
+#250000000
+1!
+0#
+1$
+0&
+#500000000
+0!
+1"
+0$
+1%
+#750000000
+1!
+1#
+1$
+1&
+#1000000000
+0!
+0"
+0$
+0%
+#1250000000
+1!
+0#
+1$
+0&
+#1500000000
+0!
+1"
+0$
+1%
+#1750000000
+1!
+1#
+1$
+1&
+#2000000000

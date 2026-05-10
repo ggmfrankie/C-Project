@@ -1,0 +1,101 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+
+    // =====================
+    // D FLIP FLOP PIPELINE
+    // =====================
+
+    {
+      "label": "compile DFlipFlop",
+      "type": "shell",
+      "command": "ghdl",
+      "args": [
+        "-a",
+        "D_FlipFlop.vhdl",
+        "D_FlipFlop-test.vhdl"
+      ]
+    },
+    {
+      "label": "elaborate DFlipFlop",
+      "type": "shell",
+      "command": "ghdl",
+      "args": ["-e", "testbench_dff"],
+      "dependsOn": "compile DFlipFlop"
+    },
+    {
+      "label": "run DFlipFlop",
+      "type": "shell",
+      "command": "ghdl",
+      "args": ["-r", "testbench_dff", "--vcd=wave_dff.vcd"],
+      "dependsOn": "elaborate DFlipFlop"
+    },
+    {
+      "label": "wave DFlipFlop",
+      "type": "shell",
+      "command": "gtkwave",
+      "args": ["wave_dff.vcd"],
+      "dependsOn": "run DFlipFlop"
+    },
+
+    {
+      "label": "FULL D FLIPFLOP RUN",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "compile DFlipFlop",
+        "elaborate DFlipFlop",
+        "run DFlipFlop",
+        "wave DFlipFlop"
+      ],
+      "problemMatcher": []
+    },
+
+    // =====================
+    // JK FLIP FLOP PIPELINE
+    // =====================
+
+    {
+      "label": "compile JKFlipFlop",
+      "type": "shell",
+      "command": "ghdl",
+      "args": [
+        "-a",
+        "JK_FlipFlop.vhdl",
+        "JK_FlipFlop-test.vhdl"
+      ]
+    },
+    {
+      "label": "elaborate JKFlipFlop",
+      "type": "shell",
+      "command": "ghdl",
+      "args": ["-e", "testbench_jk"],
+      "dependsOn": "compile JKFlipFlop"
+    },
+    {
+      "label": "run JKFlipFlop",
+      "type": "shell",
+      "command": "ghdl",
+      "args": ["-r", "testbench_jk", "--vcd=wave_jk.vcd"],
+      "dependsOn": "elaborate JKFlipFlop"
+    },
+    {
+      "label": "wave JKFlipFlop",
+      "type": "shell",
+      "command": "gtkwave",
+      "args": ["wave_jk.vcd"],
+      "dependsOn": "run JKFlipFlop"
+    },
+
+    {
+      "label": "FULL JK FLIPFLOP RUN",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "compile JKFlipFlop",
+        "elaborate JKFlipFlop",
+        "run JKFlipFlop",
+        "wave JKFlipFlop"
+      ],
+      "problemMatcher": []
+    }
+  ]
+}
