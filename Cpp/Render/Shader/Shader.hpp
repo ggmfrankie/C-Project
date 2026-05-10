@@ -69,6 +69,7 @@ namespace Render {
             }
             return hash;
         }
+
         /// @brief Sets the specified uniform to the value.
         /// Extracts uniform location once and caches it inside a static variable. Each invocation generates a unique instance.
         /// Does typechecking once and throws an error if types don't match.
@@ -81,8 +82,7 @@ namespace Render {
             using enum UniformType;
             const static Uniform u = getUniform(Name.value);
             const static auto typeCheck = [](UniformType a, UniformType b) {
-                if (a == Unknown || b == Unknown) return true;
-                if (a == b) return true;
+                if (a == Unknown || b == Unknown || a == b) return true;
                 std::ostringstream error;
                 error << "[Warning] Uniform type '" << a << "' not matching with Uniform type '" << b << "' in shader program.\n";
                 throw ShaderException(error.str());
