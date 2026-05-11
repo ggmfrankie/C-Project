@@ -76,7 +76,6 @@ namespace Render {
 
 #define setUniform(Name, Value) setUniform_T<Render::Shader::ConstStr{Name}, Render::Shader::fnv1a(__FILE__)>(Value)
 
-
         template<ConstStr Name, uint32_t ID, typename V>
         void setUniform_T(V value) {
             using enum UniformType;
