@@ -9,11 +9,13 @@ port (
 end D_FlipFlop;
 
 architecture rtl of D_FlipFlop is
+    signal q_int: std_logic := '0';
 begin
 	process (clk)
     begin
         if rising_edge(clk) then
-            q <= a;
+            q_int <= a;
         end if;
     end process;
+    q <= q_int;
 end rtl;

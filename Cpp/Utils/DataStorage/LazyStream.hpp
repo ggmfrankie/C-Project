@@ -35,7 +35,7 @@ namespace ggm {
     template<typename Container, u64 TAKE_LIMIT = SIZE_MAX,  typename... Ops>
     class LazyStream {
         const Container& mContainer;
-        std::tuple<Ops...> mOps;
+        const std::tuple<Ops...> mOps;
 
         template<typename F, typename Input>
         struct GetType;
@@ -92,6 +92,7 @@ namespace ggm {
             mContainer(container),
             mOps()
         {}
+
         constexpr LazyStream(const Container& container, std::tuple<Ops...> o) :
             mContainer(container),
             mOps(std::move(o))
@@ -175,7 +176,7 @@ namespace ggm {
         }
 
         template<u64 n>
-        constexpr auto take() {
+        constexpr auto take() const {
             return LazyStream<Container, n, Ops...>(mContainer, mOps);
         }
     };

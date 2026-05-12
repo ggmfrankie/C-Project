@@ -26,14 +26,23 @@ begin
             q => out1
         );
 
+    clock: process
+    begin
+        for i in 0 to 8  loop
+            clk <= '0';wait for 150 ns;
+            clk <= '1';wait for 150 ns;
+        end loop;
+        wait;
+    end process clock;
+
     tb: process
     begin
         for i in 1 to 2 loop
 
-            clk <= '0'; j <= '0'; k <= '1'; wait for 250 ns;
-            clk <= '1'; j <= '0'; k <= '0'; wait for 250 ns;
-            clk <= '0'; j <= '1'; k <= '0'; wait for 250 ns;
-            clk <= '1'; j <= '1'; k <= '1'; wait for 250 ns;
+            j <= '0'; k <= '1'; wait for 250 ns;
+            j <= '0'; k <= '0'; wait for 250 ns;
+            j <= '1'; k <= '0'; wait for 250 ns;
+            j <= '1'; k <= '1'; wait for 250 ns;
 
         end loop;
 

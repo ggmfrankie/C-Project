@@ -74,6 +74,10 @@ std::ostream& operator<<(std::ostream& os, callable_wrapper<F> w) {
     return w.f(os);
 }
 
+auto max(auto a, auto b) {
+    return a < b ? b : a;
+}
+
 namespace awesome_shit::jej {
     struct numberHolder {
         double d;

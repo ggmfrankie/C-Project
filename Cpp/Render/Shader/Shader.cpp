@@ -70,7 +70,7 @@ namespace Render {
                 if (v == V) return T;
             }
 
-            return UniformType::Unknown;
+            return Unknown;
         }(type))
     {}
 

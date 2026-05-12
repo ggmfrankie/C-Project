@@ -96,6 +96,49 @@
         "wave JKFlipFlop"
       ],
       "problemMatcher": []
+    },
+    {
+      "label": "compile Schieberegister",
+      "type": "shell",
+      "command": "ghdl",
+      "args": [
+        "-a",
+        "Schieberegister.vhdl",
+        "Schieberegister-test.vhdl"
+      ]
+    },
+    {
+      "label": "elaborate Schieberegister",
+      "type": "shell",
+      "command": "ghdl",
+      "args": ["-e", "testbench_sr"],
+      "dependsOn": "compile Schieberegister"
+    },
+    {
+      "label": "run Schieberegister",
+      "type": "shell",
+      "command": "ghdl",
+      "args": ["-r", "testbench_sr", "--vcd=wave_jk.vcd"],
+      "dependsOn": "elaborate Schieberegister"
+    },
+    {
+      "label": "wave Schieberegister",
+      "type": "shell",
+      "command": "gtkwave",
+      "args": ["wave_jk.vcd"],
+      "dependsOn": "run Schieberegister"
+    },
+
+    {
+      "label": "FULL SCHIEBEREGISTER RUN",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "compile Schieberegister",
+        "elaborate Schieberegister",
+        "run Schieberegister",
+        "wave Schieberegister"
+      ],
+      "problemMatcher": []
     }
   ]
 }

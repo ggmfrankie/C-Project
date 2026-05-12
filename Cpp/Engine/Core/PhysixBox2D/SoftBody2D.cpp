@@ -90,4 +90,4 @@ namespace PhysixBox {
     const InlineVector<PointMass, 16>& SoftBody2D::getPoints() const {
         return mPoints;
     }
-} // PhysicsBox
+}

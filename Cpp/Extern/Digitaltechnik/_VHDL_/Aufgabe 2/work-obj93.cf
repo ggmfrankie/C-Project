@@ -1,10 +1,19 @@
 v 4
-file . "JK_FlipFlop-test.vhdl" "3a49d1f4d7b92065130ea4efa3193215cf364795" "20260510145712.671":
-  entity testbench_jk at 6( 250) + 0 on 39;
-  architecture rtl of testbench_jk at 12( 342) + 0 on 40;
-file . "D_FlipFlop.vhdl" "0230173ecb67c9fc4a5a19f6e85cca661584e864" "20260510145148.942":
-  entity d_flipflop at 1( 0) + 0 on 21;
-  architecture rtl of d_flipflop at 11( 147) + 0 on 22;
-file . "JK_FlipFlop.vhdl" "3f41a52f15ce1ca70cf22941bf9db234c5b7d58a" "20260510145712.625":
-  entity jk_flipflop at 1( 0) + 0 on 37;
-  architecture rtl of jk_flipflop at 11( 156) + 0 on 38;
+file . "D_FlipFlop-test.vhdl" "2a475087a3e69990298d3a470de5a62265b64164" "20260512071340.210":
+  entity testbench_dff at 6( 250) + 0 on 59;
+  architecture rtl of testbench_dff at 12( 344) + 0 on 60;
+file . "Schieberegister-test.vhdl" "91da92b9edff978a5b099b9d7d10228ab4a87984" "20260512081343.570":
+  entity testbench_sr at 6( 250) + 0 on 99;
+  architecture rtl of testbench_sr at 12( 342) + 0 on 100;
+file . "JK_FlipFlop-test.vhdl" "8f5185c11aa62f4530c2b095e93ca215991ad3be" "20260512081029.380":
+  entity testbench_jk at 6( 250) + 0 on 95;
+  architecture rtl of testbench_jk at 12( 342) + 0 on 96;
+file . "D_FlipFlop.vhdl" "04bc325ee7b2c94a8f87eabea9afea24e58cae38" "20260512071340.059":
+  entity d_flipflop at 1( 0) + 0 on 57;
+  architecture rtl of d_flipflop at 11( 147) + 0 on 58;
+file . "JK_FlipFlop.vhdl" "3f41a52f15ce1ca70cf22941bf9db234c5b7d58a" "20260512081020.827":
+  entity jk_flipflop at 1( 0) + 0 on 93;
+  architecture rtl of jk_flipflop at 11( 156) + 0 on 94;
+file . "Schieberegister.vhdl" "292731e5eec58c6e56415e829f23db09f19339b4" "20260512081343.450":
+  entity schieberegister at 1( 0) + 0 on 97;
+  architecture rtl of schieberegister at 12( 196) + 0 on 98;
