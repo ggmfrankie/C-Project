@@ -6,14 +6,13 @@
 library ieee;
 use ieee.std_logic_1164.all;
 
-entity testbench_dff is
-end testbench_dff;
+entity testbench_dff is end;
 
 architecture rtl of testbench_dff is
 
     signal clk  : std_logic := '0';
     signal in2 : std_logic := '0';
-    signal out1 : std_logic;
+    signal out1 : std_logic_vector := (others => '0');
 
 begin
 
