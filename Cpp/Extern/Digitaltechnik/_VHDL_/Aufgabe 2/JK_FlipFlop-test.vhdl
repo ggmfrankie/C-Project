@@ -33,7 +33,7 @@ begin
             clk <= '1';wait for 150 ns;
         end loop;
         wait;
-    end process clock;
+    end process;
 
     tb: process
     begin
