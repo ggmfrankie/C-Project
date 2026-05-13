@@ -130,7 +130,7 @@ namespace Render {
             } else {
                 static_assert(false, "Unsupported uniform type");
             }
-        }
+            }
         }
 
         struct ShaderException final : std::runtime_error{
