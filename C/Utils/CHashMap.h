@@ -88,7 +88,6 @@ uint32_t _hashMapHash_(const char* key);
 void* _hashMapGet_(void* map, const char* key, size_t stride);
 #define mapGet(map, key) (typeof(*map)*) _hashMapGet_((map), (key), _HashMapContentSize_(map))
 
-
 /*
 auto p = &_hashMapValue(hTest, _place);
         size_t idx = ((byte*)_place - (byte*)hTest) / _HashMapContentSize_(hTest);

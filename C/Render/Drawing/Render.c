@@ -150,9 +150,6 @@ typedef struct {
     int minWidth;
     int minHeight;
 
-    int prefWidth;
-    int prefHeight;
-
     int maxWidth;
     int maxHeight;
 
@@ -166,15 +163,30 @@ typedef struct {
     int prefHeight;
 } TextDimensions;
 
-ElementDimensions calculateDimensions(Element* self, const Font* font) {
+ElementDimensions calculateDimensions(const Element* self, const Font* font) {
     ElementDimensions data = {};
     for_eachArr(childPtr, self->aChildElements, {
-        Element* child = *childPtr;
-        ElementDimensions childData = calculateDimensions(child, font);
+        const Element* child = *childPtr;
+        const ElementDimensions childData = calculateDimensions(child, font);
+        switch (self->layoutDirection) {
+            case L_down:
+                data.minWidth = max(data.minWidth, childData.minWidth);
+                data.minHeight += childData.minHeight;
 
+                data.maxWidth = max(data.maxWidth, childData.maxWidth);
+                data.maxHeight += childData.maxHeight;
+                break;
+            case L_right:
+                data.minWidth += childData.minWidth;
+                data.minHeight = max(data.minHeight, childData.minHeight);
+
+                data.maxWidth += childData.maxWidth;
+                data.maxHeight = max(data.maxHeight, childData.maxHeight);
+                break;
+        }
     });
-    data.prefWidth = max(data.prefWidth, self->dims.width);
-    data.prefHeight = max(data.prefWidth, self->dims.height);
+    data.minWidth = max(data.minWidth, self->dims.width);
+    data.minHeight = max(data.minHeight, self->dims.height);
 }
 
 //TODO maybe pass available size to the child element or maybe change the layout function if the element has fixed width?
