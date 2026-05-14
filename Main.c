@@ -18,6 +18,7 @@
 #include "C/Projects/Tokenizer/Calculator.h"
 #include "C/Projects/TFE/TFE.h"
 #include "Utils/CArrayList.h"
+#include "Utils/UtilsTest.h"
 
 #if 0
 int main(){
@@ -26,6 +27,7 @@ int main(){
     //startEngine(generateTestGUI);
     //startEngine(createChessGUI);
     //Calculator_runParserTest();
+    Utils_test();
 
     return 0;
 }

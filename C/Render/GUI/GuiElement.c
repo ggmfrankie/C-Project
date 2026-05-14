@@ -14,19 +14,15 @@
 #include "Render/Drawing/Mesh.h"
 #include "Utils/Makros.h"
 #include "Utils/CArrayList.h"
+#include "Utils/CHashMap.h"
 static constexpr int MAX_ELEMENTS = 1024;
 typedef struct {
     Element m[MAX_ELEMENTS];
-    size_t capacity;
     size_t size;
 } ElementList;
 
-static Hashmap_Element g_Hashmap = {};
-static ElementList g_Elements = {.capacity = MAX_ELEMENTS, .size = 0};
-
-void initElements() {
-    g_Hashmap = newHashmap_Element(512);
-}
+static Element** g_map_Elements;
+static ElementList g_Elements;
 
 Element* Element_new(const Vec2i pos, const int width, const int height) {
     g_Elements.m[g_Elements.size] = (Element){
@@ -133,7 +129,9 @@ void Element_setColor(Element* element, const Vec3f color) {
 
 Element* Element_getElement(const char* name) {
     assert(name != nullptr);
-    return *Hashmap_Element_get(&g_Hashmap, name);
+    Element* out = *mapGet(g_map_Elements, name);
+    assert(out != nullptr);
+    return out;
 }
 
 bool Element_isQuadBB(const Element *element, const Vec2i mousePos) {
@@ -225,7 +223,7 @@ Element *Element_addElement(
     if (notSelectable) lastElement->callbacks.isMouseOver = nullptr;
 
     if (name) {
-        Hashmap_Element_add(&g_Hashmap, name, lastElement);
+        mapInsert(g_map_Elements, name, lastElement);
     }
 
     if (text) {

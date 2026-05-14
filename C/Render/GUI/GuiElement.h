@@ -6,7 +6,7 @@
 #include "GuiTypes.h"
 #include "Tasks.h"
 
-#include "../../Utils/HashMap.h"
+#include "../../Utils/Deprecated/HashMap.h"
 #include "../../Utils/Vector.h"
 #include "Render/Drawing/TextDisplaying.h"
 #include "Utils/Network.h"
@@ -104,8 +104,6 @@ typedef struct Element {
 
 } Element;
 
-HASH_MAP(Element, char*, Element*)
-
 typedef struct ElementSettings {
     char* name;
     Vec2i pos;
@@ -142,8 +140,6 @@ typedef struct ElementSettings {
     void* elementData;
 
 } ElementSettings;
-
-void initElements();
 
 Element* Element_new(Vec2i pos, int width, int height);
 Element* f_addChildElements(Element* parent, ...);

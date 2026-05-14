@@ -4,7 +4,7 @@
 #pragma once
 #include "GuiDefines.h"
 #include "../Utils/Deprecated/Map.h"
-#include "../Utils/HashMap.h"
+#include "../Utils/Deprecated/HashMap.h"
 #include "../Utils/CString.h"
 #include "../Utils/Vector.h"
 #include "../../Dependencies/include/glad/gl.h"

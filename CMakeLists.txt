@@ -36,7 +36,7 @@ add_library(GUI STATIC
         C/Utils/Vector.h
         C/Render/Shader.c
         C/Render/Shader.h
-        C/Utils/HashMap.h
+        C/Utils/Deprecated/HashMap.h
         C/Utils/FileIO.c
         C/Utils/FileIO.h
         C/Utils/StringBuilder.c
@@ -87,7 +87,6 @@ add_library(GUI STATIC
         C/Projects/ChessNewandImproved/ChessBetter2.c
         C/Projects/Tokenizer/Calculator.c
         C/Projects/Tokenizer/Calculator.h
-        C/Utils/CArrayList.c
         C/Utils/CArrayList.h
 
         C/Projects/TFE/TFE.c
@@ -100,6 +99,10 @@ add_library(GUI STATIC
         C/Render/Drawing/Batcher.h
         C/Render/Drawing/RenderTypes.h
         C/GuiDefines.h
+        C/Utils/CHashMap.h
+        C/Utils/UtilsTest.h
+        C/Utils/CHashMap.c
+        C/Utils/UtilsTypedef.h
 )
 
 set_target_properties(GUI PROPERTIES LINKER_LANGUAGE C)

@@ -54,7 +54,7 @@ static UserCallbacks g_Callbacks;
 static void processInput(Renderer *renderer);
 static bool processInputRec(Element *element, Renderer *renderer);
 static bool dragElement(const Renderer *renderer);
-void gui_processDebug();
+static void gui_processDebug();
 
 static void threadExecute() {
     do {
@@ -78,7 +78,6 @@ void gui_init(GLFWwindow* window, const int width, const int height, void (*gene
     g_Renderer = newGUIRenderer(window, width, height, "ARIAL.TTF");
 
     Renderer_init(&g_Renderer);
-    initElements();
 
     generateGUI(g_Renderer.guiRoot);
 
@@ -169,7 +168,7 @@ void gui_setCornerRadius(const char* name, const int radius) {
     )
 }
 
-void gui_processDebug() {
+static void gui_processDebug() {
     const Element* gameBoard = Element_getElement("game board");
     const Element* parent = gameBoard->parentElement;
     assert(strcmp(parent->name, "GUI_ROOT") == 0);

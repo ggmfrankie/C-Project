@@ -3,7 +3,6 @@
 //
 
 #pragma once
-#include "GuiDefines.h"
 #include <assert.h>
 #include <stdio.h>
 
@@ -17,9 +16,9 @@ typedef struct {
 
 #define ArrayInitCapacity 16
 
-#define _getHead(array) (((__Array_Header_*)(array))[-1])
+#define _arrayGetHead(array) (((__Array_Header_*)(array))[-1])
 
-#define arrLen(array) ((array) ? (_getHead(array).size) : 0)
+#define arrLen(array) ((array) ? (_arrayGetHead(array).size) : 0)
 
 #define arrIsEmpty(array) (arrLen(array) == 0)
 
@@ -32,7 +31,7 @@ typedef struct {
             header->size = 0;\
             (array) = (void*) (header+1);\
         }\
-        __Array_Header_* header = &_getHead(array);\
+        __Array_Header_* header = &_arrayGetHead(array);\
         if (header->capacity <= header->size) {\
             assert(header->capacity != 0);\
             const size_t newCapacity = header->capacity * 2;\
@@ -48,20 +47,20 @@ typedef struct {
         (array)[header->size++] = x;\
     } while (0)
 
-#define arrTryGet(array, index) (((array) == nullptr) ? nullptr : (_getHead(array).size <= (index)) ? nullptr : &(array)[index])
+#define arrTryGet(array, index) (((array) == nullptr) ? nullptr : (_arrayGetHead(array).size <= (index)) ? nullptr : &(array)[index])
 
 #define arrGetLast(array) (array) ? &(array)[arrLen(array)-1]: nullptr;
 
 #define arrClear(array)\
     do {\
         if ((array) == nullptr) break;\
-        _getHead(array).size = 0;\
+        _arrayGetHead(array).size = 0;\
     } while (0)
 
 #define arrDel(array) \
     do {\
         assert((array) != nullptr);\
-        free(&_getHead(array));\
+        free(&_arrayGetHead(array));\
         (array) = nullptr;\
     } while (0)
 

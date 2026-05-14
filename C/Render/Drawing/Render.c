@@ -14,7 +14,7 @@
 #include "Utils/UtilityFun.h"
 
 static void accumulateMeshes(Element *element, const Renderer *renderer, GuiVertex *vertices, int *vt, int *indices, int *id);
-static Vec2i updateLayout(Element* self, const Vec2i parentCursor, const Vec2i remainingSpace, const Vec2i parentPos, const Font* font);
+static Vec2i updateLayout(Element* self, Vec2i parentCursor, Vec2i remainingSpace, Vec2i parentPos, const Font* font);
 
 Element* createRootElement();
 
@@ -144,6 +144,37 @@ void Renderer_updateLayout(const Renderer *renderer) {
     root->dims.height = renderer->screenHeight;
 
     updateLayout(root, (Vec2i){0, 0}, (Vec2i){renderer->screenWidth, renderer->screenHeight},  (Vec2i){0, 0}, &renderer->font);
+}
+
+typedef struct {
+    int minWidth;
+    int minHeight;
+
+    int prefWidth;
+    int prefHeight;
+
+    int maxWidth;
+    int maxHeight;
+
+    float flexGrowX;
+    float flexGrowY;
+
+} ElementDimensions;
+
+typedef struct {
+    int prefWidth;
+    int prefHeight;
+} TextDimensions;
+
+ElementDimensions calculateDimensions(Element* self, const Font* font) {
+    ElementDimensions data = {};
+    for_eachArr(childPtr, self->aChildElements, {
+        Element* child = *childPtr;
+        ElementDimensions childData = calculateDimensions(child, font);
+
+    });
+    data.prefWidth = max(data.prefWidth, self->dims.width);
+    data.prefHeight = max(data.prefWidth, self->dims.height);
 }
 
 //TODO maybe pass available size to the child element or maybe change the layout function if the element has fixed width?

@@ -3,9 +3,10 @@
 //
 
 #pragma once
+#include <stdint.h>
+
 #include "GuiDefines.h"
 #include "../../Utils/Vector.h"
-#include "../../Utils/HashMap.h"
 
 typedef struct NinePatchData {
     int stretchStartX;
@@ -27,12 +28,10 @@ typedef struct Texture {
     Vec2f uv1;
 } Texture;
 
-HASH_MAP(AtlasTextures, char*, Texture);
-
 typedef struct TextureAtlas {
     uint32_t ID;
     int width, height;
-    Hashmap_AtlasTextures textures;
+    Texture* map_textures;
 } TextureAtlas;
 
 Basic_Texture *newTexture(int width, int height, uint32_t textureId);

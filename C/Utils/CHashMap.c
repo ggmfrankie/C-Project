@@ -1,0 +1,42 @@
+//
+// Created by Stefan on 14.05.2026.
+//
+#include "CHashMap.h"
+#include <string.h>
+
+uint32_t _hashMapHash_(const char* key) {
+    assert(key != nullptr);
+    uint32_t h = _HashMapSeed_;
+    h ^= 2166136261UL;
+    const auto data = (const uint8_t*)key;
+    for(int i = 0; data[i] != '\0'; ++i) {
+        h ^= data[i];
+        h *= 16777619;
+    }
+    return h;
+}
+
+void* _hashMapGet_(void* map, const char* key, size_t stride) {
+    assert(map != nullptr && key != nullptr);
+
+    const _HashMap_Header_* header = &_hashMapGetHead_(map);
+    const size_t capacity = header->capacity;
+
+    byte* place = map + (_hashMapHash_(key) % capacity) * stride;
+
+    const byte* end = (byte*)map + stride * capacity;
+
+    for (int i = 0; i < capacity; ++i) {
+        const char* presentKey = _hashMapKey(place);
+        if (presentKey == nullptr) {
+            puts("Key is not inside the hashmap");
+            return nullptr;
+        }
+        if (strcmp(presentKey, key) == 0) return place + sizeof(char*);
+
+        place += stride;
+        if (place >= end) place = map;
+    }
+    puts("Hashmap full???");
+    return nullptr;
+}

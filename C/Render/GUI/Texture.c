@@ -5,10 +5,12 @@
 #include "../GUI/Texture.h"
 #include "../../Utils/CString.h"
 #define STB_IMAGE_IMPLEMENTATION
+#include <_bsd_types.h>
 #include <stb/stb_image.h>
 #include <stb/stb_rect_pack.h>
 
 #include "glad/gl.h"
+#include "Utils/CHashMap.h"
 
 static constexpr int MAX_ATLAS_TEXTURES = 512;
 
@@ -20,7 +22,7 @@ typedef struct {
 
 static GLuint uploadTextureToGPU(int width, int height, int channels, const unsigned char* pixels);
 
-static Hashmap_AtlasTextures g_TextureMap;
+static Texture* g_map_textureMap;
 static auto g_Textures = (TextureList){.capacity = 256, .size = 0};
 
 Basic_Texture* newTexture(const int width, const int height, const GLuint textureId) {
@@ -30,8 +32,6 @@ Basic_Texture* newTexture(const int width, const int height, const GLuint textur
 }
 
 void f_loadTextures(TextureAtlas *atlas, const char *first, va_list args) {
-
-    g_TextureMap = newHashmap_AtlasTextures(64);
     stbrp_rect rects[MAX_ATLAS_TEXTURES];
     u_char* pixels[MAX_ATLAS_TEXTURES];
     const char* names[MAX_ATLAS_TEXTURES];
@@ -91,7 +91,7 @@ void f_loadTextures(TextureAtlas *atlas, const char *first, va_list args) {
     atlas->ID = uploadTextureToGPU(atlas->width, atlas->height, 4, data);
 
     for (int i = 0; i < index; i++) {
-        Hashmap_AtlasTextures_add(&g_TextureMap, names[i], (Texture){
+        mapInsert(g_map_textureMap, names[i], (Texture){
             .uv0 = {(float)rects[i].x/(float)atlas->width, (float)rects[i].y/(float)atlas->height},
             .uv1 = {(float)(rects[i].x + rects[i].w)/(float)atlas->width, (float)(rects[i].y + rects[i].h)/(float)atlas->height}
         });
@@ -155,7 +155,7 @@ Texture getTexture(const char* name) {
         puts("Error loading texture: no name provided");
         return (Texture){};
     }
-    const Texture* texture = Hashmap_AtlasTextures_get(&g_TextureMap, name);
+    const Texture* texture = mapGet(g_map_textureMap, name);
     return *texture;
 }
 

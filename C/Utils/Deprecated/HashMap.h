@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include <_bsd_types.h>
 
-#include "CString.h"
+#include "../CString.h"
 
 
 #define HASH_MAP(Name, Key, Value)\
