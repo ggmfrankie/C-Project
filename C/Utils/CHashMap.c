@@ -16,15 +16,15 @@ uint32_t _hashMapHash_(const char* key) {
     return h;
 }
 
-void* _hashMapGet_(void* map, const char* key, size_t stride) {
+void* _hashMapGet_(byte* map, const char* key, size_t stride) {
     assert(map != nullptr && key != nullptr);
 
-    const _HashMap_Header_* header = &_hashMapGetHead_(map);
+    const _HashMap_Header_* header = &_hashMapGetHead(map);
     const size_t capacity = header->capacity;
 
     byte* place = map + (_hashMapHash_(key) % capacity) * stride;
 
-    const byte* end = (byte*)map + stride * capacity;
+    const byte* end = map + stride * capacity;
 
     for (int i = 0; i < capacity; ++i) {
         const char* presentKey = _hashMapKey(place);

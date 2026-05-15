@@ -19,12 +19,12 @@ typedef struct {
 #define _HashMapSeed_ 342341431UL
 #define _HashMapContentSize_(map) (sizeof(char*) + sizeof(*(map)))
 
-#define _hashMapGetHead_(map) (((_HashMap_Header_*)(map))[-1])
+#define _hashMapGetHead(map) (((_HashMap_Header_*)(map))[-1])
 #define _hashMapKey(_place) (*(const char**)(_place))
 #define _hashMapValue(map, _place) (*(typeof(*(map))*)((byte*)(_place) + sizeof(char*)))
 
-#define mapLen(map) ((map) ? (_hashMapGetHead_(map).size) : 0)
-#define mapCap(map) ((map) ? (_hashMapGetHead_(map).capacity) : 0)
+#define mapLen(map) ((map) ? (_hashMapGetHead(map).size) : 0)
+#define mapCap(map) ((map) ? (_hashMapGetHead(map).capacity) : 0)
 
 #define mapEmpty(map) (arrLen(map) == 0)
 
@@ -39,7 +39,7 @@ uint32_t _hashMapHash_(const char* key);
             _header->size = 0;\
             (map) = (void*) (_header+1);\
         }\
-        _HashMap_Header_* _header = &_hashMapGetHead_(map);\
+        _HashMap_Header_* _header = &_hashMapGetHead(map);\
         if (_header->size / (float)_header->capacity > 0.75f) /* GROW */{\
             assert(_header->capacity != 0);\
             const size_t _newCapacity = _header->capacity * 2;\
@@ -85,8 +85,8 @@ uint32_t _hashMapHash_(const char* key);
         ++_header->size;\
     } while (0)
 
-void* _hashMapGet_(void* map, const char* key, size_t stride);
-#define mapGet(map, key) (typeof(*map)*) _hashMapGet_((map), (key), _HashMapContentSize_(map))
+void* _hashMapGet_(byte* map, const char* key, size_t stride);
+#define mapGet(map, key) (typeof(*map)*) _hashMapGet_((byte*)(map), (key), _HashMapContentSize_(map))
 
 /*
 auto p = &_hashMapValue(hTest, _place);

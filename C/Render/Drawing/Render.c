@@ -16,6 +16,9 @@
 static void accumulateMeshes(Element *element, const Renderer *renderer, GuiVertex *vertices, int *vt, int *indices, int *id);
 static Vec2i updateLayout(Element* self, Vec2i parentCursor, Vec2i remainingSpace, Vec2i parentPos, const Font* font);
 
+static void layoutElement(Element* self);
+static CachedDimensions* calculateDimensions(Element* self, const Font* font);
+
 Element* createRootElement();
 
 [[deprecated]]
@@ -146,47 +149,85 @@ void Renderer_updateLayout(const Renderer *renderer) {
     updateLayout(root, (Vec2i){0, 0}, (Vec2i){renderer->screenWidth, renderer->screenHeight},  (Vec2i){0, 0}, &renderer->font);
 }
 
-typedef struct {
-    int minWidth;
-    int minHeight;
+void Renderer_updateLayout2(const Renderer *renderer) {
+    calculateDimensions(renderer->guiRoot, &renderer->font);
+    layoutElement(renderer->guiRoot);
+}
 
-    int maxWidth;
-    int maxHeight;
+static CachedDimensions* calculateDimensions(Element* self, const Font* font) {
+    CachedDimensions* data = &self->cachedDims;
 
-    float flexGrowX;
-    float flexGrowY;
+    *data = (CachedDimensions){};
 
-} ElementDimensions;
+    if (self->textElement.hasText) {
+        const Vec2i textDims = measureElementText(font, &self->textElement);
+        data->minWidth = textDims.x;
+        data->minHeight = textDims.y;
+    }
 
-typedef struct {
-    int prefWidth;
-    int prefHeight;
-} TextDimensions;
-
-ElementDimensions calculateDimensions(const Element* self, const Font* font) {
-    ElementDimensions data = {};
     for_eachArr(childPtr, self->aChildElements, {
-        const Element* child = *childPtr;
-        const ElementDimensions childData = calculateDimensions(child, font);
+        Element* child = *childPtr;
+        const CachedDimensions* childData = calculateDimensions(child, font);
         switch (self->layoutDirection) {
             case L_down:
-                data.minWidth = max(data.minWidth, childData.minWidth);
-                data.minHeight += childData.minHeight;
+                data->minWidth = max(data->minWidth, childData->minWidth);
+                data->minHeight += childData->minHeight;
 
-                data.maxWidth = max(data.maxWidth, childData.maxWidth);
-                data.maxHeight += childData.maxHeight;
+                data->maxWidth = max(data->maxWidth, childData->maxWidth);
+                data->maxHeight += childData->maxHeight;
                 break;
             case L_right:
-                data.minWidth += childData.minWidth;
-                data.minHeight = max(data.minHeight, childData.minHeight);
+                data->minWidth += childData->minWidth;
+                data->minHeight = max(data->minHeight, childData->minHeight);
 
-                data.maxWidth += childData.maxWidth;
-                data.maxHeight = max(data.maxHeight, childData.maxHeight);
+                data->maxWidth += childData->maxWidth;
+                data->maxHeight = max(data->maxHeight, childData->maxHeight);
                 break;
         }
     });
-    data.minWidth = max(data.minWidth, self->dims.width);
-    data.minHeight = max(data.minHeight, self->dims.height);
+    switch (self->layoutDirection) {
+        case L_down:
+            data->minHeight += (arrLen(self->aChildElements)-1) * self->childGap;
+            break;
+        case L_right:
+            data->minWidth += (arrLen(self->aChildElements)-1) * self->childGap;
+            break;
+    }
+    data->minWidth += self->padding.up + self->padding.down;
+    data->minHeight += self->padding.left + self->padding.right;
+
+    data->minWidth = max(data->minWidth, self->dims.width);
+    data->minHeight = max(data->minHeight, self->dims.height);
+
+    if (self->flags.fixedWidth) data->maxWidth = self->dims.width;
+    if (self->flags.fixedHeight) data->maxHeight = self->dims.height;
+
+    if (self->flags.wantGrowHorizontal) data->flexGrowX = 1.0f;
+    if (self->flags.wantGrowVertical) data->flexGrowY = 1.0f;
+
+    return data;
+}
+
+static void layoutElement(Element* self) {
+    Vec2i cursor = {
+        self->dims.worldPos.x + self->padding.left,
+        self->dims.worldPos.y + self->padding.up
+    };
+
+    const CachedDimensions* data = &self->cachedDims;
+
+    for_eachArr(childPtr, self->aChildElements, {
+        Element* child = *childPtr;
+        const CachedDimensions* childData = &child->cachedDims;
+
+        if (data->maxWidth != 0) {
+
+        }
+
+        if (data->maxHeight != 0) {
+
+        }
+    });
 }
 
 //TODO maybe pass available size to the child element or maybe change the layout function if the element has fixed width?
@@ -204,7 +245,6 @@ static Vec2i updateLayout(Element* self, const Vec2i parentCursor, const Vec2i r
     const bool print = correctElement && only_every(200);
 #endif
     if (cb->reset) cb->reset(self);
-
 #if GUI_DEBUG
     print_if(print,
         "---------------------\n"

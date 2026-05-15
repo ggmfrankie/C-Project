@@ -34,6 +34,17 @@ typedef enum ElementType: byte {
     t_textField
 } ElementType;
 
+typedef struct {
+    int minWidth;
+    int minHeight;
+
+    int maxWidth;
+    int maxHeight;
+
+    float flexGrowX;
+    float flexGrowY;
+} CachedDimensions;
+
 typedef struct Element {
     char* name;
     ElementType type;
@@ -75,6 +86,8 @@ typedef struct Element {
         float transparency;
         float brightness;
     } visuals;
+
+    CachedDimensions cachedDims;
 
     int ID;
 

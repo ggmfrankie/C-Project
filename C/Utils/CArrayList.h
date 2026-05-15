@@ -18,7 +18,7 @@ typedef struct {
 
 #define _arrayGetHead(array) (((__Array_Header_*)(array))[-1])
 
-#define arrLen(array) ((array) ? (_arrayGetHead(array).size) : 0)
+#define arrLen(array) (_arrayGetHead(array).size)
 
 #define arrIsEmpty(array) (arrLen(array) == 0)
 
@@ -79,7 +79,7 @@ typedef struct {
     do { \
         if ((array) == nullptr) break; \
         size_t len = arrLen(array); \
-        for (size_t i = len; i-- > 0;) { \
+        for (size_t i = len; i --> 0;) { \
             auto item = &(array)[i]; \
             __VA_ARGS__ \
         } \

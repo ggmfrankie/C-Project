@@ -88,7 +88,7 @@ Font loadFontAtlas(char* file) {
 
 void accumulateTextQuads(const Element *element, GuiVertex *vertices, int *vt, int *indices, int *id, const Font *font) {
     const auto aCharQuads = element->textElement.aCharQuads;
-    if (arrIsEmpty(aCharQuads)) return;
+    if (aCharQuads == nullptr || arrIsEmpty(aCharQuads)) return;
 
     const float xOffset = (float)element->padding.left;
     const float yOffset = (float)font->maxCharHeight * element->textElement.textScale + (float)element->padding.up;
