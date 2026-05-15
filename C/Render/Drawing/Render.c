@@ -199,8 +199,8 @@ static CachedDimensions* calculateDimensions(Element* self, const Font* font) {
     data->minWidth = max(data->minWidth, self->dims.width);
     data->minHeight = max(data->minHeight, self->dims.height);
 
-    if (self->flags.fixedWidth) data->maxWidth = self->dims.width;
-    if (self->flags.fixedHeight) data->maxHeight = self->dims.height;
+    data->maxWidth = self->flags.fixedHeight ? self->dims.width : INT32_MAX;
+    data->maxHeight = self->flags.fixedHeight ? self->dims.height : INT32_MAX;
 
     if (self->flags.wantGrowHorizontal) data->flexGrowX = 1.0f;
     if (self->flags.wantGrowVertical) data->flexGrowY = 1.0f;
@@ -220,13 +220,11 @@ static void layoutElement(Element* self) {
         Element* child = *childPtr;
         const CachedDimensions* childData = &child->cachedDims;
 
-        if (data->maxWidth != 0) {
 
-        }
+        if (cursor.x + childData->minWidth);
 
-        if (data->maxHeight != 0) {
 
-        }
+
     });
 }
 
