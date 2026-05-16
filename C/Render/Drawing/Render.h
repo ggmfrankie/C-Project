@@ -29,6 +29,7 @@ void Renderer_init(Renderer *renderer);
 
 void Renderer_render(const Renderer *renderer);
 void Renderer_updateLayout(const Renderer *renderer);
+void Renderer_updateLayout2(const Renderer *renderer);
 void Renderer_destroy(const Renderer *renderer);
 
 bool isMousePressed(GLFWwindow* window, int mouseButton);

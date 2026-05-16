@@ -18,7 +18,7 @@ typedef struct {
 
 #define _arrayGetHead(array) (((__Array_Header_*)(array))[-1])
 
-#define arrLen(array) (_arrayGetHead(array).size)
+#define arrLen(array) ((array) ? _arrayGetHead(array).size : 0)
 
 #define arrIsEmpty(array) (arrLen(array) == 0)
 

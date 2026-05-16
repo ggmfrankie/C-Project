@@ -37,12 +37,6 @@ typedef enum ElementType: byte {
 typedef struct {
     int minWidth;
     int minHeight;
-
-    int maxWidth;
-    int maxHeight;
-
-    float flexGrowX;
-    float flexGrowY;
 } CachedDimensions;
 
 typedef struct Element {
@@ -68,13 +62,15 @@ typedef struct Element {
 
         int width;
         int height;
-        int prefWidth;
-        int prefHeight;
+        int maxWidth;
+        int maxHeight;
 
         int worldWidth;
         int worldHeight;
 
         int cornerRadius;
+
+        float flexGrow;
     } dims;
 
     struct {
@@ -126,6 +122,7 @@ typedef struct ElementSettings {
     int cornerRadius;
     int width;
     int height;
+    float flexGrow;
 
     Texture* old_texture;
     char* texture;
@@ -155,7 +152,7 @@ typedef struct ElementSettings {
 } ElementSettings;
 
 Element* Element_new(Vec2i pos, int width, int height);
-Element* f_addChildElements(Element* parent, ...);
+Element* Element_addChildElements(Element* parent, ...);
 
 Element* addChildrenAsGrid(ElementSettings parentData, ElementSettings es, int numX, int numY);
 Element* addChildrenAsGridWithGenerator(ElementSettings parentData, ElementSettings es, int numX, int numY, Element* (*generateElement)(int row, int col, ElementSettings));
@@ -163,7 +160,7 @@ Element* addChildrenAsGridWithGenerator(ElementSettings parentData, ElementSetti
 void Element_setOnClickCallback(Element* element, bool (*onClick)(Element* element, Renderer* renderer));
 void Element_setOnHoverCallback(Element* element, bool (*onHover)(Element* element, Renderer* renderer));
 void Element_setBoundingBox(Element* element, bool (*isMouseOver)(const Element *element, Vec2i mousePos));
-void defaultReset(Element* element);
+void Element_defaultReset(Element* element);
 
 Element* Element_getElement(const char* name);
 void Element_setText(Element* element, const char* text);
@@ -176,10 +173,7 @@ void Element_printDebug(const Element* element);
 
 bool Element_isQuadBB(const Element *element, Vec2i mousePos);
 
-#define addChildElements(parent, ...) f_addChildElements(parent, __VA_ARGS__, NULL)
-
-#define addChildElementsN(parent, count, ...) f_addChildElementsN(parent, count, __VA_ARGS__)
-#define fitMode (Vec2i){-1, -1}
+#define addChildElements(parent, ...) Element_addChildElements(parent, __VA_ARGS__, NULL)
 
 Element *Element_addElement(
     char *name,
@@ -201,8 +195,9 @@ Element *Element_addElement(
     LayoutDirection layoutDirection,
     bool fixedWidth,
     bool fixedHeight,
-    void (*whileSelected)(Element *element), bool draggable, void (*onUpdate)(Element *element), bool wantGrowHorizontal, bool
-    wantGrowVertical, float transparency, const char *texture, bool invisible, int cornerRadius
+    void (*whileSelected)(Element *element), bool draggable, void (*onUpdate)(Element *element),
+    bool wantGrowHorizontal, bool
+    wantGrowVertical, float transparency, const char *texture, bool invisible, int cornerRadius, float flexGrow
 );
 
 Element *createElement(ElementSettings es);

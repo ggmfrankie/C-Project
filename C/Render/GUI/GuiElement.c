@@ -33,7 +33,9 @@ Element* Element_new(const Vec2i pos, const int width, const int height) {
             .pos = pos,
             .worldPos = pos,
             .worldWidth = width,
-            .worldHeight = height
+            .worldHeight = height,
+            .maxWidth = INT32_MAX,
+            .maxHeight = INT32_MAX
         },
         .callbacks = {
             .onClick = nullptr,
@@ -66,13 +68,13 @@ Element* Element_new(const Vec2i pos, const int width, const int height) {
     return &g_Elements.m[g_Elements.size++];
 }
 
-Element* f_addChildElements(Element* parent, ...) {
+Element* Element_addChildElements(Element* parent, ...) {
     va_list args;
     va_start(args, parent);
     assert(parent != nullptr);
     while (1) {
         Element* child = va_arg(args, Element*);
-        if (child == NULL) {
+        if (child == nullptr) {
             break;
         }
         child->parentElement = parent;
@@ -170,7 +172,8 @@ Element *Element_addElement(
     float transparency,
     const char *texture,
     bool invisible,
-    int cornerRadius
+    int cornerRadius,
+    float flexGrow
 )
 {
     Element* lastElement = Element_new(pos, width, height);
@@ -199,7 +202,7 @@ Element *Element_addElement(
     lastElement->name = name;
     lastElement->positionMode = positionMode;
     lastElement->childGap = childGap;
-    lastElement->callbacks.reset = defaultReset;
+    lastElement->callbacks.reset = Element_defaultReset;
     lastElement->elementData = elementData;
     lastElement->layoutDirection = layoutDirection;
     lastElement->flags.fixedWidth = fixedWidth;
@@ -214,6 +217,10 @@ Element *Element_addElement(
     lastElement->flags.invisible = invisible;
     lastElement->visuals.brightness = 1.0f;
     lastElement->dims.cornerRadius = cornerRadius;
+    lastElement->dims.flexGrow = flexGrow;
+
+    if (fixedWidth) lastElement->dims.maxWidth = lastElement->dims.width;
+    if (fixedHeight) lastElement->dims.maxHeight = lastElement->dims.height;
 
     if (texture) {
         lastElement->visuals.texture = getTexture(texture);
@@ -250,11 +257,11 @@ Element *guiAddSimpleSlider(
     SliderData* sliderData
 )
 {
-    Element* element = Element_addElement(nullptr, pos, width, height, colorBackground, (Padding){10, 10, 10, 10}, 10, Element_isQuadBB, hoverAndDragFun, NULL, (Task){}, NULL, true, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false, 0.0f, NULL, true, 0);
+    Element* element = Element_addElement(nullptr, pos, width, height, colorBackground, (Padding){10, 10, 10, 10}, 10, Element_isQuadBB, hoverAndDragFun, NULL, (Task){}, NULL, true, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false, 0.0f, NULL, true, 0, 0.0f);
     Vec2i sliderPos = {};
     sliderPos.x = width/2;
     sliderPos.y = 0;
-    Element* sliderElement = Element_addElement(nullptr, sliderPos, width, height, colorSlider, (Padding){10, 10, 10, 10}, 10, Element_isQuadBB, hoverAndDragFun, sliderCallbackFun, (Task){}, NULL, true, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false, 0.0f, NULL, true, 0);
+    Element* sliderElement = Element_addElement(nullptr, sliderPos, width, height, colorSlider, (Padding){10, 10, 10, 10}, 10, Element_isQuadBB, hoverAndDragFun, sliderCallbackFun, (Task){}, NULL, true, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false, 0.0f, NULL, true, 0, 0.0f);
     arrPush(element->aChildElements, sliderElement);
     element->elementData = sliderData;
     return element;
@@ -285,33 +292,34 @@ Element *createTextFieldElement(const ElementSettings elementSettings, bool (*on
 
 Element *createElement(const ElementSettings es) {
     return Element_addElement(es.name,
-                         es.pos,
-                         es.width,
-                         es.height,
-                         es.color,
-                         es.padding,
-                         es.childGap,
-                         Element_isQuadBB,
-                         es.onHover,
-                         es.onClick,
-                         es.task,
-                         es.text,
-                         true,
-                         es.posMode,
-                         es.elementData,
-                         es.notSelectable,
-                         es.layoutDirection,
-                         es.fixedWidth,
-                         es.fixedHeight,
-                         es.whileSelected,
-                         es.draggable,
-                         es.onUpdate,
-                         es.wantGrowHorizontal,
-                         es.wantGrowVertical,
-                         es.transparency,
-                         nullptr,
-                         es.invisible,
-                         es.cornerRadius
+                              es.pos,
+                              es.width,
+                              es.height,
+                              es.color,
+                              es.padding,
+                              es.childGap,
+                              Element_isQuadBB,
+                              es.onHover,
+                              es.onClick,
+                              es.task,
+                              es.text,
+                              true,
+                              es.posMode,
+                              es.elementData,
+                              es.notSelectable,
+                              es.layoutDirection,
+                              es.fixedWidth,
+                              es.fixedHeight,
+                              es.whileSelected,
+                              es.draggable,
+                              es.onUpdate,
+                              es.wantGrowHorizontal,
+                              es.wantGrowVertical,
+                              es.transparency,
+                              nullptr,
+                              es.invisible,
+                              es.cornerRadius,
+                              es.flexGrow
     );
 }
 
@@ -342,7 +350,7 @@ Element* addChildrenAsGridWithGenerator(const ElementSettings parentData, Elemen
     return parent;
 }
 
-void defaultReset(Element* element) {
+void Element_defaultReset(Element* element) {
     element->visuals.brightness = 1.0f;
 }
 

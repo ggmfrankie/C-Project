@@ -16,7 +16,7 @@
 static void accumulateMeshes(Element *element, const Renderer *renderer, GuiVertex *vertices, int *vt, int *indices, int *id);
 static Vec2i updateLayout(Element* self, Vec2i parentCursor, Vec2i remainingSpace, Vec2i parentPos, const Font* font);
 
-static void layoutElement(Element* self);
+static void layoutElement(const Element* self);
 static CachedDimensions* calculateDimensions(Element* self, const Font* font);
 
 Element* createRootElement();
@@ -150,6 +150,10 @@ void Renderer_updateLayout(const Renderer *renderer) {
 }
 
 void Renderer_updateLayout2(const Renderer *renderer) {
+    Element* root = renderer->guiRoot;
+    root->dims.width = renderer->screenWidth;
+    root->dims.height = renderer->screenHeight;
+
     calculateDimensions(renderer->guiRoot, &renderer->font);
     layoutElement(renderer->guiRoot);
 }
@@ -158,6 +162,9 @@ static CachedDimensions* calculateDimensions(Element* self, const Font* font) {
     CachedDimensions* data = &self->cachedDims;
 
     *data = (CachedDimensions){};
+
+    Vec2i cursor = {};
+    Vec2i extend = {};
 
     if (self->textElement.hasText) {
         const Vec2i textDims = measureElementText(font, &self->textElement);
@@ -170,61 +177,124 @@ static CachedDimensions* calculateDimensions(Element* self, const Font* font) {
         const CachedDimensions* childData = calculateDimensions(child, font);
         switch (self->layoutDirection) {
             case L_down:
-                data->minWidth = max(data->minWidth, childData->minWidth);
-                data->minHeight += childData->minHeight;
+                if (cursor.y + childData->minHeight > self->dims.maxHeight) {
+                    cursor.y = 0;
+                    cursor.x = extend.x + self->childGap;
+                }
+                cursor.y += childData->minHeight + self->childGap;
 
-                data->maxWidth = max(data->maxWidth, childData->maxWidth);
-                data->maxHeight += childData->maxHeight;
+                extend.y = max(extend.y, cursor.y);
+                extend.x = max(extend.x, cursor.x + childData->minWidth);
                 break;
             case L_right:
-                data->minWidth += childData->minWidth;
-                data->minHeight = max(data->minHeight, childData->minHeight);
+                if (cursor.x + childData->minWidth > self->dims.maxWidth) {
+                    cursor.x = 0;
+                    cursor.y = extend.y + self->childGap;
+                }
+                cursor.x += childData->minWidth + self->childGap;
 
-                data->maxWidth += childData->maxWidth;
-                data->maxHeight = max(data->maxHeight, childData->maxHeight);
+                extend.x = max(extend.x, cursor.x);
+                extend.y = max(extend.y, cursor.y + childData->minHeight);
                 break;
         }
     });
-    switch (self->layoutDirection) {
-        case L_down:
-            data->minHeight += (arrLen(self->aChildElements)-1) * self->childGap;
-            break;
-        case L_right:
-            data->minWidth += (arrLen(self->aChildElements)-1) * self->childGap;
-            break;
-    }
-    data->minWidth += self->padding.up + self->padding.down;
-    data->minHeight += self->padding.left + self->padding.right;
 
-    data->minWidth = max(data->minWidth, self->dims.width);
-    data->minHeight = max(data->minHeight, self->dims.height);
-
-    data->maxWidth = self->flags.fixedHeight ? self->dims.width : INT32_MAX;
-    data->maxHeight = self->flags.fixedHeight ? self->dims.height : INT32_MAX;
-
-    if (self->flags.wantGrowHorizontal) data->flexGrowX = 1.0f;
-    if (self->flags.wantGrowVertical) data->flexGrowY = 1.0f;
-
+    data->minWidth  = max(extend.x + self->padding.left + self->padding.right, self->dims.width);
+    data->minHeight = max(extend.y + self->padding.up   + self->padding.down,  self->dims.height);
     return data;
 }
 
-static void layoutElement(Element* self) {
-    Vec2i cursor = {
+typedef struct {
+    Element** m;
+    int size;
+
+    int mainSize;
+    int offset;
+} LayoutLine;
+
+static void placeLine(const Element* self, const LayoutLine* line) {
+    float totalFlexGrowth = 0.0f;
+    int offset = 0;
+    for (int i = 0; i < line->size; ++i)
+        totalFlexGrowth += line->m[i]->dims.flexGrow;
+
+    for (int i = 0; i < line->size; ++i) {
+        Element* curr = line->m[i];
+        const float ratio = (totalFlexGrowth) ? (curr->dims.flexGrow / totalFlexGrowth) : 0.0f;
+
+        switch (self->layoutDirection) {
+            case L_down: {
+                curr->dims.worldPos.x = self->dims.worldPos.x + line->offset;
+                curr->dims.worldPos.y = self->dims.worldPos.y + offset;
+
+                const float extra = ratio * (self->dims.worldHeight - line->mainSize);
+
+                curr->dims.worldHeight = curr->cachedDims.minHeight + extra;
+                offset += curr->dims.worldHeight + self->childGap;
+            } break;
+            case L_right: {
+                curr->dims.worldPos.y = self->dims.worldPos.y + line->offset;
+                curr->dims.worldPos.x = self->dims.worldPos.x + offset;
+
+                const float extra = ratio * (self->dims.worldWidth - line->mainSize);
+
+                curr->dims.worldWidth = curr->cachedDims.minWidth + extra;
+                offset += curr->dims.worldWidth + self->childGap;
+            } break;
+        }
+    }
+}
+
+static void layoutElement(const Element* self) {
+    const Vec2i contentAreaStart = {
         self->dims.worldPos.x + self->padding.left,
         self->dims.worldPos.y + self->padding.up
     };
 
-    const CachedDimensions* data = &self->cachedDims;
+    Vec2i cursor = contentAreaStart;
+    Vec2i extend = contentAreaStart;
+
+    Element* storage[arrLen(self->aChildElements)];
+    LayoutLine line = {
+        .m = storage,
+        .size = 0,
+        .mainSize = 0
+    };
 
     for_eachArr(childPtr, self->aChildElements, {
         Element* child = *childPtr;
+        if (child->callbacks.reset) child->callbacks.reset(child);
         const CachedDimensions* childData = &child->cachedDims;
 
+        if (cursor.x + childData->minWidth > self->dims.width) {
+            line.mainSize += self->childGap * (len-1);
+            placeLine(self, &line);
 
-        if (cursor.x + childData->minWidth);
+            cursor.x = extend.x + self->childGap;
+            cursor.y = contentAreaStart.y;
+            line = (LayoutLine){.m = storage};
+        }
+
+        if (cursor.y + childData->minHeight > self->dims.height) {
+            line.mainSize += self->childGap * (len-1);
+            placeLine(self, &line);
+
+            cursor.y = extend.y + self->childGap;
+            cursor.x = contentAreaStart.x;
+            line = (LayoutLine){.m = storage};
+        }
+
+        line.m[line.size++] = child;
+        line.mainSize += ((self->layoutDirection == L_down) ? childData->minHeight : childData->minWidth);
 
 
+        extend.x = max(extend.x, childData->minWidth);
+        extend.y = max(extend.y, childData->minHeight);
 
+    });
+
+    for_eachArr(childPtr, self->aChildElements, {
+        layoutElement(*childPtr);
     });
 }
 
