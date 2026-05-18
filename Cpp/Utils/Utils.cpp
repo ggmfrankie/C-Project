@@ -66,7 +66,7 @@ namespace ggm {
                 case State::Digit:
                     if (std::isdigit(*next)) {
                         Digit:
-                        result += (*next - '0') * pow(10, factor);
+                        result += (*next - '0') * std::pow(10, factor);
                         --factor;
                         state = State::Digit;
                     }
