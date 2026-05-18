@@ -32,7 +32,8 @@ namespace ggm {
         F fn;
     };
 
-    template<typename Container, u64 TAKE_LIMIT = SIZE_MAX,  typename... Ops>
+    template<typename Container, u64 TAKE_LIMIT = SIZE_MAX, typename... Ops>
+    requires requires (Container a) {a.begin(); a.end();}
     class LazyStream {
         const Container& mContainer;
         const std::tuple<Ops...> mOps;
@@ -98,7 +99,7 @@ namespace ggm {
             mOps(std::move(o))
         {}
 
-        auto toVector() -> std::vector<FinalType> {
+        constexpr auto toVector() -> std::vector<FinalType> {
             std::vector<FinalType> out{};
             out.reserve(mContainer.size());
 
@@ -113,22 +114,22 @@ namespace ggm {
             return out;
         }
 
-        auto toArray() -> std::array<FinalType, TAKE_LIMIT> {
+        constexpr auto toArray() -> std::array<FinalType, TAKE_LIMIT> {
             static_assert(TAKE_LIMIT != SIZE_MAX, "Array size is not known. Use take() first or consider toVector()");
             std::array<FinalType, TAKE_LIMIT> out;
 
             u64 taken = 0;
             for (const auto& thing: mContainer) {
-                if constexpr (TAKE_LIMIT < SIZE_MAX) if (taken >= TAKE_LIMIT) break;
+                if (taken >= TAKE_LIMIT) break;
                 if (std::optional<FinalType> value = process<0, InitialType>(thing, mOps)) {
                     out[taken] = std::move(*value);
-                    if constexpr (TAKE_LIMIT < SIZE_MAX) ++taken;
+                    ++taken;
                 }
             }
             return out;
         }
 
-        auto getFirst() -> FinalType {
+        constexpr auto getFirst() -> FinalType {
             for (const auto& thing: mContainer) {
                 std::optional<FinalType> value = process<0, InitialType>(thing, mOps);
                 if (value) return *value;
@@ -138,7 +139,7 @@ namespace ggm {
 
         template<typename Consumer>
         requires isConsumerFor<Consumer, FinalType>
-        void forEach(Consumer&& c) {
+        constexpr void forEach(Consumer&& c) {
             u64 taken = 0;
             for (const auto& thing: mContainer) {
                 if constexpr (TAKE_LIMIT < SIZE_MAX) if (taken >= TAKE_LIMIT) break;

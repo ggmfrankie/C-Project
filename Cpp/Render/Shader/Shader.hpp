@@ -73,6 +73,7 @@ namespace Render {
         /// @brief Sets the specified uniform to the value.
         /// Extracts uniform location once and caches it inside a static variable. Each invocation generates a unique instance.
         /// Does typechecking once and throws an error if types don't match.
+        /// Uses the current file to generate a unique key to force unique functions per translation unit
 
 #define setUniform(Name, Value) setUniform_T<Render::Shader::ConstStr{Name}, Render::Shader::fnv1a(__FILE__)>(Value)
 

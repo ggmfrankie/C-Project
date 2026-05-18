@@ -2,25 +2,34 @@ from dataclasses import dataclass, field
 import re
 import random
 import argparse
-
-""" TODO: Automatically compile and run VHDL"""
+import subprocess
+import logging
 
 def main():
     parser = argparse.ArgumentParser(description="VHDL testbench generator")
     parser.add_argument("path", help="Path to VHDL file")
-    parser.add_argument("-o", "--output", help="Output file")
+    parser.add_argument("-o", "--output", action="store_true", help="Enable output")
     parser.add_argument("-n", "--numTests", type=int, default=10)
     parser.add_argument("--mode", choices=["random", "all"], default="random")
+    parser.add_argument("-v", "--verbose", action="store_true", help="Enable debug logging")
 
     args = parser.parse_args()
 
-    # Only processes the first entity
+
+    logging.basicConfig(
+        level=logging.DEBUG if args.verbose else logging.INFO,
+        format="%(levelname)s: %(message)s"
+    )
+
+
+    # Only first entity for now
     entity = readVHDLFile(args.path)[0]
     testbench = createTestbench(entity, args.numTests, args.mode)
-
+    tbFileName = f"{entity.name}_tb.vhdl"
     if args.output:
-        with open(args.output, "w") as f:
+        with open(tbFileName, "w") as f:
             f.write(testbench)
+        compileAndRun(args.path, tbFileName)
 
     else:
         print(testbench)
@@ -30,6 +39,25 @@ def readVHDLFile(path):
     with open(path) as file:
         lines = file.readlines()
         return getEntities(lines)
+    
+def runCmd(exe: str, args: list[str]):
+    subprocess.run([exe]+args)
+
+def compileAndRun(mainFile: str, testFile: str):
+    testName = testFile.removesuffix(".vhdl")
+    try:
+        logging.info("Compiling")
+        runCmd("ghdl", ["-a", mainFile, testFile])
+        logging.info("Running test")
+        runCmd("ghdl", ["-e", testName])
+        logging.info("Generating output")
+        runCmd("ghdl", ["-r", testName, "--vcd=wave.vcd"])
+        logging.info("Showing output")
+        runCmd("gtkwave", ["wave.vcd"])
+
+    except subprocess.CalledProcessError as e:
+        print("Error occurred:", e)
+        print("Error output:", e.stderr)
     
 @dataclass
 class Port:
@@ -104,19 +132,6 @@ def getEntities(lines: list[str]) -> list[Entity]:
             entities.append(parseEntity(lines, i))
     return entities
 
-        
-def getLinesWith(lines: list[str], identifier: str, max=0):
-    out: list[str] = []
-    count = 0
-    for l in lines:
-        if l.startswith(identifier):
-            out.append(l[len(identifier):])
-            count += 1
-            if max > 0 and count >= max: 
-                break
-
-    return out
-
 def getLength(vType: str):
     vhdlType = vType.lower()
     if vhdlType == "std_logic":
@@ -139,7 +154,7 @@ def allCombinations(inputs: list[Port]):
         raise ValueError("Too many combinations for exhaustive test")
 
     for i in range(2 ** totalBits):
-        yield toBin(i, totalBits);
+        yield toBin(i, totalBits)
 
 def toBin(value: int, width: int) -> str:
     return format(value, f"0{width}b")
@@ -248,4 +263,4 @@ def assignFromBits(inputs: list[Port], bitsString: str):
     return lines
 
 if __name__ == "__main__":
-    main();
+    main()
