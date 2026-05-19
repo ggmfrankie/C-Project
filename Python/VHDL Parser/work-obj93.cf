@@ -1,0 +1,7 @@
+v 4
+file . "JK_FlipFlop_tb.vhdl" "348d44c3ea8d5f66a4444b0f562217eda98bf968" "20260519074259.614":
+  entity jk_flipflop_tb at 1( 0) + 0 on 29;
+  architecture sim of jk_flipflop_tb at 4( 76) + 0 on 30;
+file . ".\JK_FlipFlop.vhdl" "3f41a52f15ce1ca70cf22941bf9db234c5b7d58a" "20260519074259.509":
+  entity jk_flipflop at 1( 0) + 0 on 27;
+  architecture rtl of jk_flipflop at 11( 156) + 0 on 28;
