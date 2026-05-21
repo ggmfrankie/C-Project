@@ -14,8 +14,6 @@
 #define min(a, b) (((a) < (b)) ? (a) : (b))
 #define max(a, b) (((a) > (b)) ? (a) : (b))
 
-
-
 #define print_if(condition, text, ...) do {if (condition) printf(text, ##__VA_ARGS__);} while(0)
 #endif
 

@@ -37,7 +37,9 @@ typedef enum ElementType: byte {
 typedef struct {
     int minWidth;
     int minHeight;
-} CachedDimensions;
+
+    int* aLineIndices;
+} Cache;
 
 typedef struct Element {
     char* name;
@@ -83,7 +85,7 @@ typedef struct Element {
         float brightness;
     } visuals;
 
-    CachedDimensions cachedDims;
+    Cache cachedDims;
 
     int ID;
 

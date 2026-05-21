@@ -10,7 +10,6 @@ typedef struct CString {
     size_t length;
     size_t capacity;
     bool isHeap;
-
 } String;
 
 typedef struct StringFunctions {

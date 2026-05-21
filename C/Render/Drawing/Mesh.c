@@ -13,8 +13,6 @@
 #include "Render/GUI/Texture.h"
 #include "Utils/Vector.h"
 
-inline float deg2rad(const float d) { return d * (M_PI / 180.0f); }
-
 struct ArcInfo {
     int start;
     int end;
@@ -22,12 +20,12 @@ struct ArcInfo {
 };
 
 static struct ArcInfo Mesh_triangulate(const Vec2f corner, const float radius, GuiVertex *verts, int* vt, int* indices, int* id, float startAngle, float endAngle, int numTriangles) {
-    float radStep = (endAngle - startAngle)/(float)numTriangles;
-    int cornerIndex = *vt;
+    const float radStep = (endAngle - startAngle)/(float)numTriangles;
+    const int cornerIndex = *vt;
 
     verts[(*vt)++].pos = corner;
 
-    int startIndex = *vt;
+    const int startIndex = *vt;
 
     verts[(*vt)++].pos = (Vec2f){
         corner.x + cosf(startAngle)*radius,

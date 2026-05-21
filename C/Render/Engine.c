@@ -70,7 +70,7 @@ static void* workerThreadInit(void* args) {
     }
     pthread_mutex_unlock(&guiMutex);
     threadExecute();
-    return NULL;
+    return nullptr;
 }
 
 void gui_init(GLFWwindow* window, const int width, const int height, void (*generateGUI)(Element* guiRoot)) {
@@ -286,7 +286,7 @@ static bool processInputRec(Element *element, Renderer *renderer) {
     if (element == NULL || !element->flags.isActive) return false;
     if (element->callbacks.onUpdate) element->callbacks.onUpdate(element);
 
-    for_eachRevArr(child, element->aChildElements,
+    for_eachRevArr(const child, element->aChildElements,
         if (processInputRec(*child, renderer)) return true;
     );
 

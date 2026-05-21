@@ -5,12 +5,13 @@
 #include "../GUI/Texture.h"
 #include "../../Utils/CString.h"
 #define STB_IMAGE_IMPLEMENTATION
-#include <_bsd_types.h>
+
 #include <stb/stb_image.h>
 #include <stb/stb_rect_pack.h>
 
 #include "glad/gl.h"
 #include "Utils/CHashMap.h"
+#include "Utils/Utils.h"
 
 static constexpr int MAX_ATLAS_TEXTURES = 512;
 
@@ -33,16 +34,18 @@ Basic_Texture* newTexture(const int width, const int height, const GLuint textur
 
 void f_loadTextures(TextureAtlas *atlas, const char *first, va_list args) {
     stbrp_rect rects[MAX_ATLAS_TEXTURES];
-    u_char* pixels[MAX_ATLAS_TEXTURES];
+    byte* pixels[MAX_ATLAS_TEXTURES];
     const char* names[MAX_ATLAS_TEXTURES];
     int index = 0;
 
     const char* file = first;
 
     while (file) {
-        String fileNameString = newString_c(file);
         const String defaultPath = stringOf("../Resources/Textures/");
-        String fullPath = Strings.combine(&defaultPath, &fileNameString);
+
+        defer(str_delete) String fileNameString = newString_c(file);
+        defer(str_delete) const String fullPath = Strings.combine(&defaultPath, &fileNameString);
+
         int width, height, channels;
 
         pixels[index] = stbi_load(fullPath.m, &width, &height, &channels, 4);
@@ -54,16 +57,13 @@ void f_loadTextures(TextureAtlas *atlas, const char *first, va_list args) {
         names[index] = file;
 
         index++;
-
-        Strings.delete_(&fileNameString);
-        Strings.delete_(&fullPath);
         file = va_arg(args, const char*);
     }
 
-    unsigned char* data = calloc(atlas->width * atlas->height * 4, 1);
+    defer(defer_free) byte* data = calloc(atlas->width * atlas->height * 4, 1);
 
     stbrp_context ctx;
-    stbrp_node* nodes = malloc(sizeof(stbrp_node) * atlas->width);
+    defer(defer_free) stbrp_node* nodes = malloc(sizeof(stbrp_node) * atlas->width);
 
     stbrp_init_target(&ctx, atlas->width, atlas->height, nodes, atlas->width);
     stbrp_pack_rects(&ctx, rects, index);
@@ -79,11 +79,11 @@ void f_loadTextures(TextureAtlas *atlas, const char *first, va_list args) {
         const int w    = rects[i].w;
         const int h    = rects[i].h;
 
-        const unsigned char* src = pixels[i];
+        const byte* src = pixels[i];
 
         for (int row = 0; row < h; ++row) {
-            unsigned char* dst = data + ((dstY + row) * atlas->width + dstX) * 4;
-            const unsigned char* s = src + row * (w * 4);
+            byte* dst = data + ((dstY + row) * atlas->width + dstX) * 4;
+            const byte* s = src + row * (w * 4);
             memcpy(dst, s, (size_t)w * 4);
         }
     }
@@ -100,8 +100,6 @@ void f_loadTextures(TextureAtlas *atlas, const char *first, va_list args) {
     for (int i = 0; i < index; i++) {
         stbi_image_free(pixels[i]);
     }
-    free(nodes);
-    free(data);
 }
 
 Basic_Texture *newEmptyTexture(const int width, const int height) {
@@ -133,13 +131,12 @@ Basic_Texture *newEmptyTexture(const int width, const int height) {
 Basic_Texture *loadTextureFromPng(char *fileName) {
     const String fileNameString = stringOf(fileName);
     const String defaultPath = stringOf("../Resources/Textures/");
-    String fullPath = Strings.combine(&defaultPath, &fileNameString);
+    defer(str_delete) const String fullPath = Strings.combine(&defaultPath, &fileNameString);
 
     int width, height, channels;
 
-    unsigned char* data = stbi_load(fullPath.m, &width, &height, &channels, 0);
+    byte* data = stbi_load(fullPath.m, &width, &height, &channels, 0);
 
-    Strings.delete_(&fullPath);
     if (!data) {
         printf("Failed to load image\n");
         exit(-3) ;
@@ -159,7 +156,7 @@ Texture getTexture(const char* name) {
     return *texture;
 }
 
-static GLuint uploadTextureToGPU(const int width, const int height, const int channels, const unsigned char* pixels) {
+static GLuint uploadTextureToGPU(const int width, const int height, const int channels, const byte* pixels) {
     GLuint texture;
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
