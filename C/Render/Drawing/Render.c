@@ -159,7 +159,7 @@ void Renderer_updateLayout2(const Renderer *renderer) {
 }
 
 static Cache* cacheLayoutLines(Element* self, Font* font) {
-    Cache* data = &self->cachedDims;
+    Cache* data = &self->layoutCache;
 
     arrClear(data->aLineIndices);
     data->minWidth = 0;
@@ -207,14 +207,34 @@ static Cache* cacheLayoutLines(Element* self, Font* font) {
             ++(*currLineCount);
         }
     });
-
     data->minWidth  = max(extend.x + self->padding.left + self->padding.right, self->dims.width);
     data->minHeight = max(extend.y + self->padding.up   + self->padding.down,  self->dims.height);
     return data;
 }
 
 static void layoutElement(const Element* self) {
+    const Vec2i contentStart = {self->dims.worldPos.x + self->padding.left, self->dims.worldPos.y + self->padding.down};
+    Vec2i cursor = contentStart;
+    Vec2i extend = contentStart;
 
+    int lineIndex = 0;
+    int remainingElementCount = 0;
+    for_eachArr(childPtr, self->aChildElements, {
+        Element* child = *childPtr;
+        Cache* childCache = &child->layoutCache;
+        if (remainingElementCount == 0) {
+            remainingElementCount = childCache->aLineIndices[lineIndex];
+            --lineIndex;
+        }
+        switch (self->layoutDirection) {
+            case L_down:
+
+            break;
+            case L_right:
+
+            break;
+        }
+    });
 }
 
 //TODO maybe pass available size to the child element or maybe change the layout function if the element has fixed width?
@@ -225,7 +245,7 @@ static Vec2i updateLayout(Element* self, const Vec2i parentCursor, const Vec2i r
     const auto cb = &self->callbacks;
     const auto dims = &self->dims;
     const auto padding = &self->padding;
-    const auto flags = &self->flags;
+    const auto flags = &self->flags; 
     
 #if GUI_DEBUG
     const bool correctElement = (self->name) ? (strcmp(GUI_DEBUG_OBSERVE_ELEMENT_UPDATE_ELEMENT, self->name) == 0) : false;

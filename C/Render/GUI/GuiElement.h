@@ -85,7 +85,7 @@ typedef struct Element {
         float brightness;
     } visuals;
 
-    Cache cachedDims;
+    Cache layoutCache;
 
     int ID;
 
