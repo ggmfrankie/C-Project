@@ -18,7 +18,6 @@ static Vec2i updateLayout(Element* self, Vec2i parentCursor, Vec2i remainingSpac
 
 static void layoutElement(const Element* self);
 
-
 Element* createRootElement();
 
 [[deprecated]]
