@@ -9,14 +9,12 @@
 #include "../Utils/Vector.h"
 #include "../../Dependencies/include/glad/gl.h"
 
-HASH_MAP(Uniforms, char*, GLint)
 
 typedef struct Shader {
     int programId;
     int vertexId;
     int fragmentId;
-    Hashmap_Uniforms uniforms;
-
+    GLint* map_uniforms;
 } Shader;
 
 typedef struct OtherShaders {

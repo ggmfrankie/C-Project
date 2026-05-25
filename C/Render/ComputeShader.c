@@ -11,19 +11,21 @@
 #include "../Utils/CString.h"
 #include "../Utils/Vector.h"
 #include "Utils/CArrayList.h"
+#include "Utils/CHashMap.h"
+#include "Utils/Utils.h"
 
 static GLuint generateGraphSSBO(const size_t size) {
     GLuint graphSSBO;
     glGenBuffers(1, &graphSSBO);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, graphSSBO);
-    glBufferData(GL_SHADER_STORAGE_BUFFER, (GLsizeiptr) (sizeof(Vec2f) * size), NULL, GL_DYNAMIC_DRAW);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, (GLsizeiptr) (sizeof(Vec2f) * size), nullptr, GL_DYNAMIC_DRAW);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, graphSSBO);
     return graphSSBO;
 }
 
 static GLuint createGraphingShader(const String *fileName, const int programId) {
-    String shaderSource = readShaderFile(fileName);
-    const GLchar* source = (GLchar*)shaderSource.m;
+    defer(str_delete) const String shaderSource = readShaderFile(fileName);
+    const GLchar* source = shaderSource.m;
 
     const int shaderId = createShader(&source, GL_COMPUTE_SHADER, programId);
 
@@ -32,11 +34,10 @@ static GLuint createGraphingShader(const String *fileName, const int programId) 
 
     glGetShaderiv(shaderId, GL_COMPILE_STATUS, &success);
     if (!success) {
-        glGetShaderInfoLog(shaderId, 512, NULL, infoLog);
+        glGetShaderInfoLog(shaderId, 512, nullptr, infoLog);
         printf("Graphing Shader Compile Error:\n%s\n", infoLog);
     }
-
-    Strings.delete_(&shaderSource);
+    
     return shaderId;
 }
 
@@ -46,7 +47,7 @@ void ComputeShader_createUniform(ComputeShader *shader, const char* name) {
     if(uniformLocation < 0){
         printf("Error creating Uniform");
     }
-    Hashmap_Uniforms_add(&shader->uniforms, name, uniformLocation);
+    mapInsert(shader->map_uniforms, name, uniformLocation);
 }
 
 ComputeShader newComputeShader(Basic_Texture *texture, const int size) {
@@ -71,7 +72,7 @@ ComputeShader newComputeShader(Basic_Texture *texture, const int size) {
         .SSBO = generateGraphSSBO(size),
         .programId = programId,
         .texture = texture,
-        .uniforms = newHashmap_Uniforms(16),
+        .map_uniforms = nullptr,
         .ssboSize = size,
         .thickness = 0.0f,
         .startX = 0.0f,
@@ -94,18 +95,16 @@ void ComputeShader_update(const ComputeShader *computeShader, double (*func)(dou
     double minVal = func(xStart);
     double maxVal = func(xStart);
 
-    // first pass: find min/max over domain
     for (int i = 0; i < size; i++) {
-        double x = xStart + (xEnd - xStart) * (float) i / (float)(size - 1);
-        double y = func(x);
+        const double x = xStart + (xEnd - xStart) * (float) i / (float)(size - 1);
+        const double y = func(x);
         if (y < minVal) minVal = y;
         if (y > maxVal) maxVal = y;
     }
 
-    // second pass: normalize to 0..1
     for (int i = 0; i < size; i++) {
-        double x = xStart + (xEnd - xStart) * (float) i / (float)(size - 1);
-        double y = func(x);
+        const double x = xStart + (xEnd - xStart) * (float) i / (float)(size - 1);
+        const double y = func(x);
         Vec2f normPos;
         normPos.x = (float)i / (float)(size - 1);
         normPos.y = (float)((y - minVal) / (maxVal - minVal));

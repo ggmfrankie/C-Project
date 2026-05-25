@@ -5,6 +5,8 @@
 
 #include "Shader.h"
 #include "../Utils/FileIO.h"
+#include "Utils/CHashMap.h"
+#include "Utils/Utils.h"
 
 ShaderFunction Shaders = {
     .bind = Shader_bindProgram,
@@ -36,7 +38,6 @@ Shader newShader(char* vertexShaderFile, char* fragmentShaderFile) {
         printf("Vertex Shader Compile Error:\n%s\n", infoLog);
     }
 
-    // --- DEBUG: Check fragment shader compile status ---
     glGetShaderiv(fragmentId, GL_COMPILE_STATUS, &success);
     if (!success) {
         glGetShaderInfoLog(fragmentId, 512, nullptr, infoLog);
@@ -45,7 +46,6 @@ Shader newShader(char* vertexShaderFile, char* fragmentShaderFile) {
 
     glLinkProgram(programId);
 
-    // --- DEBUG: Check program link status ---
     glGetProgramiv(programId, GL_LINK_STATUS, &success);
     if (!success) {
         glGetProgramInfoLog(programId, 512, nullptr, infoLog);
@@ -56,7 +56,7 @@ Shader newShader(char* vertexShaderFile, char* fragmentShaderFile) {
         .programId = programId,
         .vertexId = vertexId,
         .fragmentId = fragmentId,
-        .uniforms = newHashmap_Uniforms(16)
+        .map_uniforms = nullptr
     };
 }
 
@@ -66,7 +66,7 @@ void Shader_createUniform(Shader *shader, const char* name) {
     if(uniformLocation < 0){
         printf("Error creating Uniform: %s", name);
     }
-    Hashmap_Uniforms_add(&shader->uniforms, name, uniformLocation);
+    mapInsert(shader->map_uniforms, name, uniformLocation);
 }
 
 int createVertexShader(const String *fileName, const int programId) {
@@ -91,9 +91,8 @@ int createFragmentShader(const String *fileName, const int programId) {
 
 String readShaderFile(const String *fileName) {
     const String defaultShaderPath = stringOf("../C/Shader/");
-    String completePath = Strings.combine(&defaultShaderPath, fileName);
+    defer(str_delete) const String completePath = Strings.combine(&defaultShaderPath, fileName);
     const String shaderSource = readFile(&completePath);
-    Strings.delete_(&completePath);
     return shaderSource;
 }
 
@@ -106,19 +105,19 @@ int createShader(const GLchar** shaderSource, const int shaderType, const int pr
 }
 
 void setUniform_f(const Shader *shader, const char* name, const float value) {
-    glUniform1f(*Hashmap_Uniforms_get(&shader->uniforms, name), value);
+    glUniform1f(*mapGet(shader->map_uniforms, name), value);
 }
 
 void setUniform_i(const Shader *shader, const char* name, const int value) {
-    glUniform1i(*Hashmap_Uniforms_get(&shader->uniforms, name), value);
+    glUniform1i(*mapGet(shader->map_uniforms, name), value);
 }
 
 void setUniform_Vec2(const Shader *shader, const char* name, const Vec2f value) {
-    glUniform2f(*Hashmap_Uniforms_get(&shader->uniforms, name), value.x, value.y);
+    glUniform2f(*mapGet(shader->map_uniforms, name), value.x, value.y);
 }
 
 void setUniform_Vec3(const Shader *shader, const char* name, const Vec3f value) {
-    glUniform3f(*Hashmap_Uniforms_get(&shader->uniforms, name), value.x, value.y, value.z);
+    glUniform3f(*mapGet(shader->map_uniforms, name), value.x, value.y, value.z);
 }
 
 void Shader_bindProgram(const Shader *shader) {

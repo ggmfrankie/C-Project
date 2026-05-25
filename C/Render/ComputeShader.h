@@ -12,7 +12,7 @@ typedef struct ComputeShader {
     GLuint ssboSize;
     GLuint programId;
     Basic_Texture* texture;
-    Hashmap_Uniforms uniforms;
+    GLuint* map_uniforms;
     float thickness;
     float startX;
     float endX;

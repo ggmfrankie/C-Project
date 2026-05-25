@@ -103,8 +103,7 @@ add_library(GUI STATIC
         C/Utils/UtilsTest.h
         C/Utils/CHashMap.c
         C/Utils/UtilsTypedef.h
-        C/Utils/Defer.c
-        C/Utils/Defer.h
+        C/Utils/Utils.c
 )
 
 set_target_properties(GUI PROPERTIES LINKER_LANGUAGE C)
