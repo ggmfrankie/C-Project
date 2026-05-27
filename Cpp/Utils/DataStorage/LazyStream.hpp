@@ -40,7 +40,6 @@ namespace ggm {
 
         template<typename F, typename Input>
         struct GetType;
-
         template<typename F, typename Input>
         struct GetType<Filter<F>, Input> {
             using type = Input;
