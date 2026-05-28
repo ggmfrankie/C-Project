@@ -17,6 +17,7 @@ static void accumulateMeshes(Element *element, const Renderer *renderer, GuiVert
 static Vec2i updateLayout(Element* self, Vec2i parentCursor, Vec2i remainingSpace, Vec2i parentPos, const Font* font);
 
 static void layoutElement(const Element* self);
+static Cache* cacheLayoutLines(Element* self, const Font* font);
 
 Element* createRootElement();
 
@@ -153,86 +154,122 @@ void Renderer_updateLayout2(const Renderer *renderer) {
     root->dims.width = renderer->screenWidth;
     root->dims.height = renderer->screenHeight;
 
-
+    cacheLayoutLines(renderer->guiRoot, &renderer->font);
     layoutElement(renderer->guiRoot);
 }
 
-static Cache* cacheLayoutLines(Element* self, Font* font) {
+static Cache* cacheLayoutLines(Element* self, const Font* font) {
     Cache* data = &self->layoutCache;
 
-    arrClear(data->aLineIndices);
-    data->minWidth = 0;
-    data->minHeight = 0;
+    arrClear(data->aLines);
+    arrPush(data->aLines, (Line){});
+    data->minWidth = self->padding.right + self->padding.right;
+    data->minHeight = self->padding.up + self->padding.down;
 
     Vec2i cursor = {};
     Vec2i extend = {};
 
     if (self->textElement.hasText) {
         const Vec2i textDims = measureElementText(font, &self->textElement);
-        data->minWidth = textDims.x;
-        data->minHeight = textDims.y;
+        data->minWidth += textDims.x;
+        data->minHeight += textDims.y;
     }
 
+    bool newLine = false;
     for_eachArr(childPtr, self->aChildElements, {
         Element* child = *childPtr;
         const Cache* childData = cacheLayoutLines(child, font);
 
-        int* currLineCount = arrGetLast(data->aLineIndices);
-        switch (self->layoutDirection) {
+        Line* currLine = arrGetLast(data->aLines);
+        if (child->positionMode == POS_FIT) {
+            switch (self->layoutDirection) {
             case L_down:
-                if (cursor.y + childData->minHeight > self->dims.maxHeight) {
-                    // new line
-                    arrPush(data->aLineIndices, 0);
-                    currLineCount = arrGetLast(data->aLineIndices);
-                }
-                cursor.y += childData->minHeight + self->childGap;
+                    if (cursor.y + childData->minHeight + self->padding.down > self->dims.maxHeight) {
+                        // new line
+                        currLine->end = i;
+                        arrPush(data->aLines, (Line){i, i});
+                    }
+                    cursor.y += childData->minHeight + self->childGap;
 
-                extend.y = max(extend.y, cursor.y);
-                extend.x = max(extend.x, cursor.x + childData->minWidth);
+                    extend.y = max(extend.y, cursor.y);
+                    extend.x = max(extend.x, cursor.x + childData->minWidth);
 
-                break;
-            case L_right:
-                if (cursor.x + childData->minWidth > self->dims.maxWidth) {
-                    // new line
-                    arrPush(data->aLineIndices, 0);
-                    currLineCount = arrGetLast(data->aLineIndices);
-                }
-                cursor.x += childData->minWidth + self->childGap;
+                    break;
+                case L_right:
+                    if (cursor.x + childData->minWidth + self->padding.right > self->dims.maxWidth) {
+                        // new line
+                        currLine->end = i;
+                        arrPush(data->aLines, (Line){i, i});
+                    }
+                    cursor.x += childData->minWidth + self->childGap;
 
-                extend.x = max(extend.x, cursor.x);
-                extend.y = max(extend.y, cursor.y + childData->minHeight);
+                    extend.x = max(extend.x, cursor.x);
+                    extend.y = max(extend.y, cursor.y + childData->minHeight);
 
-                break;
-            ++(*currLineCount);
+                    break;
+            }
+            ++currLine->end;
         }
     });
-    data->minWidth  = max(extend.x + self->padding.left + self->padding.right, self->dims.width);
-    data->minHeight = max(extend.y + self->padding.up   + self->padding.down,  self->dims.height);
+    data->minWidth  = max(extend.x + self->padding.left + self->padding.right, max(self->dims.width, data->minWidth));
+    data->minHeight = max(extend.y + self->padding.up   + self->padding.down,  max(self->dims.height, data->minHeight));
     return data;
 }
 
+static void placeLineDown(const Element* parent, Vec2i* cursor, Vec2i* extend, Element** array, Line line) {
+    float totalLineFlex = 0.0f;
+
+    for (int i = line.start; i < line.end; ++i) {
+        totalLineFlex += array[i]->dims.flexGrow;
+    }
+
+    for (int i = line.start; i < line.end; ++i) {
+        Element* curr = array[i];
+        if (curr->positionMode == POS_FIT) {
+            curr->dims.worldPos = *cursor;
+
+            curr->dims.worldWidth = curr->layoutCache.minWidth;
+            curr->dims.worldHeight = curr->layoutCache.minHeight + ((totalLineFlex) ? (curr->dims.flexGrow/totalLineFlex) * parent->dims.worldHeight : 0);
+
+            cursor->y += curr->dims.worldHeight + parent->childGap;
+
+            extend->x = max(extend->x, curr->dims.worldPos.x + curr->dims.worldWidth);
+            extend->y = max(extend->y, curr->dims.worldPos.y + curr->dims.worldHeight);
+        } else {
+            curr->dims.worldWidth = curr->layoutCache.minWidth;
+            curr->dims.worldHeight = curr->layoutCache.minHeight;
+        }
+    }
+}
+
 static void layoutElement(const Element* self) {
+    if (!self || !self->flags.isActive) return;
     const Vec2i contentStart = {self->dims.worldPos.x + self->padding.left, self->dims.worldPos.y + self->padding.down};
     Vec2i cursor = contentStart;
     Vec2i extend = contentStart;
 
-    int lineIndex = 0;
-    int remainingElementCount = 0;
+    if (!arrIsEmpty(self->aChildElements) && !arrIsEmpty(self->layoutCache.aLines)) {
+
+        //New Line
+        for_eachArr(linesPtr, self->layoutCache.aLines, {
+            switch (self->layoutDirection) {
+                case L_down:
+                    cursor.x = extend.x + self->childGap;
+                    cursor.y = contentStart.y;
+                    placeLineDown(self, &cursor, &extend, self->aChildElements, *linesPtr);
+                    break;
+                case L_right:
+                    cursor.y = extend.y + self->childGap;
+                    cursor.x = contentStart.x;
+                    break;
+            }
+        });
+    }
+
     for_eachArr(childPtr, self->aChildElements, {
         Element* child = *childPtr;
-        Cache* childCache = &child->layoutCache;
-        if (remainingElementCount == 0) {
-            remainingElementCount = childCache->aLineIndices[lineIndex];
-            --lineIndex;
-        }
-        switch (self->layoutDirection) {
-            case L_down:
-
-            break;
-            case L_right:
-
-            break;
-        }
+        if (child->callbacks.reset) child->callbacks.reset(child);
+        layoutElement(*childPtr);
     });
 }
 

@@ -90,7 +90,7 @@ void gui_init(GLFWwindow* window, const int width, const int height, void (*gene
 void gui_update() {
     lock();
     dragElement(&g_Renderer);
-    Renderer_updateLayout(&g_Renderer);
+    Renderer_updateLayout2(&g_Renderer);
     gui_popUpdate();
     processInput(&g_Renderer);
 #ifdef GUI_DEBUG

@@ -22,7 +22,7 @@ typedef struct {
 
 #define arrIsEmpty(array) (arrLen(array) == 0)
 
-#define arrPush(array, x) \
+#define arrPush(array, ...) \
     do {\
         if((array) == nullptr) {\
             __Array_Header_* header = malloc(sizeof(*(array)) * ArrayInitCapacity + sizeof(__Array_Header_));\
@@ -44,12 +44,12 @@ typedef struct {
                 puts("Failed to realloc ArrayList");\
             }\
         }\
-        (array)[header->size++] = x;\
+        (array)[header->size++] = __VA_ARGS__;\
     } while (0)
 
 #define arrTryGet(array, index) (((array) == nullptr) ? nullptr : (_arrayGetHead(array).size <= (index)) ? nullptr : &(array)[index])
 
-#define arrGetLast(array) (array) ? &(array)[arrLen(array)-1]: nullptr;
+#define arrGetLast(array) ((array) ? &(array)[arrLen(array)-1]: nullptr)
 
 #define arrClear(array)\
     do {\

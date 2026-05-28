@@ -35,10 +35,15 @@ typedef enum ElementType: byte {
 } ElementType;
 
 typedef struct {
+    int start;
+    int end;
+} Line;
+
+typedef struct {
     int minWidth;
     int minHeight;
 
-    int* aLineIndices;
+    Line* aLines;
 } Cache;
 
 typedef struct Element {
