@@ -6,6 +6,8 @@
 
 #include "Utils/Utils.hpp"
 #include "DebugLayer.hpp"
+#include "Game2DGui.h"
+#include "GuiInterface.h"
 #include "Render/Screen.hpp"
 #include "Render/Objects/Objects2D/Physics/PhysicsFactory.hpp"
 
@@ -30,10 +32,14 @@ namespace Game2D {
     }
 
     void Game2D::postInit() {
+        gui_init(mScreen->getWindowHandle(), mScreen->getWidth(), mScreen->getHeight(), generateGame2DGui);
         glfwSetInputMode(mScreen->getWindowHandle(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
     }
 
     void Game2D::onShutdown() {}
 
-    void Game2D::onUpdate(double deltaTime) {}
+    void Game2D::onUpdate(double deltaTime) {
+        gui_update();
+        gui_render();
+    }
 }

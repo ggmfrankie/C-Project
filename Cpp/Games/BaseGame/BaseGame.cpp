@@ -147,6 +147,8 @@ namespace Game {
             mCamera->moveBy(cameraMovement.x * CAMERA_POS_STEP, cameraMovement.y * CAMERA_POS_STEP, cameraMovement.z * CAMERA_POS_STEP);
             mCamera->rotateBy(camRot.x * MOUSE_SENSITIVITY, 0 , camRot.y * MOUSE_SENSITIVITY);
         }
+
+        gui_update();
     }
 
     void BaseGame::onShutdown() {
@@ -160,4 +162,4 @@ namespace Game {
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         }
     }
-} // Render
+}

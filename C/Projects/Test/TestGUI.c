@@ -21,7 +21,7 @@ void generateTestGUI(Element *guiRoot) {
                 .onHover = defaultHoverFun,
                 .draggable = true,
                 .childGap = 10,
-                .posMode = POS_ABSOLUTE,
+                .posMode = POS_RELATIVE,
             }),
             createElement((ElementSettings){
                 .texture = "Pointer Schematic.png",

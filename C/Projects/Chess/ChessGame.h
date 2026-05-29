@@ -2,9 +2,7 @@
 // Created by Stefan on 07.01.2026.
 //
 
-
-#ifndef C_CHESSGAME_H
-#define C_CHESSGAME_H
+#pragma once
 
 #ifdef __cplusplus
 extern "C" {
@@ -18,4 +16,3 @@ void createChessGUI(struct Element *root);
     }
 #endif
 
-#endif //C_CHESSGAME_H

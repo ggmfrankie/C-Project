@@ -27,7 +27,8 @@ void generateDebugGui(Element* guiRoot) {
                 .fixedHeight = true,
                 .notSelectable = true,
                 .invisible = true,
-                .color = {}
+                .color = {},
+                .posMode = POS_RELATIVE
             }),
             createElement((ElementSettings){
                 .width = 20,
@@ -57,7 +58,7 @@ void generateMainMenuGui(Element* guiRoot) {
                 .color = {0.78f, 0.78f, 0.78f},
                 .draggable = true,
                 .childGap = 10,
-                .posMode = POS_ABSOLUTE,
+                .posMode = POS_RELATIVE,
                 .transparency = 0.5,
                 .cornerRadius = 20.f
             }),

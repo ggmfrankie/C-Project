@@ -51,7 +51,7 @@ bool guiInitialized = false;
 static Renderer g_Renderer;
 static UserCallbacks g_Callbacks;
 
-static void processInput(Renderer *renderer);
+static void Engine_processInput(Renderer *renderer);
 static bool processInputRec(Element *element, Renderer *renderer);
 static bool dragElement(const Renderer *renderer);
 static void gui_processDebug();
@@ -92,8 +92,8 @@ void gui_update() {
     dragElement(&g_Renderer);
     Renderer_updateLayout2(&g_Renderer);
     gui_popUpdate();
-    processInput(&g_Renderer);
-#ifdef GUI_DEBUG
+    Engine_processInput(&g_Renderer);
+#if GUI_DEBUG
     gui_processDebug();
 #endif
     unlock();
@@ -251,7 +251,7 @@ static bool dragElement(const Renderer *renderer) {
             offset.y = renderer->mousePos.y - element->dims.worldPos.y;
             dragging = true;
         } else {
-            element->positionMode = POS_ABSOLUTE;
+            element->positionMode = POS_RELATIVE;
             element->dims.pos.x = (renderer->mousePos.x - parentWorldPos.x) - offset.x - 0;
             element->dims.pos.y = (renderer->mousePos.y - parentWorldPos.y) - offset.y - 0;
 
@@ -272,7 +272,7 @@ static bool dragElement(const Renderer *renderer) {
     return false;
 }
 
-static void processInput(Renderer *renderer) {
+static void Engine_processInput(Renderer *renderer) {
     renderer->guiRoot->dims.width = renderer->screenWidth;
     renderer->guiRoot->dims.height = renderer->screenHeight;
 

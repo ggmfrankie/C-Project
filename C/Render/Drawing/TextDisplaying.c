@@ -7,6 +7,7 @@
 #define STB_RECT_PACK_IMPLEMENTATION
 #include <stb/stb_rect_pack.h>
 #define STB_TRUETYPE_IMPLEMENTATION
+#include <float.h>
 #include <minwindef.h>
 #include <stb/stb_truetype.h>
 #include "Render.h"
@@ -128,17 +129,43 @@ void accumulateTextQuads(const Element *element, GuiVertex *vertices, int *vt, i
 }
 
 Vec2i measureElementText(const Font *font, const TextElement* textElement) {
-    const Vec2i measurements = measureText(font, &textElement->text);
-    const float scale = textElement->textScale;
-    return (Vec2i){(int)(measurements.x * scale), (int)(measurements.y * scale)};
+
+    if (arrIsEmpty(textElement->aCharQuads)) {
+        return (Vec2i){0, 0};
+    }
+
+    float minX =  FLT_MAX;
+    float minY =  FLT_MAX;
+    float maxX = -FLT_MAX;
+    float maxY = -FLT_MAX;
+
+    for_eachArr(charPtr, textElement->aCharQuads, {
+        Character* c = charPtr;
+
+        float x0 = c->pos.x;
+        float y0 = c->pos.y;
+        float x1 = c->pos.x + c->width;
+        float y1 = c->pos.y + c->height;
+
+        minX = min(minX, x0);
+        minY = min(minY, y0);
+        maxX = max(maxX, x1);
+        maxY = max(maxY, y1);
+    });
+
+    float width  = maxX - minX;
+    float height = maxY - minY;
+
+    return (Vec2i){
+        (int)width,
+        (int)height
+    };
+
 }
 
 Vec2i measureText(const Font *font, const String *text) {
-
     float x = 0.0f;
     float y = 0.0f;
-
-    float maxHeight = 0.0f;
 
     for (int i = 0; i < text->length; i++) {
         const char c = text->m[i];
@@ -154,15 +181,11 @@ Vec2i measureText(const Font *font, const String *text) {
             &y,
             &q,0
         );
-
-        const float glyphHeight = (q.y1 - q.y0);
-
-        maxHeight = max(maxHeight, glyphHeight);
     }
 
     return (Vec2i){
         (int)(x),
-        (int)(maxHeight)
+        (int)(font->maxCharHeight)
     };
 }
 

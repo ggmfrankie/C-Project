@@ -336,7 +336,7 @@ Element* addChildrenAsGridWithGenerator(const ElementSettings parentData, Elemen
     const int childWidth = parent->dims.width/numX;
     const int childHeight = parent->dims.height/numY;
 
-    es.posMode = POS_ABSOLUTE;
+    es.posMode = POS_RELATIVE;
     es.width = childWidth;
     es.height = childHeight;
 

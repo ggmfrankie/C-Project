@@ -33,7 +33,7 @@ bool dragFun(Element *element, const Renderer *renderer) {
             offset.y = renderer->mousePos.y - element->dims.worldPos.y;
             dragging = true;
         } else {
-            element->positionMode = POS_ABSOLUTE;
+            element->positionMode = POS_RELATIVE;
             element->dims.pos.x = (renderer->mousePos.x - parentWorldPos.x) - offset.x - ((element->parentElement)?element->parentElement->padding.left:0);
             element->dims.pos.y = (renderer->mousePos.y - parentWorldPos.y) - offset.y - ((element->parentElement)?element->parentElement->padding.up:0);
         }

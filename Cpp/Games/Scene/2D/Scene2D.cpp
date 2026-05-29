@@ -3,6 +3,8 @@
 //
 
 #include "Scene2D.hpp"
+
+#include "GuiInterface.h"
 #include "Render/Objects/Objects2D/Physics/PhysicsFactory.hpp"
 
 namespace Game2D {
@@ -18,6 +20,7 @@ namespace Game2D {
     void Scene2D::render(int width, int height) {
         mRenderer.render(width, height);
         mLayerStack.renderAll(width, height);
+        gui_render();
     }
 
     void Scene2D::update(float dt) {

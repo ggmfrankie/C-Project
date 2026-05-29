@@ -16,7 +16,6 @@ namespace Game {
 
 class GameEngine {
 public:
-
     ~GameEngine() = default;
 
     explicit GameEngine(Game::IGame& game);
@@ -24,14 +23,14 @@ public:
     void loop();
     void init();
 
-    void pushTask(const Engine::Task &t);
+    void pushTask(const Engine::Task& t);
 
-    Render::Screen &getScreen();
-    Engine::CommandRegistry &getCommandRegistry();
+    Render::Screen& getScreen();
+    Engine::CommandRegistry& getCommandRegistry();
 
-    static GameEngine &New(Game::IGame &game);
+    static GameEngine& New(Game::IGame& game);
 
-    static GameEngine &Get();
+    static GameEngine& Get();
 
 private:
     void processTasks();

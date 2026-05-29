@@ -35,6 +35,7 @@ namespace Game {
 
     void Scene3D::render(int width, int height) {
         mRenderLayer.render(width, height);
+        gui_render();
     }
 
     void Scene3D::update(float dt) {
@@ -42,6 +43,5 @@ namespace Game {
             obj.sync();
         }
         mPhysicsHandler.update(dt);
-        gui_update();
     }
-} // Game
+}

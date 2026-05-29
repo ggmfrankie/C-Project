@@ -20,7 +20,7 @@ typedef struct Padding {
 
 typedef enum PositionMode: byte {
     POS_FIT = 0,
-    POS_ABSOLUTE
+    POS_RELATIVE
 } PositionMode;
 
 typedef enum LayoutDirection: byte {

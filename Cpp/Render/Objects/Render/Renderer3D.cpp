@@ -46,6 +46,5 @@ namespace Game {
 
             obj.render();
         }
-        gui_render();
     }
 } // Game

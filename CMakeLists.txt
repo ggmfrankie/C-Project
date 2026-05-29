@@ -214,6 +214,8 @@ add_executable(C-Project
         Cpp/Render/Objects/Objects2D/Physics/PhysicsObjectRef.cpp
         Cpp/Render/Objects/Objects2D/Physics/PhysicsFactory.cpp
         EngineDefines.hpp
+        Cpp/Games/Game2D/Game2DGui.c
+        Cpp/Games/Game2D/Game2DGui.h
 )
 
 target_compile_definitions(C-Project PUBLIC JPH_ENABLE_ASSERTS)

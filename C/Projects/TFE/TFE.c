@@ -28,7 +28,7 @@ Element* TFE_createSquare(int, int, ElementSettings es) {
         createElement((ElementSettings){
             .text = "test",
             .pos = {20, 30},
-            .posMode = POS_ABSOLUTE,
+            .posMode = POS_RELATIVE,
             .transparency = 1.0f
         })
     );

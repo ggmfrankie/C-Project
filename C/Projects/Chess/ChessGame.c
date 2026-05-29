@@ -405,7 +405,7 @@ static bool applyMove(const ChessMove* move) {
     static bool isGameOver = false;
     if (isGameOver) return false;
 
-    const Vec2i pos = (Vec2i){move->toCol, move->toRow};
+    const Vec2i pos = {move->toCol, move->toRow};
     const Vec2i selectedPiecePos = {move->fromCol,move->fromRow};
 
     if (!board[pos.y][pos.x].isMarked)
@@ -676,9 +676,9 @@ static void createChessBoard(Element* root) {
                 (ElementSettings){
                     .color = COOL_COLOR,
                     .pos = {0,0},
-                    .posMode = POS_ABSOLUTE,
+                    .posMode = POS_RELATIVE,
                     .name = "game board",
-                    .padding = (Padding){10,10,10,10},
+                    .padding = {10,10,10,10},
                     .childGap = 10,
                     .cornerRadius = 10,
                     .draggable = true,
@@ -787,7 +787,7 @@ static void createStartScreen(Element* root) {
             createElement(
                 (ElementSettings){
                     .color = COOL_COLOR,
-                    .posMode = POS_ABSOLUTE,
+                    .posMode = POS_RELATIVE,
                     .childGap = 10,
                     .padding = {10,10,10,10},
                     .pos = {200, 200},
@@ -835,7 +835,7 @@ static void createEndScreen(Element* root) {
             createElement(
                 (ElementSettings){
                     .color = COOL_COLOR,
-                    .posMode = POS_ABSOLUTE,
+                    .posMode = POS_RELATIVE,
                     .childGap = 10,
                     .padding = {10,10,10,10},
                     .pos = {800, 200},
