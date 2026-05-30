@@ -6,8 +6,8 @@ def main():
 
 def test():
     board = chess_board(4)
-
-    print(board.test)
+    board.init()
+    board.loop()
     
 
 
@@ -49,7 +49,6 @@ def test():
 if __name__ == "__main__":
     main()
     test()
-    chess_board.drawing()
 
 
 
