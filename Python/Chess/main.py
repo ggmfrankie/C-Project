@@ -5,7 +5,7 @@ def main():
     print('Hello World!')
 
 def test():
-    board = chess_board(4)
+    board = ChessBoard(4)
     board.init()
     board.loop()
     

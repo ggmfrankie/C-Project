@@ -3,19 +3,16 @@ import sys
 
 from pygame import Surface
 from pygame.color import Color
-from pygame.surface import SurfaceType
 
 from Python.Chess.GUI.Button import Button
-from Python.Chess.Pieces.base_piece import base_piece
+from Python.Chess.Pieces.BasePiece import BasePiece
 from Python.Utils.Vector import Vec2
 
-
-
-class chess_board:
+class ChessBoard:
 
     def __init__(self, count):
         self.test = count
-        self.board: list[list[base_piece | None]] = [[None] * 8 for _ in range(8)]
+        self.board: list[list[BasePiece | None]] = [[None] * 8 for _ in range(8)]
         self.buttons: list[Button] = []
         self.piece_sprites: dict[str, Surface] = {}
         self.screen = None
@@ -23,6 +20,7 @@ class chess_board:
 
     def init(self):
         pygame.init()
+        self.load_chess_pieces()                                            #Load sprites here
 
         screen_width = 600
         screen_height = 600
@@ -43,6 +41,7 @@ class chess_board:
                     dimensions,
                     white if isWhite else black,
                     light_gray if isWhite else dark_gray,
+                    None,
                     lambda r=i, c=j: self.on_square_clicked(r, c)
                 ))
 
@@ -63,11 +62,13 @@ class chess_board:
         self.load_sprite('w_rook_1x_ns.png')
 
 
-    def load_sprite(self, path):
-        default_path = '../Ressources/Textures/Chess_pieces/'
+    def load_sprite(self, path: str):
+        # BRO WIE SCHREIBT MAN RESOURCES Grrrr
+        default_path = '../../Resources/Textures/ChessPieces/'      #Folder name falsch und resources falsch geschrieben
         sprite = pygame.image.load(default_path+path)
-        path_piece_name, idk = path.split('_',2)
-        self.piece_sprites[path_piece_name] = sprite
+        parts = path.split('_',maxsplit=2)
+        name = "_".join(parts[:2])                                  #.join() joined alle strings in den klammern mit "_" als Seperator [:2] bedeuted nimm in der liste nur die Einträge von 0 (wegelassen) bis ausschließlich index 2
+        self.piece_sprites[name] = sprite
 
     def loop(self):
 
@@ -78,20 +79,22 @@ class chess_board:
                 if event.type == pygame.QUIT:
                     running = False
 
-            for button in self.buttons:
-                button.update(events)
-                button.draw(self.screen)
+            self.draw_gui(events)
 
             pygame.display.flip()
 
         pygame.quit()
         sys.exit()
 
-    def update(self):
+    def draw_gui(self, events):
         for i, button in enumerate(self.buttons):
-            row = i / 8
+            row = i // 8
             col = i % 8
-            piece = self. board
+            piece = self.board[row][col]
+
+            button.set_sprite(self.piece_sprites["b_king"])
+            button.update(events)
+            button.draw(self.screen)
 
 
 

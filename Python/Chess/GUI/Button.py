@@ -19,7 +19,10 @@ class Button:
         color = self.hover_color if self.is_hovered else self.color
         pygame.draw.rect(surface, color, self.rect)
 
-       # surface.blit(self.sprite, )
+        #If button has a sprite, draw it
+        if self.sprite is not None:
+            sprite_rect = self.sprite.get_rect(center=self.rect.center)
+            surface.blit(self.sprite, sprite_rect)
 
 
     def update(self, events):
@@ -30,3 +33,10 @@ class Button:
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 if self.rect.collidepoint(event.pos):
                     self.action()
+
+    def set_sprite(self, sprite: Surface):
+        #Rescales the sprite to be the same dimensions as the button itself
+        self.sprite = pygame.transform.smoothscale(
+            sprite,
+            (self.rect.width, self.rect.height)
+        )
