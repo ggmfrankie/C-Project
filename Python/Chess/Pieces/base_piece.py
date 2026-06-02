@@ -1,5 +1,8 @@
 class base_piece:
-    test = 0
 
-   # def __init__ (self, movement,):
-        
+   def __init__ (self, color:int):
+       self.color = color
+
+   def getDiagonalMoves(self) -> list[None]:
+       return []
+
