@@ -46,6 +46,7 @@ class ChessBoard:
 
         pygame.display.set_caption("Chess")
 
+
     def load_chess_pieces(self):
         self.load_sprite('b_bishop_1x_ns.png')
         self.load_sprite('b_king_1x_ns.png')
@@ -69,8 +70,8 @@ class ChessBoard:
         name = "_".join(parts[:2])                                  #.join() joined alle strings in den klammern mit "_" als Seperator [:2] bedeuted nimm in der liste nur die Einträge von 0 (wegelassen) bis ausschließlich index 2
         self.piece_sprites[name] = sprite
 
-    def loop(self):
 
+    def loop(self):
         running = True
         while running:
             events = pygame.event.get()
@@ -85,6 +86,7 @@ class ChessBoard:
         pygame.quit()
         sys.exit()
 
+
     def draw_gui(self, events):
         for i, button in enumerate(self.buttons):
             row = i // 8                                #Whole number division
@@ -96,7 +98,6 @@ class ChessBoard:
             button.set_sprite(self.piece_sprites["b_king"])
             button.update(events)
             button.draw(self.screen)
-
 
 
     def on_square_clicked(self, row, col):

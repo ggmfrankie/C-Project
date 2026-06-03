@@ -860,3 +860,4 @@
 /build/
 /.zig-cache/
 .idea/editor.xml
+/.vscode/
