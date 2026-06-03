@@ -6,12 +6,11 @@ from pygame.color import Color
 
 from Python.Chess.GUI.Button import Button
 from Python.Chess.Pieces.BasePiece import BasePiece
-from Python.Utils.Vector import Vec2
+from Python.Chess.Utils.Vector import Vec2
 
 class ChessBoard:
 
-    def __init__(self, count):
-        self.test = count
+    def __init__(self):
         self.board: list[list[BasePiece | None]] = [[None] * 8 for _ in range(8)]
         self.buttons: list[Button] = []
         self.piece_sprites: dict[str, Surface] = {}
@@ -88,9 +87,11 @@ class ChessBoard:
 
     def draw_gui(self, events):
         for i, button in enumerate(self.buttons):
-            row = i // 8
+            row = i // 8                                #Whole number division
             col = i % 8
             piece = self.board[row][col]
+
+            #TODO extract name and color from piece and construct name from it to use in dictionary
 
             button.set_sprite(self.piece_sprites["b_king"])
             button.update(events)

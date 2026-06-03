@@ -2,6 +2,7 @@
 /cmake-build-release-mysys/
 /cmake-build-debug-mysys/
 /Learning/
+/.idea
 /Learning/Rust/rustlings/.gitignore
 /Learning/Rust/rustlings/.rustlings-state.txt
 /Learning/Rust/rustlings/exercises/19_smart_pointers/arc1.rs
