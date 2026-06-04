@@ -40,7 +40,7 @@ namespace Game {
 
         for (auto& obj : mObjects) {
             const ggm::Matrix4f& model = obj.getModelMatrix();
-            ggm::Matrix4f modelView = view * model;
+            const ggm::Matrix4f modelView = view * model;
 
             mShader.setUniform("modelViewMatrix", modelView);
 
