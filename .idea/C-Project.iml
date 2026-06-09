@@ -25,7 +25,7 @@
       <excludeFolder url="file://$MODULE_DIR$/Cpp/Extern/Oth/pin-2-s-2026-ertl/04_Waermespeicher/cmake-build-release-mysys/Testing" />
       <excludeFolder url="file://$MODULE_DIR$/build" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.14 (C-Project)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.12 (C-Project)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Python 3.14 interpreter library" level="application" />
   </component>

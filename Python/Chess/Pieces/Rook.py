@@ -1,9 +1,12 @@
-from Python.Chess.Pieces import base_piece
+from BasePiece import BasePiece
 
 
-class Rook(base_piece):
-    def __init__(self):
-
+class Rook(BasePiece):
+    def __init__(self, color: int):
+        super().__init__(color)
 
     def getMoves(self):
         pass
+
+    def get_identifier(self):
+        return '_'.join([super().get_color(),'Rook'])
