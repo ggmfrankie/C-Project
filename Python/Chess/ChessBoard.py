@@ -8,6 +8,13 @@ from Python.Chess.GUI.Button import Button
 from Python.Chess.Pieces.BasePiece import BasePiece
 from Python.Chess.Utils.Vector import Vec2
 
+from Python.Chess.Pieces.Rook import Rook
+from Python.Chess.Pieces.King import King
+from Python.Chess.Pieces.Queen import Queen
+from Python.Chess.Pieces.Bishop import Bishop
+from Python.Chess.Pieces.Knight import Knight
+from Python.Chess.Pieces.Pawn import Pawn
+
 class ChessBoard:
 
     def __init__(self):
@@ -19,6 +26,7 @@ class ChessBoard:
 
     def init(self):
         pygame.init()
+        self.load_board()
         self.load_chess_pieces()                                            #Load sprites here
 
         screen_width = 600
@@ -45,6 +53,29 @@ class ChessBoard:
                 ))
 
         pygame.display.set_caption("Chess")
+
+    def load_board(self):
+        self.board[0][0] = Rook(0)
+        self.board[0][-1] = Rook(0)
+        self.board[0][1] = Knight(0)
+        self.board[0][-2] = Knight(0)
+        self.board[0][2] = Bishop(0)
+        self.board[0][-3] = Bishop(0)
+        self.board[0][3] = Queen(0)
+        self.board[0][-4] = King(0)
+
+        self.board[-1][0] = Rook(1)
+        self.board[-1][-1] = Rook(1)
+        self.board[-1][1] = Knight(1)
+        self.board[-1][-2] = Knight(1)
+        self.board[-1][2] = Bishop(1)
+        self.board[-1][-3] = Bishop(1)
+        self.board[-1][3] = Queen(1)
+        self.board[-1][-4] = King(1)
+
+        for i in range(8):
+            self.board[1][i] = Pawn(0)
+            self.board[-2][i] = Pawn(1)
 
 
     def load_chess_pieces(self):
@@ -89,13 +120,14 @@ class ChessBoard:
 
     def draw_gui(self, events):
         for i, button in enumerate(self.buttons):
-            row = i // 8                                #Whole number division
-            col = i % 8
+            row = i % 8                                #Whole number division
+            col = i // 8
             piece = self.board[row][col]
 
-            #TODO extract name and color from piece and construct name from it to use in dictionary
-
-            button.set_sprite(self.piece_sprites["b_king"])
+            if piece is not None:
+                button.set_sprite(self.piece_sprites[piece.get_identifier()])
+            else:
+                button.set_sprite(None)
             button.update(events)
             button.draw(self.screen)
 

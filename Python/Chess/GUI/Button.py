@@ -33,9 +33,12 @@ class Button:
                 if self.rect.collidepoint(event.pos):
                     self.action()
 
-    def set_sprite(self, sprite: Surface):
+    def set_sprite(self, sprite: Surface | None):
         #Rescales the sprite to be the same dimensions as the button itself
-        self.sprite = pygame.transform.smoothscale(
-            sprite,
-            (self.rect.width, self.rect.height)
-        )
+        if sprite is None:
+            self.sprite = None
+        else:
+            self.sprite = pygame.transform.smoothscale(
+                sprite,
+                (self.rect.width, self.rect.height)
+            )

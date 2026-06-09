@@ -1,7 +1,7 @@
 from Python.Chess.Pieces.BasePiece import BasePiece
 
 
-class Rook(BasePiece):
+class Bishop(BasePiece):
     def __init__(self, color: int):
         super().__init__(color)
 
@@ -9,4 +9,4 @@ class Rook(BasePiece):
         pass
 
     def get_identifier(self):
-        return '_'.join([super().get_color(),'rook'])
+        return '_'.join([super().get_color(),'bishop'])

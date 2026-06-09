@@ -1,4 +1,4 @@
-from Move import Move
+from Python.Chess.Pieces.Move import Move
 
 class BasePiece:
 

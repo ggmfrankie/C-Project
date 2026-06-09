@@ -1,5 +1,5 @@
 from ChessBoard import *
-from Pieces.Rook import Rook
+from Python.Chess.Pieces.Rook import Rook
 
 def main():
     print('Hello World!')
@@ -50,8 +50,8 @@ def test():
 
 
 if __name__ == "__main__":
-    #main()
-    test() #danke dir diggi
+    main()
+    #test() #danke dir diggi
 
 
 
