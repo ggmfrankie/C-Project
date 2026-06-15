@@ -53,4 +53,4 @@ Font loadFontAtlas(char* file);
 void reloadTextQuads(const Font* font, Element *element);
 void accumulateTextQuads(const Element *element, GuiVertex *vertices, int *vt, int *indices, int *id, const Font *font);
 Vec2i measureText(const Font *font, const String *text);
-Vec2i measureElementText(const Font *font, const TextElement* textElement);
+Vec2i measureElementText(const TextElement* textElement);

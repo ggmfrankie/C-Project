@@ -2,7 +2,7 @@
 // Created by Stefan on 07.11.2025.
 //
 
-#include "TimeMeasurenments.h"
+#include "TimeMeasurements.h"
 
 #include <stdint.h>
 #define NOMINMAX

@@ -26,7 +26,7 @@ void measureFont(Font *font);
 Font loadFontAtlas(char* file) {
     const String fileName = stringOf(file);
     const String defaultPath = stringOf("../Resources/Fonts/");
-    defer(str_delete) const String completePath = Strings.combine(&defaultPath, &fileName);
+    defer(str_delete) String completePath = Strings.combine(&defaultPath, &fileName);
 
     defer(defer_free) byte* ttf_buffer = malloc(1 << 20);
     // ReSharper disable once CppDFAMemoryLeak
@@ -103,7 +103,7 @@ void accumulateTextQuads(const Element *element, GuiVertex *vertices, int *vt, i
         constexpr int texID = 1;
 
         const float x = c->pos.x + xOffset;
-        const float y = c->pos.y + yOffset;
+        const float y = c->pos.y + element->dims.worldHeight - element->padding.down;
         const float w = c->width;
         const float h = c->height;
 
@@ -131,7 +131,7 @@ void accumulateTextQuads(const Element *element, GuiVertex *vertices, int *vt, i
     });
 }
 
-Vec2i measureElementText(const Font *font, const TextElement* textElement) {
+Vec2i measureElementText(const TextElement* textElement) {
 
     if (arrIsEmpty(textElement->aCharQuads)) {
         return (Vec2i){0, 0};

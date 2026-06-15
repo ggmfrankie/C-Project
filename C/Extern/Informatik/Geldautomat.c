@@ -3,7 +3,7 @@
 //
 
 #include "Geldautomat.h"
-#include "../../Utils/TimeMeasurenments.h"
+#include "../../Utils/TimeMeasurements.h"
 
 #include <stdio.h>
 typedef int Geld;

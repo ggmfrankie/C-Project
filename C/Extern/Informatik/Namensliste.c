@@ -10,7 +10,7 @@
 #include "../../Utils/CString.h"
 #include "../../Utils/FileIO.h"
 #include "../../Utils/Deprecated/HashMap.h"
-#include "../../Utils/TimeMeasurenments.h"
+#include "../../Utils/TimeMeasurements.h"
 #include "Utils/CArrayList.h"
 
 #define MAX_ELEMENTS 500

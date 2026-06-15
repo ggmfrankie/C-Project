@@ -9,7 +9,7 @@
 #include "GameBoard.h"
 #include "../../Utils/Makros.h"
 
-#include "../../Utils/TimeMeasurenments.h"
+#include "../../Utils/TimeMeasurements.h"
 
 void runTest() {
     GameBoard board = createBoard();

@@ -17,7 +17,7 @@ static void accumulateMeshes(Element *element, const Renderer *renderer, GuiVert
 static Vec2i updateLayout(Element* self, Vec2i parentCursor, Vec2i remainingSpace, Vec2i parentPos, const Font* font);
 
 static void layoutElement(const Element* self);
-static Cache* cacheLayoutLines(Element* self, const Font* font);
+static Cache* cacheLayoutLines(Element* self);
 
 Element* createRootElement();
 
@@ -155,14 +155,12 @@ void Renderer_updateLayout2(const Renderer *renderer) {
     root->dims.worldWidth = renderer->screenWidth;
     root->dims.worldHeight = renderer->screenHeight;
 
-    for_eachArr(childPtr, renderer->guiRoot->aChildElements, {
-        cacheLayoutLines(*childPtr, &renderer->font);
-    });
+    cacheLayoutLines(root);
 
     layoutElement(renderer->guiRoot);
 }
 
-static Cache* cacheLayoutLines(Element* self, const Font* font) {
+static Cache* cacheLayoutLines(Element* self) {
     Cache* data = &self->layoutCache;
 
     arrClear(data->aLines);
@@ -179,21 +177,22 @@ static Cache* cacheLayoutLines(Element* self, const Font* font) {
     Vec2i extend = {};
 
     if (self->textElement.hasText) {
-        const Vec2i textDims = measureElementText(font, &self->textElement);
+        const Vec2i textDims = measureElementText(&self->textElement);
         data->minWidth += textDims.x;
         data->minHeight += textDims.y;
     }
 
     for_eachArr(childPtr, self->aChildElements, {
         Element* child = *childPtr;
-        const Cache* childData = cacheLayoutLines(child, font);
+        const Cache* childData = cacheLayoutLines(child);
 
         Line* currLine = arrGetLast(data->aLines);
 
         if (child->positionMode == POS_FIT) {
             const int extraGap = (cursor.x == 0) ? 0 : self->childGap;
+
             switch (self->layoutDirection) {
-            case L_down:
+                case L_down:
                     if (cursor.y + childData->minHeight + self->padding.down + extraGap > self->dims.maxHeight) {
                         // new line
                         currLine->end = i;
@@ -220,14 +219,20 @@ static Cache* cacheLayoutLines(Element* self, const Font* font) {
 
                     break;
             }
-            ++currLine->end;
+
         } else {
-            extend.x = max(extend.x, child->dims.pos.x + child->dims.width + self->padding.left);
-            extend.y = max(extend.y, child->dims.pos.y + child->dims.height + self->padding.up);
+
+            extend.x = max(extend.x, child->dims.pos.x + child->dims.width + self->childGap);
+            extend.y = max(extend.y, child->dims.pos.y + child->dims.height + self->childGap);
+
         }
+        ++currLine->end;
     });
-    data->minWidth  = max(extend.x + self->padding.left + self->padding.right, max(self->dims.width, data->minWidth));
-    data->minHeight = max(extend.y + self->padding.up   + self->padding.down,  max(self->dims.height, data->minHeight));
+
+    const int overChildGap = (arrLen(self->aChildElements) == 0) ? 0 : self->childGap;
+
+    data->minWidth  = max(extend.x + self->padding.left + self->padding.right - overChildGap, max(self->dims.width,  data->minWidth));
+    data->minHeight = max(extend.y + self->padding.up   + self->padding.down  - overChildGap, max(self->dims.height, data->minHeight));
     return data;
 }
 
@@ -268,10 +273,25 @@ static void placeLine(const Element* parent, Vec2i* cursor, Vec2i* extend, Eleme
             curr->dims.worldHeight = curr->layoutCache.minHeight;
 
             curr->dims.worldPos = (Vec2i){
-                parent->dims.worldPos.x + curr->dims.pos.x + parent->padding.left,
-                parent->dims.worldPos.y + curr->dims.pos.y + parent->padding.up
+                parent->dims.worldPos.x + curr->dims.pos.x,
+                parent->dims.worldPos.y + curr->dims.pos.y
             };
         }
+
+#if GUI_DEBUG
+        const bool correctElement = (curr->name) ? (strcmp(GUI_DEBUG_OBSERVE_ELEMENT_UPDATE_ELEMENT, curr->name) == 0) : false;
+        const bool print = correctElement && only_every(200);
+
+        print_if(print,
+            "---------------------\n"
+            "Inside placeLine()"
+            "Current Element: \"%s\"\n"
+            "Dimensions:\n"
+            "X: %i, Y: %i\n"
+            "---------------------\n\n",
+            curr->name, curr->dims.worldWidth, curr->dims.worldHeight
+        );
+#endif
     }
 }
 
@@ -292,7 +312,7 @@ static void layoutElement(const Element* self) {
         "Current Element: \"%s\"\n"
         "Dimensions:\n"
         "X: %i, Y: %i\n"
-        "---------------------\n",
+        "---------------------\n\n",
         self->name, self->dims.worldWidth, self->dims.worldHeight
     );
 #endif

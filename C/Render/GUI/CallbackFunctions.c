@@ -6,7 +6,7 @@
 
 #include "GuiElementData.h"
 #include "../Drawing/Render.h"
-#include "../../Utils/TimeMeasurenments.h"
+#include "../../Utils/TimeMeasurements.h"
 #include "../../Utils/UtilityFun.h"
 #include <windows.h>
 

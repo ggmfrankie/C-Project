@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 4.0)
-project(MixedProject LANGUAGES C CXX)
+project(C-Project LANGUAGES C CXX)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -pthread")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -pthread")
@@ -54,8 +54,8 @@ add_library(GUI STATIC
         C/Extern/Informatik/GameBoard.c
         C/Extern/Informatik/GameBoard.h
         C/Utils/Makros.h
-        C/Utils/TimeMeasurenments.c
-        C/Utils/TimeMeasurenments.h
+        C/Utils/TimeMeasurements.c
+        C/Utils/TimeMeasurements.h
         C/Render/GUI/CallbackFunctions.h
         C/Render/GUI/CallbackFunctions.c
         C/Extern/Informatik/Geldautomat.c

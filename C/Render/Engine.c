@@ -115,7 +115,6 @@ void f_gui_loadTextures(char* first, ...) {
 
 void gui_setTexture(Element* e, const char* name) {
     assert(e != nullptr);
-    assert(name != nullptr);
     Thread_Locked(
         if (name) {
             e->visuals.texture = getTexture(name);
