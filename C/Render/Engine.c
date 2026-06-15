@@ -52,8 +52,8 @@ static Renderer g_Renderer;
 static UserCallbacks g_Callbacks;
 
 static void Engine_processInput(Renderer *renderer);
-static bool processInputRec(Element *element, Renderer *renderer);
-static bool dragElement(const Renderer *renderer);
+static bool Engine_processInputRec(Element *element, Renderer *renderer);
+static bool Engine_handleDragElement(const Renderer *renderer);
 static void gui_processDebug();
 
 static void threadExecute() {
@@ -89,7 +89,7 @@ void gui_init(GLFWwindow* window, const int width, const int height, void (*gene
 
 void gui_update() {
     lock();
-    dragElement(&g_Renderer);
+    Engine_handleDragElement(&g_Renderer);
     Renderer_updateLayout2(&g_Renderer);
     gui_popUpdate();
     Engine_processInput(&g_Renderer);
@@ -106,6 +106,7 @@ void gui_render() {
 }
 
 void f_gui_loadTextures(char* first, ...) {
+    assert(first != nullptr);
     va_list args;
     va_start(args, first);
     f_loadTextures(&g_Renderer.texAtlas, first, args);
@@ -114,6 +115,7 @@ void f_gui_loadTextures(char* first, ...) {
 
 void gui_setTexture(Element* e, const char* name) {
     assert(e != nullptr);
+    assert(name != nullptr);
     Thread_Locked(
         if (name) {
             e->visuals.texture = getTexture(name);
@@ -141,6 +143,7 @@ void gui_toggleVisible(const char* name) {
 
 void gui_setText(const char* name, const char* text) {
     assert(name != nullptr);
+    assert(text != nullptr);
     Thread_Locked(
         Element_setText(Element_getElement(name), text);
     )
@@ -163,6 +166,7 @@ void gui_resetColor(const char* name) {
 }
 
 void gui_setCornerRadius(const char* name, const int radius) {
+    assert(name != nullptr);
     Thread_Locked(
         Element_getElement(name)->dims.cornerRadius = radius;
     )
@@ -229,7 +233,7 @@ static Element* focusedElement = nullptr;
 static Element* mouseCapturedElement = nullptr;
 static bool dragging = false;
 
-static bool dragElement(const Renderer *renderer) {
+static bool Engine_handleDragElement(const Renderer *renderer) {
     if (!mouseCapturedElement) return false;
     if (!mouseCapturedElement->flags.draggable) return false;
 
@@ -276,18 +280,18 @@ static void Engine_processInput(Renderer *renderer) {
     renderer->guiRoot->dims.width = renderer->screenWidth;
     renderer->guiRoot->dims.height = renderer->screenHeight;
 
-    const bool consumed = processInputRec(renderer->guiRoot, renderer);
+    const bool consumed = Engine_processInputRec(renderer->guiRoot, renderer);
 
     if (click(renderer->window, GLFW_MOUSE_BUTTON_LEFT) && !consumed) focusedElement = nullptr;
     if (focusedElement && focusedElement->callbacks.whileSelected) focusedElement->callbacks.whileSelected(focusedElement);
 }
 
-static bool processInputRec(Element *element, Renderer *renderer) {
+static bool Engine_processInputRec(Element *element, Renderer *renderer) {
     if (element == NULL || !element->flags.isActive) return false;
     if (element->callbacks.onUpdate) element->callbacks.onUpdate(element);
 
     for_eachRevArr(const child, element->aChildElements,
-        if (processInputRec(*child, renderer)) return true;
+        if (Engine_processInputRec(*child, renderer)) return true;
     );
 
     if (dragging) return false;

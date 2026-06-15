@@ -15,6 +15,9 @@
 #include "../../Utils/CString.h"
 #include "Render/GUI/GuiElement.h"
 #include "Utils/CArrayList.h"
+#include "Utils/Utils.h"
+
+
 static constexpr int FONT_ATLAS_SIZE = 2048;
 static constexpr float FONT_SIZE = 32.0f;
 
@@ -23,25 +26,28 @@ void measureFont(Font *font);
 Font loadFontAtlas(char* file) {
     const String fileName = stringOf(file);
     const String defaultPath = stringOf("../Resources/Fonts/");
-    String completePath = Strings.combine(&defaultPath, &fileName);
+    defer(str_delete) const String completePath = Strings.combine(&defaultPath, &fileName);
 
-    byte* ttf_buffer = malloc(1 << 20);
-    byte* temp_bitmap = malloc(FONT_ATLAS_SIZE * FONT_ATLAS_SIZE);
+    defer(defer_free) byte* ttf_buffer = malloc(1 << 20);
+    // ReSharper disable once CppDFAMemoryLeak
+    defer(defer_free) byte* temp_bitmap = malloc(FONT_ATLAS_SIZE * FONT_ATLAS_SIZE);
 
-    FILE* f = fopen(completePath.m, "rb");
+    defer(defer_closeFile) FILE* f = fopen(completePath.m, "rb");
+
+    assert(f != nullptr);
     const size_t bytesRead = fread(ttf_buffer, 1, 1<<20, f);
     if (bytesRead == 0) {
         printf("Failed to read font file\n");
+        // ReSharper disable once CppDFAMemoryLeak
+        return (Font){};
     }
-    fclose(f);
-    Strings.delete_(&completePath);
 
     Font font = {};
 
     font.fontSize = FONT_SIZE;
 
     stbtt_pack_context pc;
-    stbtt_PackBegin(&pc, temp_bitmap, FONT_ATLAS_SIZE, FONT_ATLAS_SIZE, 0, 1, NULL);
+    stbtt_PackBegin(&pc, temp_bitmap, FONT_ATLAS_SIZE, FONT_ATLAS_SIZE, 0, 1, nullptr);
     stbtt_PackSetOversampling(&pc, 3, 3);
 
     stbtt_PackFontRange(&pc, ttf_buffer, 0, FONT_SIZE,
@@ -81,9 +87,6 @@ Font loadFontAtlas(char* file) {
     };
 
     measureFont(&font);
-
-    free(temp_bitmap);
-    free(ttf_buffer);
     return font;
 }
 
@@ -139,13 +142,11 @@ Vec2i measureElementText(const Font *font, const TextElement* textElement) {
     float maxX = -FLT_MAX;
     float maxY = -FLT_MAX;
 
-    for_eachArr(charPtr, textElement->aCharQuads, {
-        Character* c = charPtr;
-
-        float x0 = c->pos.x;
-        float y0 = c->pos.y;
-        float x1 = c->pos.x + c->width;
-        float y1 = c->pos.y + c->height;
+    for_eachArr(c, textElement->aCharQuads, {
+        const float x0 = c->pos.x;
+        const float y0 = c->pos.y;
+        const float x1 = c->pos.x + c->width;
+        const float y1 = c->pos.y + c->height;
 
         minX = min(minX, x0);
         minY = min(minY, y0);
@@ -153,14 +154,13 @@ Vec2i measureElementText(const Font *font, const TextElement* textElement) {
         maxY = max(maxY, y1);
     });
 
-    float width  = maxX - minX;
-    float height = maxY - minY;
+    const float width  = maxX - minX;
+    const float height = maxY - minY;
 
     return (Vec2i){
         (int)width,
         (int)height
     };
-
 }
 
 Vec2i measureText(const Font *font, const String *text) {

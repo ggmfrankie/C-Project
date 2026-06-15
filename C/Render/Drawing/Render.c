@@ -262,6 +262,7 @@ static void placeLine(const Element* parent, Vec2i* cursor, Vec2i* extend, Eleme
 
             extend->x = max(extend->x, curr->dims.worldPos.x + curr->dims.worldWidth);
             extend->y = max(extend->y, curr->dims.worldPos.y + curr->dims.worldHeight);
+
         } else {
             curr->dims.worldWidth = curr->layoutCache.minWidth;
             curr->dims.worldHeight = curr->layoutCache.minHeight;
@@ -281,6 +282,20 @@ static void layoutElement(const Element* self) {
     const Vec2i contentStart = {self->dims.worldPos.x + self->padding.left, self->dims.worldPos.y + self->padding.down};
     Vec2i cursor = contentStart;
     Vec2i extend = contentStart;
+
+#if GUI_DEBUG
+    const bool correctElement = (self->name) ? (strcmp(GUI_DEBUG_OBSERVE_ELEMENT_UPDATE_ELEMENT, self->name) == 0) : false;
+    const bool print = correctElement && only_every(200);
+
+    print_if(print,
+        "---------------------\n"
+        "Current Element: \"%s\"\n"
+        "Dimensions:\n"
+        "X: %i, Y: %i\n"
+        "---------------------\n",
+        self->name, self->dims.worldWidth, self->dims.worldHeight
+    );
+#endif
 
     if (!arrIsEmpty(self->aChildElements) && !arrIsEmpty(self->layoutCache.aLines)) {
         for_eachArr(linesPtr, self->layoutCache.aLines, {

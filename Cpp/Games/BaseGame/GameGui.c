@@ -53,14 +53,16 @@ void generateMainMenuGui(Element* guiRoot) {
         addChildElements(
             createElement((ElementSettings){
                 .name = "Home Screen",
-                .pos = (Vec2i){100, 100},
+                .pos = (Vec2i){0, 0},
                 .padding = (Padding){10, 10, 10, 10},
                 .color = {0.78f, 0.78f, 0.78f},
                 .draggable = true,
                 .childGap = 10,
                 .posMode = POS_RELATIVE,
                 .transparency = 0.5,
-                .cornerRadius = 20.f
+                .cornerRadius = 20.f,
+                .width = 0,
+                .height = 0
             }),
             createElement((ElementSettings){
                 .invisible = true,
