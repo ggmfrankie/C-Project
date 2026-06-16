@@ -56,7 +56,7 @@ void Renderer_init(Renderer *renderer) {
     //ComputeShader_createUniform(&renderer->computeShader, ("thickness"));
     //ComputeShader_update(&renderer->computeShader, graphingFunction);
 
-    initBatchedRendering();
+    Batcher_init();
     Shader_createUniform(&renderer->guiShader, "screenWidth");
     Shader_createUniform(&renderer->guiShader, "screenHeight");
 }

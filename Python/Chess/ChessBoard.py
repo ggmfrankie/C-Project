@@ -21,7 +21,9 @@ class ChessBoard:
         self.board: list[list[BasePiece | None]] = [[None] * 8 for _ in range(8)]
         self.buttons: list[Button] = []
         self.piece_sprites: dict[str, Surface] = {}
-        self.screen = None
+        self.screen: Surface | None = None
+        self.selected_piece: BasePiece | None = None
+        self.mouse_piece_button : Button = Button(Vec2(0,0), Vec2(75,75), None)
 
 
     def init(self):
@@ -49,7 +51,7 @@ class ChessBoard:
                     white if isWhite else black,
                     light_gray if isWhite else dark_gray,
                     None,
-                    lambda r=i, c=j: self.on_square_clicked(r, c)
+                    lambda r=j, c=i: self.on_square_clicked(r, c)
                 ))
 
         pygame.display.set_caption("Chess")
@@ -109,6 +111,9 @@ class ChessBoard:
             for event in events:
                 if event.type == pygame.QUIT:
                     running = False
+                if event.type == pygame.MOUSEMOTION:
+                    x, y = pygame.mouse.get_pos()
+                    self.mouse_piece_button.set_position(Vec2(x - 37.5, y - 37.5))
 
             self.draw_gui(events)
 
@@ -131,6 +136,22 @@ class ChessBoard:
             button.update(events)
             button.draw(self.screen)
 
+        self.mouse_piece_button.draw(self.screen)
+
 
     def on_square_clicked(self, row, col):
-        print(f"Clicked at {row}/{col}")
+        if self.selected_piece is None:
+            if self.board[row][col] is None:
+                return
+            self.selected_piece = self.board[row][col]
+            self.board[row][col] = None
+
+            id = self.selected_piece.get_identifier()
+            self.mouse_piece_button.set_sprite(self.piece_sprites[id])
+        else:
+            self.board[row][col] = self.selected_piece
+            moves = self.selected_piece.get_moves(Vec2(row, col), self.board)
+            print(len(moves))
+            self.selected_piece = None
+            self.mouse_piece_button.set_sprite(None)
+

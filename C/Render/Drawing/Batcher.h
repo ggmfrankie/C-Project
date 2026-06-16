@@ -9,6 +9,6 @@
 #define MAX_GUI_VERTICES 163840
 #define MAX_GUI_INDICES 163840
 
-void initBatchedRendering();
+void Batcher_init();
 void uploadBatchedQuads(const GuiVertex *vertices, int vt, const int* indices, int id);
 void uploadElementData(Element* element);

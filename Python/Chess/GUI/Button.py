@@ -6,7 +6,7 @@ from Python.Chess.Utils.Vector import Vec2
 
 
 class Button:
-    def __init__(self, pos: Vec2, dims: Vec2, color: Color, hover_color: Color, sprite: Surface | None = None, action = None):
+    def __init__(self, pos: Vec2, dims: Vec2, color: Color | None, hover_color: Color = Color(20,20,20), sprite: Surface | None = None, action = None):
         self.rect = pygame.Rect(pos.x, pos.y, dims.x, dims.y)
         self.color = color
         self.hover_color = hover_color
@@ -15,8 +15,9 @@ class Button:
         self.sprite = sprite
 
     def draw(self, surface: Surface):
-        color = self.hover_color if self.is_hovered else self.color
-        pygame.draw.rect(surface, color, self.rect)
+        if self.color is not None:
+            color = self.hover_color if self.is_hovered else self.color
+            pygame.draw.rect(surface, color, self.rect)
 
         #If button has a sprite, draw it
         if self.sprite is not None:
@@ -42,3 +43,6 @@ class Button:
                 sprite,
                 (self.rect.width, self.rect.height)
             )
+
+    def set_position(self, pos: Vec2):
+        self.rect = pygame.Rect(pos.x, pos.y, 75, 75)

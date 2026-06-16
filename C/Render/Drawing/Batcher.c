@@ -17,7 +17,7 @@ typedef struct {
 
 static GraphicsData graphicsData;
 
-void initBatchedRendering() {
+void Batcher_init() {
 
     glGenVertexArrays(1, &graphicsData.VAO);
     glBindVertexArray(graphicsData.VAO);
