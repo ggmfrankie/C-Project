@@ -131,7 +131,6 @@ typedef struct ElementSettings {
     int height;
     float flexGrow;
 
-    Texture* old_texture;
     char* texture;
     Vec3f color;
     float transparency;
