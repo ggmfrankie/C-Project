@@ -141,6 +141,7 @@ static void accumulateMeshes(Element *element, const Renderer *renderer, GuiVert
     endScissor();
 }
 
+[[deprecated]]
 void Renderer_updateLayout(const Renderer *renderer) {
     Element* root = renderer->guiRoot;
     root->dims.width = renderer->screenWidth;
