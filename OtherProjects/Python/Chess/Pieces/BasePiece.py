@@ -1,7 +1,7 @@
 from typing import Self
 
-from Python.Chess.Pieces.Move import Move
-from Python.Chess.Utils.Vector import Vec2
+from OtherProjects.Python.Chess.Pieces.Move import Move
+from OtherProjects.Python.Chess.Utils.Vector import Vec2
 
 
 class BasePiece:

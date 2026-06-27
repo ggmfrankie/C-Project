@@ -1,5 +1,5 @@
 from ChessBoard import *
-from Python.Chess.Pieces.Rook import Rook
+from OtherProjects.Python.Chess.Pieces.Rook import Rook
 
 def main():
     print('Hello World!')

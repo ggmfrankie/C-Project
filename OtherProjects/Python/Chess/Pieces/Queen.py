@@ -1,4 +1,4 @@
-from Python.Chess.Pieces.BasePiece import BasePiece
+from OtherProjects.Python.Chess.Pieces.BasePiece import BasePiece
 
 
 class Queen(BasePiece):

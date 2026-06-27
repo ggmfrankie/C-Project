@@ -2,7 +2,7 @@ import pygame
 from pygame import Surface
 from pygame.color import Color
 
-from Python.Chess.Utils.Vector import Vec2
+from OtherProjects.Python.Chess.Utils.Vector import Vec2
 
 
 class Button:

@@ -4,16 +4,16 @@ import sys
 from pygame import Surface
 from pygame.color import Color
 
-from Python.Chess.GUI.Button import Button
-from Python.Chess.Pieces.BasePiece import BasePiece
-from Python.Chess.Utils.Vector import Vec2
+from OtherProjects.Python.Chess.GUI.Button import Button
+from OtherProjects.Python.Chess.Pieces.BasePiece import BasePiece
+from OtherProjects.Python.Chess.Utils.Vector import Vec2
 
-from Python.Chess.Pieces.Rook import Rook
-from Python.Chess.Pieces.King import King
-from Python.Chess.Pieces.Queen import Queen
-from Python.Chess.Pieces.Bishop import Bishop
-from Python.Chess.Pieces.Knight import Knight
-from Python.Chess.Pieces.Pawn import Pawn
+from OtherProjects.Python.Chess.Pieces.Rook import Rook
+from OtherProjects.Python.Chess.Pieces.King import King
+from OtherProjects.Python.Chess.Pieces.Queen import Queen
+from OtherProjects.Python.Chess.Pieces.Bishop import Bishop
+from OtherProjects.Python.Chess.Pieces.Knight import Knight
+from OtherProjects.Python.Chess.Pieces.Pawn import Pawn
 
 class ChessBoard:
 
@@ -97,7 +97,7 @@ class ChessBoard:
 
     def load_sprite(self, path: str):
         # BRO WIE SCHREIBT MAN RESOURCES Grrrr
-        default_path = '../../Resources/Textures/ChessPieces/'      #Folder name falsch und resources falsch geschrieben
+        default_path = '../../../Resources/Textures/ChessPieces/'  #Folder name falsch und resources falsch geschrieben
         sprite = pygame.image.load(default_path+path)
         parts = path.split('_',maxsplit=2)
         name = "_".join(parts[:2])                                  #.join() joined alle strings in den klammern mit "_" als Seperator [:2] bedeuted nimm in der liste nur die Einträge von 0 (wegelassen) bis ausschließlich index 2
