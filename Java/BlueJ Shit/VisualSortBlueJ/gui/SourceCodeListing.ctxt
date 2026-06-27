@@ -1,0 +1,16 @@
+#BlueJ class context
+comment0.target=SourceCodeListing
+comment0.text=\r\n\ This\ class\ extends\ JList\ for\ displaying\ lines\ of\ source\ code.\r\n\ One\ line\ at\ a\ time\ can\ be\ highlighted.\r\n\ @author\ Franz-Josef\r\n\r\n
+comment1.params=
+comment1.target=SourceCodeListing()
+comment2.params=sourceCode
+comment2.target=void\ loadSourceCode(java.lang.String[])
+comment2.text=\r\n\ Populates\ the\ object\ with\ the\ given\ lines\ of\ source\ code.\r\n
+comment3.params=
+comment3.target=int\ getSize()
+comment4.params=i
+comment4.target=java.lang.Object\ getElementAt(int)
+comment5.params=line
+comment5.target=void\ setSourceCodeLine(int)
+comment5.text=\r\n\ Highlights\ the\ given\ line.\r\n
+numComments=6

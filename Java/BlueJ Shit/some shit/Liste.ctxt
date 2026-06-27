@@ -1,0 +1,10 @@
+#BlueJ class context
+comment0.target=Liste
+comment0.text=\r\n\ Beschreiben\ Sie\ hier\ die\ Klasse\ Liste.\r\n\ \r\n\ @author\ (Ihr\ Name)\ \r\n\ @version\ (eine\ Versionsnummer\ oder\ ein\ Datum)\r\n
+comment1.params=
+comment1.target=Liste()
+comment2.params=knoten
+comment2.target=void\ einfuegen(Knoten)
+comment3.params=s
+comment3.target=Knoten\ suchen(java.lang.String)
+numComments=4

@@ -1,0 +1,16 @@
+#BlueJ class context
+comment0.target=Baumelement
+comment0.text=\r\n\ Tragen\ Sie\ hier\ eine\ Beschreibung\ des\ Interface\ Baumelement\ ein.\r\n\ \r\n\ @author\ (Ihr\ Name)\ \r\n\ @version\ (eine\ Versionsnummer\ oder\ ein\ Datum)\r\n
+comment1.params=k
+comment1.target=Baumelement\ addElement(Knoten)
+comment2.params=
+comment2.target=Inhalt\ getInhalt()
+comment3.params=Key
+comment3.target=Knoten\ searchKnoten(int)
+comment4.params=
+comment4.target=void\ sortieren()
+comment5.params=Key
+comment5.target=int\ getHighestKey(int)
+comment6.params=Baum\ key\ i
+comment6.target=Baumelement\ mitteFinder(Baumelement[],\ int,\ int)
+numComments=7

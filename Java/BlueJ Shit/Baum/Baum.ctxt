@@ -1,0 +1,15 @@
+#BlueJ class context
+comment0.target=Baum
+comment0.text=\r\n\ Abstrakte\ Klasse\ Baum\ \r\n\ \r\n\ @author\ \r\n
+comment1.params=
+comment1.target=Baum()
+comment1.text=---------------Konstruktor---
+comment2.params=s
+comment2.target=void\ addElement(java.lang.String)
+comment3.params=Key
+comment3.target=Knoten\ searchKnoten(int)
+comment4.params=
+comment4.target=int\ getHighestKey()
+comment5.params=key
+comment5.target=void\ sortieren(int)
+numComments=6

@@ -1,0 +1,8 @@
+#BlueJ class context
+comment0.target=idk
+comment0.text=\r\n\ Klasse\ idk.\r\n\ \ \r\n\ @author\ \r\n
+comment1.params=
+comment1.target=idk()
+comment2.params=input\ Buchstabe
+comment2.target=int\ Testen(java.lang.String,\ char)
+numComments=3

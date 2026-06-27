@@ -1,0 +1,6 @@
+#BlueJ class context
+comment0.target=Range
+comment0.text=\r\n\ This\ class\ represents\ ranges\ of\ items\ (i.\ e.\ for\ highlighting\ them\ somehow)\r\n\ as\ used\ in\ SortPanel.\r\n\ @author\ Franz-Josef\r\n\r\n
+comment1.params=rangeBegin\ rangeAfterEnd
+comment1.target=Range(int,\ int)
+numComments=2
