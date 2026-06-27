@@ -19,23 +19,20 @@ public class MainMenu {
 
     public MainMenu() {
 
-    startButton.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if (!Speicher.invalid()) {
-                int columns = getNumber(Columns);
-                int rows = getNumber(Rows);
-                int bombCount = getNumber(BombCount);
+    startButton.addActionListener(e -> {
+        if (!Speicher.invalid()) {
+            int columns = getNumber(Columns);
+            int rows = getNumber(Rows);
+            int bombCount = getNumber(BombCount);
 
-                if (columns > 1 && rows > 1 && bombCount > 1 && bombCount<= columns*rows) {
-                    Speicher.init(columns, rows);
-                    Speicher.game().placeBombs(bombCount);
-                    Speicher.game().CountBombs();
-                    Speicher.getFrameForStart().dispose();
+            if (columns > 1 && rows > 1 && bombCount > 1 && bombCount<= columns*rows) {
+                Speicher.init(columns, rows);
+                Speicher.game().placeBombs(bombCount);
+                Speicher.game().CountBombs();
+                Speicher.getFrameForStart().dispose();
 
-                } else {
-                    invalid();
-                }
+            } else {
+                invalid();
             }
         }
     });
