@@ -1,0 +1,12 @@
+#BlueJ class context
+comment0.target=Inhalt
+comment0.text=\r\n\ Klasse\ Inhalt.\r\n\ \ \r\n\ @author\ \r\n
+comment1.params=Nachricht
+comment1.target=Inhalt(java.lang.String)
+comment1.text=---------------Konstruktor---
+comment2.params=
+comment2.target=java.lang.String\ getNachricht()
+comment3.params=
+comment3.target=void\ sort()
+comment3.text=---------------Methoden------
+numComments=4

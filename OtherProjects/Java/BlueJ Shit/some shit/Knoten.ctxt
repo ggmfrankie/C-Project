@@ -1,0 +1,14 @@
+#BlueJ class context
+comment0.target=Knoten
+comment0.text=\r\n\ Beschreiben\ Sie\ hier\ die\ Klasse\ Knoten.\r\n\ \r\n\ @author\ (Ihr\ Name)\ \r\n\ @version\ (eine\ Versionsnummer\ oder\ ein\ Datum)\r\n
+comment1.params=inhalt
+comment1.target=Knoten(java.lang.String)
+comment2.params=
+comment2.target=java.lang.String\ getInhalt()
+comment3.params=k
+comment3.target=Listenelement\ einfuegen(Knoten)
+comment4.params=l
+comment4.target=void\ setNachfolger(Listenelement)
+comment5.params=s
+comment5.target=Knoten\ suchen(java.lang.String)
+numComments=6

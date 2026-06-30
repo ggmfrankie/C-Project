@@ -1,0 +1,8 @@
+#BlueJ class context
+comment0.target=Inhalt
+comment0.text=\r\n\ Beschreiben\ Sie\ hier\ die\ Klasse\ Inhalt.\r\n\ \r\n\ @author\ (Ihr\ Name)\ \r\n\ @version\ (eine\ Versionsnummer\ oder\ ein\ Datum)\r\n
+comment1.params=Inhalt
+comment1.target=Inhalt(java.lang.String)
+comment2.params=
+comment2.target=java.lang.String\ getInhalt()
+numComments=3

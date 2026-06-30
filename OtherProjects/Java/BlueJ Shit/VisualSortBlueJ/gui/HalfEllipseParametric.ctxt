@@ -1,0 +1,8 @@
+#BlueJ class context
+comment0.target=HalfEllipseParametric
+comment0.text=\r\n\ This\ class\ represents\ a\ function\ f\:\r\n\ \r\n\ t\ ->\ (centerX,\ centerY)\ +\ (a*cos(t*PI),\ b*sin(t*PI))\r\n\ \r\n\ @author\ Franz-Josef\r\n
+comment1.params=startX\ endX\ y\ b
+comment1.target=HalfEllipseParametric(int,\ int,\ int,\ int)
+comment2.params=t
+comment2.target=java.awt.Point\ evalAt(float)
+numComments=3

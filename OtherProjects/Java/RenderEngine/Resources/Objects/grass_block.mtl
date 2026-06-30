@@ -1,0 +1,9 @@
+# grass_block
+# Created 27.07.2025 by Stefan
+newmtl grass
+Ka 1.000 1.000 1.000
+Kd 1.000 1.000 1.000
+Ks 1.0 1.0 1.0
+d 1.0
+illum 1
+map_Kd grass_block.png

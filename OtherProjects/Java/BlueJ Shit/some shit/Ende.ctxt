@@ -1,0 +1,11 @@
+#BlueJ class context
+comment0.target=Ende
+comment0.text=\r\n\ Beschreiben\ Sie\ hier\ die\ Klasse\ Ende.\r\n\ \r\n\ @author\ (Ihr\ Name)\ \r\n\ @version\ (eine\ Versionsnummer\ oder\ ein\ Datum)\r\n
+comment1.params=
+comment1.target=Ende()
+comment1.text=\r\n\ Konstruktor\ f\u00FCr\ Objekte\ der\ Klasse\ Ende\r\n
+comment2.params=r
+comment2.target=Baumelement\ einfuegen(Root)
+comment3.params=
+comment3.target=int\ getKey()
+numComments=4

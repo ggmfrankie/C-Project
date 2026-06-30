@@ -141,12 +141,18 @@ static void accumulateMeshes(Element *element, const Renderer *renderer, GuiVert
     endScissor();
 }
 
+[[deprecated]]
 void Renderer_updateLayout(const Renderer *renderer) {
     Element* root = renderer->guiRoot;
     root->dims.width = renderer->screenWidth;
     root->dims.height = renderer->screenHeight;
 
-    updateLayout(root, (Vec2i){0, 0}, (Vec2i){renderer->screenWidth, renderer->screenHeight},  (Vec2i){0, 0}, &renderer->font);
+    updateLayout(
+        root,
+        (Vec2i){0, 0},
+        (Vec2i){renderer->screenWidth, renderer->screenHeight},
+        (Vec2i){0, 0}, &renderer->font
+    );
 }
 
 void Renderer_updateLayout2(const Renderer *renderer) {
@@ -173,7 +179,7 @@ static Cache* cacheLayoutLines(Element* self) {
     data->minWidth = self->padding.left + self->padding.right;
     data->minHeight = self->padding.up + self->padding.down;
 
-    Vec2i cursor = {};
+    Vec2i cursor = {self->padding.left, self->padding.up};
     Vec2i extend = {};
 
     if (self->textElement.hasText) {
@@ -189,15 +195,15 @@ static Cache* cacheLayoutLines(Element* self) {
         Line* currLine = arrGetLast(data->aLines);
 
         if (child->positionMode == POS_FIT) {
-            const int extraGap = (cursor.x == 0) ? 0 : self->childGap;
-
             switch (self->layoutDirection) {
-                case L_down:
-                    if (cursor.y + childData->minHeight + self->padding.down + extraGap > self->dims.maxHeight) {
+                case L_down: {
+                    const int extraGap = (cursor.y == self->padding.up) ? 0 : self->childGap;
+                    if (cursor.y - self->padding.down + childData->minHeight + self->padding.down + extraGap > self->dims.maxHeight) {
                         // new line
                         currLine->end = i;
                         arrPush(data->aLines, (Line){i, i});
                         currLine = arrGetLast(data->aLines);
+                        cursor = (Vec2i){extend.x + self->childGap, self->padding.up};
                     }
                     cursor.y += childData->minHeight + self->childGap;
 
@@ -205,19 +211,23 @@ static Cache* cacheLayoutLines(Element* self) {
                     extend.x = max(extend.x, cursor.x + childData->minWidth);
 
                     break;
-                case L_right:
-                    if (cursor.x + childData->minWidth + self->padding.right + extraGap > self->dims.maxWidth) {
+                }
+                case L_right: {
+                    const int extraGap = (cursor.x == self->padding.left) ? 0 : self->childGap;
+                    if (cursor.x - self->padding.left + childData->minWidth + self->padding.right + extraGap > self->dims.maxWidth) {
                         // new line
                         currLine->end = i;
                         arrPush(data->aLines, (Line){i, i});
                         currLine = arrGetLast(data->aLines);
+                        cursor = (Vec2i){self->padding.left, extend.y + self->childGap};
                     }
                     cursor.x += childData->minWidth + self->childGap;
 
                     extend.x = max(extend.x, cursor.x);
-                    extend.y = max(extend.y, cursor.y + childData->minHeight);
+                    extend.y = max(extend.y, cursor.y + childData->minHeight - self->padding.up);
 
                     break;
+                }
             }
 
         } else {
@@ -238,10 +248,23 @@ static Cache* cacheLayoutLines(Element* self) {
 
 static void placeLine(const Element* parent, Vec2i* cursor, Vec2i* extend, Element** array, Line line) {
     float totalLineFlex = 0.0f;
+    int totalMinSize = 0;
+    int sumChildGaps = (line.end - line.start-1) * parent->childGap;
 
     for (int i = line.start; i < line.end; ++i) {
         totalLineFlex += array[i]->dims.flexGrow;
+        switch (parent->layoutDirection) {
+            case L_right: totalMinSize += array[i]->layoutCache.minWidth;  break;
+            case L_down:  totalMinSize += array[i]->layoutCache.minHeight; break;
+        }
     }
+    int containerSize;
+    switch (parent->layoutDirection) {
+        case L_right: containerSize = parent->dims.worldWidth  - parent->padding.left - parent->padding.right; break;
+        case L_down:  containerSize = parent->dims.worldHeight - parent->padding.up   - parent->padding.down;  break;
+    }
+    int availableFlexSpace = max(0, containerSize - totalMinSize - sumChildGaps);
+
 
     const Vec2i lineStart = *cursor;
 
@@ -251,18 +274,22 @@ static void placeLine(const Element* parent, Vec2i* cursor, Vec2i* extend, Eleme
             curr->dims.worldPos = *cursor;
 
             switch (parent->layoutDirection) {
-                case L_down:
-                    curr->dims.worldWidth = curr->layoutCache.minWidth;
-                    curr->dims.worldHeight = curr->layoutCache.minHeight + ((totalLineFlex) ? (curr->dims.flexGrow/totalLineFlex) * (parent->dims.worldHeight - lineStart.y) : 0);
-
+                case L_down: {
+                    int extraHeight = (totalLineFlex > 0) ?
+                        (int)((curr->dims.flexGrow / totalLineFlex) * availableFlexSpace) : 0;
+                    curr->dims.worldWidth  = curr->layoutCache.minWidth;
+                    curr->dims.worldHeight = curr->layoutCache.minHeight + extraHeight;
                     cursor->y += curr->dims.worldHeight + parent->childGap;
                     break;
-                case L_right:
-                    curr->dims.worldWidth = curr->layoutCache.minWidth + ((totalLineFlex) ? (curr->dims.flexGrow/totalLineFlex) * (parent->dims.worldWidth - lineStart.x) : 0);
+                }
+                case L_right: {
+                    int extraWidth = (totalLineFlex > 0) ?
+                        (int)((curr->dims.flexGrow / totalLineFlex) * availableFlexSpace) : 0;
+                    curr->dims.worldWidth  = curr->layoutCache.minWidth + extraWidth;
                     curr->dims.worldHeight = curr->layoutCache.minHeight;
-
                     cursor->x += curr->dims.worldWidth + parent->childGap;
                     break;
+                }
             }
 
             extend->x = max(extend->x, curr->dims.worldPos.x + curr->dims.worldWidth);
@@ -299,7 +326,7 @@ static void placeLine(const Element* parent, Vec2i* cursor, Vec2i* extend, Eleme
 
 static void layoutElement(const Element* self) {
     if (!self || !self->flags.isActive) return;
-    const Vec2i contentStart = {self->dims.worldPos.x + self->padding.left, self->dims.worldPos.y + self->padding.down};
+    const Vec2i contentStart = {self->dims.worldPos.x + self->padding.left, self->dims.worldPos.y + self->padding.up};
     Vec2i cursor = contentStart;
     Vec2i extend = contentStart;
 
@@ -343,7 +370,7 @@ static void layoutElement(const Element* self) {
 
 //TODO maybe pass available size to the child element or maybe change the layout function if the element has fixed width?
 //! @brief Traverses the gui_element tree and updates positions and dimensions of children and then parents
-
+[[deprecated]]
 static Vec2i updateLayout(Element* self, const Vec2i parentCursor, const Vec2i remainingSpace, const Vec2i parentPos, const Font* font) {
     if (!self || !self->flags.isActive) return (Vec2i){0,0};
     const auto cb = &self->callbacks;

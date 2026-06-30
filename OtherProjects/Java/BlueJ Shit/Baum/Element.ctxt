@@ -1,0 +1,14 @@
+#BlueJ class context
+comment0.target=Element
+comment0.text=\r\n\ Beschreiben\ Sie\ hier\ die\ Klasse\ Element.\r\n\ \r\n\ @author\ (Ihr\ Name)\ \r\n\ @version\ (eine\ Versionsnummer\ oder\ ein\ Datum)\r\n
+comment1.params=inhalt
+comment1.target=Element(Baumelement)
+comment2.params=e
+comment2.target=Listenelement\ addElement(Element)
+comment3.params=
+comment3.target=Baumelement\ getInhalt()
+comment4.params=l
+comment4.target=void\ addNachfolger(Listenelement)
+comment5.params=
+comment5.target=Listenelement\ getNachfolger()
+numComments=6

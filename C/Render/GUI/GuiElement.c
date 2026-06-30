@@ -342,8 +342,8 @@ Element* addChildrenAsGridWithGenerator(const ElementSettings parentData, Elemen
 
     for (int i = 0; i < numX; i++) {
         for (int ii = 0; ii < numY; ii++) {
-            es.pos.x = (parentData.childGap + childWidth) * i + parent->padding.left;
-            es.pos.y = (parentData.childGap + childHeight) * ii + parent->padding.up;
+            es.pos.x = (parentData.childGap + childWidth) * i;
+            es.pos.y = (parentData.childGap + childHeight) * ii;
             addChildElements(parent, generateElement(i, ii, es));
         }
     }

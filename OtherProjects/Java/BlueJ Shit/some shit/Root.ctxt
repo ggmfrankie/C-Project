@@ -1,0 +1,10 @@
+#BlueJ class context
+comment0.target=Root
+comment0.text=\r\n\ Beschreiben\ Sie\ hier\ die\ Klasse\ Root.\r\n\ \r\n\ @author\ (Ihr\ Name)\ \r\n\ @version\ (eine\ Versionsnummer\ oder\ ein\ Datum)\r\n
+comment1.params=s\ key
+comment1.target=Root(java.lang.String,\ int)
+comment2.params=
+comment2.target=int\ getKey()
+comment3.params=r
+comment3.target=Baumelement\ einfuegen(Root)
+numComments=4

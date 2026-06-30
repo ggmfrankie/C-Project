@@ -1,0 +1,12 @@
+#BlueJ class context
+comment0.target=Ende
+comment0.text=\r\n\ Beschreiben\ Sie\ hier\ die\ Klasse\ Ende.\r\n\ \r\n\ @author\ (Ihr\ Name)\ \r\n\ @version\ (eine\ Versionsnummer\ oder\ ein\ Datum)\r\n
+comment1.params=
+comment1.target=Ende()
+comment2.params=
+comment2.target=Baumelement\ getInhalt()
+comment3.params=e
+comment3.target=Listenelement\ addElement(Element)
+comment4.params=
+comment4.target=Listenelement\ getNachfolger()
+numComments=5

@@ -1,0 +1,10 @@
+#BlueJ class context
+comment0.target=Listenelement
+comment0.text=\r\n\ Tragen\ Sie\ hier\ eine\ Beschreibung\ des\ Interface\ Listenelement\ ein.\r\n\ \r\n\ @author\ (Ihr\ Name)\ \r\n\ @version\ (eine\ Versionsnummer\ oder\ ein\ Datum)\r\n
+comment1.params=
+comment1.target=Baumelement\ getInhalt()
+comment2.params=e
+comment2.target=Listenelement\ addElement(Element)
+comment3.params=
+comment3.target=Listenelement\ getNachfolger()
+numComments=4

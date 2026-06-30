@@ -1,0 +1,23 @@
+#BlueJ class context
+comment0.target=Knoten
+comment0.text=\r\n\ Klasse\ Knoten.\r\n\ \ \r\n\ @author\ \r\n
+comment1.params=inhalt\ key
+comment1.target=Knoten(Inhalt,\ int)
+comment1.text=---------------Konstruktor---
+comment2.params=k
+comment2.target=Baumelement\ addElement(Knoten)
+comment3.params=
+comment3.target=Inhalt\ getInhalt()
+comment4.params=Key
+comment4.target=int\ getHighestKey(int)
+comment5.params=
+comment5.target=int\ getKey()
+comment6.params=Key
+comment6.target=Knoten\ searchKnoten(int)
+comment7.params=rechterNachfolger\ linkerNachfolger
+comment7.target=void\ setNachfolger(Baumelement,\ Baumelement)
+comment8.params=
+comment8.target=void\ sortieren()
+comment9.params=Baum\ key\ i
+comment9.target=Baumelement\ mitteFinder(Baumelement[],\ int,\ int)
+numComments=10

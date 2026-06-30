@@ -1,0 +1,19 @@
+#BlueJ class context
+comment0.target=Item
+comment0.text=\r\n\ This\ class\ represents\ graphical\ items\ (bars\ with\ rounded\ corners)\ to\ be\r\n\ sorted\ as\ used\ by\ SortPanel.\r\n\ \r\n\ @author\ Franz-Josef\r\n
+comment1.params=size
+comment1.target=Item(int)
+comment2.params=itemWidth\ itemHeightUnit
+comment2.target=void\ prepareDraw(int,\ int)
+comment2.text=\r\n\ Call\ this\ method\ from\ paint\r\n\ shortly\ before\ you\ call\ draw\ on\ the\ several\ objects\ of\ class\ Item.\r\n\ @param\ itemWidth\t\t\tThe\ width\ of\ the\ following\ items\ to\ be\ drawn\r\n\ @param\ itemHeightUnit\tThe\ height\ unit\ (which\ will\ be\ multiplied\ by\ this.size)\r\n
+comment3.params=state
+comment3.target=void\ setState(Item.State)
+comment4.params=g\ x\ y
+comment4.target=void\ draw(java.awt.Graphics,\ int,\ int)
+comment4.text=\r\n\ Draws\ an\ item\ with\ height\ and\ width\ specified\ as\ in\ prepareDraw.\r\n\ @param\ g\t\tThe\ graphics\ context\ to\ be\ used\r\n\ @param\ x\t\tThe\ left\ position\ of\ the\ item\r\n\ @param\ y\t\tThe\ bottom\ position\ of\ the\ item\r\n
+comment5.params=
+comment5.target=java.lang.String\ toString()
+comment6.params=
+comment6.target=Item\ getNullItem()
+comment6.text=\r\n\ Returns\ the\ nullItem,\ which\ is\ the\ "empty"\ or\ "non-existent"\ item.\r\n\ This\ has\ the\ following\ advantage\ over\ just\ using\ null\:\r\n\ getNullItem().draw(...)\ will\ just\ do\ nothing\ whereas\ null.draw(...)\r\n\ will\ throw\ an\ exception.\r\n\ @return\r\n
+numComments=7

@@ -726,7 +726,7 @@ static void createChessBoard(Element* root) {
                         .color = {.25, .35, .355},
                         .padding = {5,5,5,5},
                         .childGap = 10,
-                        .width = 400,
+                        .flexGrow = 1.0f,
                         .layoutDirection = L_right,
                         .notSelectable = true,
                         .wantGrowHorizontal = true,
