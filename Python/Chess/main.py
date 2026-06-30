@@ -11,7 +11,8 @@ def test():
     rook = Rook(0)
     print(rook.get_identifier())
 
-    
+
+
 
 
 

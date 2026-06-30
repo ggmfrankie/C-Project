@@ -125,9 +125,9 @@ class ChessBoard:
 
     def draw_gui(self, events):
         for i, button in enumerate(self.buttons):
-            row = i % 8                                #Whole number division
-            col = i // 8
-            piece = self.board[row][col]
+            y = i % 8                                #Whole number division
+            x = i // 8
+            piece = self.board[y][x]
 
             if piece is not None:
                 button.set_sprite(self.piece_sprites[piece.get_identifier()])
@@ -139,19 +139,29 @@ class ChessBoard:
         self.mouse_piece_button.draw(self.screen)
 
 
-    def on_square_clicked(self, row, col):
+    def on_square_clicked(self, y, x):
         if self.selected_piece is None:
-            if self.board[row][col] is None:
+            if self.board[y][x] is None:
                 return
-            self.selected_piece = self.board[row][col]
-            self.board[row][col] = None
-
+            self.selected_piece = self.board[y][x]
+            self.board[y][x] = None
+            self.print_board()
+            moves = self.selected_piece.get_moves(Vec2(x, y), self.board)
+            print(len(moves))
             id = self.selected_piece.get_identifier()
             self.mouse_piece_button.set_sprite(self.piece_sprites[id])
+
+
         else:
-            self.board[row][col] = self.selected_piece
-            moves = self.selected_piece.get_moves(Vec2(row, col), self.board)
-            print(len(moves))
+            self.board[y][x] = self.selected_piece
+
             self.selected_piece = None
             self.mouse_piece_button.set_sprite(None)
 
+
+    def print_board(self):
+        for i in range(8):
+            for j in range(8):
+                print(self.board[i][j].get_identifier() if self.board[i][j] is not None else '0',end=" ")
+
+            print()

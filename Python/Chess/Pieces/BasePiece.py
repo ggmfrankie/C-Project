@@ -10,48 +10,82 @@ class BasePiece:
         self.color = color
         self.color_string = 'w' if color == 1 else 'b'
 
-    def get_diagonal_moves(self, pos: Vec2, board: list[list[Self | None]], direction, limit = -1) -> list[Move]:
+    def get_diagonal_moves(self, pos: Vec2, board: list[list[Self | None]], direction) -> list[Move]:
         moves: list[Move] = []
 
 
-        for i in range(8):
+        for i in range(1,8):
             match direction:
                 case 0:
-                    row = pos.x - i
-                    col = pos.y + i
+                    y = pos.y - i
+                    x = pos.x + i
                     pass
                 case 1:
-                    row = pos.x + i
-                    col = pos.y + i
+                    y = pos.y + i
+                    x = pos.x + i
                     pass
                 case 2:
-                    row = pos.x + i
-                    col = pos.y - i
+                    y = pos.y + i
+                    x = pos.x - i
                     pass
                 case 3:
-                    row = pos.x - i
-                    col = pos.y - i
+                    y = pos.y - i
+                    x = pos.x - i
                     pass
                 case _ :
                     return []
 
-            if row > 7 or col > 7 or row < 0 or col < 0:
+            if y > 7 or x > 7 or y < 0 or x < 0:
                 break
 
-            figure = board[row][col]
+            figure = board[y][x]
             if figure is None:
-                moves.append(Move(row, col, False, 0, False, False))
+                moves.append(Move(y, x, False, 0, False, False))
             elif figure.color == self.color:
                 break
             else:
-                moves.append(Move(row, col, True, 10, False, False))
+                moves.append(Move(y, x, True, 10, False, False))
                 break
 
-        return []
+        return moves
 
-    def get_orthogonal_moves(self, direction, limit = -1) -> list[Move]:
-        #TODO
-        return []
+    def get_orthogonal_moves(self, pos: Vec2, board: list[list[Self | None]], direction) -> list[Move]:
+        moves: list[Move] = []
+
+        for i in range(1, 8):
+            match direction:
+                case 0:
+                    y = pos.y
+                    x = pos.x + i
+                    pass
+                case 1:
+                    y = pos.y + i
+                    x = pos.x
+                    pass
+                case 2:
+                    y = pos.y
+                    x = pos.x - i
+                    pass
+                case 3:
+                    y = pos.y - i
+                    x = pos.x
+                    pass
+                case _:
+                    return []
+
+            if y > 7 or x > 7 or y < 0 or x < 0:
+                break
+
+            figure = board[y][x]
+            if figure is None:
+                moves.append(Move(y, x, False, 0, False, False))
+            elif figure.color == self.color:
+                break
+            else:
+                moves.append(Move(y, x, True, 10, False, False))
+                break
+
+        return moves
 
     def get_color(self):
         return self.color_string

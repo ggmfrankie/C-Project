@@ -10,7 +10,11 @@ class Rook(BasePiece):
         super().__init__(color)
 
     def get_moves(self, pos: Vec2, board: list[list[Self | None]]) -> list[Move]:
-        return []
+        return (super().get_orthogonal_moves(pos, board, 0) +
+                super().get_orthogonal_moves(pos, board, 1) +
+                super().get_orthogonal_moves(pos, board, 2) +
+                super().get_orthogonal_moves(pos, board, 3)
+                )
 
     def get_identifier(self):
         return '_'.join([super().get_color(),'rook'])
