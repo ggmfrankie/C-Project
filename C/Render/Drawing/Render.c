@@ -166,9 +166,46 @@ void Renderer_updateLayout2(const Renderer *renderer) {
     layoutElement(renderer->guiRoot);
 }
 
+static void clearCache(Element* self) {
+    Cache* cache = &self->layoutCache;
+    arrClear(cache->aLines);
+    arrPush(cache->aLines, (Line){});
+    cache->minWidth = 0;
+    cache->minHeight = 0;
+}
+
+static Vec2i calculateTextSize(const Element* self) {
+    if (self->textElement.hasText) {
+        return  measureElementText(&self->textElement);
+    }
+    return (Vec2i){0, 0};
+}
+
+static Vec2i getManualDims(const Element* self) {
+    return (Vec2i){
+        self->dims.width,
+        self->dims.height
+    };
+}
+
+static Vec2i getDimsFromChildren(const Element* self, Cache* cache) {
+
+}
+
+static
+
+static Cache* cacheLayout(Element* self) {
+    if (!self->flags.isActive) return &self->layoutCache;
+
+    clearCache(self);
+
+    Vec2i textDims   = calculateTextSize(self);
+    Vec2i manualDims = getManualDims(self);
+    Vec2i childDims  = getDimsFromChildren(self, &self->layoutCache);
+}
+
 static Cache* cacheLayoutLines(Element* self) {
     Cache* data = &self->layoutCache;
-
     arrClear(data->aLines);
     arrPush(data->aLines, (Line){});
     data->minWidth = 0;

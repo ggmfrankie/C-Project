@@ -26,6 +26,7 @@
       <excludeFolder url="file://$MODULE_DIR$/cmake-build-debug/CMakeFiles" />
       <excludeFolder url="file://$MODULE_DIR$/cmake-build-debug/Testing" />
       <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Rust/target" />
+      <excludeFolder url="file://$MODULE_DIR$/Rust/target" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.14 (C-Project)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
