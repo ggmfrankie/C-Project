@@ -188,22 +188,29 @@ static Vec2i getManualDims(const Element* self) {
     };
 }
 
-static void accumulateLinesVertical(const Vec2i start, Cache* parentCache, const Cache* childCache) {
-    Vec2i cursor = start;
-    Vec2i extend = (Vec2i){0, 0};
-}
+
 
 static Vec2i getDimsFromChildren(const Element* self, Cache* parentCache) {
     const Vec2i start = {self->padding.up, self->padding.left};
+    Vec2i cursor = start;
+    Vec2i extend = (Vec2i){0, 0};
+
     for_eachArr(childPtr, self->aChildElements, {
         const Cache* childCache = &(*childPtr)->layoutCache;
+        Line* lines = parentCache->aLines;
 
         switch (self->layoutDirection) {
-            case L_down:
-                accumulateLinesVertical(start, parentCache, childCache);
+            case L_down: {
+                int predictedExtend = extend.y + childCache->minHeight + self->childGap;
+                if (predictedExtend > self->dims.maxWidth) {
+                    cursor.y = start.y;
+                    cursor.x = extend.x + self->childGap;
+                }
+            }
                 break;
-            case L_right:
+            case L_right: {
 
+            }
                 break;
         }
     });
