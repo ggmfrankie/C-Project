@@ -148,8 +148,8 @@ typedef struct ElementSettings {
     bool invisible;
     bool notSelectable;
     bool draggable;
-    bool fixedWidth;
-    bool fixedHeight;
+    bool maxWidth;
+    bool maxHeight;
     bool wantGrowHorizontal;
     bool wantGrowVertical;
 

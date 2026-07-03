@@ -24,7 +24,7 @@ void generateDebugGui(Element* guiRoot) {
         addChildElements(
             createElement((ElementSettings){
                 .height = 20,
-                .fixedHeight = true,
+                .maxHeight = true,
                 .notSelectable = true,
                 .invisible = true,
                 .color = {},

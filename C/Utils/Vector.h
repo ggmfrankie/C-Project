@@ -58,3 +58,4 @@ Vec2i: Vec2i_Add,\
 Vec3f: Vec3f_Add,\
 Vec4f: Vec4f_Add\
 )(vec1, factor)
+

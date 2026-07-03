@@ -18,6 +18,7 @@ static Vec2i updateLayout(Element* self, Vec2i parentCursor, Vec2i remainingSpac
 
 static void layoutElement(const Element* self);
 static Cache* cacheLayoutLines(Element* self);
+static Cache* cacheLayout(Element* self);
 
 Element* createRootElement();
 
@@ -161,7 +162,7 @@ void Renderer_updateLayout2(const Renderer *renderer) {
     root->dims.worldWidth = renderer->screenWidth;
     root->dims.worldHeight = renderer->screenHeight;
 
-    cacheLayoutLines(root);
+    cacheLayout(root);
 
     layoutElement(renderer->guiRoot);
 }
@@ -176,7 +177,7 @@ static void clearCache(Element* self) {
 
 static Vec2i calculateTextSize(const Element* self) {
     if (self->textElement.hasText) {
-        return  measureElementText(&self->textElement);
+        return measureElementText(&self->textElement);
     }
     return (Vec2i){0, 0};
 }
@@ -187,45 +188,106 @@ static Vec2i getManualDims(const Element* self) {
         self->dims.height
     };
 }
+static Line* startNewline(Line* lines, const int i) {
+    //Close line
+    arrGetLast(lines)->end = i;
+    //New line
+    arrPush(lines, (Line){.start = i, .end = i});
+    return arrGetLast(lines);
+}
 
-
-
-static Vec2i getDimsFromChildren(const Element* self, Cache* parentCache) {
-    const Vec2i start = {self->padding.up, self->padding.left};
-    Vec2i cursor = start;
-    Vec2i extend = (Vec2i){0, 0};
+static Vec2i getDimsFromChildren(const Element* self, Line* lines) {
+    Vec2i cursor = {0, 0};
+    Vec2i extend = {0, 0};
 
     for_eachArr(childPtr, self->aChildElements, {
-        const Cache* childCache = &(*childPtr)->layoutCache;
-        Line* lines = parentCache->aLines;
+        Element* child = *childPtr;
+        //First calculate sizes of children
+        const Cache* childCache = cacheLayout(child);
+        Line* currLine = &lines[0];
+        const int childGap = self->childGap;
+
+        if (child->positionMode == POS_RELATIVE) {
+            extend.x = max(extend.x, child->dims.pos.x + childCache->minWidth + childGap);
+            extend.y = max(extend.y, child->dims.pos.y + child->dims.height + childGap);
+            currLine->end++;
+            continue;
+        }
 
         switch (self->layoutDirection) {
             case L_down: {
-                int predictedExtend = extend.y + childCache->minHeight + self->childGap;
-                if (predictedExtend > self->dims.maxWidth) {
-                    cursor.y = start.y;
-                    cursor.x = extend.x + self->childGap;
+                const int extraGap = (cursor.y == 0) ? childGap : 0;
+                const int totalPadding = self->padding.left + self->padding.right;
+                const int predictedTotalHeight = cursor.y + childCache->minHeight + extraGap + totalPadding;
+                if (predictedTotalHeight > self->dims.maxHeight) {
+                    cursor.y = 0;
+                    cursor.x = extend.x + childGap;
+                    currLine = startNewline(lines, i);
                 }
+                //Increment cursor by childHeight + childGap
+                cursor.y += childCache->minHeight + childGap;
+
+                //Update max extend
+                extend.y = max(extend.y, cursor.y);
+                extend.x = max(extend.x, cursor.x + childCache->minWidth);
             }
                 break;
             case L_right: {
+                const int extraGap = (cursor.x == 0) ? childGap : 0;
+                const int totalPadding = self->padding.up + self->padding.down;
+                const int predictedTotalHeight = cursor.x + childCache->minWidth + extraGap + totalPadding;
+                if (predictedTotalHeight > self->dims.maxWidth) {
+                    cursor.x = 0;
+                    cursor.y = extend.y + childGap;
+                    currLine = startNewline(lines, i);
+                }
+                //Increment cursor by childWidth + childGap
+                cursor.x += childCache->minWidth + childGap;
 
+                //Update max extend
+                extend.x = max(extend.x, cursor.x);
+                extend.y = max(extend.y, cursor.y + childGap + childCache->minHeight);
             }
                 break;
         }
+        currLine->end++;
     });
+
+    //remove extra child gap
+    if (!arrIsEmpty(self->aChildElements)) {
+        switch (self->layoutDirection) {
+            case L_down:
+                extend.y -= self->childGap;
+                break;
+            case L_right:
+                extend.x -= self->childGap;
+                break;
+        }
+    }
+
+    return extend;
 }
-
-
 
 static Cache* cacheLayout(Element* self) {
     if (!self->flags.isActive) return &self->layoutCache;
 
     clearCache(self);
 
-    Vec2i textDims   = calculateTextSize(self);
-    Vec2i manualDims = getManualDims(self);
-    Vec2i childDims  = getDimsFromChildren(self, &self->layoutCache);
+    const Vec2i textDims   = calculateTextSize(self);
+    const Vec2i manualDims = getManualDims(self);
+    const Vec2i childDims  = getDimsFromChildren(self, self->layoutCache.aLines);
+
+    self->layoutCache.minWidth  =
+        max(self->dims.cornerRadius, self->padding.left) +
+        max(textDims.x, max(manualDims.x, childDims.x)) +
+        max(self->dims.cornerRadius, self->padding.right);
+
+    self->layoutCache.minHeight =
+        max(self->dims.cornerRadius, self->padding.up) +
+        max(textDims.y, max(manualDims.y, childDims.y)) +
+        max(self->dims.cornerRadius, self->padding.down);
+
+    return &self->layoutCache;
 }
 
 static Cache* cacheLayoutLines(Element* self) {

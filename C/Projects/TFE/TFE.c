@@ -55,8 +55,8 @@ void TFE_createGUI(Element* root) {
                     .color = {0.4, 0.6, 0.7},
                     .width = 400,
                     .height = 400,
-                    .fixedWidth = true,
-                    .fixedHeight = true,
+                    .maxWidth = true,
+                    .maxHeight = true,
                     .padding = {10,10,10,10},
                     .childGap = 10
                 },

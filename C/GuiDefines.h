@@ -4,7 +4,7 @@
 
 #pragma once
 
-#define GUI_DEBUG 1
+#define GUI_DEBUG 0
 
 #define GUI_DEBUG_RENDER 0
 #define GUI_DEBUG_TRACE_DRAGGING 0

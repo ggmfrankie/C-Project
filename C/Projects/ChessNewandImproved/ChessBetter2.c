@@ -371,7 +371,7 @@ void chess_createChessBoard(Element* element) {
             addChildElements(
                 createElement((ElementSettings){
                     .height = 600,
-                    .fixedHeight = true,
+                    .maxHeight = true,
                     .notSelectable = true,
                     .color = COLOR_GRAY,
                 }),

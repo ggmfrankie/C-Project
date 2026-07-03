@@ -690,8 +690,8 @@ static void createChessBoard(Element* root) {
                     .onUpdate = updateColorRainbow,
                     .width = 400,
                     .height = 400,
-                    .fixedWidth = true,
-                    .fixedHeight = true,
+                    .maxWidth = true,
+                    .maxHeight = true,
                     .padding = {10,10,10,10}
                 },
                 (ElementSettings){
@@ -730,7 +730,7 @@ static void createChessBoard(Element* root) {
                         .layoutDirection = L_right,
                         .notSelectable = true,
                         .wantGrowHorizontal = true,
-                        .fixedWidth = true,
+                        .maxWidth = true,
                         .cornerRadius = 10,
                         .name = "panel"
                     }

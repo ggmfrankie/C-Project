@@ -43,7 +43,7 @@ void generateTestGUI(Element *guiRoot) {
                     .color = (Vec3f){0.0f, 0.0f, 0.0f},
                     .childGap = 5,
                     .padding = (Padding){10, 10, 10, 10},
-                    .fixedHeight = true,
+                    .maxHeight = true,
                     .onUpdate = incrementHeight,
                 }),
                 createElement((ElementSettings){
@@ -115,7 +115,7 @@ void generateTestGUI(Element *guiRoot) {
                     .draggable = true,
                     .width = 100,
                     .height = 20,
-                    .padding = (Padding){4, 4, 4, 4},
+                    .padding = (Padding){10, 10, 10, 10},
                     .text = "hoosaasas"
                 })
             )
