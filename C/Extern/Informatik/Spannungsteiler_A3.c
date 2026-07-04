@@ -3,9 +3,9 @@
 //
 
 #include "Spannungsteiler_A3.h"
-
-#include <bemapiset.h>
 #include <stdio.h>
+
+#include "Utils/Makros.h"
 #define Diode 2.5
 int Berechnung() {
     Spannung U = 5.0f;

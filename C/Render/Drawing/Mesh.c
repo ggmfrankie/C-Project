@@ -5,8 +5,7 @@
 
 #include <string.h>
 #include <math.h>
-
-#include <bemapiset.h>
+#include "Utils/Makros.h"
 
 #include "RenderTypes.h"
 #include "Render/GUI/GuiElement.h"

@@ -9,7 +9,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <_bsd_types.h>
+#include "Utils/Makros.h"
 
 #include "../CString.h"
 

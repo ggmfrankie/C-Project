@@ -11,6 +11,7 @@
 #include <string.h>
 
 #include "../../Extern/Libraries/WinAdapt.h"
+#include "Utils/UtilsTypedef.h"
 
 constexpr int MAX_TOKENS = 64;
 constexpr int MAX_TOKEN_LENGTH = 16;

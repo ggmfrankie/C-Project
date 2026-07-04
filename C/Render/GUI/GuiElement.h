@@ -10,6 +10,7 @@
 #include "../../Utils/Vector.h"
 #include "Render/Drawing/TextDisplaying.h"
 #include "Utils/Network.h"
+#include "Utils/UtilsTypedef.h"
 
 typedef struct Padding {
     int left;

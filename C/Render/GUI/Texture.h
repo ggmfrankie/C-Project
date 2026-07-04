@@ -4,6 +4,7 @@
 
 #pragma once
 #include <stdint.h>
+#include <stdarg.h>
 
 #include "GuiDefines.h"
 #include "../../Utils/Vector.h"

@@ -1,11 +1,12 @@
 //
 // Created by ertls on 27.11.2025.
 //
-
+#ifdef _Win32
 #include "Namensliste.h"
 #include <string.h>
 #include <windows.h>
 #include <_bsd_types.h>
+#include "Utils/Makros.h"
 
 #include "../../Utils/CString.h"
 #include "../../Utils/FileIO.h"
@@ -161,3 +162,4 @@ void namensliste_schnell() {
 
     printf("Time elapsed: %llu ns", time);
 }
+#endif

@@ -7,7 +7,9 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <string.h>
-#include <_bsd_types.h>
+#include <sys/types.h>
+
+#include "Utils/Makros.h"
 #include "../../Utils/FileIO.h"
 
 void testEndianness();

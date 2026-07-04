@@ -8,7 +8,6 @@
 #include <stb/stb_rect_pack.h>
 #define STB_TRUETYPE_IMPLEMENTATION
 #include <float.h>
-#include <minwindef.h>
 #include <stb/stb_truetype.h>
 #include "Render.h"
 #include "RenderTypes.h"

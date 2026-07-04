@@ -1,3 +1,4 @@
+/*
 #ifndef __WINADAPT
 #define __WINADAPT
 
@@ -36,3 +37,4 @@ extern void delay(double amount);
 extern void runAsThread(void *(*TheFunction)(void*));
 
 #endif
+*/

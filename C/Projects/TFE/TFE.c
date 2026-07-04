@@ -17,9 +17,12 @@ static void TFE_onKeyPress(int key, int scancode, int action, int mods) {
 }
 
 void TFE_newGame() {
+#ifdef _WIN32
+
     if (game) game_destroy(game);
     game = game_create();
     gui_onKeyPressCallback(TFE_onKeyPress);
+#endif
 }
 
 Element* TFE_createSquare(int, int, ElementSettings es) {
@@ -71,7 +74,7 @@ void TFE_createGUI(Element* root) {
 }
 
 void TFE_run() {
-
+#ifdef _WIN32
     game_input(game, 0);
     int board[16];
     game_get_board(game, board);
@@ -81,6 +84,8 @@ void TFE_run() {
     for (int i = 0; i < 16; i++) {
         printf("%i ", board[i]);
     }
+#endif
+
 }
 
 

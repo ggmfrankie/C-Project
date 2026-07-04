@@ -47,35 +47,18 @@ add_library(GUI STATIC
         C/Render/ComputeShader.h
         C/Render/GUI/Texture.c
         C/Render/GUI/Texture.h
-        C/Extern/Informatik/Spannungsteiler_A3.c
-        C/Extern/Informatik/Spannungsteiler_A3.h
-        C/Extern/Informatik/DrunkenBishop.c
-        C/Extern/Informatik/DrunkenBishop.h
-        C/Extern/Informatik/GameBoard.c
-        C/Extern/Informatik/GameBoard.h
         C/Utils/Makros.h
         C/Utils/TimeMeasurements.c
         C/Utils/TimeMeasurements.h
         C/Render/GUI/CallbackFunctions.h
         C/Render/GUI/CallbackFunctions.c
-        C/Extern/Informatik/Geldautomat.c
         C/Render/Drawing/TextDisplaying.c
         C/Render/Drawing/TextDisplaying.h
-        C/Extern/Informatik/PointerFun.c
-        C/Extern/Informatik/Namensliste.c
-        C/Extern/Informatik/Personalverwaltung.c
         C/Render/GUI/Tasks.c
         C/Render/GUI/Tasks.h
-        C/Extern/Informatik/MonteCarlo.c
-        C/Extern/Informatik/MonteCarlo.h
-        C/Extern/Informatik/libminibmp.c
         C/Utils/MemoryArena.c
         C/Render/GUI/GuiElementData.c
         C/Render/GUI/GuiElementData.h
-        C/Extern/Libraries/WinAdapt.c
-        C/Extern/Libraries/WinAdapt.h
-        C/Extern/Informatik/TowersOfHanoi.c
-        C/Extern/Informatik/TowersOfHanoi.h
         C/Projects/Chess/ChessGame.c
         C/Projects/Chess/ChessGame.h
         C/Utils/Network.c
@@ -88,11 +71,9 @@ add_library(GUI STATIC
         C/Projects/Tokenizer/Calculator.c
         C/Projects/Tokenizer/Calculator.h
         C/Utils/CArrayList.h
-
         C/Projects/TFE/TFE.c
         C/Projects/TFE/TFE.h
         C/GuiTypes.h
-
         C/Render/GUI/Update.c
         C/Render/GUI/Update.h
         C/Render/Drawing/Batcher.c
@@ -133,8 +114,6 @@ add_executable(C-Project
         Cpp/Render/Objects/Render/Texture.hpp
         Cpp/Render/Objects/Render/Material.cpp
         Cpp/Render/Objects/Render/Material.hpp
-        Cpp/Render/Objects/Loader/ObjLoader.cpp
-        Cpp/Render/Objects/Loader/ObjLoader.hpp
         Cpp/Utils/Utils.cpp
         Cpp/Utils/Utils.hpp
         Cpp/Utils/Math/Quaternion.hpp
@@ -195,7 +174,6 @@ add_executable(C-Project
         Cpp/Games/Game2D/Game2D.cpp
         Cpp/Games/Game2D/Game2D.hpp
         Cpp/Engine/Core/PhysixBox2D/Collision.hpp
-        Dependencies/RustGame/TFE.h
         Cpp/Test/Java.cpp
         Cpp/Test/Java.hpp
         Cpp/Utils/DataStorage/Stream.hpp
@@ -216,6 +194,8 @@ add_executable(C-Project
         EngineDefines.hpp
         Cpp/Games/Game2D/Game2DGui.c
         Cpp/Games/Game2D/Game2DGui.h
+        Cpp/Render/Objects/Loader/OBJLoader.cpp
+        Cpp/Render/Objects/Loader/OBJLoader.hpp
 )
 
 target_compile_definitions(C-Project PUBLIC JPH_ENABLE_ASSERTS)
@@ -243,6 +223,7 @@ add_custom_command(TARGET C-Project POST_BUILD
         $<TARGET_FILE_DIR:C-Project>
 )
 
+if (WIN32)
 target_link_libraries(C-Project PRIVATE
         glfw
         opengl32     # OpenGL (needed by GLFW)
@@ -256,4 +237,14 @@ target_link_libraries(C-Project PRIVATE
         #TBB::tbb
         RustGame
 )
+endif (WIN32)
 
+if (UNIX)
+    target_link_libraries(C-Project PRIVATE
+            glfw
+            GUI
+            Jolt
+            #TBB::tbb
+            #RustGame
+    )
+endif (UNIX)

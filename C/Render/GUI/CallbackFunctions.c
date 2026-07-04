@@ -8,8 +8,9 @@
 #include "../Drawing/Render.h"
 #include "../../Utils/TimeMeasurements.h"
 #include "../../Utils/UtilityFun.h"
+#ifdef _WIN32
 #include <windows.h>
-
+#endif
 #include "GuiElement.h"
 #include "../Engine.h"
 #include "GLFW/glfw3.h"
@@ -138,6 +139,7 @@ bool textField_runTask(Element *element, Renderer *renderer) {
 }
 
 void displayCurrentTime(Element *element) {
+#ifdef _Win32
     static u_int64 lastTime = 0;
     if (lastTime == 0) lastTime = now_ns();
 
@@ -158,6 +160,7 @@ void displayCurrentTime(Element *element) {
            t.wMinute,
            t.wSecond);
     Element_setText(element, time);
+#endif
 }
 
 void syncWithScreen(Element *element) {
@@ -168,12 +171,12 @@ void syncWithScreen(Element *element) {
 
 void updateColorRainbow(Element *element) {
     static double hue = 0.0f;
-    static u_int64 lastTime = 0;
+    static unsigned long long lastTime = 0;
 
     if (lastTime == 0) lastTime = now_ns();
 
-    const u_int64 currentTime = now_ns();
-    const u_int64 timeNs = currentTime - lastTime;
+    const unsigned long long currentTime = now_ns();
+    const unsigned long long timeNs = currentTime - lastTime;
 
     hue += 120.0 * (double)timeNs * 1e-9;
     if (hue >= 360.0) hue -= 360.0;

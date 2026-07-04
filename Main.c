@@ -1,6 +1,10 @@
 
 #include <stdio.h>
+#ifdef _WIN32
 #include <windows.h>
+#else
+#endif
+
 
 #include "C/Render/Engine.h"
 #include "C/Utils/Deprecated/Map.h"

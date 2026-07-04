@@ -3,9 +3,12 @@
 //
 #include "GuiDefines.h"
 #include "Engine.h"
+#include <stdarg.h>
+#include <unistd.h>
 
+#ifdef _WIN32
 #include <windows.h>
-
+#endif
 #include "GUI/GuiElement.h"
 #include "Drawing/Render.h"
 #include "GUI/CallbackFunctions.h"
@@ -223,7 +226,12 @@ void startEngine(void (*generateGUI)(Element* guiRoot)) {
 
         gui_render();
 
+#ifdef _WIN32
         Sleep(1);
+#else
+        nanosleep(&(struct timespec){0, 1000000000L}, NULL);
+#endif
+
     }
     glfwTerminate();
 }
@@ -380,10 +388,10 @@ Font *getFont() {
 }
 
 double graphingFunction(const double x) {
-    const Spannung value = berechneSpannungsteiler(10, 40, berechneErsatzwiderstand(30, 10 * x));
+    //const Spannung value = berechneSpannungsteiler(10, 40, berechneErsatzwiderstand(30, 10 * x));
     //printf("%6.4f %6.4f\n", x*10, value);
 
-    return value;
+    return 0.0;
 }
 
 static bool isMainThread() {

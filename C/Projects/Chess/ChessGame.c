@@ -7,7 +7,6 @@
 #include "../../Render/GUI/CallbackFunctions.h"
 #include "../../Utils/Makros.h"
 #include "../../Utils/Network.h"
-#include <psdk_inc/_socket_types.h>
 
 #include "GuiInterface.h"
 #include "Render/GUI/GuiElement.h"
@@ -87,7 +86,6 @@ static bool turnPosCanCastle = true;
 static bool turnNegCanCastle = true;
 static bool isMultiplayer = false;
 
-static SOCKET gameSocket = INVALID_SOCKET;
 static pthread_t multiplayerListener;
 
 static PieceColor turn = -1;
