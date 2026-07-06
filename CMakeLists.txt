@@ -200,12 +200,18 @@ add_executable(C-Project
 
 target_compile_definitions(C-Project PUBLIC JPH_ENABLE_ASSERTS)
 
+if (WIN32)
 set(GLFW_LIB "${CMAKE_SOURCE_DIR}/Dependencies/lib-mingw-w64/libglfw3.a")
+endif (WIN32)
 
+if (UNIX)
+    set(GLFW_LIB "${CMAKE_SOURCE_DIR}/Dependencies/lib-mingw-w64/Linux/libglfw3.a")
+endif (UNIX)
 add_library(glfw STATIC IMPORTED)
 set_target_properties(glfw PROPERTIES
         IMPORTED_LOCATION "${GLFW_LIB}"
 )
+
 
 #find_package(TBB REQUIRED)
 
@@ -240,10 +246,12 @@ target_link_libraries(C-Project PRIVATE
 endif (WIN32)
 
 if (UNIX)
+    find_package(OpenGL REQUIRED)
     target_link_libraries(C-Project PRIVATE
             glfw
             GUI
             Jolt
+            OpenGL::OpenGL
             #TBB::tbb
             #RustGame
     )

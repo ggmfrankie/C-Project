@@ -5,6 +5,8 @@
 #include "Jolt/Jolt.h"
 #include "Player.hpp"
 
+#include <filesystem>
+
 #include "../../Render/Objects/Physics/PhysicsHandler3D.hpp"
 #include "Jolt/Physics/Character/Character.h"
 #include "Jolt/Physics/Character/Character.h"
@@ -14,7 +16,7 @@
 namespace Game {
 
     Obj3D::RenderObject3D createPlayerRenderObject(){
-        return Obj3D::RenderObject3D("grass_block\\grass_block.obj");
+        return Obj3D::RenderObject3D(std::filesystem::path("grass_block") / "grass_block.obj");
     }
 
     Player::Player(const ggm::Vector3f& pos, JPH::PhysicsSystem& system) :

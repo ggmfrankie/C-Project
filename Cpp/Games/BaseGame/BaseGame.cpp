@@ -58,14 +58,14 @@ namespace Game {
 
             const float scale = size(rng);
             mScene.addObject(
-                "grass_block\\grass_block.obj", scale,
+                std::filesystem::path("grass_block")/"grass_block.obj", scale,
                 Obj3D::PhysicsFactory::newBox(scale,scale,scale, pos)
             )
             .rotateToDeg(rot);
         }
 
         mScene.addObject(
-            "ground_plane\\ground_plane.obj", 1.0f,
+            std::filesystem::path("ground_plane")/"ground_plane.obj", 1.0f,
             Obj3D::PhysicsFactory::newBox(1000,0,1000, {0,-32, -20}, JPH::EMotionType::Static)
         );
 

@@ -16,11 +16,12 @@ using std::string;
 using std::string_view;
 using std::vector;
 using std::cout;
+namespace fs = std::filesystem;
 
 
 namespace Obj3D::OBJLoader {
     OBJObject::OBJObject(const std::string &fileName) :
-        mFolderPath(std::filesystem::path("..\\Resources\\Objects") / fileName)
+        mFolderPath(fs::current_path().parent_path() / "Resources" / "Objects" / fileName)
     {}
 
     /// @brief Loads the Object from the defined path and stores it internally
