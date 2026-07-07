@@ -142,20 +142,6 @@ static void accumulateMeshes(Element *element, const Renderer *renderer, GuiVert
     endScissor();
 }
 
-[[deprecated]]
-void Renderer_updateLayout(const Renderer *renderer) {
-    Element* root = renderer->guiRoot;
-    root->dims.width = renderer->screenWidth;
-    root->dims.height = renderer->screenHeight;
-
-    updateLayout(
-        root,
-        (Vec2i){0, 0},
-        (Vec2i){renderer->screenWidth, renderer->screenHeight},
-        (Vec2i){0, 0}, &renderer->font
-    );
-}
-
 void Renderer_updateLayout2(const Renderer *renderer) {
     Element* root = renderer->guiRoot;
 
@@ -275,6 +261,8 @@ static Cache* cacheLayout(Element* self) {
 
     const Vec2i textDims   = calculateTextSize(self);
     const Vec2i manualDims = getManualDims(self);
+
+    //Recursion
     const Vec2i childDims  = getDimsFromChildren(self, self->layoutCache.aLines);
 
     self->layoutCache.minWidth  =
@@ -290,83 +278,35 @@ static Cache* cacheLayout(Element* self) {
     return &self->layoutCache;
 }
 
-static Cache* cacheLayoutLines(Element* self) {
-    Cache* data = &self->layoutCache;
-    arrClear(data->aLines);
-    arrPush(data->aLines, (Line){});
-    data->minWidth = 0;
-    data->minHeight = 0;
+struct FlexData {
+    float totalFlex;
+    float totalMinSize;
+};
 
-    if (!self->flags.isActive) return data;
-
-    data->minWidth = self->padding.left + self->padding.right;
-    data->minHeight = self->padding.up + self->padding.down;
-
-    Vec2i cursor = {self->padding.left, self->padding.up};
-    Vec2i extend = {};
-
-    if (self->textElement.hasText) {
-        const Vec2i textDims = measureElementText(&self->textElement);
-        data->minWidth += textDims.x;
-        data->minHeight += textDims.y;
-    }
-
-    for_eachArr(childPtr, self->aChildElements, {
-        Element* child = *childPtr;
-        const Cache* childData = cacheLayoutLines(child);
-
-        Line* currLine = arrGetLast(data->aLines);
-
-        if (child->positionMode == POS_FIT) {
-            switch (self->layoutDirection) {
-                case L_down: {
-                    const int extraGap = (cursor.y == self->padding.up) ? 0 : self->childGap;
-                    if (cursor.y - self->padding.down + childData->minHeight + self->padding.down + extraGap > self->dims.maxHeight) {
-                        // new line
-                        currLine->end = i;
-                        arrPush(data->aLines, (Line){i, i});
-                        currLine = arrGetLast(data->aLines);
-                        cursor = (Vec2i){extend.x + self->childGap, self->padding.up};
-                    }
-                    cursor.y += childData->minHeight + self->childGap;
-
-                    extend.y = max(extend.y, cursor.y);
-                    extend.x = max(extend.x, cursor.x + childData->minWidth);
-
-                    break;
-                }
-                case L_right: {
-                    const int extraGap = (cursor.x == self->padding.left) ? 0 : self->childGap;
-                    if (cursor.x - self->padding.left + childData->minWidth + self->padding.right + extraGap > self->dims.maxWidth) {
-                        // new line
-                        currLine->end = i;
-                        arrPush(data->aLines, (Line){i, i});
-                        currLine = arrGetLast(data->aLines);
-                        cursor = (Vec2i){self->padding.left, extend.y + self->childGap};
-                    }
-                    cursor.x += childData->minWidth + self->childGap;
-
-                    extend.x = max(extend.x, cursor.x);
-                    extend.y = max(extend.y, cursor.y + childData->minHeight - self->padding.up);
-
-                    break;
-                }
-            }
-
-        } else {
-
-            extend.x = max(extend.x, child->dims.pos.x + child->dims.width + self->childGap);
-            extend.y = max(extend.y, child->dims.pos.y + child->dims.height + self->childGap);
-
+static struct FlexData calculateTotalLineFlex(const Line* line, const Element** elements, LayoutDirection dir) {
+    struct FlexData data = {};
+    for (int i = line->start; i < line->end; ++i) {
+        data.totalFlex += elements[i]->dims.flexGrow;
+        switch (dir) {
+            case L_right: data.totalMinSize += elements[i]->layoutCache.minWidth;  break;
+            case L_down:  data.totalMinSize += elements[i]->layoutCache.minHeight; break;
         }
-        ++currLine->end;
-    });
-
-    const int overChildGap = (arrLen(self->aChildElements) == 0) ? 0 : self->childGap;
-
-    data->minWidth  = max(extend.x + self->padding.left + self->padding.right - overChildGap, max(self->dims.width,  data->minWidth));
-    data->minHeight = max(extend.y + self->padding.up   + self->padding.down  - overChildGap, max(self->dims.height, data->minHeight));
+    }
     return data;
+}
+
+static void placeChildElements(const Element* self) {
+    if (!self || !self->flags.isActive) return;
+
+    const Vec2i start = {self->padding.left, self->padding.up};
+    Vec2i cursor = start;
+    Vec2i extend = start;
+
+    for_eachArr(linesPtr, self->layoutCache.aLines, {
+        Line* curr = linesPtr;
+
+        struct FlexData flexData = calculateTotalLineFlex(curr, self->aChildElements, self->layoutDirection);
+    });
 }
 
 static void placeLine(const Element* parent, Vec2i* cursor, Vec2i* extend, Element** array, Line line) {
@@ -423,8 +363,8 @@ static void placeLine(const Element* parent, Vec2i* cursor, Vec2i* extend, Eleme
             curr->dims.worldHeight = curr->layoutCache.minHeight;
 
             curr->dims.worldPos = (Vec2i){
-                parent->dims.worldPos.x + curr->dims.pos.x,
-                parent->dims.worldPos.y + curr->dims.pos.y
+                parent->dims.worldPos.x + curr->dims.pos.x + parent->padding.left,
+                parent->dims.worldPos.y + curr->dims.pos.y + parent->padding.up
             };
         }
 
@@ -473,14 +413,13 @@ static void layoutElement(const Element* self) {
                 case L_down:
                     cursor.x = extend.x + ((i == 0) ? 0 : self->childGap);
                     cursor.y = contentStart.y;
-                    placeLine(self, &cursor, &extend, self->aChildElements, *linesPtr);
                     break;
                 case L_right:
                     cursor.y = extend.y + ((i == 0) ? 0 : self->childGap);
                     cursor.x = contentStart.x;
-                    placeLine(self, &cursor, &extend, self->aChildElements, *linesPtr);
                     break;
             }
+            placeLine(self, &cursor, &extend, self->aChildElements, *linesPtr);
         });
     }
 
@@ -490,104 +429,6 @@ static void layoutElement(const Element* self) {
         layoutElement(*childPtr);
     });
 }
-
-//TODO maybe pass available size to the child element or maybe change the layout function if the element has fixed width?
-//! @brief Traverses the gui_element tree and updates positions and dimensions of children and then parents
-[[deprecated]]
-static Vec2i updateLayout(Element* self, const Vec2i parentCursor, const Vec2i remainingSpace, const Vec2i parentPos, const Font* font) {
-    if (!self || !self->flags.isActive) return (Vec2i){0,0};
-    const auto cb = &self->callbacks;
-    const auto dims = &self->dims;
-    const auto padding = &self->padding;
-    const auto flags = &self->flags; 
-    
-#if GUI_DEBUG
-    const bool correctElement = (self->name) ? (strcmp(GUI_DEBUG_OBSERVE_ELEMENT_UPDATE_ELEMENT, self->name) == 0) : false;
-    const bool print = correctElement && only_every(200);
-#endif
-    if (cb->reset) cb->reset(self);
-#if GUI_DEBUG
-    print_if(print,
-        "---------------------\n"
-        "Current Element: \"%s\"\n"
-        "Remaining space:\n"
-        "X: %i, Y: %i\n"
-        "---------------------\n",
-        self->name, remainingSpace.x, remainingSpace.y
-    );
-#endif
-    if (self->positionMode == POS_FIT) {
-        dims->pos.x = parentCursor.x;
-        dims->pos.y = parentCursor.y;
-    }
-    dims->worldPos.x = dims->pos.x + parentPos.x;
-    dims->worldPos.y = dims->pos.y + parentPos.y;
-
-    dims->worldWidth = dims->width;
-    dims->worldHeight = dims->height;
-
-    auto cursor = (Vec2i){padding->left, padding->up};
-    const LayoutDirection layoutDirection = self->layoutDirection;
-
-    int extendRight = self->padding.left;
-    int extendDown = self->padding.up;
-
-    if (self->textElement.hasText) {
-        const int textW = padding->left + (int)self->textElement.width + padding->right;
-        const int textH = padding->up + (int)((float)(font->maxCharHeight) * self->textElement.textScale) + padding->down;
-
-        dims->worldWidth  = max(dims->worldWidth ,  textW);
-        dims->worldHeight = max(dims->worldHeight, textH);
-    }
-
-    const Vec2i maxSpace = {
-        .x = flags->fixedWidth ? dims->worldWidth : self->flags.wantGrowHorizontal ? remainingSpace.x : 0,
-        .y = flags->fixedHeight ? dims->worldHeight : self->flags.wantGrowVertical ? remainingSpace.y : 0
-    };
-
-    for_eachArr(childPtr, self->aChildElements, {
-        Element *child = *childPtr;
-        Vec2i currSpace = {.x = maxSpace.x - cursor.x, .y = maxSpace.y - cursor.y};
-
-        Vec2i childDimensions = updateLayout(child, cursor, currSpace, dims->worldPos, font);
-
-        // if current element has fixed dims, but child elements in the next row
-        // advance the cursor to the next column
-        if (flags->fixedWidth && cursor.x + childDimensions.x + padding->right > dims->worldWidth) {
-            cursor.y = extendDown + self->childGap;
-            cursor.x = padding->left;
-            currSpace.y = dims->height + padding->up + padding->down;
-            childDimensions = updateLayout(child, cursor, currSpace, dims->worldPos, font);
-        }
-        // advance the cursor to the next row
-        if (flags->fixedHeight && cursor.y + childDimensions.y + padding->down > dims->worldHeight) {
-            cursor.y = padding->up;
-            cursor.x = extendRight + self->childGap;
-            currSpace.x = dims->width + padding->left + padding->right;
-            childDimensions = updateLayout(child, cursor, currSpace, dims->worldPos, font);
-        }
-
-        extendRight = max(extendRight, child->dims.pos.x + childDimensions.x);
-        extendDown  = max(extendDown,  child->dims.pos.y + childDimensions.y);
-
-        if (child->positionMode == POS_FIT) {
-            if (layoutDirection == L_down) cursor.y += childDimensions.y + self->childGap;
-            else if (layoutDirection == L_right) cursor.x += childDimensions.x + self->childGap;
-        } else {
-            if (layoutDirection == L_down) cursor.y = extendDown + self->childGap;
-            else if (layoutDirection == L_right) cursor.x = extendRight + self->childGap;
-        }
-    });
-
-    dims->worldWidth = max(dims->worldWidth, extendRight + padding->right);
-    dims->worldHeight = max(dims->worldHeight, extendDown + padding->down);
-
-    if (self->flags.wantGrowHorizontal) self->dims.worldWidth = max(dims->worldWidth, remainingSpace.x);
-    if (self->flags.wantGrowVertical) self->dims.worldHeight = max(dims->worldHeight, remainingSpace.y);
-
-    return (Vec2i){dims->worldWidth, dims->worldHeight};
-}
-
 
 inline bool isMousePressed(GLFWwindow* window, const int mouseButton) {
     return glfwGetMouseButton(window, mouseButton) == GLFW_PRESS;

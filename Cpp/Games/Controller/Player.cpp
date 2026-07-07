@@ -16,7 +16,7 @@
 namespace Game {
 
     Obj3D::RenderObject3D createPlayerRenderObject(){
-        return Obj3D::RenderObject3D(std::filesystem::path("grass_block") / "grass_block.obj");
+        return Obj3D::RenderObject3D((std::filesystem::path("grass_block") / "grass_block.obj").generic_string());
     }
 
     Player::Player(const ggm::Vector3f& pos, JPH::PhysicsSystem& system) :

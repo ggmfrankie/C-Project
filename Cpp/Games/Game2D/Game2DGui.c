@@ -11,7 +11,7 @@ void generateGame2DGui(Element *guiRoot) {
         createElement((ElementSettings){
             .text = "Test",
             .color = {0.7,.0,0},
-            .padding = {10,10,10,10}
+            .padding = {5,5,5,5}
         }),
         addChildElements(
             createElement((ElementSettings){
@@ -20,8 +20,8 @@ void generateGame2DGui(Element *guiRoot) {
                 .posMode = POS_RELATIVE,
                 //.width = 200,
                 .maxHeight = 150,
-                .padding = {10,10,10,10},
-                .cornerRadius = 10,
+                .padding = {5,5,5,5},
+                .cornerRadius = 2,
                 .childGap = 4
             }),
             createElement((ElementSettings){
@@ -36,7 +36,6 @@ void generateGame2DGui(Element *guiRoot) {
             }),
             createElement((ElementSettings){
                 .text = "Heloowow",
-                .height = 100,
                 .padding = {4,4,4,4},
                 .color = {.9, .4, 0}
             })

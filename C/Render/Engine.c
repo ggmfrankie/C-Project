@@ -226,12 +226,7 @@ void startEngine(void (*generateGUI)(Element* guiRoot)) {
 
         gui_render();
 
-#ifdef _WIN32
-        Sleep(1);
-#else
         nanosleep(&(struct timespec){0, 1000000000L}, NULL);
-#endif
-
     }
     glfwTerminate();
 }
@@ -294,10 +289,11 @@ static void Engine_processInput(Renderer *renderer) {
 }
 
 static bool Engine_processInputRec(Element *element, Renderer *renderer) {
-    if (element == NULL || !element->flags.isActive) return false;
+    if (element == nullptr || !element->flags.isActive) return false;
     if (element->callbacks.onUpdate) element->callbacks.onUpdate(element);
 
     for_eachRevArr(const child, element->aChildElements,
+        //return if input was consumed by child element
         if (Engine_processInputRec(*child, renderer)) return true;
     );
 
