@@ -283,7 +283,7 @@ struct FlexData {
     float totalMinSize;
 };
 
-static struct FlexData calculateTotalLineFlex(const Line* line, const Element** elements, LayoutDirection dir) {
+static struct FlexData calculateTotalLineFlex(const Line* line, Element** elements, LayoutDirection dir) {
     struct FlexData data = {};
     for (int i = line->start; i < line->end; ++i) {
         data.totalFlex += elements[i]->dims.flexGrow;
