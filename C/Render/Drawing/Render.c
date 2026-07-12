@@ -303,9 +303,9 @@ static void placeChildElements(const Element* self) {
     Vec2i extend = start;
 
     for_eachArr(linesPtr, self->layoutCache.aLines, {
-        Line* curr = linesPtr;
+        Line* currLine = linesPtr;
 
-        struct FlexData flexData = calculateTotalLineFlex(curr, self->aChildElements, self->layoutDirection);
+        struct FlexData flexData = calculateTotalLineFlex(currLine, self->aChildElements, self->layoutDirection);
     });
 }
 
