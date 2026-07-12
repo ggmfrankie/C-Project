@@ -23,17 +23,17 @@ void generateDebugGui(Element* guiRoot) {
     addChildElements(guiRoot,
         addChildElements(
             createElement((ElementSettings){
-                .height = 20,
+                .minHeight = 20,
                 .maxHeight = true,
-                .notSelectable = true,
+                .cantBeSelected = true,
                 .invisible = true,
                 .color = {},
                 .posMode = POS_RELATIVE
             }),
             createElement((ElementSettings){
-                .width = 20,
+                .minWidth = 20,
                 .text = "fps",
-                .notSelectable = true,
+                .cantBeSelected = true,
                 .invisible = true,
                 .name = "fps display"
             })
@@ -61,19 +61,19 @@ void generateMainMenuGui(Element* guiRoot) {
                 .posMode = POS_RELATIVE,
                 .transparency = 0.5,
                 .cornerRadius = 20.f,
-                .width = 0,
-                .height = 0
+                .minWidth = 0,
+                .minHeight = 0
             }),
             createElement((ElementSettings){
                 .invisible = true,
-                .notSelectable = true,
+                .cantBeSelected = true,
                 .text = "Home Screen",
             }),
 
             createTextFieldElement((ElementSettings){
                 .padding = {10,10,10,10},
-                .height = 20,
-                .width = 100,
+                .minHeight = 20,
+                .minWidth = 100,
                 .color = {0.88f, 0.88f, 0.91f},
                 .cornerRadius = 10,
                 .task = runCommand
@@ -81,11 +81,11 @@ void generateMainMenuGui(Element* guiRoot) {
             }, textField_runTask),
             createElement((ElementSettings){
                 .padding = {10,10,10,10},
-                .height = 20,
-                .width = 100,
+                .minHeight = 20,
+                .minWidth = 100,
                 .color = {0.88f, 0.88f, 0.91f},
                 .onClick = runTaskFun,
-                .onHover = defaultHoverFun,
+                .canBeHovered = true,
                 .task = changeFov70,
                 .text = "change fov to 70",
                 .name = "btn_fov_70",
@@ -93,11 +93,11 @@ void generateMainMenuGui(Element* guiRoot) {
             }),
             createElement((ElementSettings){
                 .padding = {10,10,10,10},
-                .height = 20,
-                .width = 100,
+                .minHeight = 20,
+                .minWidth = 100,
                 .color = {0.88f, 0.88f, 0.91f},
                 .onClick = runTaskFun,
-                .onHover = defaultHoverFun,
+                .canBeHovered = true,
                 .task = changeFov90,
                 .text = "change fov to 90",
                 .name = "btn_fov_90",
@@ -107,7 +107,7 @@ void generateMainMenuGui(Element* guiRoot) {
                 .text = "Start Chess",
                 .padding = {10,10,10,10},
                 .color = {0.88f, 0.88f, 0.91f},
-                .onHover = defaultHoverFun,
+                .canBeHovered = true,
                 .onClick = runTaskFun,
                 .task = {update_chessGame},
                 .cornerRadius = 10
@@ -116,7 +116,7 @@ void generateMainMenuGui(Element* guiRoot) {
                 .text = "Start 2048",
                 .padding = {10,10,10,10},
                 .color = {0.88f, 0.88f, 0.91f},
-                .onHover = defaultHoverFun,
+                .canBeHovered = true,
                 .onClick = runTaskFun,
                 .task = {TFE_gameCreate},
                 .cornerRadius = 10
@@ -125,7 +125,7 @@ void generateMainMenuGui(Element* guiRoot) {
                 .text = "Quit",
                 .padding = {10,10,10,10},
                 .color = {0.88f, 0.88f, 0.91f},
-                .onHover = defaultHoverFun,
+                .canBeHovered = true,
                 .onClick = runTaskFun,
                 .task = quitTask,
                 .cornerRadius = 10

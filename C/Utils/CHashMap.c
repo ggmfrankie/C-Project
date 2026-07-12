@@ -17,7 +17,8 @@ uint32_t _hashMapHash_(const char* key) {
 }
 
 void* _hashMapGet_(byte* map, const char* key, size_t stride) {
-    assert(map != nullptr && key != nullptr);
+    if (map == nullptr) return nullptr;
+    if (key == nullptr) return nullptr;
 
     const _HashMap_Header_* header = &_hashMapGetHead(map);
     const size_t capacity = header->capacity;

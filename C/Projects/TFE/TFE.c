@@ -51,13 +51,13 @@ void TFE_createGUI(Element* root) {
             createElement((ElementSettings){
                 .text = "Hello to 2048",
                 .transparency = 1.0f,
-                .notSelectable = true
+                .cantBeSelected = true
             }),
             addChildrenAsGridWithGenerator(
                 (ElementSettings){
                     .color = {0.4, 0.6, 0.7},
-                    .width = 400,
-                    .height = 400,
+                    .minWidth = 400,
+                    .minHeight = 400,
                     .maxWidth = true,
                     .maxHeight = true,
                     .padding = {10,10,10,10},

@@ -7,10 +7,7 @@
 #include "GuiTypes.h"
 
 
-bool dragFun(Element *element, const Renderer *renderer);
 bool runTaskFun(Element *element, Renderer *renderer);
-bool hoverAndDragFun(Element *element, Renderer *renderer);
-bool hoverAndDragFunctionInvis(Element *element, Renderer *renderer);
 bool sliderCallbackFun(Element *element, Renderer *renderer);
 bool click(GLFWwindow *window, int mouseButton);
 bool defaultHoverFun(Element *element, Renderer *renderer);

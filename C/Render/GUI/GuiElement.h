@@ -25,8 +25,8 @@ typedef enum PositionMode: byte {
 } PositionMode;
 
 typedef enum LayoutDirection: byte {
-    L_down = 0,
-    L_right
+    LAYOUT_DOWN = 0,
+    LAYOUT_RIGHT
 } LayoutDirection;
 
 typedef enum ElementType: byte {
@@ -34,6 +34,14 @@ typedef enum ElementType: byte {
     t_slider,
     t_textField
 } ElementType;
+
+typedef enum UIState: byte {
+    UI_STATE_NORMAL,
+    UI_STATE_HOVER,
+    UI_STATE_PRESSED,
+    UI_STATE_SELECTED,
+    UI_STATE_DISABLED
+} UIState;
 
 typedef struct {
     int start;
@@ -44,17 +52,19 @@ typedef struct {
     int minWidth;
     int minHeight;
 
+    //layout lines
     Line* aLines;
 } Cache;
 
 typedef struct Element {
     char* name;
     ElementType type;
+    UIState state;
 
     struct {
         bool isActive: 1;
-        bool autoFit: 1;
         bool invisible: 1;
+        bool canBeHovered: 1;
         bool fixedWidth: 1;
         bool fixedHeight: 1;
         bool draggable: 1;
@@ -114,7 +124,8 @@ typedef struct Element {
 
     Task task;
     Element* parentElement;
-    Element** aChildElements;
+    Element** aFlowElements;
+    Element** aStaticElements;
     int childGap;
 
     void* elementData;
@@ -128,8 +139,10 @@ typedef struct ElementSettings {
     LayoutDirection layoutDirection;
 
     int cornerRadius;
-    int width;
-    int height;
+    int minWidth;
+    int minHeight;
+    int maxWidth;
+    int maxHeight;
     float flexGrow;
 
     char* texture;
@@ -145,12 +158,11 @@ typedef struct ElementSettings {
     Task task;
     Padding padding;
     int childGap;
+    bool canBeHovered;
     bool autoFit;
     bool invisible;
-    bool notSelectable;
+    bool cantBeSelected;
     bool draggable;
-    bool maxWidth;
-    bool maxHeight;
     bool wantGrowHorizontal;
     bool wantGrowVertical;
 
@@ -200,11 +212,12 @@ Element *Element_addElement(
     void *elementData,
     bool notSelectable,
     LayoutDirection layoutDirection,
-    bool fixedWidth,
-    bool fixedHeight,
+    int maxWidth,
+    int maxHeight,
     void (*whileSelected)(Element *element), bool draggable, void (*onUpdate)(Element *element),
     bool wantGrowHorizontal, bool
-    wantGrowVertical, float transparency, const char *texture, bool invisible, int cornerRadius, float flexGrow
+    wantGrowVertical, float transparency, const char *texture, bool invisible, int cornerRadius, float flexGrow, bool
+    canBeHovered
 );
 
 Element *createElement(ElementSettings es);

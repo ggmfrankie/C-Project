@@ -653,9 +653,9 @@ static Element* createChessSquares(const int row, const int col, ElementSettings
     es.color = ((row+col) % 2 ? COLOR_GRAY : COLOR_WHITE);
 
     const ElementSettings pieceDisplaySettings = {
-        .width = es.width,
-        .height = es.height,
-        .notSelectable = true,
+        .minWidth = es.minWidth,
+        .minHeight = es.minHeight,
+        .cantBeSelected = true,
         .color = {},
         .transparency = 1.0f,
     };
@@ -686,10 +686,8 @@ static void createChessBoard(Element* root) {
                 (ElementSettings){
                     .color = COLOR_DARKYELLOW,
                     .onUpdate = updateColorRainbow,
-                    .width = 400,
-                    .height = 400,
-                    .maxWidth = true,
-                    .maxHeight = true,
+                    .minWidth = 400,
+                    .minHeight = 400,
                     .padding = {10,10,10,10}
                 },
                 (ElementSettings){
@@ -703,10 +701,10 @@ static void createChessBoard(Element* root) {
             addChildElements(
                 createElement(
                     (ElementSettings){
-                        .color = COOL_COLOR,
-                        .layoutDirection = L_right,
+                        .layoutDirection = LAYOUT_RIGHT,
                         .childGap = 10,
-                        .cornerRadius = 10
+                        .invisible = true,
+                        .wantGrowHorizontal = true
                     }
                 ),
                 createElement(
@@ -714,8 +712,21 @@ static void createChessBoard(Element* root) {
                         .color = COLOR_GRAY,
                         .padding = {10,10,10,10},
                         .text = "",
-                        .onUpdate = displayCurrentTime
+                        .onUpdate = displayCurrentTime,
+                        .cornerRadius = 6,
+                        .flexGrow = 1.0,
+                        .wantGrowVertical = true
                     }
+                ),
+                createTextFieldElement((ElementSettings){
+                        .color = COLOR_GRAY,
+                        .padding = {10,10,10,10},
+                        .text = "",
+                        .cornerRadius = 6,
+                        .flexGrow = 1.0,
+                        .wantGrowVertical = true
+                    },
+                    nullptr
                 )
             ),
             addChildElements(
@@ -724,11 +735,10 @@ static void createChessBoard(Element* root) {
                         .color = {.25, .35, .355},
                         .padding = {5,5,5,5},
                         .childGap = 10,
-                        .flexGrow = 1.0f,
-                        .layoutDirection = L_right,
-                        .notSelectable = true,
                         .wantGrowHorizontal = true,
-                        .maxWidth = true,
+                        .maxWidth = 400,
+                        .layoutDirection = LAYOUT_RIGHT,
+                        .cantBeSelected = true,
                         .cornerRadius = 10,
                         .name = "panel"
                     }
@@ -738,8 +748,9 @@ static void createChessBoard(Element* root) {
                         .color = {.2, .3, .3},
                         .text = "Reset",
                         .padding = {10, 10, 10 ,10},
-                        .onHover = defaultHoverFun,
+                        .canBeHovered = true,
                         .onClick = runTaskFun,
+                        .flexGrow = 1.0f,
                         .task = {resetBoard}
                     }
                 ),
@@ -748,7 +759,8 @@ static void createChessBoard(Element* root) {
                         .color = {.6, .3, .3},
                         .text = "Switch sides",
                         .padding = {10, 10, 10 ,10},
-                        .onHover = defaultHoverFun,
+                        .canBeHovered = true,
+                        .flexGrow = 1.0f,
                         .onClick = runTaskFun,
                         .task = {switchSides},
                     }
@@ -758,7 +770,8 @@ static void createChessBoard(Element* root) {
                         .color = {.6, .3, .3},
                         .text = "Flip Board",
                         .padding = {10, 10, 10 ,10},
-                        .onHover = defaultHoverFun,
+                        .canBeHovered = true,
+                        .flexGrow = 1.0f,
                         .onClick = runTaskFun,
                         .task = {flipBoard},
                     }
@@ -768,8 +781,9 @@ static void createChessBoard(Element* root) {
                         .color = {.6, .3, .3},
                         .text = "Close",
                         .padding = {10, 10, 10 ,10},
-                        .onHover = defaultHoverFun,
+                        .canBeHovered = true,
                         .onClick = runTaskFun,
+                        .flexGrow = 1.0f,
                         .task = {closeGame},
                     }
                 )
@@ -797,30 +811,43 @@ static void createStartScreen(Element* root) {
             createElement(
                 (ElementSettings){
                     .color = {.2, .3, .3},
-                    .text = "Welcome to my Chess Game"
+                    .text = "Chess Game",
+                    .cantBeSelected = true
                 }
             ),
-            createElement(
-                (ElementSettings){
-                    .color = {.3, .3, .3},
-                    .padding = {10,10,10,10},
-                    .text = "Start",
-                    .onHover = defaultHoverFun,
-                    .onClick = runTaskFun,
-                    .task = startChessGameTask,
-                    .cornerRadius = 10
-                }
-            ),
-            createElement(
-                (ElementSettings){
-                    .color = {.8, .0, .0},
-                    .padding = {10,10,10,10},
-                    .text = "End it all",
-                    .onHover = defaultHoverFun,
-                    .onClick = runTaskFun,
-                    .task = closeProgram,
-                    .cornerRadius = 10
-                }
+            addChildElements(
+                createElement(
+                    (ElementSettings){
+                        .layoutDirection = LAYOUT_RIGHT,
+                        .wantGrowHorizontal = true,
+                        .invisible = true,
+                        .childGap = 10
+                    }
+                ),
+                createElement(
+                    (ElementSettings){
+                        .color = {.3, .3, .3},
+                        .padding = {10,10,10,10},
+                        .text = "Start",
+                        .canBeHovered = true,
+                        .onClick = runTaskFun,
+                        .task = startChessGameTask,
+                        .cornerRadius = 10,
+                        .flexGrow = .75
+                    }
+                ),
+                createElement(
+                    (ElementSettings){
+                        .color = {.4, .0, .0},
+                        .padding = {10,10,10,10},
+                        .text = "End it all",
+                        .canBeHovered = true,
+                        .onClick = runTaskFun,
+                        .task = closeProgram,
+                        .cornerRadius = 10,
+                        .flexGrow = 0.25
+                    }
+                )
             )
         )
     );
@@ -842,8 +869,8 @@ static void createEndScreen(Element* root) {
             ),
             createElement(
                 (ElementSettings){
-                    .width = 100,
-                    .height = 100,
+                    .minWidth = 100,
+                    .minHeight = 100,
                     .text = "test",
                     .name = "color display",
                     .padding = {10,10,10,10}

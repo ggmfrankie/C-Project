@@ -54,6 +54,7 @@ bool guiInitialized = false;
 static Renderer g_Renderer;
 static UserCallbacks g_Callbacks;
 
+static void Engine_resetStates(Element* self);
 static void Engine_processInput(Renderer *renderer);
 static bool Engine_processInputRec(Element *element, Renderer *renderer);
 static bool Engine_handleDragElement(const Renderer *renderer);
@@ -92,11 +93,12 @@ void gui_init(GLFWwindow* window, const int width, const int height, void (*gene
 
 void gui_update() {
     lock();
+    Engine_resetStates(g_Renderer.guiRoot);
     Engine_handleDragElement(&g_Renderer);
     Renderer_updateLayout2(&g_Renderer);
     gui_popUpdate();
     Engine_processInput(&g_Renderer);
-#if GUI_DEBUG
+#if GUI_DEBUG && GUI_DEBUG_PROCESS_DEBUG
     gui_processDebug();
 #endif
     unlock();
@@ -231,6 +233,14 @@ void startEngine(void (*generateGUI)(Element* guiRoot)) {
     glfwTerminate();
 }
 
+static void Engine_resetStates(Element* self) {
+    if (!self || !self->flags.isActive) return;
+    self->state = UI_STATE_NORMAL;
+
+    for_eachArr(child, self->aFlowElements, { Engine_resetStates(*child); });
+    for_eachArr(child, self->aStaticElements, { Engine_resetStates(*child); });
+}
+
 static Element* focusedElement = nullptr;
 static Element* mouseCapturedElement = nullptr;
 static bool dragging = false;
@@ -292,17 +302,25 @@ static bool Engine_processInputRec(Element *element, Renderer *renderer) {
     if (element == nullptr || !element->flags.isActive) return false;
     if (element->callbacks.onUpdate) element->callbacks.onUpdate(element);
 
-    for_eachRevArr(const child, element->aChildElements,
+    for_eachRevArr(const child, element->aFlowElements,
+        //return if input was consumed by child element
+        if (Engine_processInputRec(*child, renderer)) return true;
+    );
+    for_eachRevArr(const child, element->aStaticElements,
         //return if input was consumed by child element
         if (Engine_processInputRec(*child, renderer)) return true;
     );
 
     if (dragging) return false;
     if (element->callbacks.isMouseOver && element->callbacks.isMouseOver(element, renderer->mousePos)) {
-        if (element->callbacks.onHover && element->callbacks.onHover(element, renderer)) return true;
+        if (element->flags.canBeHovered) {
+            element->state = UI_STATE_HOVER;
+            if (element->callbacks.onHover && element->callbacks.onHover(element, renderer)) return true;
+        }
         if (click(renderer->window, GLFW_MOUSE_BUTTON_LEFT)) {
             mouseCapturedElement = element;
             focusedElement = element;
+            element->state = UI_STATE_PRESSED;
             if (element->callbacks.onClick && element->callbacks.onClick(element, renderer)) return true;
         }
         return true;

@@ -74,7 +74,7 @@ void uploadBatchedQuads(const GuiVertex *vertices, const int vt, const int* indi
 
 static InstanceData instanceFromElement(const Element* e) {
     InstanceData out = {};
-    out.brightness      = e->visuals.brightness;
+    out.brightness      = (e->state >= UI_STATE_HOVER && e->flags.canBeHovered) ? e->visuals.brightness - 0.2 : e->visuals.brightness;
     out.worldPos        = toVec2f(e->dims.worldPos);
     out.color           = e->visuals.color;
     out.hasTexture      = e->flags.hasTexture;

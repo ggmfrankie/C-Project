@@ -27,6 +27,7 @@ static ElementList g_Elements;
 Element* Element_new(const Vec2i pos, const int width, const int height) {
     g_Elements.m[g_Elements.size] = (Element){
         .name = nullptr,
+        .state = UI_STATE_NORMAL,
         .dims = {
             .width = width,
             .height = height,
@@ -52,9 +53,9 @@ Element* Element_new(const Vec2i pos, const int width, const int height) {
         },
         .textElement = {.aCharQuads = nullptr, .textScale = 1.0f},
         .parentElement = nullptr,
-        .aChildElements = nullptr,
+        .aFlowElements = nullptr,
         .padding = {0,0,0,0},
-        .flags = {.isActive = true, .autoFit = true, .needsDeletion = true},
+        .flags = {.isActive = true, .needsDeletion = true},
         .task = (Task){nullptr, nullptr},
         .childGap = 0,
         .elementData = nullptr,
@@ -78,9 +79,15 @@ Element* Element_addChildElements(Element* parent, ...) {
             break;
         }
         child->parentElement = parent;
-        arrPush(parent->aChildElements, child);
+        switch (child->positionMode) {
+            case POS_FIT:
+                arrPush(parent->aFlowElements, child);
+                break;
+            case POS_RELATIVE:
+                arrPush(parent->aStaticElements, child);
+                break;
+        }
     }
-
     va_end(args);
     return parent;
 }
@@ -162,8 +169,8 @@ Element *Element_addElement(
     void *elementData,
     const bool notSelectable,
     const LayoutDirection layoutDirection,
-    bool fixedWidth,
-    bool fixedHeight,
+    int maxWidth,
+    int maxHeight,
     void (*whileSelected)(Element *element),
     bool draggable,
     void (*onUpdate)(Element *element),
@@ -173,7 +180,8 @@ Element *Element_addElement(
     const char *texture,
     bool invisible,
     int cornerRadius,
-    float flexGrow
+    float flexGrow,
+    bool canBeHovered
 )
 {
     Element* lastElement = Element_new(pos, width, height);
@@ -189,7 +197,7 @@ Element *Element_addElement(
         }
     }
 
-    const auto p = (Padding){
+    const Padding p = {
         max(padding.left, cornerRadius),
         max(padding.up, cornerRadius),
         max(padding.right, cornerRadius),
@@ -205,8 +213,6 @@ Element *Element_addElement(
     lastElement->callbacks.reset = Element_defaultReset;
     lastElement->elementData = elementData;
     lastElement->layoutDirection = layoutDirection;
-    lastElement->flags.fixedWidth = fixedWidth;
-    lastElement->flags.fixedHeight = fixedHeight;
     lastElement->callbacks.whileSelected = whileSelected;
     lastElement->flags.draggable = draggable;
     lastElement->callbacks.onUpdate = onUpdate;
@@ -218,9 +224,15 @@ Element *Element_addElement(
     lastElement->visuals.brightness = 1.0f;
     lastElement->dims.cornerRadius = cornerRadius;
     lastElement->dims.flexGrow = flexGrow;
+    lastElement->flags.canBeHovered = canBeHovered;
 
-    if (fixedWidth) lastElement->dims.maxWidth = lastElement->dims.width;
-    if (fixedHeight) lastElement->dims.maxHeight = lastElement->dims.height;
+    if (maxWidth) {
+        lastElement->dims.maxWidth = maxWidth;
+    }
+
+    if (maxHeight) {
+        lastElement->dims.maxHeight = maxHeight;
+    }
 
     if (texture) {
         lastElement->visuals.texture = getTexture(texture);
@@ -257,12 +269,12 @@ Element *guiAddSimpleSlider(
     SliderData* sliderData
 )
 {
-    Element* element = Element_addElement(nullptr, pos, width, height, colorBackground, (Padding){10, 10, 10, 10}, 10, Element_isQuadBB, hoverAndDragFun, NULL, (Task){}, NULL, true, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false, 0.0f, NULL, true, 0, 0.0f);
+    Element* element = Element_addElement(nullptr, pos, width, height, colorBackground, (Padding){10, 10, 10, 10}, 10, Element_isQuadBB, nullptr, NULL, (Task){}, NULL, true, POS_FIT, NULL, false, LAYOUT_DOWN, false, false, NULL, false, NULL, false, false, 0.0f, NULL, true, 0, 0.0f, false);
     Vec2i sliderPos = {};
     sliderPos.x = width/2;
     sliderPos.y = 0;
-    Element* sliderElement = Element_addElement(nullptr, sliderPos, width, height, colorSlider, (Padding){10, 10, 10, 10}, 10, Element_isQuadBB, hoverAndDragFun, sliderCallbackFun, (Task){}, NULL, true, POS_FIT, NULL, false, L_down, false, false, NULL, false, NULL, false, false, 0.0f, NULL, true, 0, 0.0f);
-    arrPush(element->aChildElements, sliderElement);
+    Element* sliderElement = Element_addElement(nullptr, sliderPos, width, height, colorSlider, (Padding){10, 10, 10, 10}, 10, Element_isQuadBB, nullptr, sliderCallbackFun, (Task){}, NULL, true, POS_FIT, NULL, false, LAYOUT_DOWN, false, false, NULL, false, NULL, false, false, 0.0f, NULL, true, 0, 0.0f, false);
+    arrPush(element->aFlowElements, sliderElement);
     element->elementData = sliderData;
     return element;
 }
@@ -273,8 +285,8 @@ Element *createTextFieldElement(const ElementSettings elementSettings, bool (*on
     textData->onEnterCallback = onEnterCallback;
     Element* textField = createElement(
         (ElementSettings){
-            .width = elementSettings.width - elementSettings.padding.left - elementSettings.padding.right,
-            .height = elementSettings.height - elementSettings.padding.up - elementSettings.padding.down,
+            .minWidth = elementSettings.minWidth,
+            .minHeight = elementSettings.minHeight,
             .padding = {5,5,5,5},
             .elementData = textData,
             .color = v_mul(elementSettings.color, 0.8f),
@@ -293,8 +305,8 @@ Element *createTextFieldElement(const ElementSettings elementSettings, bool (*on
 Element *createElement(const ElementSettings es) {
     return Element_addElement(es.name,
                               es.pos,
-                              es.width,
-                              es.height,
+                              es.minWidth,
+                              es.minHeight,
                               es.color,
                               es.padding,
                               es.childGap,
@@ -306,7 +318,7 @@ Element *createElement(const ElementSettings es) {
                               true,
                               es.posMode,
                               es.elementData,
-                              es.notSelectable,
+                              es.cantBeSelected,
                               es.layoutDirection,
                               es.maxWidth,
                               es.maxHeight,
@@ -319,7 +331,8 @@ Element *createElement(const ElementSettings es) {
                               nullptr,
                               es.invisible,
                               es.cornerRadius,
-                              es.flexGrow
+                              es.flexGrow,
+                              es.canBeHovered
     );
 }
 
@@ -337,8 +350,8 @@ Element* addChildrenAsGridWithGenerator(const ElementSettings parentData, Elemen
     const int childHeight = parent->dims.height/numY;
 
     es.posMode = POS_RELATIVE;
-    es.width = childWidth;
-    es.height = childHeight;
+    es.minWidth = childWidth;
+    es.minHeight = childHeight;
 
     for (int i = 0; i < numX; i++) {
         for (int ii = 0; ii < numY; ii++) {

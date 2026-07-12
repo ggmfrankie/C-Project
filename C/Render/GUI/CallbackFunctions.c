@@ -17,32 +17,6 @@
 #include "Utils/CArrayList.h"
 #include "Utils/Makros.h"
 
-bool dragFun(Element *element, const Renderer *renderer) {
-    static Vec2i offset;
-    static bool dragging = false;
-    const bool isMouseDown = isMousePressed(renderer->window, GLFW_MOUSE_BUTTON_LEFT);
-
-    if (!isMouseDown) {
-        dragging = false;
-        return false;
-    }
-
-    if (glfwGetKey(renderer->window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-        const Vec2i parentWorldPos = element->parentElement ? element->parentElement->dims.worldPos : (Vec2i){0, 0};
-        if (!dragging) {
-            offset.x = renderer->mousePos.x - element->dims.worldPos.x;
-            offset.y = renderer->mousePos.y - element->dims.worldPos.y;
-            dragging = true;
-        } else {
-            element->positionMode = POS_RELATIVE;
-            element->dims.pos.x = (renderer->mousePos.x - parentWorldPos.x) - offset.x - ((element->parentElement)?element->parentElement->padding.left:0);
-            element->dims.pos.y = (renderer->mousePos.y - parentWorldPos.y) - offset.y - ((element->parentElement)?element->parentElement->padding.up:0);
-        }
-        return true;
-    }
-    return false;
-}
-
 bool isSelectedCharacter(Vec2f pos, float width, float height, const Vec2i mousePos) {
     if ((float)mousePos.x <= pos.x+width && (float)mousePos.x >= pos.x &&
         (float)mousePos.y <= pos.y+height && (float)mousePos.y >= pos.y) {
@@ -51,16 +25,8 @@ bool isSelectedCharacter(Vec2f pos, float width, float height, const Vec2i mouse
     return false;
 }
 
-bool hoverAndDragFun(Element *element, Renderer *renderer) {
-    return dragFun(element, renderer);
-}
-
-bool hoverAndDragFunctionInvis(Element *element, Renderer *renderer) {
-    return dragFun(element, renderer);
-}
-
 bool defaultHoverFun(Element *element, Renderer *renderer) {
-    element->visuals.brightness = 0.8f;
+
     return false;
 }
 
@@ -139,7 +105,7 @@ bool textField_runTask(Element *element, Renderer *renderer) {
 }
 
 void displayCurrentTime(Element *element) {
-#ifdef _Win32
+#ifdef _WIN32
     static u_int64 lastTime = 0;
     if (lastTime == 0) lastTime = now_ns();
 
