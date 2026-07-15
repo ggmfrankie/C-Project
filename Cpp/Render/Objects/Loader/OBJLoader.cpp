@@ -10,7 +10,6 @@
 
 #include "../Render/Mesh.hpp"
 #include "Utils/DataStorage/LazyStream.hpp"
-#include "Utils/DataStorage/Stream.hpp"
 
 using std::string;
 using std::string_view;
@@ -145,7 +144,13 @@ namespace Obj3D::OBJLoader {
     /// @brief Extracts the Mesh object
     [[nodiscard]] Mesh
     OBJObject::getMesh() {
-        return {std::move(mGlVertices), std::move(mGlUv), std::move(mGlNormals), std::move(mIndices), std::move(mTexture)};
+        return {
+          std::move(mGlVertices), 
+          std::move(mGlUv), 
+          std::move(mGlNormals),
+          std::move(mIndices),
+          std::move(mTexture)
+        };
     }
 
     std::vector<ggm::Vector3f>

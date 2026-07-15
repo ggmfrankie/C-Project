@@ -16,7 +16,7 @@ namespace Obj3D {
         static ggm::i64 id = 0;
         auto obj = OBJLoader::OBJObject(objFile);
         obj.load();
-        mMeshes << (obj.getMesh());
+        mMeshes.add(obj.getMesh());
         mUuid = id++;
     }
 
@@ -112,7 +112,7 @@ namespace Obj3D {
     RenderObject3D
     RenderObject3D::getDummyObject() {
         RenderObject3D dummy{};
-        dummy.mMeshes << Mesh::getDummyMesh();
+        dummy.mMeshes.add(Mesh::getDummyMesh());
         return dummy;
     }
 

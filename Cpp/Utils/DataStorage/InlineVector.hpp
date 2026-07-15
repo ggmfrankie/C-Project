@@ -154,12 +154,6 @@ namespace ggm {
             return *ptr;
         }
 
-        template <class U>
-        InlineVector& operator<<(U&& thing) {
-            add(std::forward<U>(thing));
-            return *this;
-        }
-
         T& front() {
             return mData[0];
         }

@@ -125,7 +125,7 @@ option(JPH_USE_DX12 "Use DirectX" OFF)
 option(JPH_USE_DXC "Use DXC shader compiler" OFF)
 
 # Option to compile with Vulkan compute
-option(JPH_USE_VK "Use Vulkan" ON)
+option(JPH_USE_VK "Use Vulkan" OFF)
 
 # Option to compile with Metal compute
 option(JPH_USE_MTL "Use Metal" OFF)
