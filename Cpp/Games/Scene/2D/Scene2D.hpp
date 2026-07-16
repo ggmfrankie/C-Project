@@ -7,8 +7,8 @@
 #include "LayerStack.hpp"
 #include "Engine/Core/PhysixBox2D/PhysicsSystem.hpp"
 #include "Games/Scene/IScene.hpp"
-#include "Render/Objects/Objects2D/GameObject.hpp"
-#include "Render/Objects/Objects2D/Render/Renderer.hpp"
+#include "Render/Objects/2D/GameObject.hpp"
+#include "Render/Objects/2D/Render/Renderer.hpp"
 #include "Render/Transformation/Camera.hpp"
 
 

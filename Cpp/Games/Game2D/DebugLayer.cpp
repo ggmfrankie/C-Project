@@ -4,7 +4,7 @@
 
 #include "DebugLayer.hpp"
 
-#include "Render/Objects/Objects2D/Render/Renderer.hpp"
+#include "Render/Objects/2D/Render/Renderer.hpp"
 
 namespace Game2D {
 

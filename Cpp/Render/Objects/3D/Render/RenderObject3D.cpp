@@ -11,10 +11,11 @@
 
 namespace Obj3D {
     using ggm::Matrix4f;
+    namespace fs = std::filesystem;
 
-    RenderObject3D::RenderObject3D(const std::string& objFile) {
+    RenderObject3D::RenderObject3D(const fs::path& objFile) {
         static ggm::i64 id = 0;
-        auto obj = OBJLoader::OBJObject(objFile);
+        OBJLoader::OBJObject obj(objFile);
         obj.load();
         mMeshes.add(obj.getMesh());
         mUuid = id++;

@@ -3,7 +3,7 @@
 //
 
 #include "Renderer.hpp"
-#include "Render/Objects/Objects2D/Render/RenderObject.hpp"
+#include "Render/Objects/2D/Render/RenderObject.hpp"
 
 namespace Game2D {
     Renderer::Renderer() :

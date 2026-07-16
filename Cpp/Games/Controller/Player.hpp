@@ -7,7 +7,7 @@
 #include "GameEngine.hpp"
 #include "Jolt/Physics/PhysicsSystem.h"
 #include "Jolt/Physics/Character/Character.h"
-#include "Render/Objects/Render/RenderObject3D.hpp"
+#include "Render/Objects/3D/Render/RenderObject3D.hpp"
 
 namespace Game {
     class Player {

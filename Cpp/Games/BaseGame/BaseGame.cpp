@@ -5,13 +5,12 @@
 #include "BaseGame.hpp"
 
 #include "GameGui.h"
-#include "Render/Objects/Loader/OBJLoader.hpp"
+#include "Render/Objects/3D/Loader/OBJLoader.hpp"
 #include "GuiInterface.h"
 #include "Engine/CommandRegistry.hpp"
-#include "../../Render/Objects/Physics/PhysicsHandler3D.hpp"
 #include "../Scene/3D/Scene3D.hpp"
 #include "Render/Screen.hpp"
-#include "Render/Objects/Physics/PhysicsFactory.hpp"
+#include "Render/Objects/3D/Physics/PhysicsFactory.hpp"
 #include "Render/Transformation/Camera.hpp"
 #include "../Controller/Player.hpp"
 
@@ -37,12 +36,10 @@ namespace Game {
             std::chrono::steady_clock::now().time_since_epoch().count()
         ));
 
-        // Position ranges
         std::uniform_real_distribution posX(-10.0f, 10.0f);
         std::uniform_real_distribution posY(0.5f, 20.0f);
         std::uniform_real_distribution posZ(-10.0f, 10.0f);
 
-        // Rotation ranges (degrees)
         std::uniform_real_distribution rotPitch(0.0f, 360.0f);
         std::uniform_real_distribution rotYaw(0.0f, 360.0f);
         std::uniform_real_distribution rotRoll(0.0f, 360.0f);
@@ -50,22 +47,20 @@ namespace Game {
         std::uniform_real_distribution size(0.5f, 5.0f);
 
         for (int i = 0; i < 200; i++) {
-            // Randomized position
             ggm::Vector3f pos(posX(rng), posY(rng), posZ(rng));
 
-            // Randomized rotation
             ggm::Vector3f rot(rotPitch(rng), rotYaw(rng), rotRoll(rng));
 
             const float scale = size(rng);
             mScene.addObject(
-                (std::filesystem::path("grass_block")/"grass_block.obj").generic_string(), scale,
+                "grass_block/grass_block.obj", scale,
                 Obj3D::PhysicsFactory::newBox(scale,scale,scale, pos)
             )
             .rotateToDeg(rot);
         }
 
         mScene.addObject(
-            (std::filesystem::path("ground_plane")/"ground_plane.obj").generic_string(), 1.0f,
+            "ground_plane/ground_plane.obj", 1.0f,
             Obj3D::PhysicsFactory::newBox(1000,0,1000, {0,-32, -20}, JPH::EMotionType::Static)
         );
 

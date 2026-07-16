@@ -98,22 +98,14 @@ add_executable(C-Project
         Main.cpp
         Cpp/Render/Screen.cpp
         Cpp/Render/Screen.hpp
-        Cpp/Render/Objects/Render/Mesh.cpp
-        Cpp/Render/Objects/Render/Mesh.hpp
         Cpp/Utils/Math/Vector.hpp
         Cpp/Render/Shader/Shader.cpp
         Cpp/Render/Shader/Shader.hpp
         Cpp/Utils/FileIO.cpp
         Cpp/Utils/FileIO.hpp
-        Cpp/Render/Objects/Render/RenderObject3D.cpp
-        Cpp/Render/Objects/Render/RenderObject3D.hpp
         Cpp/Utils/Math/Matrix.hpp
         Cpp/Render/Transformation/Camera.cpp
         Cpp/Render/Transformation/Camera.hpp
-        Cpp/Render/Objects/Render/Texture.cpp
-        Cpp/Render/Objects/Render/Texture.hpp
-        Cpp/Render/Objects/Render/Material.cpp
-        Cpp/Render/Objects/Render/Material.hpp
         Cpp/Utils/Utils.cpp
         Cpp/Utils/Utils.hpp
         Cpp/Utils/Math/Quaternion.hpp
@@ -133,18 +125,10 @@ add_executable(C-Project
         Cpp/Games/BaseGame/GuiTasks.cpp
         Cpp/Engine/CommandRegistry.cpp
         Cpp/Engine/CommandRegistry.hpp
-        Cpp/Render/Objects/Physics/PhysicsObjectRef.cpp
-        Cpp/Render/Objects/Physics/PhysicsObjectRef.hpp
         Cpp/Render/Shader/Lighting/PointLight.cpp
         Cpp/Render/Shader/Lighting/PointLight.hpp
         Cpp/Render/Shader/DeferredShader.cpp
         Cpp/Render/Shader/DeferredShader.hpp
-        Cpp/Render/Objects/Render/Renderer3D.cpp
-        Cpp/Render/Objects/Render/Renderer3D.hpp
-        Cpp/Render/Objects/Physics/PhysicsHandler3D.cpp
-        Cpp/Render/Objects/Physics/PhysicsHandler3D.hpp
-        Cpp/Render/Objects/GameObject.cpp
-        Cpp/Render/Objects/GameObject.hpp
         Cpp/Games/Controller/Player.cpp
         Cpp/Games/Controller/Player.hpp
         Cpp/Utils/DataStorage/SparseSet.hpp
@@ -159,18 +143,13 @@ add_executable(C-Project
         Cpp/Engine/Core/PhysixBox2D/SoftBody2D.hpp
         Cpp/Engine/Core/PhysixBox2D/Constrains/Spring.cpp
         Cpp/Engine/Core/PhysixBox2D/Constrains/Spring.hpp
-        Cpp/Render/Objects/Objects2D/Render/DynamicMesh.cpp
-        Cpp/Render/Objects/Objects2D/Render/DynamicMesh.hpp
         Cpp/Test/Test.cpp
         Cpp/Test/Test.hpp
         Cpp/Games/Scene/3D/Scene3D.cpp
         Cpp/Games/Scene/3D/Scene3D.hpp
-        Cpp/Render/Objects/Physics/PhysicsFactory.hpp
-        Cpp/Render/Objects/Physics/PhysicsFactory.cpp
         Cpp/Games/Scene/IScene.hpp
         Cpp/Games/Scene/2D/Scene2D.cpp
         Cpp/Games/Scene/2D/Scene2D.hpp
-        Cpp/Render/Objects/Render/RenderObjectRef3D.hpp
         Cpp/Games/Game2D/Game2D.cpp
         Cpp/Games/Game2D/Game2D.hpp
         Cpp/Engine/Core/PhysixBox2D/Collision.hpp
@@ -186,16 +165,25 @@ add_executable(C-Project
         Cpp/Games/Scene/2D/ILayer.hpp
         Cpp/Games/Game2D/DebugLayer.cpp
         Cpp/Games/Game2D/DebugLayer.hpp
-        Cpp/Render/Objects/Objects2D/Render/Renderer.cpp
-        Cpp/Render/Objects/Objects2D/GameObject.cpp
-        Cpp/Render/Objects/Objects2D/Render/RenderObject.cpp
-        Cpp/Render/Objects/Objects2D/Physics/PhysicsObjectRef.cpp
-        Cpp/Render/Objects/Objects2D/Physics/PhysicsFactory.cpp
         EngineDefines.hpp
         Cpp/Games/Game2D/Game2DGui.c
         Cpp/Games/Game2D/Game2DGui.h
-        Cpp/Render/Objects/Loader/OBJLoader.cpp
-        Cpp/Render/Objects/Loader/OBJLoader.hpp
+        Cpp/Render/Objects/2D/Physics/PhysicsFactory.cpp
+        Cpp/Render/Objects/2D/Physics/PhysicsObjectRef.cpp
+        Cpp/Render/Objects/2D/Render/DynamicMesh.cpp
+        Cpp/Render/Objects/2D/Render/Renderer.cpp
+        Cpp/Render/Objects/2D/Render/RenderObject.cpp
+        Cpp/Render/Objects/2D/GameObject.cpp
+        Cpp/Render/Objects/3D/Loader/OBJLoader.cpp
+        Cpp/Render/Objects/3D/Physics/PhysicsFactory.cpp
+        Cpp/Render/Objects/3D/Physics/PhysicsHandler3D.cpp
+        Cpp/Render/Objects/3D/Physics/PhysicsObjectRef.cpp
+        Cpp/Render/Objects/3D/Render/Material.cpp
+        Cpp/Render/Objects/3D/Render/Mesh.cpp
+        Cpp/Render/Objects/3D/Render/Renderer3D.cpp
+        Cpp/Render/Objects/3D/Render/RenderObject3D.cpp
+        Cpp/Render/Objects/3D/Render/Texture.cpp
+        Cpp/Render/Objects/3D/GameObject.cpp
 )
 
 target_compile_definitions(C-Project PUBLIC JPH_ENABLE_ASSERTS)

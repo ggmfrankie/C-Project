@@ -9,7 +9,7 @@
 
 #include "Material.hpp"
 #include "Texture.hpp"
-#include "../../../Utils/Math/Vector.hpp"
+#include "Utils/Math/Vector.hpp"
 #include "glad/gl.h"
 
 namespace Obj3D {

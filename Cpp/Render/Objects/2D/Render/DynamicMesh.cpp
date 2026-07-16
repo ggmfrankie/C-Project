@@ -36,7 +36,7 @@ namespace Game2D {
         mVertices.clear();
         mUvs.clear();
 
-        if (mTexture.hasData()) mTexture.init();
+        mTexture.init();
 
         mInitialized = true;
     }

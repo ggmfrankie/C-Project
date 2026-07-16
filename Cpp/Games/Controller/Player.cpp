@@ -7,8 +7,7 @@
 
 #include <filesystem>
 
-#include "../../Render/Objects/Physics/PhysicsHandler3D.hpp"
-#include "Jolt/Physics/Character/Character.h"
+#include "../../Render/Objects/3D/Physics/PhysicsHandler3D.hpp"
 #include "Jolt/Physics/Character/Character.h"
 #include "Jolt/Physics/Collision/Shape/Shape.h"
 #include <Jolt/Physics/Collision/Shape/CapsuleShape.h>

@@ -5,24 +5,24 @@
 #pragma once
 
 #include "../IScene.hpp"
-#include "../../../Render/Objects/Physics/PhysicsHandler3D.hpp"
-#include "../../../Render/Objects/Render/Renderer3D.hpp"
-#include "Render/Objects/GameObject.hpp"
-#include "Render/Objects/Render/RenderObject3D.hpp"
+#include "Render/Objects/3D/GameObject.hpp"
+#include "Render/Objects/3D/Render/Renderer3D.hpp"
 #include "Render/Transformation/Camera.hpp"
+#include "Render/Objects/3D/Physics/PhysicsFactory.hpp"
+#include "Render/Objects/3D/Physics/PhysicsHandler3D.hpp"
 
 namespace Game {
     class Scene3D final : public IScene{
         ggm::InlineVector<Obj3D::GameObject, 64> mGameObjects{};
 
         PhysicsHandler3D mPhysicsHandler{};
-        Renderer3D mRenderLayer{};
+        Renderer3D mRenderer{};
 
         Render::Camera mCamera{};
 
     public:
         Scene3D();
-        Obj3D::GameObject& addObject(const std::string &objFile, float scale, const Obj3D::PhysicsSettings &settings);
+        Obj3D::GameObject& addObject(const std::filesystem::path& objFile, float scale, const Obj3D::PhysicsSettings &settings);
 
         void init() override;
 

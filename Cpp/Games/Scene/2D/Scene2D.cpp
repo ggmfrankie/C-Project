@@ -5,7 +5,7 @@
 #include "Scene2D.hpp"
 
 #include "GuiInterface.h"
-#include "Render/Objects/Objects2D/Physics/PhysicsFactory.hpp"
+#include "Render/Objects/2D/Physics/PhysicsFactory.hpp"
 
 namespace Game2D {
     Scene2D::Scene2D() :

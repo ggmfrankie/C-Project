@@ -4,7 +4,7 @@
 
 #pragma once
 #include "../EngineDefines.hpp"
-#include "Render/Objects/Objects2D/GameObject.hpp"
+#include "Render/Objects/2D/GameObject.hpp"
 #include "Utils/DataStorage/SparseSet.hpp"
 
 namespace Game2D {

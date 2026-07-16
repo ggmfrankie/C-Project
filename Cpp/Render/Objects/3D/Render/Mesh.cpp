@@ -85,7 +85,7 @@ namespace Obj3D {
         uvs = {};
         normals = {};
 
-        if (texture.hasData()) texture.init();
+        texture.init();
         if (material.hasData()) material.init();
 
         initialized = true;
@@ -93,7 +93,7 @@ namespace Obj3D {
 
     void Mesh::render() const {
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture.id());
+        glBindTexture(GL_TEXTURE_2D, texture.getId());
 
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, static_cast<int>(indices.size()), GL_UNSIGNED_INT, nullptr);
@@ -101,7 +101,7 @@ namespace Obj3D {
     }
 
     bool Mesh::hasTexture() const {
-        return texture.hasData();
+        return texture.getId() != 0;
     }
 
     bool Mesh::hasMaterial() const {

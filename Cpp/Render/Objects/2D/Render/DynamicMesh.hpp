@@ -5,9 +5,11 @@
 #pragma once
 #include "../EngineDefines.hpp"
 #include "glad/gl.h"
-#include "Render/Objects/Render/Texture.hpp"
+
 #include "Utils/Math/Vector.hpp"
 #include <vector>
+
+#include "Render/Objects/3D/Render/Texture.hpp"
 
 namespace Game2D {
     class DynamicMesh {

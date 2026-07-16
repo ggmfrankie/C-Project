@@ -4,16 +4,16 @@
 
 #pragma once
 #include "../EngineDefines.hpp"
-#include "../../../Utils/DataStorage/InlineVector.hpp"
-#include "../../../Utils/Math/Quaternion.hpp"
-#include "../../../Utils/Math/Matrix.hpp"
+#include "Utils/DataStorage/InlineVector.hpp"
+#include "Utils/Math/Quaternion.hpp"
+#include "Utils/Math/Matrix.hpp"
 #include "Mesh.hpp"
 
 
 namespace Obj3D {
     class RenderObject3D {
     public:
-        explicit RenderObject3D(const std::string &objFile);
+        explicit RenderObject3D(const std::filesystem::path &objFile);
         RenderObject3D();
         RenderObject3D(RenderObject3D &&other) noexcept ;
         RenderObject3D(const RenderObject3D &other) noexcept;

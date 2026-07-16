@@ -5,19 +5,20 @@
 #include "Scene3D.hpp"
 
 #include "GuiInterface.h"
-#include "../../../Render/Objects/Render/Renderer3D.hpp"
-#include "Render/Objects/Physics/PhysicsFactory.hpp"
+#include "Render/Objects/3D/Render/Renderer3D.hpp"
+#include "Render/Objects/3D/Physics/PhysicsFactory.hpp"
 
 namespace Game {
     using namespace Obj3D;
+    namespace fs = std::filesystem;
 
     Scene3D::Scene3D() {
         mPhysicsHandler.init();
     }
 
     //! @brief Creates a RenderObject from an .obj file and creates a PhysicsObject from the settings given. Creates a Game Object that reference both.
-    GameObject& Scene3D::addObject(const std::string& objFile, float scale, const PhysicsSettings& settings) {
-        auto ro = mRenderLayer.newObject(objFile);
+    GameObject& Scene3D::addObject(const fs::path& objFile, float scale, const PhysicsSettings& settings) {
+        auto ro = mRenderer.newObject(objFile);
         ro.get().scaleTo(scale);
         auto po = mPhysicsHandler.newObject(settings);
 
@@ -30,11 +31,11 @@ namespace Game {
     }
 
     void Scene3D::init() {
-        mRenderLayer.init(&mCamera);
+        mRenderer.init(&mCamera);
     }
 
     void Scene3D::render(int width, int height) {
-        mRenderLayer.render(width, height);
+        mRenderer.render(width, height);
         gui_render();
     }
 

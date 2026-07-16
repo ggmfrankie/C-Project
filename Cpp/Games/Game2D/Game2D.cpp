@@ -9,7 +9,7 @@
 #include "Game2DGui.h"
 #include "GuiInterface.h"
 #include "Render/Screen.hpp"
-#include "Render/Objects/Objects2D/Physics/PhysicsFactory.hpp"
+#include "Render/Objects/2D/Physics/PhysicsFactory.hpp"
 
 
 namespace Game2D {

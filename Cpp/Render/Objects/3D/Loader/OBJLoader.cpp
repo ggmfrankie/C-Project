@@ -19,7 +19,7 @@ namespace fs = std::filesystem;
 
 
 namespace Obj3D::OBJLoader {
-    OBJObject::OBJObject(const std::string &fileName) :
+    OBJObject::OBJObject(const fs::path& fileName) :
         mFolderPath(fs::current_path().parent_path() / "Resources" / "Objects" / fileName)
     {}
 
@@ -44,7 +44,7 @@ namespace Obj3D::OBJLoader {
 
         loadMeshData(lines);
         const string textureName = loadMaterial(mFolderPath.parent_path(), mMaterialLib);
-        mTexture = Texture{(mFolderPath.parent_path() / textureName).string()};
+        mTexture = Texture{mFolderPath.parent_path() / textureName};
     }
 
     void OBJObject::loadMeshData(const Lines& lines) {

@@ -6,7 +6,7 @@
 
 #include <cmath>
 
-#include "Render/Objects/Objects2D/Physics/PhysicsFactory.hpp"
+#include "Render/Objects/2D/Physics/PhysicsFactory.hpp"
 
 namespace PhysixBox {
 

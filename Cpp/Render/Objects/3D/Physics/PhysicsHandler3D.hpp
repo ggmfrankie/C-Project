@@ -7,7 +7,7 @@
 #include <Jolt/Jolt.h>
 #include <Jolt/Physics/PhysicsSystem.h>
 #include <Jolt/Core/JobSystemThreadPool.h>
-#include "Render/Objects/Physics/PhysicsObjectRef.hpp"
+#include "Render/Objects/3D/Physics/PhysicsObjectRef.hpp"
 #include "Utils/Math/ggmdef.hpp"
 
 namespace Obj3D {
