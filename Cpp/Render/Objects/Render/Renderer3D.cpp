@@ -9,8 +9,10 @@
 #include "Render/Transformation/Camera.hpp"
 
 namespace Game {
-    Renderer3D::Renderer3D() : mShader("MainShader.vert", "MainShader.frag"), mObjects(64) {
-    }
+    Renderer3D::Renderer3D() :
+        mShader("MainShader.vert", "MainShader.frag"),
+        mObjects(64)
+    {}
 
     Renderer3D::~Renderer3D() = default;
 
