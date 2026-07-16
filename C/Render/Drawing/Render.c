@@ -156,8 +156,11 @@ static void accumulateMeshes(Element *element, const Renderer *renderer, GuiVert
 void Renderer_updateLayout2(const Renderer *renderer) {
     Element* root = renderer->guiRoot;
 
-    root->dims.worldWidth = renderer->screenWidth;
+    root->dims.worldWidth  = renderer->screenWidth;
     root->dims.worldHeight = renderer->screenHeight;
+
+    root->dims.maxWidth  = renderer->screenWidth;
+    root->dims.maxHeight = renderer->screenHeight;
 
     cacheLayout(root);
 

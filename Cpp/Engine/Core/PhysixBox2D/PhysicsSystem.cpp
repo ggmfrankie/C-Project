@@ -194,8 +194,7 @@ PhysicsSystem::Collision PhysicsSystem::getCollision(SoftBody2D &body,
   return result;
 }
 
-Game2D::PhysicsObjectRef PhysicsSystem::addBody(
-    const Game2D::PhysicsFactory2D::PhysicsSettings &settings) {
+Game2D::PhysicsObjectRef PhysicsSystem::addBody(const Game2D::PhysicsFactory2D::PhysicsSettings &settings) {
   const auto id = mBodies.push();
   auto &body = mBodies.get(id);
 
@@ -209,7 +208,7 @@ Game2D::PhysicsObjectRef PhysicsSystem::addBody(
 
     float length = (first.pos - second.pos).length();
 
-    body.addSpring(first, second, 200.0f, length, 10.0f);
+    body.addSpring(first, second, 2000.0f, length, .9f);
   }
 
   return {id, mBodies};
