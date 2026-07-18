@@ -30,7 +30,7 @@ void generateTestGUI(Element *guiRoot) {
                 .padding = (Padding){10,10,10,10},
                 .text = "This is a test and yes Text Positioning must be refractored",
             }),
-            createTextFieldElement((ElementSettings){
+            TextFieldElement_new((ElementSettings){
                 .padding = {10,10,10,10},
                 .minHeight = 20,
                 .minWidth = 100,

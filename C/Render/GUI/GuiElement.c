@@ -24,7 +24,7 @@ typedef struct {
 static Element** g_map_Elements;
 static ElementList g_Elements;
 
-Element* Element_new(const Vec2i pos, const int width, const int height) {
+Element* Element_allocateNew(const Vec2i pos, const int width, const int height) {
     g_Elements.m[g_Elements.size] = (Element){
         .name = nullptr,
         .state = UI_STATE_NORMAL,
@@ -72,12 +72,18 @@ Element* Element_new(const Vec2i pos, const int width, const int height) {
 Element* Element_addChildElements(Element* parent, ...) {
     va_list args;
     va_start(args, parent);
+    Element_addChildElements_vaList(parent, args);
+    va_end(args);
+    return parent;
+}
+
+Element* Element_addChildElements_vaList(Element* parent, va_list args) {
     assert(parent != nullptr);
     while (1) {
         Element* child = va_arg(args, Element*);
-        if (child == nullptr) {
-            break;
-        }
+
+        if (child == nullptr) break;
+
         child->parentElement = parent;
         switch (child->positionMode) {
             case POS_FIT:
@@ -88,7 +94,6 @@ Element* Element_addChildElements(Element* parent, ...) {
                 break;
         }
     }
-    va_end(args);
     return parent;
 }
 
@@ -184,7 +189,7 @@ Element *Element_addElement(
     bool canBeHovered
 )
 {
-    Element* lastElement = Element_new(pos, width, height);
+    Element* lastElement = Element_allocateNew(pos, width, height);
     if (mouseOver) {
         lastElement->callbacks.isMouseOver = mouseOver;
         if (hover) lastElement->callbacks.onHover = hover;
@@ -279,7 +284,7 @@ Element *guiAddSimpleSlider(
     return element;
 }
 
-Element *createTextFieldElement(const ElementSettings elementSettings, bool (*onEnterCallback)(Element* element, Renderer *renderer)) {
+Element *TextFieldElement_new(const ElementSettings elementSettings, bool (*onEnterCallback)(Element* element, Renderer *renderer)) {
     Element* element = createElement(elementSettings);
     TextFieldData* textData = calloc(1, sizeof(TextFieldData));
     textData->onEnterCallback = onEnterCallback;
@@ -302,7 +307,7 @@ Element *createTextFieldElement(const ElementSettings elementSettings, bool (*on
     return element;
 }
 
-Element *createElement(const ElementSettings es) {
+Element* createElement(const ElementSettings es) {
     return Element_addElement(es.name,
                               es.pos,
                               es.minWidth,
@@ -334,6 +339,15 @@ Element *createElement(const ElementSettings es) {
                               es.flexGrow,
                               es.canBeHovered
     );
+}
+
+Element* _Element_new(ElementSettings es, ...) {
+    Element* element = createElement(es);
+    va_list args;
+    va_start(args, es);
+    Element_addChildElements_vaList(element, args);
+    va_end(args);
+    return element;
 }
 
 static Element* defaultGenerator(int, int, ElementSettings es) {

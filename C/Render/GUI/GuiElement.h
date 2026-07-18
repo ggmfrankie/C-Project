@@ -170,8 +170,9 @@ typedef struct ElementSettings {
 
 } ElementSettings;
 
-Element* Element_new(Vec2i pos, int width, int height);
+Element* Element_allocateNew(Vec2i pos, int width, int height);
 Element* Element_addChildElements(Element* parent, ...);
+Element* Element_addChildElements_vaList(Element* parent, va_list args);
 
 Element* addChildrenAsGrid(ElementSettings parentData, ElementSettings es, int numX, int numY);
 Element* addChildrenAsGridWithGenerator(ElementSettings parentData, ElementSettings es, int numX, int numY, Element* (*generateElement)(int row, int col, ElementSettings));
@@ -191,8 +192,6 @@ void Element_setColor(Element* element, Vec3f color);
 void Element_printDebug(const Element* element);
 
 bool Element_isQuadBB(const Element *element, Vec2i mousePos);
-
-#define addChildElements(parent, ...) Element_addChildElements(parent, __VA_ARGS__, NULL)
 
 Element *Element_addElement(
     char *name,
@@ -220,5 +219,10 @@ Element *Element_addElement(
     canBeHovered
 );
 
-Element *createElement(ElementSettings es);
-Element *createTextFieldElement( ElementSettings elementSettings, bool (*onEnterCallback)(Element* element, Renderer *renderer));
+Element* createElement(ElementSettings es);
+
+Element* _Element_new(ElementSettings es, ...);
+Element* TextFieldElement_new( ElementSettings elementSettings, bool (*onEnterCallback)(Element* element, Renderer *renderer));
+
+#define Element_new(settings, ...) _Element_new(settings, __VA_ARGS__, nullptr)
+#define addChildElements(parent, ...) Element_addChildElements(parent, __VA_ARGS__, nullptr)

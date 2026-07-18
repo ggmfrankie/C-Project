@@ -50,27 +50,25 @@ void generateMainMenuGui(Element* guiRoot) {
     const Task runCommand = {Engine_runCommand};
 
     addChildElements(guiRoot,
-        addChildElements(
-            createElement((ElementSettings){
-                .name = "Home Screen",
-                .pos = (Vec2i){0, 0},
-                .padding = (Padding){10, 10, 10, 10},
-                .color = {0.78f, 0.78f, 0.78f},
-                .draggable = true,
-                .childGap = 10,
-                .posMode = POS_RELATIVE,
-                .transparency = 0.5,
-                .cornerRadius = 20.f,
-                .minWidth = 0,
-                .minHeight = 0
-            }),
-            createElement((ElementSettings){
+        Element_new((ElementSettings){
+            .name = "Home Screen",
+            .pos = (Vec2i){0, 0},
+            .padding = (Padding){10, 10, 10, 10},
+            .color = {0.78f, 0.78f, 0.78f},
+            .draggable = true,
+            .childGap = 10,
+            .posMode = POS_RELATIVE,
+            .transparency = 0.5,
+            .cornerRadius = 20.f,
+            .minWidth = 0,
+            .minHeight = 0
+        },
+            Element_new((ElementSettings){
                 .invisible = true,
                 .cantBeSelected = true,
                 .text = "Home Screen",
             }),
-
-            createTextFieldElement((ElementSettings){
+            TextFieldElement_new((ElementSettings){
                 .padding = {10,10,10,10},
                 .minHeight = 20,
                 .minWidth = 100,
@@ -79,7 +77,7 @@ void generateMainMenuGui(Element* guiRoot) {
                 .task = runCommand
 
             }, textField_runTask),
-            createElement((ElementSettings){
+            Element_new((ElementSettings){
                 .padding = {10,10,10,10},
                 .minHeight = 20,
                 .minWidth = 100,
@@ -91,7 +89,7 @@ void generateMainMenuGui(Element* guiRoot) {
                 .name = "btn_fov_70",
                 .cornerRadius = 10
             }),
-            createElement((ElementSettings){
+            Element_new((ElementSettings){
                 .padding = {10,10,10,10},
                 .minHeight = 20,
                 .minWidth = 100,
@@ -103,7 +101,7 @@ void generateMainMenuGui(Element* guiRoot) {
                 .name = "btn_fov_90",
                 .cornerRadius = 10
             }),
-            createElement((ElementSettings){
+            Element_new((ElementSettings){
                 .text = "Start Chess",
                 .padding = {10,10,10,10},
                 .color = {0.88f, 0.88f, 0.91f},
@@ -112,7 +110,7 @@ void generateMainMenuGui(Element* guiRoot) {
                 .task = {update_chessGame},
                 .cornerRadius = 10
             }),
-            createElement((ElementSettings){
+            Element_new((ElementSettings){
                 .text = "Start 2048",
                 .padding = {10,10,10,10},
                 .color = {0.88f, 0.88f, 0.91f},
@@ -121,7 +119,7 @@ void generateMainMenuGui(Element* guiRoot) {
                 .task = {TFE_gameCreate},
                 .cornerRadius = 10
             }),
-            createElement((ElementSettings){
+            Element_new((ElementSettings){
                 .text = "Quit",
                 .padding = {10,10,10,10},
                 .color = {0.88f, 0.88f, 0.91f},

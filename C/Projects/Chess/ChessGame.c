@@ -669,46 +669,38 @@ static Element* createChessSquares(const int row, const int col, ElementSettings
 
 static void createChessBoard(Element* root) {
     addChildElements(root,
-        addChildElements(
-            createElement(
-                (ElementSettings){
-                    .color = COOL_COLOR,
-                    .pos = {0,0},
-                    .posMode = POS_RELATIVE,
-                    .name = "game board",
-                    .padding = {10,10,10,10},
-                    .childGap = 10,
-                    .cornerRadius = 10,
-                    .draggable = true,
-                }
-            ),
-            addChildrenAsGridWithGenerator(
+            Element_new((ElementSettings){
+                .color = COOL_COLOR,
+                .pos = {0,0},
+                .posMode = POS_RELATIVE,
+                .name = "game board",
+                .padding = {10,10,10,10},
+                .childGap = 10,
+                .cornerRadius = 10,
+                .draggable = true,
+            },
+                addChildrenAsGridWithGenerator(
                 (ElementSettings){
                     .color = COLOR_DARKYELLOW,
                     .onUpdate = updateColorRainbow,
                     .minWidth = 400,
                     .minHeight = 400,
                     .padding = {10,10,10,10}
-                },
-                (ElementSettings){
+                },(ElementSettings){
                     .color = COLOR_WHITE,
                     .onHover = defaultHoverFun,
                     .onClick = runTaskFun,
                     .task = {onSquareClicked2, THIS_ELEMENT}
-                }, 8, 8,
-                createChessSquares
-            ),
-            addChildElements(
-                createElement(
-                    (ElementSettings){
-                        .layoutDirection = LAYOUT_RIGHT,
-                        .childGap = 10,
-                        .invisible = true,
-                        .wantGrowHorizontal = true
-                    }
+                },
+                8, 8,createChessSquares
                 ),
-                createElement(
-                    (ElementSettings){
+                Element_new((ElementSettings){
+                    .layoutDirection = LAYOUT_RIGHT,
+                    .childGap = 10,
+                    .invisible = true,
+                    .wantGrowHorizontal = true
+                },
+                    Element_new((ElementSettings){
                         .color = COLOR_GRAY,
                         .padding = {10,10,10,10},
                         .text = "",
@@ -716,9 +708,8 @@ static void createChessBoard(Element* root) {
                         .cornerRadius = 6,
                         .flexGrow = 1.0,
                         .wantGrowVertical = true
-                    }
-                ),
-                createTextFieldElement((ElementSettings){
+                    }),
+                    TextFieldElement_new((ElementSettings){
                         .color = COLOR_GRAY,
                         .padding = {10,10,10,10},
                         .text = "",
@@ -726,25 +717,21 @@ static void createChessBoard(Element* root) {
                         .flexGrow = 1.0,
                         .wantGrowVertical = true
                     },
-                    nullptr
-                )
-            ),
-            addChildElements(
-                 createElement(
-                    (ElementSettings){
-                        .color = {.25, .35, .355},
-                        .padding = {5,5,5,5},
-                        .childGap = 10,
-                        .wantGrowHorizontal = true,
-                        .maxWidth = 400,
-                        .layoutDirection = LAYOUT_RIGHT,
-                        .cantBeSelected = true,
-                        .cornerRadius = 10,
-                        .name = "panel"
-                    }
+                        nullptr
+                    )
                 ),
-                createElement(
-                    (ElementSettings){
+                Element_new((ElementSettings){
+                    .color = {.25, .35, .355},
+                    .padding = {5,5,5,5},
+                    .childGap = 10,
+                    .wantGrowHorizontal = true,
+                    .maxWidth = 400,
+                    .layoutDirection = LAYOUT_RIGHT,
+                    .cantBeSelected = true,
+                    .cornerRadius = 10,
+                    .name = "panel"
+                },
+                    Element_new((ElementSettings){
                         .color = {.2, .3, .3},
                         .text = "Reset",
                         .padding = {10, 10, 10 ,10},
@@ -752,10 +739,8 @@ static void createChessBoard(Element* root) {
                         .onClick = runTaskFun,
                         .flexGrow = 1.0f,
                         .task = {resetBoard}
-                    }
-                ),
-                createElement(
-                    (ElementSettings){
+                    }),
+                    Element_new((ElementSettings){
                         .color = {.6, .3, .3},
                         .text = "Switch sides",
                         .padding = {10, 10, 10 ,10},
@@ -763,10 +748,8 @@ static void createChessBoard(Element* root) {
                         .flexGrow = 1.0f,
                         .onClick = runTaskFun,
                         .task = {switchSides},
-                    }
-                ),
-                createElement(
-                    (ElementSettings){
+                    }),
+                    Element_new((ElementSettings){
                         .color = {.6, .3, .3},
                         .text = "Flip Board",
                         .padding = {10, 10, 10 ,10},
@@ -774,10 +757,8 @@ static void createChessBoard(Element* root) {
                         .flexGrow = 1.0f,
                         .onClick = runTaskFun,
                         .task = {flipBoard},
-                    }
-                ),
-                createElement(
-                    (ElementSettings){
+                    }),
+                    Element_new((ElementSettings){
                         .color = {.6, .3, .3},
                         .text = "Close",
                         .padding = {10, 10, 10 ,10},
@@ -785,47 +766,37 @@ static void createChessBoard(Element* root) {
                         .onClick = runTaskFun,
                         .flexGrow = 1.0f,
                         .task = {closeGame},
-                    }
+                    })
                 )
             )
-        )
     );
     gui_setActive("game board", false);
 }
 
 static void createStartScreen(Element* root) {
     addChildElements(root,
-        addChildElements(
-            createElement(
-                (ElementSettings){
-                    .color = COOL_COLOR,
-                    .posMode = POS_RELATIVE,
-                    .childGap = 10,
-                    .padding = {10,10,10,10},
-                    .pos = {200, 200},
-                    .name = "start screen",
-                    .cornerRadius = 10,
-                    .draggable = true
-                }
-            ),
-            createElement(
-                (ElementSettings){
+            Element_new((ElementSettings){
+                .color = COOL_COLOR,
+                .posMode = POS_RELATIVE,
+                .childGap = 10,
+                .padding = {10,10,10,10},
+                .pos = {200, 200},
+                .name = "start screen",
+                .cornerRadius = 10,
+                .draggable = true
+            },
+                Element_new((ElementSettings){
                     .color = {.2, .3, .3},
                     .text = "Chess Game",
                     .cantBeSelected = true
-                }
-            ),
-            addChildElements(
-                createElement(
-                    (ElementSettings){
-                        .layoutDirection = LAYOUT_RIGHT,
-                        .wantGrowHorizontal = true,
-                        .invisible = true,
-                        .childGap = 10
-                    }
-                ),
-                createElement(
-                    (ElementSettings){
+                }),
+                Element_new((ElementSettings){
+                    .layoutDirection = LAYOUT_RIGHT,
+                    .wantGrowHorizontal = true,
+                    .invisible = true,
+                    .childGap = 10
+                },
+                    Element_new((ElementSettings){
                         .color = {.3, .3, .3},
                         .padding = {10,10,10,10},
                         .text = "Start",
@@ -834,10 +805,8 @@ static void createStartScreen(Element* root) {
                         .task = startChessGameTask,
                         .cornerRadius = 10,
                         .flexGrow = .75
-                    }
-                ),
-                createElement(
-                    (ElementSettings){
+                    }),
+                    Element_new((ElementSettings){
                         .color = {.4, .0, .0},
                         .padding = {10,10,10,10},
                         .text = "End it all",
@@ -846,48 +815,39 @@ static void createStartScreen(Element* root) {
                         .task = closeProgram,
                         .cornerRadius = 10,
                         .flexGrow = 0.25
-                    }
+                    })
                 )
             )
-        )
     );
     gui_setActive("start screen", false);
 }
 
 static void createEndScreen(Element* root) {
     addChildElements(root,
-        addChildElements(
-            createElement(
-                (ElementSettings){
-                    .color = COOL_COLOR,
-                    .posMode = POS_RELATIVE,
-                    .childGap = 10,
-                    .padding = {10,10,10,10},
-                    .pos = {800, 200},
-                    .name = "end screen",
-                }
-            ),
-            createElement(
-                (ElementSettings){
+            Element_new((ElementSettings){
+                .color = COOL_COLOR,
+                .posMode = POS_RELATIVE,
+                .childGap = 10,
+                .padding = {10,10,10,10},
+                .pos = {800, 200},
+                .name = "end screen",
+            },
+                Element_new((ElementSettings){
                     .minWidth = 100,
                     .minHeight = 100,
                     .text = "test",
                     .name = "color display",
                     .padding = {10,10,10,10}
-                }
-            ),
-            createElement(
-                (ElementSettings){
+                }),
+                Element_new((ElementSettings){
                     .color = {.8, .0, .0},
                     .padding = {10,10,10,10},
                     .text = "End it all",
                     .onHover = defaultHoverFun,
                     .onClick = runTaskFun,
                     .task = closeProgram
-                }
+                })
             )
-        )
     );
-    Element* endScreen = Element_getElement("end screen");
-    endScreen->flags.isActive = false;
+    gui_setActive("end screen", false);
 }

@@ -458,7 +458,7 @@ Renderer newGUIRenderer(GLFWwindow* window, const int width, const int height, c
 }
 
 Element* createRootElement() {
-    const auto e = Element_new((Vec2i){}, 0, 0);
+    const auto e = Element_allocateNew((Vec2i){}, 0, 0);
     e->name = "GUI_ROOT";
     e->flags.invisible = true;
     return e;
