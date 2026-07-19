@@ -356,7 +356,7 @@ static void joinGame(const char* ip) {
 }
 #endif
 
-static void startChessGameTask(void* nix) {
+static void startChessGameTask(void*) {
     Element* mainMenu = Element_getElement("start screen");
     Element* chessBoard = Element_getElement("game board");
     Element_setActive(mainMenu, false);
@@ -514,7 +514,7 @@ static char* getTextureForPiece(ChessPiece piece) {
 static void switchSides(void*) {
     boardDirection = !boardDirection;
     turn = -turn;
-    resetBoard(NULL);
+    resetBoard(nullptr);
 }
 
 static void flipBoard(void*) {
@@ -602,9 +602,9 @@ static void syncGui() {
         for (int ii = 0; ii < 8; ii++) {
             gui_setTexture(pieceSlots[i][ii], getTextureForPiece(board[i][ii].piece));
 
-            Vec3f d = pieceSlots[i][ii]->parentElement->visuals.defaultColor;
-            Vec3f defaultColor = (Vec3f){d.x,d.y,d.z};
-            Vec3f color = board[i][ii].isMarked ? Vec3f_Add(COLOR_DARKYELLOW, Vec3f_Mul(defaultColor, 0.2f)) : defaultColor;
+            const Vec3f d = pieceSlots[i][ii]->parentElement->visuals.defaultColor;
+            const Vec3f defaultColor = {d.x,d.y,d.z};
+            const Vec3f color = board[i][ii].isMarked ? Vec3f_Add(COLOR_DARKYELLOW, Vec3f_Mul(defaultColor, 0.2f)) : defaultColor;
             Element_setColor(pieceSlots[i][ii]->parentElement, color);
         }
     }
