@@ -1,7 +1,6 @@
 //
 // Created by ertls on 29.05.2026.
 //
-#pragma once
 #include "Render/GUI/GuiElement.h"
 #include "Game2DGui.h"
 
