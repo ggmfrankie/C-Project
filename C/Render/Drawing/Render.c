@@ -11,13 +11,8 @@
 #include "Render/GUI/GuiElement.h"
 #include "Utils/CArrayList.h"
 #include "Utils/Makros.h"
-#include "Utils/UtilityFun.h"
 
 static void accumulateMeshes(Element *element, const Renderer *renderer, GuiVertex *vertices, int *vt, int *indices, int *id);
-static Vec2i updateLayout(Element* self, Vec2i parentCursor, Vec2i remainingSpace, Vec2i parentPos, const Font* font);
-
-static void layoutElement(const Element* self);
-static Cache* cacheLayoutLines(Element* self);
 static Cache* cacheLayout(Element* self);
 
 static void placeChildElements(const Element* self);
@@ -72,13 +67,13 @@ static void beginScissor(const Element* e, const int screenHeight) {
     const int y = screenHeight - (e->dims.worldPos.y + e->dims.worldHeight);
     const int w = e->dims.worldWidth;
     const int h = e->dims.worldHeight;
-
     glScissor(x, y, w, h);
 }
 
 static void endScissor() {
     glDisable(GL_SCISSOR_TEST);
 }
+
 
 void Renderer_render(const Renderer *renderer) {
     static GuiVertex vertices[MAX_GUI_VERTICES];
@@ -153,7 +148,7 @@ static void accumulateMeshes(Element *element, const Renderer *renderer, GuiVert
     });
 }
 
-void Renderer_updateLayout2(const Renderer *renderer) {
+void Renderer_updateLayout(const Renderer *renderer) {
     Element* root = renderer->guiRoot;
 
     root->dims.worldWidth  = renderer->screenWidth;

@@ -95,7 +95,7 @@ void gui_update() {
     lock();
     Engine_resetStates(g_Renderer.guiRoot);
     Engine_handleDragElement(&g_Renderer);
-    Renderer_updateLayout2(&g_Renderer);
+    Renderer_updateLayout(&g_Renderer);
     gui_popUpdate();
     Engine_processInput(&g_Renderer);
 #if GUI_DEBUG && GUI_DEBUG_PROCESS_DEBUG
