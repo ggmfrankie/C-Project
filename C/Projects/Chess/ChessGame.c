@@ -278,7 +278,6 @@ static void chessCheckedMark(const int row, const int column, const int pieceRow
     if (getColor(board[row][column].piece) != color && !board[row][column].isMarked) {
         board[row][column].isMarked = 2*!doesMoveCauseCheck(row, column, pieceRow, pieceCol, color);
     }
-
 }
 
 static void markedOnlyIfEnemy(const int row, const int column, const int pieceRow, const int pieceCol, const PieceColor color) {
@@ -771,6 +770,7 @@ static void createChessBoard(Element* root) {
             )
     );
     gui_setActive("game board", false);
+    // alt+shift = moveLine
 }
 
 static void createStartScreen(Element* root) {
