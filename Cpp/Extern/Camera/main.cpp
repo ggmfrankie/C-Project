@@ -3,7 +3,10 @@
 #include "Network/Server.hpp"
 
 int main(){
-    std::cout << "Hello World\n";
+    std::cout << "Starting...\n";
     Server server{};
-    server.start();
+    std::cout << typeid(std::string).name() <<"\n";
+    std::cout << typeid(bool).name() <<"\n";
+    std::cout << typeid(int).name() <<"\n";
+    //server.start();
 }

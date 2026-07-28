@@ -17,11 +17,17 @@ public:
 
     [[nodiscard]] std::string getBoard() const;
 
+    static TicTacToe& New();
+
+    static TicTacToe& Get();
+
 private:
     enum class Turn {
         X,
         O
     };
+
+    static TicTacToe GAME;
     std::array<char, 10> mBoard;
     Turn mTurn;
 };

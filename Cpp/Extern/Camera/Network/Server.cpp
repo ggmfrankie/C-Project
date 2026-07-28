@@ -5,6 +5,7 @@
 #include "Server.hpp"
 
 #include "json.hpp"
+#include "../Test/TicTacToe.hpp"
 
 
 using httplib::Request;
@@ -13,7 +14,9 @@ using std::string;
 using nlohmann::json;
 
 Server::Server()
-{}
+{
+    TicTacToe::New();
+}
 
 Server::Json Server::handleRequest(Json json) {
     const string method = json["method"];
@@ -26,9 +29,10 @@ Server::Json Server::handleRequest(Json json) {
     if (method == "tools/call") {
         string name = json["params"]["name"];
         if (name == "getBoard") {
-            //return invokeMethod(&TicTacToe::getBoard, mGame);
+            return invokeMethod(&TicTacToe::getBoard, TicTacToe::Get());
         } else if (name == "makeMove") {
-
+            int row = json["params"];
+            //return invokeMethod(&TicTacToe::makeMove, TicTacToe::Get(), );
         }
     }
 
@@ -53,7 +57,7 @@ void Server::start() {
     mServer.listen("localhost", 8080);
 }
 
-constexpr Server::Json Server::getAllMethods() {
+Server::Json Server::getAllMethods() {
     Json out;
     out["jsonrpc"] = "2.0";
     out["id"] = 1;
@@ -82,3 +86,4 @@ constexpr Server::Json Server::getAllMethods() {
 
     return out;
 }
+

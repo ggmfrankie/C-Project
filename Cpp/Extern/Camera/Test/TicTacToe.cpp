@@ -9,6 +9,8 @@
 
 using std::string;
 
+TicTacToe TicTacToe::GAME;
+
 TicTacToe::TicTacToe() :
     mBoard(),
     mTurn(Turn::X)
@@ -36,4 +38,12 @@ string TicTacToe::getBoard() const {
         if ((i+1)%3 == 0) output << '\n';
     }
     return output.str();
+}
+
+TicTacToe& TicTacToe::New() {
+    return GAME = TicTacToe();
+}
+
+TicTacToe& TicTacToe::Get() {
+    return GAME;
 }
