@@ -3,26 +3,29 @@
 //
 
 #pragma once
+#include <functional>
+#include <optional>
 #include <string>
+#include <variant>
 #include <vector>
 
 namespace ggm {
     class Parsing {
         using string = std::string;
     public:
-        struct Function {
-            struct Parameters {
-                string type;
-                string name;
-                bool isConst;
-            };
-            string returnType;
+        struct Parameter {
+            string type;
             string name;
-            std::vector<Parameters>;
+            bool isConst;
         };
 
-        Function parseFunction(const std::string_view funcBody);
-    private:
+        struct Function {
+            string name;
+            string returnType;
+            std::vector<Parameter> parameters;
+        };
 
+        static Function extractParameters(std::string_view funcBody);
+    private:
     };
 } // ggm

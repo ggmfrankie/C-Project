@@ -7,13 +7,19 @@
 #include <json.hpp>
 
 #include "LazyStream.hpp"
+#include "Parsing.hpp"
 #include "Utils.hpp"
+
+#define MCP_CAT2(a,b) a##b
+#define MCP_CAT(a,b) MCP_CAT2(a,b)
 
 class McpInterface {
     using Json = nlohmann::basic_json<>;
     using string = std::string;
 
-    static McpInterface INTERFACE;
+    McpInterface() {
+        mRequestableFunctions.reserve(16);
+    }
 
     struct NameMap {
         const std::string_view type;
@@ -36,8 +42,7 @@ class McpInterface {
     template<typename F, typename... Args>
     requires std::invocable<F, Args...>
     static Json _newRequest(int id, const string&& name, F&& func, Args&&... args) {
-        constexpr std::vector<string> argTypes = {typeid(std::remove_cvref_t<Args>).name()...};
-
+        constexpr std::array<string, sizeof...(Args)> argTypes = {typeid(std::remove_cvref_t<Args>).name()...};
 
         Json out;
         out["jsonrpc"] = "2.0";
@@ -83,14 +88,23 @@ class McpInterface {
         return out;
     }
 
-
+    std::unordered_map<string, ggm::Parsing::Function> mRequestableFunctions{};
 
 public:
+    static McpInterface& Get() {
+        static McpInterface INTERFACE{};
+        return INTERFACE;
+    }
+
     bool _processRequestableFunction(const std::string_view signature) {
-        auto parts = ggm::split(signature, ' ');
+        const auto functionParameter = ggm::Parsing::extractParameters(signature);
+        mRequestableFunctions[functionParameter.name] = functionParameter;
+        return false;
     }
 
 #define MakeRequestableFunction(...)\
-    __VA_ARGS__\
-    {static bool _unused_ = McpInterface::_processRequestableFunction(#__VA_ARGS__)}
+    inline static const bool MCP_CAT(_mcp_reg_, __COUNTER__) = \
+        McpInterface::Get()._processRequestableFunction(#__VA_ARGS__);\
+        __VA_ARGS__
+
 };

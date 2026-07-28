@@ -51,7 +51,7 @@ namespace Engine {
         return pred ? pred(s) : false;
     }
 
-    void procChar(char ch, vector<Token>& tokens, const string& str) {
+    static void procChar(char ch, vector<Token>& tokens, const string& str) {
         static auto state = State::start;
         static int begin = 0, end = 0;
 

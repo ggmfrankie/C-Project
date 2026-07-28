@@ -3,4 +3,3 @@
 //
 
 #include "McpInterface.hpp"
-McpInterface McpInterface::INTERFACE;

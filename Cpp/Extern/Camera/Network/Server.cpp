@@ -29,7 +29,7 @@ Server::Json Server::handleRequest(Json json) {
     if (method == "tools/call") {
         string name = json["params"]["name"];
         if (name == "getBoard") {
-            return invokeMethod(&TicTacToe::getBoard, TicTacToe::Get());
+            //return invokeMethod(&TicTacToe::getBoard, TicTacToe::Get());
         } else if (name == "makeMove") {
             int row = json["params"];
             //return invokeMethod(&TicTacToe::makeMove, TicTacToe::Get(), );

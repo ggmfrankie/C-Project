@@ -9,7 +9,7 @@
 #include <cstdint>
 
 namespace ggm {
-
+    using u64 = unsigned long long;
     template<typename Function, typename ReturnType, typename... Args>
     concept returns = std::same_as<std::invoke_result_t<Function&, Args...>, ReturnType>;
 
