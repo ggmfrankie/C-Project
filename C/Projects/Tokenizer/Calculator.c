@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../../Extern/Libraries/WinAdapt.h"
+#include "../../../OtherProjects/C/Informatik/WinAdapt.h"
 #include "Utils/UtilsTypedef.h"
 
 constexpr int MAX_TOKENS = 64;

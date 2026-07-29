@@ -27,7 +27,7 @@ void setUpdateInterval(const unsigned Interval)
 
 #include <windows.h>
 
-#include "WinAdapt.h"
+#include "../../../C/Extern/Libraries/WinAdapt.h"
 
 #define SIMPROTIMER 4711
 
