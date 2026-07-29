@@ -58,7 +58,7 @@ bmp newBMP(long dx, const long dy)
 void save_BMP(char * name, const bmp *image)
 {
     const String fileName = stringOf(name);
-    const String defaultPath = stringOf("../Extern/Informatik/Data/");
+    const String defaultPath = stringOf("../Cpp/Informatik/Data/");
     String fullPath = Strings.combine(&defaultPath, &fileName);
     FILE* f = fopen(fullPath.m,"wb");
     fwrite(image, HEADERSIZE, 1, f);

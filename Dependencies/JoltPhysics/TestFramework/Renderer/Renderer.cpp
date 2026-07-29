@@ -44,7 +44,7 @@ bool Renderer::BeginFrame(const CameraState &inCamera, float inWorldScale)
 	float light_fov = DegreesToRadians(20.0f);
 	float light_near = 1.0f;
 
-	// Camera properties
+	// McpServer properties
 	Vec3 cam_pos = Vec3(inCamera.mPos - mBaseOffset);
 	float camera_fovy = inCamera.mFOVY;
 	float camera_aspect = static_cast<float>(mWindow->GetWindowWidth()) / mWindow->GetWindowHeight();
@@ -57,7 +57,7 @@ bool Renderer::BeginFrame(const CameraState &inCamera, float inWorldScale)
 	// Calculate light frustum
 	mLightFrustum = Frustum(light_pos, light_fwd, light_up, light_fov, light_fov, light_near);
 
-	// Camera projection and view
+	// McpServer projection and view
 	mVSBuffer.mProjection = sPerspectiveInfiniteReverseZ(camera_fovy, camera_aspect, camera_near, mPerspectiveYSign);
 	Vec3 tgt = cam_pos + inCamera.mForward;
 	mVSBuffer.mView = Mat44::sLookAt(cam_pos, tgt, inCamera.mUp);
@@ -66,7 +66,7 @@ bool Renderer::BeginFrame(const CameraState &inCamera, float inWorldScale)
 	mVSBuffer.mLightProjection = sPerspectiveInfiniteReverseZ(light_fov, 1.0f, light_near, mPerspectiveYSign);
 	mVSBuffer.mLightView = Mat44::sLookAt(light_pos, light_tgt, light_up);
 
-	// Camera ortho projection and view
+	// McpServer ortho projection and view
 	mVSBufferOrtho.mProjection = Mat44(Vec4(2.0f / mWindow->GetWindowWidth(), 0.0f, 0.0f, 0.0f), Vec4(0.0f, -mPerspectiveYSign * 2.0f / mWindow->GetWindowHeight(), 0.0f, 0.0f), Vec4(0.0f, 0.0f, -1.0f, 0.0f), Vec4(-1.0f, mPerspectiveYSign * 1.0f, 0.0f, 1.0f));
 	mVSBufferOrtho.mView = Mat44::sIdentity();
 

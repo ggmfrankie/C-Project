@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include "Network/Server.hpp"
-#include "Utils/McpInterface.hpp"
+#include "Utils/McpFunctionRegistry.hpp"
 #include "Utils/Parsing.hpp"
 
 MakeRequestableFunction(int main())

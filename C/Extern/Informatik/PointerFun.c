@@ -91,10 +91,10 @@ void pointerFun() {
     reversedCharArray[length] = '\0';
     printf("Normal: %s\nReversed: %s\n", charArray, reversedCharArray);
 
-    const String filepath = stringOf("../Extern/Informatik/Data/03_geheim.txt");
+    const String filepath = stringOf("../Cpp/Informatik/Data/03_geheim.txt");
     String file = readFile(&filepath);
     const String key = stringOf("Erdbeermilch");
-    const String destinationFile = stringOf("../Extern/Informatik/Data/entschluesselt.txt");
+    const String destinationFile = stringOf("../Cpp/Informatik/Data/entschluesselt.txt");
     Strings.println(&file);
 
     decrypt(&file, &key);

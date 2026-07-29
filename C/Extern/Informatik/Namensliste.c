@@ -51,7 +51,7 @@ void namensliste_Aufgabe(void* userdata) {
 }
 
 void namensliste_langsam() {
-    const String path = stringOf("../Extern/Informatik/Data/vornamen.txt");
+    const String path = stringOf("../Cpp/Informatik/Data/vornamen.txt");
     String nameList = readFile(&path);
     String* names = Strings.split(&nameList, "\n");
 
@@ -145,7 +145,7 @@ void enterName(const NameCounterMap *ncm) {
 }
 
 void namensliste_schnell() {
-    const String path = stringOf("../Extern/Informatik/Data/vornamen.txt");
+    const String path = stringOf("../Cpp/Informatik/Data/vornamen.txt");
     const String nameList = readFile(&path);
     String* names = Strings.split(&nameList, "\n");
     Hashmap_NameCounter nameCounter = newHashmap_NameCounter(512);

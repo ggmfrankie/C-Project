@@ -22,7 +22,7 @@ namespace JPH {
 class Application
 {
 private:
-	/// Camera state
+	/// McpServer state
 	CameraState					mLocalCamera;
 	CameraState					mWorldCamera;
 

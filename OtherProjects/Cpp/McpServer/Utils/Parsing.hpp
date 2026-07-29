@@ -16,7 +16,6 @@ namespace ggm {
         struct Parameter {
             string type;
             string name;
-            bool isConst;
         };
 
         struct Function {
