@@ -12,7 +12,6 @@
 #include "GUI/GuiElement.h"
 #include "Drawing/Render.h"
 #include "GUI/CallbackFunctions.h"
-#include "../Extern/Informatik/Spannungsteiler_A3.h"
 #include "GLFW/glfw3.h"
 
 #include "GUI/GuiElementData.h"

@@ -158,8 +158,6 @@ add_executable(C-Project
         Cpp/Utils/DataStorage/Stream.hpp
         Cpp/Games/BaseGame/GameGui.c
         Cpp/Utils/DataStorage/LazyStream.hpp
-        Cpp/Extern/Sudoku/SudokuBoard.cpp
-        Cpp/Extern/Sudoku/SudokuBoard.hpp
         Cpp/Games/Scene/2D/LayerStack.cpp
         Cpp/Games/Scene/2D/LayerStack.hpp
         Cpp/Games/Scene/2D/ILayer.hpp

@@ -6,7 +6,6 @@
 
 #include "Cpp/GameEngine.hpp"
 #include "Cpp/Games/BaseGame/BaseGame.hpp"
-#include "Cpp/Extern/Sudoku/SudokuBoard.hpp"
 #include "Cpp/Games/Game2D/Game2D.hpp"
 #include "Cpp/Test/Test.hpp"
 

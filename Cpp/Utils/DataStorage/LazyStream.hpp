@@ -7,6 +7,7 @@
 #include <vector>
 #include <functional>
 #include <cstdint>
+#include "Utils/Math/ggmdef.hpp"
 
 namespace ggm {
 
