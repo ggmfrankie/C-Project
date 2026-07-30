@@ -1,0 +1,3 @@
+C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio/CMakeFiles/McpServer.dir
+C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio/CMakeFiles/edit_cache.dir
+C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio/CMakeFiles/rebuild_cache.dir

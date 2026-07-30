@@ -1,0 +1,32 @@
+[
+{
+  "directory": "C:/git/oth/C-Project/Cpp/Extern/Camera/cmake-build-debug",
+  "command": "C:\\Users\\ertls\\AppData\\Local\\Programs\\CLION2~1.1\\bin\\mingw\\bin\\C__~1.EXE -IC:/git/oth/C-Project/Cpp/Extern/Camera/Dependencies/cpp-httpLib -g -std=gnu++23 -fdiagnostics-color=always -fmodules-ts -fmodule-mapper=CMakeFiles\\Camera.dir\\main.cpp.obj.modmap -MD -fdeps-format=p1689r5 -x c++ -o CMakeFiles\\Camera.dir\\main.cpp.obj -c C:\\git\\oth\\C-Project\\Cpp\\Extern\\Camera\\main.cpp",
+  "file": "C:/git/oth/C-Project/Cpp/Extern/Camera/main.cpp",
+  "output": "C:/git/oth/C-Project/Cpp/Extern/Camera/cmake-build-debug/CMakeFiles/Camera.dir/main.cpp.obj"
+},
+{
+  "directory": "C:/git/oth/C-Project/Cpp/Extern/Camera/cmake-build-debug",
+  "command": "C:\\Users\\ertls\\AppData\\Local\\Programs\\CLION2~1.1\\bin\\mingw\\bin\\C__~1.EXE -IC:/git/oth/C-Project/Cpp/Extern/Camera/Dependencies/cpp-httpLib -g -std=gnu++23 -fdiagnostics-color=always -fmodules-ts -fmodule-mapper=CMakeFiles\\Camera.dir\\Utils\\Json.cpp.obj.modmap -MD -fdeps-format=p1689r5 -x c++ -o CMakeFiles\\Camera.dir\\Utils\\Json.cpp.obj -c C:\\git\\oth\\C-Project\\Cpp\\Extern\\Camera\\Utils\\Json.cpp",
+  "file": "C:/git/oth/C-Project/Cpp/Extern/Camera/Utils/Json.cpp",
+  "output": "C:/git/oth/C-Project/Cpp/Extern/Camera/cmake-build-debug/CMakeFiles/Camera.dir/Utils/Json.cpp.obj"
+},
+{
+  "directory": "C:/git/oth/C-Project/Cpp/Extern/Camera/cmake-build-debug",
+  "command": "C:\\Users\\ertls\\AppData\\Local\\Programs\\CLION2~1.1\\bin\\mingw\\bin\\C__~1.EXE -IC:/git/oth/C-Project/Cpp/Extern/Camera/Dependencies/cpp-httpLib -g -std=gnu++23 -fdiagnostics-color=always -fmodules-ts -fmodule-mapper=CMakeFiles\\Camera.dir\\Test\\TicTacToe.cpp.obj.modmap -MD -fdeps-format=p1689r5 -x c++ -o CMakeFiles\\Camera.dir\\Test\\TicTacToe.cpp.obj -c C:\\git\\oth\\C-Project\\Cpp\\Extern\\Camera\\Test\\TicTacToe.cpp",
+  "file": "C:/git/oth/C-Project/Cpp/Extern/Camera/Test/TicTacToe.cpp",
+  "output": "C:/git/oth/C-Project/Cpp/Extern/Camera/cmake-build-debug/CMakeFiles/Camera.dir/Test/TicTacToe.cpp.obj"
+},
+{
+  "directory": "C:/git/oth/C-Project/Cpp/Extern/Camera/cmake-build-debug",
+  "command": "C:\\Users\\ertls\\AppData\\Local\\Programs\\CLION2~1.1\\bin\\mingw\\bin\\C__~1.EXE -IC:/git/oth/C-Project/Cpp/Extern/Camera/Dependencies/cpp-httpLib -g -std=gnu++23 -fdiagnostics-color=always -fmodules-ts -fmodule-mapper=CMakeFiles\\Camera.dir\\Network\\Server.cpp.obj.modmap -MD -fdeps-format=p1689r5 -x c++ -o CMakeFiles\\Camera.dir\\Network\\Server.cpp.obj -c C:\\git\\oth\\C-Project\\Cpp\\Extern\\Camera\\Network\\Server.cpp",
+  "file": "C:/git/oth/C-Project/Cpp/Extern/Camera/Network/Server.cpp",
+  "output": "C:/git/oth/C-Project/Cpp/Extern/Camera/cmake-build-debug/CMakeFiles/Camera.dir/Network/Server.cpp.obj"
+},
+{
+  "directory": "C:/git/oth/C-Project/Cpp/Extern/Camera/cmake-build-debug",
+  "command": "C:\\Users\\ertls\\AppData\\Local\\Programs\\CLION2~1.1\\bin\\mingw\\bin\\C__~1.EXE -IC:/git/oth/C-Project/Cpp/Extern/Camera/Dependencies/cpp-httpLib -g -std=gnu++23 -fdiagnostics-color=always -fmodules-ts -fmodule-mapper=CMakeFiles\\Camera.dir\\Network\\Client.cpp.obj.modmap -MD -fdeps-format=p1689r5 -x c++ -o CMakeFiles\\Camera.dir\\Network\\Client.cpp.obj -c C:\\git\\oth\\C-Project\\Cpp\\Extern\\Camera\\Network\\Client.cpp",
+  "file": "C:/git/oth/C-Project/Cpp/Extern/Camera/Network/Client.cpp",
+  "output": "C:/git/oth/C-Project/Cpp/Extern/Camera/cmake-build-debug/CMakeFiles/Camera.dir/Network/Client.cpp.obj"
+}
+]

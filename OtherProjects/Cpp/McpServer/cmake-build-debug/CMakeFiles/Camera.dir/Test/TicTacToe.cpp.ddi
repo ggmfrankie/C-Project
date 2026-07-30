@@ -1,0 +1,11 @@
+{
+"rules": [
+{
+"primary-output": "CMakeFiles/Camera.dir/Test/TicTacToe.cpp.o",
+"requires": [
+]
+}
+],
+"version": 0,
+"revision": 0
+}

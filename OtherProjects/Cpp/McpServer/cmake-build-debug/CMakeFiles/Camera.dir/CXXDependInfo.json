@@ -1,0 +1,50 @@
+{
+	"bmi-installation" : null,
+	"compiler-frontend-variant" : "GNU",
+	"compiler-id" : "GNU",
+	"compiler-simulate-id" : "",
+	"config" : "Debug",
+	"cxx-modules" : {},
+	"database-info" : null,
+	"dir-cur-bld" : "C:/git/oth/C-Project/Cpp/Extern/Camera/cmake-build-debug",
+	"dir-cur-src" : "C:/git/oth/C-Project/Cpp/Extern/Camera",
+	"dir-top-bld" : "C:/git/oth/C-Project/Cpp/Extern/Camera/cmake-build-debug",
+	"dir-top-src" : "C:/git/oth/C-Project/Cpp/Extern/Camera",
+	"exports" : [],
+	"forward-modules-from-target-dirs" : [],
+	"include-dirs" : 
+	[
+		"C:\\git\\oth\\C-Project\\Cpp\\Extern\\Camera\\Dependencies\\cpp-httpLib"
+	],
+	"language" : "CXX",
+	"linked-target-dirs" : [],
+	"module-dir" : "C:/git/oth/C-Project/Cpp/Extern/Camera/cmake-build-debug/CMakeFiles/Camera.dir",
+	"sources" : 
+	{
+		"CMakeFiles/Camera.dir/Network/Client.cpp.obj" : 
+		{
+			"language" : "CXX",
+			"source" : "C:/git/oth/C-Project/Cpp/Extern/Camera/Network/Client.cpp"
+		},
+		"CMakeFiles/Camera.dir/Network/Server.cpp.obj" : 
+		{
+			"language" : "CXX",
+			"source" : "C:/git/oth/C-Project/Cpp/Extern/Camera/Network/Server.cpp"
+		},
+		"CMakeFiles/Camera.dir/Test/TicTacToe.cpp.obj" : 
+		{
+			"language" : "CXX",
+			"source" : "C:/git/oth/C-Project/Cpp/Extern/Camera/Test/TicTacToe.cpp"
+		},
+		"CMakeFiles/Camera.dir/Utils/Json.cpp.obj" : 
+		{
+			"language" : "CXX",
+			"source" : "C:/git/oth/C-Project/Cpp/Extern/Camera/Utils/Json.cpp"
+		},
+		"CMakeFiles/Camera.dir/main.cpp.obj" : 
+		{
+			"language" : "CXX",
+			"source" : "C:/git/oth/C-Project/Cpp/Extern/Camera/main.cpp"
+		}
+	}
+}

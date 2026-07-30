@@ -1,0 +1,11 @@
+ninja_dyndep_version = 1.0
+build CMakeFiles/Camera.dir/main.cpp.obj: dyndep
+
+build CMakeFiles/Camera.dir/Utils/Json.cpp.obj: dyndep
+
+build CMakeFiles/Camera.dir/Test/TicTacToe.cpp.obj: dyndep
+
+build CMakeFiles/Camera.dir/Network/Server.cpp.obj: dyndep
+
+build CMakeFiles/Camera.dir/Network/Client.cpp.obj: dyndep
+

@@ -1,0 +1,66 @@
+{
+	"bmi-installation" : null,
+	"compiler-frontend-variant" : "MSVC",
+	"compiler-id" : "MSVC",
+	"compiler-simulate-id" : "",
+	"config" : "Debug",
+	"cxx-modules" : {},
+	"database-info" : null,
+	"dir-cur-bld" : "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio",
+	"dir-cur-src" : "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer",
+	"dir-top-bld" : "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio",
+	"dir-top-src" : "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer",
+	"exports" : [],
+	"forward-modules-from-target-dirs" : [],
+	"include-dirs" : 
+	[
+		"C:\\git\\oth\\C-Project\\OtherProjects\\Cpp\\McpServer\\Dependencies\\cpp-httpLib",
+		"C:\\git\\oth\\C-Project\\OtherProjects\\Cpp\\McpServer\\Dependencies\\json"
+	],
+	"language" : "CXX",
+	"linked-target-dirs" : [],
+	"module-dir" : "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio/CMakeFiles/McpServer.dir",
+	"sources" : 
+	{
+		"CMakeFiles/McpServer.dir/Network/Client.cpp.obj" : 
+		{
+			"language" : "CXX",
+			"source" : "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/Network/Client.cpp"
+		},
+		"CMakeFiles/McpServer.dir/Network/Server.cpp.obj" : 
+		{
+			"language" : "CXX",
+			"source" : "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/Network/Server.cpp"
+		},
+		"CMakeFiles/McpServer.dir/Test/TicTacToe.cpp.obj" : 
+		{
+			"language" : "CXX",
+			"source" : "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/Test/TicTacToe.cpp"
+		},
+		"CMakeFiles/McpServer.dir/Utils/Json.cpp.obj" : 
+		{
+			"language" : "CXX",
+			"source" : "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/Utils/Json.cpp"
+		},
+		"CMakeFiles/McpServer.dir/Utils/McpFunctionRegistry.cpp.obj" : 
+		{
+			"language" : "CXX",
+			"source" : "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/Utils/McpFunctionRegistry.cpp"
+		},
+		"CMakeFiles/McpServer.dir/Utils/Parsing.cpp.obj" : 
+		{
+			"language" : "CXX",
+			"source" : "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/Utils/Parsing.cpp"
+		},
+		"CMakeFiles/McpServer.dir/Utils/Utils.cpp.obj" : 
+		{
+			"language" : "CXX",
+			"source" : "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/Utils/Utils.cpp"
+		},
+		"CMakeFiles/McpServer.dir/main.cpp.obj" : 
+		{
+			"language" : "CXX",
+			"source" : "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/main.cpp"
+		}
+	}
+}

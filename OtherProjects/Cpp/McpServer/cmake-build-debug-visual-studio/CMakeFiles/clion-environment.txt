@@ -1,0 +1,5 @@
+ToolSet: 18.0 (local)@C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools
+Ninja: 1.13.2@C:\Users\ertls\AppData\Local\Programs\CLion 2026.2.0.1\bin\ninja\win\x64\ninja.exe
+Options: 
+
+Options:-DCMAKE_MAKE_PROGRAM=C:/Users/ertls/AppData/Local/Programs/CLion 2026.2.0.1/bin/ninja/win/x64/ninja.exe

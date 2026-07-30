@@ -1,0 +1,3 @@
+C:/git/oth/C-Project/Cpp/Extern/Camera/cmake-build-debug/CMakeFiles/Camera.dir
+C:/git/oth/C-Project/Cpp/Extern/Camera/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/git/oth/C-Project/Cpp/Extern/Camera/cmake-build-debug/CMakeFiles/rebuild_cache.dir
