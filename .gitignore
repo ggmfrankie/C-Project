@@ -646,3 +646,11 @@
 /flamegraph.svg
 /out/
 /Debug/
+/cmake-build-debug-mingw-gcc/
+/cmake-build-debug/
+/cmake-build-debug-mingw/
+/cmake-build-debug-old/
+/OtherProjects/Cpp/InfraCamera/cmake-build-debug/
+/OtherProjects/Cpp/InfraCamera/cmake-build-debug-visual-studio/
+/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio/
+/OtherProjects/Cpp/McpServer/cmake-build-debug/

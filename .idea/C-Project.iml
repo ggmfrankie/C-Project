@@ -31,8 +31,34 @@
       <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Python/Chess/.venv" />
       <excludeFolder url="file://$MODULE_DIR$/out" />
       <excludeFolder url="file://$MODULE_DIR$/Debug" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Cpp/InfraCamera/cmake-build-debug" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Cpp/InfraCamera/cmake-build-debug-visual-studio" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Cpp/InfraCamera/cmake-build-debug-visual-studio/.cmake" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Cpp/InfraCamera/cmake-build-debug-visual-studio/CMakeFiles" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Cpp/InfraCamera/cmake-build-debug-visual-studio/Dependencies" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Cpp/InfraCamera/cmake-build-debug-visual-studio/Testing" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Cpp/InfraCamera/cmake-build-debug/.cmake" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Cpp/InfraCamera/cmake-build-debug/CMakeFiles" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Cpp/InfraCamera/cmake-build-debug/Testing" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Cpp/McpServer/.idea/shelf" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio/.cmake" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio/CMakeFiles/4.3.1/CompilerIdC/tmp" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio/CMakeFiles/4.3.1/CompilerIdCXX/tmp" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio/CMakeFiles/Camera.dir/Network" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio/CMakeFiles/Camera.dir/Test" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio/CMakeFiles/Camera.dir/Utils" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio/CMakeFiles/McpServer.dir/Network" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio/CMakeFiles/McpServer.dir/Test" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio/CMakeFiles/McpServer.dir/Utils" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio/CMakeFiles/pkgRedirects" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Cpp/McpServer/cmake-build-debug/.cmake" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Cpp/McpServer/cmake-build-debug/CMakeFiles/4.3.1/CompilerIdC/tmp" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Cpp/McpServer/cmake-build-debug/CMakeFiles/4.3.1/CompilerIdCXX/tmp" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Cpp/McpServer/cmake-build-debug/CMakeFiles/pkgRedirects" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Cpp/McpServer/cmake-build-debug/Dependencies/beast/CMakeFiles" />
+      <excludeFolder url="file://$MODULE_DIR$/cmake-build-debug-mingw-gcc" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.14 (C-Project)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="C:\git\oth\C-Project\.venv" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Python 3.14 interpreter library" level="application" />
   </component>

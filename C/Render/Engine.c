@@ -227,7 +227,7 @@ void startEngine(void (*generateGUI)(Element* guiRoot)) {
 
         gui_render();
 
-        nanosleep(&(struct timespec){0, 1000000000L}, NULL);
+        nanosleep(&(struct timespec){.tv_sec = 0, .tv_nsec = 1000000000L}, NULL);
     }
     glfwTerminate();
 }
@@ -342,7 +342,7 @@ void gui_charCallback(GLFWwindow* window, const unsigned int codepoint) {
 
 void gui_keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     if (g_Callbacks.onKeyPress) { g_Callbacks.onKeyPress(key, scancode, action, mods);}
-    if (focusedElement == NULL || focusedElement->type == t_defaultElement) return;
+    if (focusedElement == nullptr || focusedElement->type == t_defaultElement) return;
     if (key == GLFW_KEY_ESCAPE) {
         focusedElement = nullptr;
         return;
@@ -392,12 +392,19 @@ Vec2i getMousePos() {
 }
 
 Vec2i getWindowSize() {
-    const Vec2i windowSize = {g_Renderer.screenWidth, g_Renderer.screenHeight};
+    Vec2i windowSize;
+    Thread_Locked(
+        windowSize = (Vec2i){g_Renderer.screenWidth, g_Renderer.screenHeight};
+    )
     return windowSize;
 }
 
 Font *getFont() {
-    return &g_Renderer.font;
+    Font* font;
+    Thread_Locked(
+        font = &g_Renderer.font;
+    )
+    return font;
 }
 
 double graphingFunction(const double x) {
