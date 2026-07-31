@@ -5,7 +5,7 @@
 typedef struct List_String List_String;
 typedef struct StringFunctions StringFunctions;
 
-typedef struct CString {
+typedef struct CString_v1 {
     char* m;
     size_t length;
     size_t capacity;

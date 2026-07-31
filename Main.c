@@ -7,24 +7,20 @@
 
 
 #include "C/Render/Engine.h"
-#include "C/Utils/Deprecated/Map.h"
-#include "C/Utils/CString.h"
+#include "C/Utils/CString_v1.h"
 #include "C/Projects/Test/TestGUI.h"
 #include "C/Projects/Chess/ChessGame.h"
 #include "C/Projects/ChessNewandImproved/ChessBetter2.h"
 #include "C/Projects/Tokenizer/Calculator.h"
 #include "C/Projects/TFE/TFE.h"
-#include "Utils/CArrayList.h"
-#include "Utils/UtilsTest.h"
+#include "C/Utils/DataStructures/CArrayList.h"
+#include "C/Utils/DataStructures/CString.h"
+#include "C/Utils/DataStructures/Test.h"
 
 #if 0
 int main(){
-    SetConsoleOutputCP(CP_UTF8);
-    //startEngine(chess_createChessBoard);
-    //startEngine(generateTestGUI);
-    //startEngine(createChessGUI);
-    //Calculator_runParserTest();
-    Utils_test();
+
+
 
     return 0;
 }

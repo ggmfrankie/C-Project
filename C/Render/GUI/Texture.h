@@ -7,7 +7,7 @@
 #include <stdarg.h>
 
 #include "GuiDefines.h"
-#include "../../Utils/Vector.h"
+#include "../../Utils/Math/Vector.h"
 
 typedef struct NinePatchData {
     int stretchStartX;

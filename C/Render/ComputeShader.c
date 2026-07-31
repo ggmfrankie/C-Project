@@ -8,11 +8,11 @@
 
 #include "Shader.h"
 #include "Render/GUI/Texture.h"
-#include "../Utils/CString.h"
-#include "../Utils/Vector.h"
-#include "Utils/CArrayList.h"
-#include "Utils/CHashMap.h"
-#include "Utils/Utils.h"
+#include "../Utils/CString_v1.h"
+#include "../Utils/Math/Vector.h"
+#include "../Utils/DataStructures/CArrayList.h"
+#include "../Utils/DataStructures/CHashMap.h"
+#include "Utils/Defer.h"
 
 static GLuint generateGraphSSBO(const size_t size) {
     GLuint graphSSBO;
@@ -24,7 +24,7 @@ static GLuint generateGraphSSBO(const size_t size) {
 }
 
 static GLuint createGraphingShader(const String *fileName, const int programId) {
-    defer(str_delete) const String shaderSource = readShaderFile(fileName);
+    defer(str_delete) String shaderSource = readShaderFile(fileName);
     const GLchar* source = shaderSource.m;
 
     const int shaderId = createShader(&source, GL_COMPUTE_SHADER, programId);

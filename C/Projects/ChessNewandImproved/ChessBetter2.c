@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "../../Render/GUI/CallbackFunctions.h"
-#include "Utils/CArrayList.h"
+#include "../../Utils/DataStructures/CArrayList.h"
 
 #define COOL_COLOR (Vec3f){.2, .3, .3}
 #define COLOR_WHITE (Vec3f){1, 1, 1}

@@ -6,10 +6,8 @@
 #include "GuiTypes.h"
 #include "Tasks.h"
 
-#include "../../Utils/Deprecated/HashMap.h"
-#include "../../Utils/Vector.h"
+#include "../../Utils/Math/Vector.h"
 #include "Render/Drawing/TextDisplaying.h"
-#include "Utils/Network.h"
 #include "Utils/UtilsTypedef.h"
 
 typedef struct Padding {

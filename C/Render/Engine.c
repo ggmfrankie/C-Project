@@ -19,7 +19,7 @@
 #include "GUI/Update.h"
 #include "Utils/Makros.h"
 #include "Render/Drawing/TextDisplaying.h"
-#include "Utils/CArrayList.h"
+#include "../Utils/DataStructures/CArrayList.h"
 
 #define WIDTH 4096
 #define HEIGHT 600

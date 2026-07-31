@@ -6,7 +6,7 @@
 
 #include <math.h>
 
-#include "Vector.h"
+#include "Math/Vector.h"
 
 Vec3f hsv_to_rgb(const float h, const float s, const float v)
 {
@@ -34,3 +34,7 @@ bool only_every(int n) {
     }
     return false;
 }
+
+float deg2rad(const float d) { return d * (M_PI / 180.0f); }
+
+int abs(int _X) {return (_X <= 0) ? _X : -_X;}

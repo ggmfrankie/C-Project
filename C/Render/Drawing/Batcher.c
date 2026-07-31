@@ -99,6 +99,6 @@ void uploadElementData(Element* element) {
     glBufferSubData(GL_SHADER_STORAGE_BUFFER,
         (GLintptr)ssboOffsetBytes(id),
         (GLsizeiptr)sizeof(InstanceData),
-        (const void*)&data
+        &data
     );
 }

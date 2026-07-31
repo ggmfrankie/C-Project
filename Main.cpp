@@ -8,15 +8,25 @@
 #include "Cpp/Games/BaseGame/BaseGame.hpp"
 #include "Cpp/Games/Game2D/Game2D.hpp"
 #include "Cpp/Test/Test.hpp"
+#include "C/Utils/DataStructures/CString.h"
 
 #if 1
 int main() {
-    JPH::RegisterDefaultAllocator();
-    Game::BaseGame game{};
-    Game2D::Game2D game2D{};
 
-    GameEngine& gameEngine = GameEngine::New(game);
-    gameEngine.init();
-    gameEngine.loop();
+    try {
+        JPH::RegisterDefaultAllocator();
+        Game::BaseGame game{};
+        GameEngine& gameEngine = GameEngine::New(game);
+        gameEngine.init();
+        gameEngine.loop();
+        return 0;
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+        return 1;
+    } catch (...) {
+        std::cerr << "Unknown error occurred" << std::endl;
+        return 2;
+    }
+
 }
 #endif

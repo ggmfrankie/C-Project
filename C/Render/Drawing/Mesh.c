@@ -10,7 +10,7 @@
 #include "RenderTypes.h"
 #include "Render/GUI/GuiElement.h"
 #include "Render/GUI/Texture.h"
-#include "Utils/Vector.h"
+#include "../../Utils/Math/Vector.h"
 
 struct ArcInfo {
     int start;

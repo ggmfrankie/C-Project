@@ -3,10 +3,8 @@
 //
 #pragma once
 #include "GuiDefines.h"
-#include "../Utils/Deprecated/Map.h"
-#include "../Utils/Deprecated/HashMap.h"
-#include "../Utils/CString.h"
-#include "../Utils/Vector.h"
+#include "../Utils/CString_v1.h"
+#include "../Utils/Math/Vector.h"
 #include "../../Dependencies/include/glad/gl.h"
 
 

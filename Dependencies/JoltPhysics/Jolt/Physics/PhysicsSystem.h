@@ -248,7 +248,7 @@ public:
 	bool						WereBodiesInContact(const BodyID &inBody1ID, const BodyID &inBody2ID) const { return mContactManager.WereBodiesInContact(inBody1ID, inBody2ID); }
 
 	/// Get the bounding box of all bodies in the physics system.
-	/// Deprecated: Use GetBroadPhaseQuery().GetBounds() instead.
+	/// _Deprecated_: Use GetBroadPhaseQuery().GetBounds() instead.
 	AABox						GetBounds() const											{ return mBroadPhase->GetBounds(); }
 
 #ifdef JPH_TRACK_BROADPHASE_STATS

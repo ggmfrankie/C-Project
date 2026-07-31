@@ -1,11 +1,11 @@
 
-#include "CString.h"
+#include "CString_v1.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "CArrayList.h"
+#include "DataStructures/CArrayList.h"
 #include "StringBuilder.h"
 
 StringFunctions Strings = {

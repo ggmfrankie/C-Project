@@ -4,9 +4,9 @@
 
 
 #include "Shader.h"
-#include "../Utils/FileIO.h"
-#include "Utils/CHashMap.h"
-#include "Utils/Utils.h"
+#include "../Utils/Os/FileIO.h"
+#include "../Utils/DataStructures/CHashMap.h"
+#include "Utils/Defer.h"
 
 ShaderFunction Shaders = {
     .bind = Shader_bindProgram,
@@ -19,8 +19,9 @@ ShaderFunction Shaders = {
     .setUniform_Vec2 = setUniform_Vec2
 };
 
-int createVertexShader(const String *fileName, int programId);
-int createFragmentShader(const String *fileName, int programId);
+static int createVertexShader(const String *fileName, int programId);
+
+static int createFragmentShader(const String *fileName, int programId);
 
 Shader newShader(char* vertexShaderFile, char* fragmentShaderFile) {
     const int programId = glCreateProgram();
@@ -92,7 +93,7 @@ int createFragmentShader(const String *fileName, const int programId) {
 String readShaderFile(const String *fileName) {
     const String defaultShaderPath = stringOf("../C/Shader/");
     defer(str_delete) const String completePath = Strings.combine(&defaultShaderPath, fileName);
-    const String shaderSource = readFile(&completePath);
+    const String shaderSource = readFilev1(&completePath);
     return shaderSource;
 }
 

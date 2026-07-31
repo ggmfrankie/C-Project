@@ -6,10 +6,10 @@
 
 #include "Batcher.h"
 #include "RenderTypes.h"
-#include "../../Utils/Vector.h"
+#include "../../Utils/Math/Vector.h"
 #include "GLFW/glfw3.h"
 #include "Render/GUI/GuiElement.h"
-#include "Utils/CArrayList.h"
+#include "../../Utils/DataStructures/CArrayList.h"
 #include "Utils/Makros.h"
 
 static void accumulateMeshes(Element *element, const Renderer *renderer, GuiVertex *vertices, int *vt, int *indices, int *id);

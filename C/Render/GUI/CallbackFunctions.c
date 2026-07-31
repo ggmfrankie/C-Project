@@ -6,7 +6,7 @@
 
 #include "GuiElementData.h"
 #include "../Drawing/Render.h"
-#include "../../Utils/TimeMeasurements.h"
+#include "../../Utils/Os/Time.h"
 #include "../../Utils/UtilityFun.h"
 #ifdef _WIN32
 #include <windows.h>
@@ -14,7 +14,7 @@
 #include "GuiElement.h"
 #include "../Engine.h"
 #include "GLFW/glfw3.h"
-#include "Utils/CArrayList.h"
+#include "../../Utils/DataStructures/CArrayList.h"
 #include "Utils/Makros.h"
 
 bool isSelectedCharacter(Vec2f pos, float width, float height, const Vec2i mousePos) {

@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include "Utils/Makros.h"
 
-#include "../CString.h"
+#include "../CString_v1.h"
 
 
 #define HASH_MAP(Name, Key, Value)\

@@ -13,8 +13,8 @@
 #include "GuiElementData.h"
 #include "Render/Drawing/Mesh.h"
 #include "Utils/Makros.h"
-#include "Utils/CArrayList.h"
-#include "Utils/CHashMap.h"
+#include "Utils/DataStructures/CArrayList.h"
+#include "Utils/DataStructures/CHashMap.h"
 static constexpr int MAX_ELEMENTS = 1024;
 typedef struct {
     Element m[MAX_ELEMENTS];

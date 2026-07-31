@@ -3,8 +3,9 @@
 //
 #pragma once
 #include "GuiDefines.h"
-#include "Vector.h"
+#include "Math/Vector.h"
 
 Vec3f hsv_to_rgb(float h, float s, float v);
 bool only_every(int n);
-
+float deg2rad(float d);
+int abs(int _X);

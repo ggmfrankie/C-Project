@@ -3,15 +3,15 @@
 //
 
 #include "../GUI/Texture.h"
-#include "../../Utils/CString.h"
+#include "../../Utils/CString_v1.h"
 #define STB_IMAGE_IMPLEMENTATION
 
 #include <stb/stb_image.h>
 #include <stb/stb_rect_pack.h>
 
 #include "glad/gl.h"
-#include "Utils/CHashMap.h"
-#include "Utils/Utils.h"
+#include "../../Utils/DataStructures/CHashMap.h"
+#include "Utils/Defer.h"
 
 static constexpr int MAX_ATLAS_TEXTURES = 512;
 

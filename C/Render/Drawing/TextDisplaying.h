@@ -9,9 +9,9 @@
 #include "GuiTypes.h"
 
 #include "../../../Dependencies/include/stb/stb_truetype.h"
-#include "../../Utils/Vector.h"
+#include "../../Utils/Math/Vector.h"
 #include "Render/GUI/Texture.h"
-#include "Utils/CString.h"
+#include "Utils/CString_v1.h"
 
 typedef struct Font {
     Basic_Texture fontAtlas;

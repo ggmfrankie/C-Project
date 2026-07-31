@@ -21,10 +21,10 @@ include_directories(
 )
 
 add_library(GUI STATIC
-        C/Utils/GenericLinkedList.h
+        C/Utils/_Deprecated_/GenericLinkedList.h
         Main.c
-        C/Utils/CString.c
-        C/Utils/CString.h
+        C/Utils/CString_v1.c
+        C/Utils/CString_v1.h
         C/Render/Drawing/Render.c
         C/Render/Drawing/Render.h
         C/Render/Drawing/Mesh.c
@@ -32,13 +32,13 @@ add_library(GUI STATIC
         Dependencies/GL/gl.c
         C/Render/Engine.c
         C/Render/Engine.h
-        C/Utils/Vector.c
-        C/Utils/Vector.h
+        C/Utils/Math/Vector.c
+        C/Utils/Math/Vector.h
         C/Render/Shader.c
         C/Render/Shader.h
-        C/Utils/Deprecated/HashMap.h
-        C/Utils/FileIO.c
-        C/Utils/FileIO.h
+        C/Utils/_Deprecated_/HashMap.h
+        C/Utils/Os/FileIO.c
+        C/Utils/Os/FileIO.h
         C/Utils/StringBuilder.c
         C/Utils/StringBuilder.h
         C/Render/GUI/GuiElement.c
@@ -48,21 +48,21 @@ add_library(GUI STATIC
         C/Render/GUI/Texture.c
         C/Render/GUI/Texture.h
         C/Utils/Makros.h
-        C/Utils/TimeMeasurements.c
-        C/Utils/TimeMeasurements.h
+        C/Utils/Os/Time.c
+        C/Utils/Os/Time.h
         C/Render/GUI/CallbackFunctions.h
         C/Render/GUI/CallbackFunctions.c
         C/Render/Drawing/TextDisplaying.c
         C/Render/Drawing/TextDisplaying.h
         C/Render/GUI/Tasks.c
         C/Render/GUI/Tasks.h
-        C/Utils/MemoryArena.c
+        C/Utils/_NYI_/MemoryArena.c
         C/Render/GUI/GuiElementData.c
         C/Render/GUI/GuiElementData.h
         C/Projects/Chess/ChessGame.c
         C/Projects/Chess/ChessGame.h
-        C/Utils/Network.c
-        C/Utils/Network.h
+        C/Utils/_NYI_/Network.c
+        C/Utils/_NYI_/Network.h
         C/Utils/UtilityFun.c
         C/Utils/UtilityFun.h
         C/Projects/Test/TestGUI.c
@@ -70,7 +70,7 @@ add_library(GUI STATIC
         C/Projects/ChessNewandImproved/ChessBetter2.c
         C/Projects/Tokenizer/Calculator.c
         C/Projects/Tokenizer/Calculator.h
-        C/Utils/CArrayList.h
+        C/Utils/DataStructures/CArrayList.h
         C/Projects/TFE/TFE.c
         C/Projects/TFE/TFE.h
         C/GuiTypes.h
@@ -80,11 +80,15 @@ add_library(GUI STATIC
         C/Render/Drawing/Batcher.h
         C/Render/Drawing/RenderTypes.h
         C/GuiDefines.h
-        C/Utils/CHashMap.h
-        C/Utils/UtilsTest.h
-        C/Utils/CHashMap.c
+        C/Utils/DataStructures/CHashMap.h
+        C/Utils/DataStructures/Test.h
+        C/Utils/DataStructures/CHashMap.c
         C/Utils/UtilsTypedef.h
-        C/Utils/Utils.c
+        C/Utils/Defer.c
+        C/Utils/DataStructures/CString.c
+        C/Utils/DataStructures/CString.h
+        C/Utils/Logging/Logging.c
+        C/Utils/Logging/Logging.h
 )
 
 set_target_properties(GUI PROPERTIES LINKER_LANGUAGE C)
@@ -227,7 +231,6 @@ target_link_libraries(C-Project PRIVATE
         Jolt
         winpthread
         #TBB::tbb
-        RustGame
 )
 endif (WIN32)
 

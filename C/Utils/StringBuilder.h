@@ -4,7 +4,7 @@
 
 #pragma once
 #include "GuiDefines.h"
-#include "CString.h"
+#include "CString_v1.h"
 
 typedef struct StringBuilder {
     char* content;

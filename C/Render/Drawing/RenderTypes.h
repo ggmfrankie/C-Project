@@ -3,7 +3,7 @@
 //
 #pragma once
 #include "GuiDefines.h"
-#include "Utils/Vector.h"
+#include "../../Utils/Math/Vector.h"
 
 typedef struct GuiVertex {
     Vec2f pos;

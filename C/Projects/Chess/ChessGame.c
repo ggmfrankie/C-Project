@@ -4,10 +4,9 @@
 
 #include "ChessGame.h"
 
-#include "../../Render/GUI/CallbackFunctions.h"
-#include "../../Utils/Makros.h"
-#include "../../Utils/Network.h"
-
+#include "Render/GUI/CallbackFunctions.h"
+#include "Utils/Makros.h"
+#include "Utils/UtilityFun.h"
 #include "GuiInterface.h"
 #include "Render/GUI/GuiElement.h"
 

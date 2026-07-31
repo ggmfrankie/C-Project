@@ -4,7 +4,9 @@
 
 #pragma once
 #include <concepts>
-#include <../Dependencies/json/json.hpp>
+#include <json.hpp>
+#include <memory>
+#include <stdexcept>
 
 #include "LazyStream.hpp"
 #include "Parsing.hpp"
@@ -58,7 +60,7 @@ class McpFunctionRegistry {
         }
 
         template<typename... Args>
-        std::tuple<Args...> argsFromJsonArray(const Json& params) {
+        std::tuple<Args...> argsFromJson(const Json& params) {
             if (!params.is_array() || params.size() != sizeof...(Args)) {
                 throw std::runtime_error("Invalid params");
             }
@@ -92,7 +94,7 @@ class McpFunctionRegistry {
         F mFunction;
 
         Json operator()(const Json& args) {
-            return invokeMethod(mFunction, argsFromJsonArray<>(args));
+            return invokeMethod(mFunction, argsFromJson<>(args));
         }
     };
 
@@ -109,9 +111,13 @@ public:
         for (auto &val: mRequestableFunctions | std::views::values) {
             auto& function = *val;
             auto& meta = function.getMetadata();
-            out["name"]= meta.name;
+            out["name"] = meta.name;
             out["inputSchema"] = {"type", "object"};
-            
+            for (const auto&[type, name]: meta.parameters) {
+                out["inputSchema"]["properties"][name] = {
+                    {"type", getJsonName(type)}
+                };
+            }
         }
     }
 

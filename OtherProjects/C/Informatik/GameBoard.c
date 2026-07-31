@@ -7,7 +7,7 @@
 #include "Utils/Makros.h"
 #include <stdio.h>
 
-#include "Utils/CArrayList.h"
+#include "../../../C/Utils/DataStructures/CArrayList.h"
 #pragma GCC diagnostic ignored "-Wsign-compare"
 
 bool moveBishopTo(GameBoard *board, int x, int y);

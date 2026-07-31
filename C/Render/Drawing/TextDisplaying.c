@@ -11,16 +11,17 @@
 #include <stb/stb_truetype.h>
 #include "Render.h"
 #include "RenderTypes.h"
-#include "../../Utils/CString.h"
+#include "Utils/CString_v1.h"
 #include "Render/GUI/GuiElement.h"
-#include "Utils/CArrayList.h"
-#include "Utils/Utils.h"
+#include "Utils/DataStructures/CArrayList.h"
+#include "Utils/Defer.h"
+#include "Utils/Makros.h"
 
 
 static constexpr int FONT_ATLAS_SIZE = 2048;
 static constexpr float FONT_SIZE = 32.0f;
 
-void measureFont(Font *font);
+static void measureFont(Font *font);
 
 Font loadFontAtlas(char* file) {
     const String fileName = stringOf(file);
