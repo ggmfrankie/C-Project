@@ -440,7 +440,7 @@ inline bool isMousePressed(GLFWwindow* window, const int mouseButton) {
     return glfwGetMouseButton(window, mouseButton) == GLFW_PRESS;
 }
 
-Renderer newGUIRenderer(GLFWwindow* window, const int width, const int height, char *fontFile) {
+Renderer newGUIRenderer(GLFWwindow* window, const int width, const int height, const char *fontFile) {
     return (Renderer){
         .guiShader = newShader("GuiRender.vert", "GuiRender.frag"),
         .window = window,

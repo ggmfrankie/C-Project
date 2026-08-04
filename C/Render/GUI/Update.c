@@ -7,8 +7,8 @@
 #define UPDATE_QUEUE_MAX 64
 
 GUI_Update updateQueue[UPDATE_QUEUE_MAX];
-int updateHead = 0;
-int updateTail = 0;
+static int updateHead = 0;
+static int updateTail = 0;
 
 void gui_pushUpdate(GuiUpdate gt, void* data) {
     updateQueue[updateTail].func = gt;

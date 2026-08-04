@@ -49,7 +49,7 @@ typedef struct TextElement {
     Character* aCharQuads;
 } TextElement;
 
-Font loadFontAtlas(char* file);
+Font loadFontAtlas(const char* file);
 void reloadTextQuads(const Font* font, Element *element);
 void accumulateTextQuads(const Element *element, GuiVertex *vertices, int *vt, int *indices, int *id, const Font *font);
 Vec2i measureText(const Font *font, const String *text);

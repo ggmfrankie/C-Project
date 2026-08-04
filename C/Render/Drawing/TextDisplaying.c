@@ -14,7 +14,7 @@
 #include "Utils/CString_v1.h"
 #include "Render/GUI/GuiElement.h"
 #include "Utils/DataStructures/CArrayList.h"
-#include "../../Utils/Makros/Defer.h"
+#include "Utils/Makros/Defer.h"
 #include "Utils/Makros/Makros.h"
 
 
@@ -23,7 +23,7 @@
 
 static void measureFont(Font *font);
 
-Font loadFontAtlas(char* file) {
+Font loadFontAtlas(const char* file) {
     const char* defaultPath = "../Resources/Fonts/";
     defer(defer_strDelete) CStr completePath = cstrConcat(defaultPath, file);
 

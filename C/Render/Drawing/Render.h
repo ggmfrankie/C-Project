@@ -24,7 +24,7 @@ typedef struct Renderer {
     Element* guiRoot;
 } Renderer;
 
-Renderer newGUIRenderer(GLFWwindow* window, int width, int height, char *fontFile);
+Renderer newGUIRenderer(GLFWwindow* window, int width, int height, const char *fontFile);
 void Renderer_init(Renderer *renderer);
 
 void Renderer_render(const Renderer *renderer);

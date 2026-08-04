@@ -9,41 +9,40 @@
 
 #include "../CString_v1.h"
 #include "../Makros/Defer.h"
+#include "Utils/Logging/Logging.h"
 
 Str readFile(const char* fileName) {
     defer(defer_closeFile) FILE *file = fopen(fileName, "rb");
 
     if (!file) {
-        printf("Failed to open file: %s\n", fileName);
-        exit(1);
+        WARNING("Failed to open file: %s\n", fileName);
+        return nullptr;
     }
 
     fseek(file, 0, SEEK_END);
     const long size = ftell(file);
     rewind(file);
 
-    char buffer[size+1];
+    Str buffer = strNew_c(size+1);
 
     fread(buffer, 1, size, file);
 
     buffer[size] = '\0';
 
-    return strNew(buffer);
+    return buffer;
 }
 void writeFile(const char* fileName, CStr content) {
     defer(defer_closeFile) FILE *file = fopen(fileName, "wb");
 
     if (!file) {
-        fprintf(stderr, "Failed to open file: %s\n", fileName);
-        exit(1);
+        WARNING("Failed to open file: %s\n", fileName);
+        return;
     }
 
     const size_t len = strLen(content);
     const size_t writtenChars = fwrite(content, 1, len, file);
-    if (writtenChars != len) {
-        perror("Failed to write complete data");
-        exit(1);
-    }
+
+    if (writtenChars != len) WARNING("Failed to write complete data");
 }
 
 String readFilev1(const String *fileName) {

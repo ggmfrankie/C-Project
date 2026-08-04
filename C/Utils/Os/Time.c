@@ -35,8 +35,7 @@ TimeNs now_ns() {
 #endif
 }
 
-uint64_t now_ns_wallclock(void)
-{
+uint64_t now_ns_wallclock() {
 #ifdef _WIN32
     FILETIME ft;
     GetSystemTimePreciseAsFileTime(&ft);

@@ -10,8 +10,9 @@
 #include <stb/stb_rect_pack.h>
 
 #include "glad/gl.h"
-#include "../../Utils/DataStructures/CHashMap.h"
-#include "../../Utils/Makros/Defer.h"
+#include "Utils/DataStructures/CHashMap.h"
+#include "Utils/Logging/Logging.h"
+#include "Utils/Makros/Defer.h"
 
 static constexpr int MAX_ATLAS_TEXTURES = 512;
 
@@ -70,7 +71,7 @@ void f_loadTextures(TextureAtlas *atlas, const char *first, va_list args) {
 
     for (int i = 0; i < index; i++) {
         if (!rects[i].was_packed) {
-            fprintf(stderr, "Atlas pack failed for rect %d (%s)\n", i, names[i]);
+            WARNING("Atlas pack failed for rect %d (%s)\n", i, names[i]);
             continue;
         }
 
@@ -138,8 +139,8 @@ Basic_Texture *loadTextureFromPng(char *fileName) {
     byte* data = stbi_load(fullPath.m, &width, &height, &channels, 0);
 
     if (!data) {
-        printf("Failed to load image\n");
-        exit(-3) ;
+        WARNING("Failed to load image\n");
+        return nullptr;
     }
     const GLuint ID = uploadTextureToGPU(width, height, channels, data);
 
@@ -149,7 +150,7 @@ Basic_Texture *loadTextureFromPng(char *fileName) {
 
 Texture getTexture(const char* name) {
     if (name == nullptr) {
-        puts("Error loading texture: no name provided");
+        WARNING("Error loading texture: no name provided");
         return (Texture){};
     }
     const Texture* texture = mapGet(g_map_textureMap, name);
