@@ -12,9 +12,9 @@
             ],
             "windowsSdkVersion": "10.0.26100.0",
             "compilerPath": "C:/msys64/mingw64/bin/c++.exe",
-            "cStandard": "c23",
+            "cStandard": "gnu23",
             "cppStandard": "c++23",
-            "intelliSenseMode": ""
+            "intelliSenseMode": "windows-clang-x64"
         }
     ],
     "version": 4

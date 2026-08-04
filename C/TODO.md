@@ -10,3 +10,5 @@ FEATURES
 - Make a resize Element that attaches to sides and makes dynamic resizing possible
 - text field improvements
 - finish slider element
+
+- Maybey make Concord discord app

@@ -17,9 +17,9 @@
 #include "GUI/GuiElementData.h"
 
 #include "GUI/Update.h"
-#include "Utils/Makros.h"
+#include "Utils/Makros/Makros.h"
 #include "Render/Drawing/TextDisplaying.h"
-#include "../Utils/DataStructures/CArrayList.h"
+#include "Utils/DataStructures/CArrayList.h"
 
 #define WIDTH 4096
 #define HEIGHT 600
@@ -162,7 +162,7 @@ void gui_setColor(const char* name, const float r, const float g, const float b)
 void gui_resetColor(const char* name) {
     assert(name != nullptr);
     Thread_Locked(
-        const auto e = Element_getElement(name);
+        const Element* e = Element_getElement(name);
         assert(e != nullptr);
         Element_setColor(e, e->visuals.defaultColor);
     )
@@ -197,8 +197,8 @@ bool gui_getActive(const char* name) {
 
 [[deprecated]]
 void startEngine(void (*generateGUI)(Element* guiRoot)) {
-    constexpr int width = 512;
-    constexpr int height = 512;
+    const int width = 512;
+    const int height = 512;
     gui_init(initWindow(width, height, "Chess"), width, height, generateGUI);
 
     Basic_Texture* graphTexture = newEmptyTexture(WIDTH, HEIGHT);

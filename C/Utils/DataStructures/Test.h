@@ -6,6 +6,10 @@
 #include "CArrayList.h"
 #include "CHashMap.h"
 
+static void foo(char c[static 1]){
+    puts(c);
+}
+
 static void Utils_test() {
 #undef _HashMapInitCapacity_
 #define _HashMapInitCapacity_ 2
@@ -37,5 +41,21 @@ static void Utils_test() {
         printf("%f\n", *num);
     );
 
+    int a = ({int x = 9; int y = 10; x + y;});
 
+    float $c= *arrTryGet(arr, 8);
+
+    switch(a){
+        case 0 ... 3:
+            puts("holla");
+        break;
+        default: 
+
+    };
+
+    foo("nullptr");
+
+    int x = 'FOO!';
 }
+
+

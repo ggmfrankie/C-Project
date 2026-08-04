@@ -8,7 +8,7 @@
 #include <stdlib.h>
 
 #include "../CString_v1.h"
-#include "../Defer.h"
+#include "../Makros/Defer.h"
 
 Str readFile(const char* fileName) {
     defer(defer_closeFile) FILE *file = fopen(fileName, "rb");

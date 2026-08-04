@@ -8,6 +8,7 @@ set(CMAKE_C_STANDARD 23)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_subdirectory(Dependencies/JoltPhysics/Build)
 target_compile_definitions(Jolt PUBLIC JPH_ENABLE_ASSERTS)
@@ -47,7 +48,7 @@ add_library(GUI STATIC
         C/Render/ComputeShader.h
         C/Render/GUI/Texture.c
         C/Render/GUI/Texture.h
-        C/Utils/Makros.h
+        C/Utils/Makros/Makros.h
         C/Utils/Os/Time.c
         C/Utils/Os/Time.h
         C/Render/GUI/CallbackFunctions.h
@@ -84,13 +85,14 @@ add_library(GUI STATIC
         C/Utils/DataStructures/Test.h
         C/Utils/DataStructures/CHashMap.c
         C/Utils/UtilsTypedef.h
-        C/Utils/Defer.c
+        C/Utils/Makros/Defer.c
         C/Utils/DataStructures/CString.c
         C/Utils/DataStructures/CString.h
         C/Utils/Logging/Logging.c
         C/Utils/Logging/Logging.h
         OtherProjects/C/Informatik/DrunkenBishop.c
         OtherProjects/C/Informatik/GameBoard.c
+        C/Utils/Makros/NamedParameters.h
 )
 
 set_target_properties(GUI PROPERTIES LINKER_LANGUAGE C)

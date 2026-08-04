@@ -47,7 +47,11 @@ typedef struct {
         (array)[header->size++] = __VA_ARGS__;\
     } while (0)
 
-#define arrTryGet(array, index) (((array) == nullptr) ? nullptr : (_arrayGetHead(array).size <= (index)) ? nullptr : &(array)[index])
+#define arrTryGet(array, index) ({\
+    typeof(array) out = nullptr;\
+    if ((array) != nullptr && _arrayGetHead(array).size > (index)) out = &(array)[index];\
+    (typeof(array))out;\
+    })
 
 #define arrGetLast(array) ((array) ? &(array)[arrLen(array)-1]: nullptr)
 
@@ -70,7 +74,7 @@ typedef struct {
        \
         size_t len = arrLen(array);\
         for (size_t i = 0; i < len; ++i) {\
-            auto (item) = &(array)[i];\
+            typeof(array) (item) = &(array)[i];\
             __VA_ARGS__\
         }\
     } while (0)
@@ -80,7 +84,7 @@ typedef struct {
         if ((array) == nullptr) break; \
         size_t len = arrLen(array); \
         for (size_t i = len; i --> 0;) { \
-            auto item = &(array)[i]; \
+            typeof(array) item = &(array)[i]; \
             __VA_ARGS__ \
         } \
     } while (0)

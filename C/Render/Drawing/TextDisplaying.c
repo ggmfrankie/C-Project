@@ -14,25 +14,24 @@
 #include "Utils/CString_v1.h"
 #include "Render/GUI/GuiElement.h"
 #include "Utils/DataStructures/CArrayList.h"
-#include "Utils/Defer.h"
-#include "Utils/Makros.h"
+#include "../../Utils/Makros/Defer.h"
+#include "Utils/Makros/Makros.h"
 
 
-static constexpr int FONT_ATLAS_SIZE = 2048;
-static constexpr float FONT_SIZE = 32.0f;
+#define FONT_ATLAS_SIZE 2048
+#define FONT_SIZE 32.0f
 
 static void measureFont(Font *font);
 
 Font loadFontAtlas(char* file) {
-    const String fileName = stringOf(file);
-    const String defaultPath = stringOf("../Resources/Fonts/");
-    defer(str_delete) String completePath = Strings.combine(&defaultPath, &fileName);
+    const char* defaultPath = "../Resources/Fonts/";
+    defer(defer_strDelete) CStr completePath = cstrConcat(defaultPath, file);
 
     defer(defer_free) byte* ttf_buffer = malloc(1 << 20);
     // ReSharper disable once CppDFAMemoryLeak
     defer(defer_free) byte* temp_bitmap = malloc(FONT_ATLAS_SIZE * FONT_ATLAS_SIZE);
 
-    defer(defer_closeFile) FILE* f = fopen(completePath.m, "rb");
+    defer(defer_closeFile) FILE* f = fopen(completePath, "rb");
 
     assert(f != nullptr);
     const size_t bytesRead = fread(ttf_buffer, 1, 1<<20, f);
@@ -72,7 +71,7 @@ Font loadFontAtlas(char* file) {
         temp_bitmap
     );
 
-    constexpr GLint swizzle[] = { GL_ONE, GL_ONE, GL_ONE, GL_RED };
+    const GLint swizzle[] = { GL_ONE, GL_ONE, GL_ONE, GL_RED };
     glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_RGBA, swizzle);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -91,7 +90,7 @@ Font loadFontAtlas(char* file) {
 }
 
 void accumulateTextQuads(const Element *element, GuiVertex *vertices, int *vt, int *indices, int *id, const Font *font) {
-    const auto aCharQuads = element->textElement.aCharQuads;
+    const Character* aCharQuads = element->textElement.aCharQuads;
     if (aCharQuads == nullptr || arrIsEmpty(aCharQuads)) return;
 
     const float xOffset = (float)element->padding.left;
@@ -100,7 +99,7 @@ void accumulateTextQuads(const Element *element, GuiVertex *vertices, int *vt, i
     const int ID = element->ID;
 
     for_eachArr(c, aCharQuads, {
-        constexpr int texID = 1;
+        const int texID = 1;
 
         const float x = c->pos.x + xOffset;
         const float y = c->pos.y + element->dims.worldHeight - element->padding.down;
@@ -200,7 +199,7 @@ void reloadTextQuads(const Font* font, Element *element) {
 
     const float textScale = textElement->textScale;
 
-    const auto startPos = (Vec2i){
+    const Vec2i startPos = {
         .x = 0,
         .y = 0
     };

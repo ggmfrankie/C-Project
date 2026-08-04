@@ -7,10 +7,10 @@
 #include <stdio.h>
 
 #include "GameBoard.h"
-#include "Utils/Makros.h"
+#include "../../../C/Utils/Makros/Makros.h"
 
 #include "Utils/Os/Time.h"
-#include "Utils/Makros.h"
+#include "../../../C/Utils/Makros/Makros.h"
 #include "Utils/Os/Time.h"
 
 void runTest() {

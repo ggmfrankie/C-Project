@@ -13,8 +13,8 @@
 #include "../../../OtherProjects/C/Informatik/WinAdapt.h"
 #include "Utils/UtilsTypedef.h"
 
-constexpr int MAX_TOKENS = 64;
-constexpr int MAX_TOKEN_LENGTH = 16;
+#define MAX_TOKENS 64
+#define MAX_TOKEN_LENGTH 16
 
 typedef enum : byte{
     s_invalid,
@@ -243,7 +243,7 @@ static double evaluateExpression(const TokenStack* list) {
 static void printTokens_List(const TokenList* list) {
     static char* mapping[] = {"operatorToken", "numberToken", "decNumberToken", "braceOpenToken", "braceCloseToken"};
     for (int i = 0; i < list->length; i++) {
-        const auto token = &list->m[i];
+        const Token* token = &list->m[i];
         for (int j = 0; j < token->length; j++) {
             printf("%c", token->content[j]);
         }
@@ -254,7 +254,7 @@ static void printTokens_List(const TokenList* list) {
 static void printTokens_Stack(const TokenStack* stack) {
     static char* mapping[] = {"operatorToken", "numberToken", "decNumberToken", "braceOpenToken", "braceCloseToken"};
     for (int i = 0; i < stack->size; i++) {
-        const auto token = stack->m[i];
+        const Token* token = stack->m[i];
         for (int j = 0; j < token->length; j++) {
             printf("%c", token->content[j]);
         }
@@ -306,6 +306,7 @@ static void newOpenBrace(char c) {
 static void newCloseBrace(char c) {
     pushToken(t_braceClose, c);
 }
+
 static bool isDigit(char c) {
     return c >= '0' && c <= '9';
 }

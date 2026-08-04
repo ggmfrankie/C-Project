@@ -6,16 +6,15 @@
 // Created by ertls on 04.03.2026.
 //
 
-typedef struct {
+static struct {
     GLuint VAO;
     GLuint VBO;
     GLuint EBO;
     GLuint SSBO;
-} GraphicsData;
+} graphicsData;
 
 #define MAX_GUI_INSTANCES 81920
 
-static GraphicsData graphicsData;
 
 void Batcher_init() {
 
@@ -44,11 +43,11 @@ void Batcher_init() {
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE,
                           sizeof(GuiVertex), (void*)offsetof(GuiVertex, uv));
-    // ID (location = 2) - integer attribute!
+    // ID (location = 2)
     glEnableVertexAttribArray(2);
     glVertexAttribIPointer(2, 1, GL_INT,
                            sizeof(GuiVertex), (void*)offsetof(GuiVertex, ID));
-    // texID (location = 3) - integer attribute!
+    // texID (location = 3)
     glEnableVertexAttribArray(3);
     glVertexAttribIPointer(3, 1, GL_INT,
                            sizeof(GuiVertex), (void*)offsetof(GuiVertex, texID));

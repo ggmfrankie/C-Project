@@ -18,9 +18,12 @@
 #include "C/Utils/DataStructures/Test.h"
 #include "OtherProjects/C/Informatik/DrunkenBishop.h"
 
-#if 0
+#if 1
 int main(){
-
+    int a = ({
+        int x = 50;
+        2;
+    });
     drawWithBishop(3529021);
 
     return 0;

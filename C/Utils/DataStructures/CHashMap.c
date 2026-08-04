@@ -3,12 +3,13 @@
 //
 #include "CHashMap.h"
 #include <string.h>
+#include "Utils/Logging/Logging.h"
 
 uint32_t _hashMapHash_(const char* key) {
     assert(key != nullptr);
     uint32_t h = _HashMapSeed_;
     h ^= 2166136261UL;
-    const auto data = (const uint8_t*)key;
+    const uint8_t* data = (const uint8_t*)key;
     for(int i = 0; data[i] != '\0'; ++i) {
         h ^= data[i];
         h *= 16777619;
@@ -17,8 +18,7 @@ uint32_t _hashMapHash_(const char* key) {
 }
 
 void* _hashMapGet_(byte* map, const char* key, size_t stride) {
-    if (map == nullptr) return nullptr;
-    if (key == nullptr) return nullptr;
+    if (map == nullptr || key == nullptr) return nullptr;
 
     const _HashMap_Header_* header = &_hashMapGetHead(map);
     const size_t capacity = header->capacity;
@@ -38,6 +38,6 @@ void* _hashMapGet_(byte* map, const char* key, size_t stride) {
         place += stride;
         if (place >= end) place = map;
     }
-    puts("Hashmap full???");
+    WARNING("Hashmap full???");
     return nullptr;
 }

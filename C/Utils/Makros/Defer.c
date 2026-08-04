@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "DataStructures/CString.h"
+#include "../DataStructures/CString.h"
 
 void defer_closeFile(FILE** f) {
     if (*f) fclose(*f);

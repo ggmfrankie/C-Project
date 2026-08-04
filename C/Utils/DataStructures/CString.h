@@ -18,15 +18,22 @@ struct _StringHeader_ {
 
 //new
 Str strNew(const char* s);
+//@brief create a new Str from char* until specified length
 Str strNew_n(const char* s, size_t count);
+//@brief creates an empty Str with supplied capacity
 Str strNew_c(size_t capacity);
+//@brief creates a new Str from an integer
 Str strFrom_int(int val);
 
-//const
+//@brief gives back the lenght as stored inside the Str
 size_t strLen(CStr s);
+//@brief gives back the capacity as stored inside the Str
 size_t strCap(CStr s);
+//@brief takes two Str and concatinates then into a new Str
 char* strConcat(CStr a, CStr b);
-CStr* strSplit(CStr s, char del);
+//@brief takes a Str and splits it into an Array of Str with the given delimiter
+Str* strSplit(CStr s, char del);
+//@brief tries to return the char at the given index
 char strAt(CStr a, size_t idx);
 
 bool strIsEmpty(CStr s);
@@ -40,7 +47,8 @@ void strFit(Str s);
 void strClear(Str s);
 void strDelete(Str s);
 
-char* cstrConcat(const char* a, const char* b);
+Str cstrConcat(const char* a, const char* b);
+void cstrbConcat(char* buff, size_t size, char* a, const char* b);
 
 void _strTest();
 

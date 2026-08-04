@@ -7,7 +7,9 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../Makros.h"
+#include "../Logging/Logging.h"
+#include "../Makros/Makros.h"
+#include "../Makros/Defer.h"
 
 static struct _StringHeader_* _strGetHeader(CStr s) {
     return &((struct _StringHeader_*)(s))[-1];
@@ -72,13 +74,13 @@ Str strFrom_int(int val) {
 
 size_t strLen(CStr s) {
     if (s == nullptr) return 0;
-    const auto header = _strGetHeader(s);
+    const struct _StringHeader_* header = _strGetHeader(s);
     return header->size;
 }
 
 size_t strCap(CStr s) {
     if (s == nullptr) return 0;
-    const auto header = _strGetHeader(s);
+    const struct _StringHeader_* header = _strGetHeader(s);
     return header->capacity;
 }
 
@@ -125,7 +127,9 @@ bool strStartsWith(CStr src, CStr p) {
     return true;
 }
 
-void strAppend(Str s);
+void strAppend(Str s){
+    TODO("KB");
+}
 
 void strFit(Str s) {
     const size_t size = strLen(s);
@@ -162,17 +166,32 @@ char* cstrConcat(const char* a, const char* b) {
     return data;
 }
 
+void cstrbConcat(char *buff, size_t size, char *a, const char *b) {
+    assert(a != nullptr && b != nullptr);
+    const size_t lenA = strlen(a);
+    const size_t lenB = strlen(b);
+    const size_t total = lenA + lenB;
+
+    if(size < total + 1) {
+        WARNING("Buffer of size: %llu is not sufficient for string length %llu\n", size, total);
+        return;
+    }
+    memcpy(buff, a, lenA);
+    memcpy(buff+lenA, b, lenB);
+    buff[total] = '\0';
+}
+
 #define content(a, b) assert(strcmp(a, b) == 0)
 #define length(s, size) assert(strLen(s) == size)
 void _strTest() {
-    const char* a = strNew("hassan");
+    defer(defer_strDelete) const char* a = strNew("hassan");
     content(a, "hassan");
     length(a, 6);
 
-    const char* b = strNew_n("belsa kaka", 5);
+    defer(defer_strDelete) const char* b = strNew_n("belsa kaka", 5);
     content(b, "belsa");
 
-    const char* ab = strConcat(a, b);
+    defer(defer_strDelete) const char* ab = strConcat(a, b);
     content(ab, "hassanbelsa");
 }
 #undef content

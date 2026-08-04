@@ -5,7 +5,7 @@
 
 #include <string.h>
 #include <math.h>
-#include "Utils/Makros.h"
+#include "../../Utils/Makros/Makros.h"
 
 #include "RenderTypes.h"
 #include "Render/GUI/GuiElement.h"
@@ -65,12 +65,12 @@ void Mesh_loadRoundedCornerMesh2(const Element* element, GuiVertex *vertices, in
     const float height = (float)element->dims.worldHeight;
     const float radius = min((float)element->dims.cornerRadius, min(width, height) * 0.5f);
 
-    constexpr float r90 = (float)M_PI * 0.5f;
-    constexpr int numTriangles = 12;
+    const float r90 = (float)M_PI * 0.5f;
+    const int numTriangles = 12;
 
     const int start = *vt;
 
-    const auto tl = Mesh_triangulate(
+    const struct ArcInfo tl = Mesh_triangulate(
         (Vec2f){radius, radius},
         radius,
         vertices,
@@ -82,7 +82,7 @@ void Mesh_loadRoundedCornerMesh2(const Element* element, GuiVertex *vertices, in
         numTriangles
     );
 
-    const auto tr = Mesh_triangulate(
+    const struct ArcInfo tr = Mesh_triangulate(
         (Vec2f){width-radius, radius},
         radius,
         vertices,
@@ -94,7 +94,7 @@ void Mesh_loadRoundedCornerMesh2(const Element* element, GuiVertex *vertices, in
         numTriangles
     );
 
-    const auto br = Mesh_triangulate(
+    const struct ArcInfo br = Mesh_triangulate(
         (Vec2f){width-radius, height-radius},
         radius,
         vertices,
@@ -106,7 +106,7 @@ void Mesh_loadRoundedCornerMesh2(const Element* element, GuiVertex *vertices, in
         numTriangles
     );
 
-    const auto bl = Mesh_triangulate(
+    const struct ArcInfo bl = Mesh_triangulate(
         (Vec2f){radius, height-radius},
         radius,
         vertices,

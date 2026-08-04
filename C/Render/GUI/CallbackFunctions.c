@@ -15,7 +15,7 @@
 #include "../Engine.h"
 #include "GLFW/glfw3.h"
 #include "../../Utils/DataStructures/CArrayList.h"
-#include "Utils/Makros.h"
+#include "../../Utils/Makros/Makros.h"
 
 bool isSelectedCharacter(Vec2f pos, float width, float height, const Vec2i mousePos) {
     if ((float)mousePos.x <= pos.x+width && (float)mousePos.x >= pos.x &&

@@ -4,14 +4,14 @@
 
 #include "MemoryArena.h"
 
+#include "../Logging/Logging.h"
 #include <stdio.h>
 #include <stdlib.h>
 
 Arena createArena(const size_t size) {
     void *memory = malloc(size);
-    if (memory == NULL) {
-        puts("failed to allocate memory for Arena");
-    }
+    if (memory == NULL) ERROR("failed to allocate memory for Arena");
+    
     return (Arena) {
         .size = size,
         .stackPointer = memory,
@@ -29,7 +29,7 @@ void freeArena(Arena *arena) {
 
 void* alloc(Arena *arena, const size_t size) {
     if (arena->size <= size) {
-        puts("Not enough memory in Arena");
+        WARNING("Not enough memory in Arena");
         return NULL;
     }
     void *allocated = arena->stackPointer;

@@ -13,8 +13,10 @@
 
 #define min(a, b) (((a) < (b)) ? (a) : (b))
 #define max(a, b) (((a) > (b)) ? (a) : (b))
+#define maxint(a,b) ({int _a = (a), _b = (b); _a > _b ? _a : _b; })
 
 #define print_if(condition, text, ...) do {if (condition) printf(text, ##__VA_ARGS__);} while(0)
+
 #endif
 
 #define only_every_do(num, ...) do {\
