@@ -16,11 +16,12 @@
 #include "C/Utils/DataStructures/CArrayList.h"
 #include "C/Utils/DataStructures/CString.h"
 #include "C/Utils/DataStructures/Test.h"
+#include "OtherProjects/C/Informatik/DrunkenBishop.h"
 
 #if 0
 int main(){
 
-
+    drawWithBishop(3529021);
 
     return 0;
 }

@@ -7,9 +7,11 @@
 #include <stdio.h>
 
 #include "GameBoard.h"
-#include "../../Utils/Makros.h"
+#include "Utils/Makros.h"
 
-#include "../../Utils/TimeMeasurements.h"
+#include "Utils/Os/Time.h"
+#include "Utils/Makros.h"
+#include "Utils/Os/Time.h"
 
 void runTest() {
     GameBoard board = createBoard();
@@ -25,7 +27,7 @@ void runTest() {
     moveAndPrintBoard(&board, right_down);
     moveAndPrintBoard(&board, right_up);
     moveAndPrintBoard(&board, right_up);
-    repeat_for(10, moveAndPrintBoard(&board, right_down));
+    for(int __i = 0; __i < (10); __i++){ moveAndPrintBoard(&board, right_down); };
 }
 
 void drawWithBishop(unsigned long long input) {
@@ -35,7 +37,7 @@ void drawWithBishop(unsigned long long input) {
     initBoard(&board);
 
     for (int i = 0; i < steps; i++) {
-        const Direction dir = input % 4;
+        const Direction dir = (Direction)(input % 4);
         input >>= 2;
         moveBishop(&board, dir);
     }

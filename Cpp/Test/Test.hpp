@@ -160,10 +160,12 @@ inline int test() {
     standard::vector<int> Numbers(oneHundred);
     standard::iota(IotaARGS);
 
+    /*
     standard::for_each(standard::execution::par_unseq,
         Numbers.begin(), Numbers.end(),
             Log
     );
+*/
 
     struct X { const int n; };
     union U { X x; float f; };

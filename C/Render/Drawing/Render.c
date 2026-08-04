@@ -91,7 +91,7 @@ void Renderer_render(const Renderer *renderer) {
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 #endif
 
-    Shaders.bind(&renderer->guiShader);
+    Shader_bindProgram(&renderer->guiShader);
     glEnable(GL_MULTISAMPLE);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, renderer->texAtlas.ID);
@@ -116,7 +116,7 @@ void Renderer_render(const Renderer *renderer) {
     glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, nullptr);
     glBindVertexArray(0);
     glDisable(GL_MULTISAMPLE);
-    Shaders.unbind();
+    Shader_unbindProgram();
 }
 
 static void accumulateMeshes(Element *element, const Renderer *renderer, GuiVertex *vertices, int *vt, int *indices, int *id) {

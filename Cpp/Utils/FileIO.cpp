@@ -7,6 +7,7 @@
 #include <filesystem>
 #include <fstream>
 #include <stdexcept>
+#include <sstream>
 
 namespace ggm::FileIO {
     std::string readFile(const std::string& filePath) {

@@ -5,6 +5,7 @@
 #include "Texture.hpp"
 
 #include <iostream>
+#include <sstream>
 
 #include "glad/gl.h"
 #include "stb/stb_image.h"

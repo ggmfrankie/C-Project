@@ -7,10 +7,11 @@
 #include <cassert>
 #include <cstring>
 #include <utility>
+#include <sstream>
 
-#include "../../Utils/FileIO.hpp"
-#include "../../Utils/Math/Matrix.hpp"
-#include "../../Utils/Math/Vector.hpp"
+#include "Utils/FileIO.hpp"
+#include "Utils/Math/Matrix.hpp"
+#include "Utils/Math/Vector.hpp"
 #include "glad/gl.h"
 #include "Utils/Utils.hpp"
 #include "Utils/DataStorage/LazyStream.hpp"

@@ -5,11 +5,11 @@
 #pragma once
 #include <stdio.h>
 
-typedef char* Str;
+typedef const char* CStr;
 
 void defer_closeFile(FILE** f);
 void defer_free(void* p);
-void defer_strDelete(Str* s);
+void defer_strDelete(CStr* s);
 
 #define defer(func) __attribute__((cleanup(func)))
 

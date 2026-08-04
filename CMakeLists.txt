@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 4.0)
 project(C-Project LANGUAGES C CXX)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -pthread")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -pthread")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -g -pthread")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -g -pthread")
 
 set(CMAKE_C_STANDARD 23)
 set(CMAKE_C_STANDARD_REQUIRED ON)
@@ -89,6 +89,8 @@ add_library(GUI STATIC
         C/Utils/DataStructures/CString.h
         C/Utils/Logging/Logging.c
         C/Utils/Logging/Logging.h
+        OtherProjects/C/Informatik/DrunkenBishop.c
+        OtherProjects/C/Informatik/GameBoard.c
 )
 
 set_target_properties(GUI PROPERTIES LINKER_LANGUAGE C)
@@ -189,6 +191,7 @@ add_executable(C-Project
 )
 
 target_compile_definitions(C-Project PUBLIC JPH_ENABLE_ASSERTS)
+target_link_options(C-Project PRIVATE -static-libgcc -static)
 
 if (WIN32)
 set(GLFW_LIB "${CMAKE_SOURCE_DIR}/Dependencies/lib-mingw-w64/libglfw3.a")

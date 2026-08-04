@@ -40,6 +40,8 @@ void strFit(Str s);
 void strClear(Str s);
 void strDelete(Str s);
 
+char* cstrConcat(const char* a, const char* b);
+
 void _strTest();
 
 #ifdef __cplusplus

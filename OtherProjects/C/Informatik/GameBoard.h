@@ -6,7 +6,7 @@
 #define C_GAMEBOARD_H
 #include <stdbool.h>
 #include <stdlib.h>
-#include "../../Utils/Vector.h"
+#include "Utils/Math/Vector.h"
 
 #define HEIGHT 7
 #define WIDTH 15

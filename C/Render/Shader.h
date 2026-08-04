@@ -6,13 +6,14 @@
 #include "../Utils/CString_v1.h"
 #include "../Utils/Math/Vector.h"
 #include "../../Dependencies/include/glad/gl.h"
+#include "Utils/DataStructures/CString.h"
 
 
 typedef struct Shader {
     int programId;
     int vertexId;
     int fragmentId;
-    GLint* map_uniforms;
+    GLint* mUniforms;
 } Shader;
 
 typedef struct OtherShaders {
@@ -20,19 +21,7 @@ typedef struct OtherShaders {
     Shader shaders[16];
 } OtherShaders;
 
-typedef struct ShaderFunction {
-    void (*bind)(const Shader*);
-    void (*unbind)();
-    void (*createUniform)(Shader *shader, const char* name);
-    void (*setUniform_f)(const Shader *shader, const char* name, float value);
-    void (*setUniform_Vec2)(const Shader *shader, const char* name, Vec2f value);
-    void (*setUniform_i)(const Shader *shader, const char* name, int value);
-
-    String (*readShaderFile)(const String *fileName);
-    int (*createShader)(const GLchar** shaderSource, int shaderType, int programId);
-} ShaderFunction;
-
-Shader newShader(char* vertexShaderFile, char* fragmentShaderFile);
+Shader newShader(const char* vertexShaderFile, const char* fragmentShaderFile);
 void Shader_bindProgram(const Shader *shader);
 void Shader_createUniform(Shader *shader, const char* name);
 void Shader_unbindProgram();
@@ -48,7 +37,5 @@ Vec2f: setUniform_Vec2,\
 Vec3f: setUniform_Vec3\
 )(shader, name, value)
 
-String readShaderFile(const String *fileName);
+CStr readShaderFile(const char *fileName);
 int createShader(const GLchar** shaderSource, int shaderType, int programId);
-
-extern ShaderFunction Shaders;

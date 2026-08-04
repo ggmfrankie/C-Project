@@ -6,6 +6,10 @@
 
 #include <cassert>
 #include <stdexcept>
+#include <iterator>
+#include <memory>
+#include <new>
+#include <cstddef>
 
 #include "../Math/ggmdef.hpp"
 

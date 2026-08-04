@@ -30,7 +30,7 @@ Str strNew(const char *s) {
     assert(header != nullptr);
 
     Str data = (void*) (header+1);
-    strcpy(data, s);
+    memcpy(data, s, len+1);
 
     header->capacity = header->size = len;
     return data;
@@ -140,8 +140,26 @@ void strClear(Str s) {
     memset(s, 0, strLen(s));
     _strGetHeader(s)->size = 0;
 }
+
 void strDelete(Str s) {
     free(_strGetHeader(s));
+}
+
+char* cstrConcat(const char* a, const char* b) {
+    assert(a != nullptr && b != nullptr);
+    const size_t lenA = strlen(a);
+    const size_t lenB = strlen(b);
+
+    struct _StringHeader_* header = malloc(sizeof(struct _StringHeader_) + lenA + lenB + 1);
+    char* data = (void*) (header+1);
+
+    memcpy(data, a, lenA);
+    memcpy(data+lenA, b, lenB);
+    data[lenA + lenB] = '\0';
+
+    header->capacity = header->size = lenA + lenB;
+
+    return data;
 }
 
 #define content(a, b) assert(strcmp(a, b) == 0)
