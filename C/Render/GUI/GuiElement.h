@@ -6,7 +6,7 @@
 #include "GuiTypes.h"
 #include "Tasks.h"
 
-#include "../../Utils/Math/Vector.h"
+#include "Utils/Math/Vector.h"
 #include "Render/Drawing/TextDisplaying.h"
 #include "Utils/UtilsTypedef.h"
 
@@ -115,6 +115,7 @@ typedef struct Element {
         void (*whileSelected)(Element* element);
         void (*onUpdate)(Element* element);
         void (*reset)(Element* element);
+        void (*requestMove)(Element* element, Vec2i pos);
     } callbacks;
 
     Padding padding;
@@ -129,6 +130,11 @@ typedef struct Element {
     void* elementData;
 
 } Element;
+
+typedef struct ElementHandle {
+    int generation;
+    int index;
+} ElementHandle;
 
 typedef struct ElementSettings {
     char* name;
@@ -220,7 +226,6 @@ Element *Element_addElement(
 Element* createElement(ElementSettings es);
 
 Element* _Element_new(ElementSettings es, ...);
-Element* TextFieldElement_new( ElementSettings elementSettings, bool (*onEnterCallback)(Element* element, Renderer *renderer));
 
 #define Element_new(settings, ...) _Element_new(settings, __VA_ARGS__, nullptr)
 #define addChildElements(parent, ...) Element_addChildElements(parent, __VA_ARGS__, nullptr)

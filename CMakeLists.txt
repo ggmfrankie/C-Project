@@ -62,8 +62,8 @@ add_library(GUI STATIC
         C/Render/GUI/GuiElementData.h
         C/Projects/Chess/ChessGame.c
         C/Projects/Chess/ChessGame.h
-        C/Utils/_NYI_/Network.c
-        C/Utils/_NYI_/Network.h
+        C/Utils/Os/Network.c
+        C/Utils/Os/Network.h
         C/Utils/UtilityFun.c
         C/Utils/UtilityFun.h
         C/Projects/Test/TestGUI.c
@@ -93,6 +93,7 @@ add_library(GUI STATIC
         OtherProjects/C/Informatik/DrunkenBishop.c
         OtherProjects/C/Informatik/GameBoard.c
         C/Utils/Makros/NamedParameters.h
+        C/Render/GUI/ElementTypes/TextField.c
 )
 
 set_target_properties(GUI PROPERTIES LINKER_LANGUAGE C)

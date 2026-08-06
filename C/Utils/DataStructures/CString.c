@@ -11,8 +11,21 @@
 #include "../Makros/Makros.h"
 #include "../Makros/Defer.h"
 
+#define IDENTIFIER 0xFADEDBEEF0
+
+static struct _StringHeader_* _strAllocate(size_t capacity){
+    struct _StringHeader_* header = malloc(sizeof(struct _StringHeader_) + capacity + 1);
+    #if STR_DEBUG 
+    header->_IDENTIFIER_ = IDENTIFIER;
+    #endif
+} 
+
 static struct _StringHeader_* _strGetHeader(CStr s) {
     return &((struct _StringHeader_*)(s))[-1];
+}
+
+static bool _strIsStr(const char* c){
+    return _strGetHeader(c)->_IDENTIFIER_ == IDENTIFIER; 
 }
 
 static void _strResizeTo(Str s, size_t newCap) {
@@ -73,18 +86,21 @@ Str strFrom_int(int val) {
 }
 
 size_t strLen(CStr s) {
+    if (!_strIsStr(s)) ERROR("Provided char* is not a Str");
     if (s == nullptr) return 0;
     const struct _StringHeader_* header = _strGetHeader(s);
     return header->size;
 }
 
 size_t strCap(CStr s) {
+    if (!_strIsStr(s)) ERROR("Provided char* is not a Str");
     if (s == nullptr) return 0;
     const struct _StringHeader_* header = _strGetHeader(s);
     return header->capacity;
 }
 
-char* strConcat(CStr a, CStr b) {
+Str strConcat(CStr a, CStr b) {
+    if (!_strIsStr(a) || _strIsStr(b)) ERROR("Provided char* is not a Str");
     assert(a != nullptr && b != nullptr);
     const size_t lenA = strLen(a);
     const size_t lenB = strLen(b);
@@ -101,13 +117,15 @@ char* strConcat(CStr a, CStr b) {
     return data;
 }
 
-CStr* strSplit(CStr s, char del) {
+Str* strSplit(CStr s, char del) {
+    TODO("Not Implemented");
 }
 
-char strAt(CStr a, size_t idx) {
-    const size_t len = strLen(a);
+char strAt(CStr s, size_t idx) {
+    if (!_strIsStr(s)) ERROR("Provided char* is not a Str");
+    const size_t len = strLen(s);
     assert(len > idx);
-    return a[idx];
+    return s[idx];
 }
 
 bool strIsEmpty(CStr s) {
@@ -127,7 +145,7 @@ bool strStartsWith(CStr src, CStr p) {
     return true;
 }
 
-void strAppend(Str s){
+void strAppend(Str s, char c){
     TODO("KB");
 }
 
@@ -147,6 +165,7 @@ void strClear(Str s) {
 
 void strDelete(Str s) {
     free(_strGetHeader(s));
+    s = nullptr;
 }
 
 char* cstrConcat(const char* a, const char* b) {
@@ -155,6 +174,8 @@ char* cstrConcat(const char* a, const char* b) {
     const size_t lenB = strlen(b);
 
     struct _StringHeader_* header = malloc(sizeof(struct _StringHeader_) + lenA + lenB + 1);
+    if (header == nullptr) ERROR("Allocation failed");
+
     char* data = (void*) (header+1);
 
     memcpy(data, a, lenA);

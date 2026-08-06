@@ -12,10 +12,9 @@
 #include <windows.h>
 #endif
 #include "GuiElement.h"
-#include "../Engine.h"
 #include "GLFW/glfw3.h"
 #include "../../Utils/DataStructures/CArrayList.h"
-#include "../../Utils/Makros/Makros.h"
+#include "CallbackFunctions.h"
 
 bool isSelectedCharacter(Vec2f pos, float width, float height, const Vec2i mousePos) {
     if ((float)mousePos.x <= pos.x+width && (float)mousePos.x >= pos.x &&
@@ -35,72 +34,11 @@ bool changeColorOnHoverFun(Element *element, Renderer *renderer) {
     return false;
 }
 
+void onRequestMove_SimpleDrag(Element *element, Vec2i pos) {
+}
+
 bool runTaskFun(Element *element, Renderer *renderer) {
     if (element->task.func && !element->task.isBlocked) pushTask(element->task.func, element->task.userdata);
-    return true;
-}
-
-bool click(GLFWwindow *window, const int mouseButton) {
-    static bool wasClicked = false;
-    const bool isMouseDown = isMousePressed(window, mouseButton);
-
-    if (!isMouseDown) {
-        wasClicked = false;
-        return false;
-    }
-    if (!wasClicked) {
-        wasClicked = true;
-        return true;
-    }
-    return false;
-}
-
-bool sliderCallbackFun(Element *element, Renderer *renderer) {
-    auto sliderDate = (SliderData*)element->elementData;
-
-    return false;
-}
-
-bool textField_onClick(Element *element, Renderer *renderer) {
-    if(element->type != t_textField) return false;
-
-    TextFieldData* data = element->elementData;
-    if (Strings.isEmpty(&data->text)) return false;
-
-    Character* charQuads = element->textElement.aCharQuads;
-    Vec2i mousePos = getMousePos();
-
-    const Vec2f relMousePos = {(float)(mousePos.x - element->dims.pos.x), (float)(mousePos.y - element->dims.pos.y)};
-    mousePos.x -= element->dims.pos.x;
-    mousePos.y -= element->dims.pos.y;
-    int i = 0;
-    for (; i < arrLen(charQuads); i++) {
-        const Character* currentChar = &charQuads[i];
-        if (relMousePos.x < currentChar->pos.x + currentChar->width/2) {
-            data->cursor.byteIndex = i;
-            return true;
-        }
-    }
-    data->cursor.byteIndex = i;
-    return true;
-}
-
-bool textField_runTask(Element *element, Renderer *renderer) {
-    if(element->type != t_textField) return false;
-    TextFieldData* data = element->elementData;
-    if (data->text.length == 0) return false;
-
-    char* newBuffer = malloc(data->text.length + 1);
-    memcpy(newBuffer, data->text.m, data->text.length);
-    newBuffer[data->text.length] = '\0';
-
-    str_clear(&data->text);
-    data->cursor.byteIndex = 0;
-    Element_setText(element,"");
-
-    if (element->task.func && !element->task.isBlocked) {
-        pushTask(element->task.func, newBuffer);
-    }
     return true;
 }
 
@@ -129,12 +67,6 @@ void displayCurrentTime(Element *element) {
 #endif
 }
 
-void syncWithScreen(Element *element) {
-    const Vec2i window = getWindowSize();
-    element->dims.width = window.x;
-    element->dims.height = window.y;
-}
-
 void updateColorRainbow(Element *element) {
     static double hue = 0.0f;
     static unsigned long long lastTime = 0;
@@ -150,43 +82,4 @@ void updateColorRainbow(Element *element) {
     const Vec3f color = hsv_to_rgb((float)hue, .3f, 1.0f);
     element->visuals.color = color;
     lastTime = currentTime;
-}
-
-void incrementWidth(Element *element) {
-    static int calls = 0;
-    static int direction = 1;
-    calls++;
-    if (calls < 1) return;
-    calls = 0;
-    element->dims.width += direction * 1;
-    if (element->dims.width <= 0) direction = -direction;
-    if (element->dims.width >= 800) direction = -direction;
-}
-
-void incrementHeight(Element *element) {
-    static int calls = 0;
-    static int direction = 1;
-    calls++;
-    if (calls < 1) return;
-    calls = 0;
-    element->dims.height += direction * 1;
-    if (element->dims.height <= 0) direction = -direction;
-    if (element->dims.height >= 800) direction = -direction;
-}
-
-void shiftPosition(Element *element) {
-    only_every_do(100, {
-        element->dims.pos.x += 20;
-        element->dims.pos.y += 20;
-    });
-}
-
-void changeTextSize(Element *element) {
-    static int calls = 0;
-    calls++;
-    if (calls < 10) return;
-    calls = 0;
-    element->textElement.textScale *= 1.1f;
-    if (element->textElement.textScale > 5.0f) element->textElement.textScale = 1.0f;
-    reloadTextQuads(getFont(), element);
 }

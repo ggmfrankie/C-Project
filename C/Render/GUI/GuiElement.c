@@ -15,14 +15,14 @@
 #include "Utils/Makros/Makros.h"
 #include "Utils/DataStructures/CArrayList.h"
 #include "Utils/DataStructures/CHashMap.h"
-static constexpr int MAX_ELEMENTS = 1024;
-typedef struct {
+
+#define MAX_ELEMENTS 1024
+static struct {
     Element m[MAX_ELEMENTS];
     size_t size;
-} ElementList;
+} g_Elements;
 
 static Element** g_map_Elements;
-static ElementList g_Elements;
 
 Element* Element_allocateNew(const Vec2i pos, const int width, const int height) {
     g_Elements.m[g_Elements.size] = (Element){
@@ -45,6 +45,7 @@ Element* Element_allocateNew(const Vec2i pos, const int width, const int height)
             .onUpdate = nullptr,
             .reset = nullptr,
             .whileSelected = nullptr,
+            .requestMove = nullptr
         },
         .visuals = {
             .brightness = 1.0f,
@@ -251,7 +252,7 @@ Element *Element_addElement(
     }
 
     if (text) {
-        const auto t = &lastElement->textElement;
+        TextElement* t = &lastElement->textElement;
         t->hasText = true;
         t->aCharQuads = nullptr;
         t->text = newReservedString(128),
@@ -263,48 +264,6 @@ Element *Element_addElement(
         reloadTextQuads(getFont(), lastElement);
     }
     return lastElement;
-}
-
-Element *guiAddSimpleSlider(
-    const Vec2i pos,
-    const int width,
-    const int height,
-    const Vec3f colorBackground,
-    const Vec3f colorSlider,
-    SliderData* sliderData
-)
-{
-    Element* element = Element_addElement(nullptr, pos, width, height, colorBackground, (Padding){10, 10, 10, 10}, 10, Element_isQuadBB, nullptr, NULL, (Task){}, NULL, true, POS_FIT, NULL, false, LAYOUT_DOWN, false, false, NULL, false, NULL, false, false, 0.0f, NULL, true, 0, 0.0f, false);
-    Vec2i sliderPos = {};
-    sliderPos.x = width/2;
-    sliderPos.y = 0;
-    Element* sliderElement = Element_addElement(nullptr, sliderPos, width, height, colorSlider, (Padding){10, 10, 10, 10}, 10, Element_isQuadBB, nullptr, sliderCallbackFun, (Task){}, NULL, true, POS_FIT, NULL, false, LAYOUT_DOWN, false, false, NULL, false, NULL, false, false, 0.0f, NULL, true, 0, 0.0f, false);
-    arrPush(element->aFlowElements, sliderElement);
-    element->elementData = sliderData;
-    return element;
-}
-
-Element *TextFieldElement_new(const ElementSettings elementSettings, bool (*onEnterCallback)(Element* element, Renderer *renderer)) {
-    Element* element = createElement(elementSettings);
-    TextFieldData* textData = calloc(1, sizeof(TextFieldData));
-    textData->onEnterCallback = onEnterCallback;
-    Element* textField = createElement(
-        (ElementSettings){
-            .minWidth = elementSettings.minWidth,
-            .minHeight = elementSettings.minHeight,
-            .padding = {5,5,5,5},
-            .elementData = textData,
-            .color = v_mul(elementSettings.color, 0.8f),
-            .onClick = textField_onClick,
-            .text = "",
-            .task = elementSettings.task,
-        }
-    );
-    textField->type = t_textField;
-    element->type = t_textField;
-    addChildElements(element, textField);
-
-    return element;
 }
 
 Element* createElement(const ElementSettings es) {
@@ -375,10 +334,6 @@ Element* addChildrenAsGridWithGenerator(const ElementSettings parentData, Elemen
         }
     }
     return parent;
-}
-
-void Element_defaultReset(Element* element) {
-    element->visuals.brightness = 1.0f;
 }
 
 void Element_printDebug(const Element* element) {

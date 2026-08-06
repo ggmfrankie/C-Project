@@ -6,9 +6,6 @@
 #include <stdarg.h>
 #include <unistd.h>
 
-#ifdef _WIN32
-#include <windows.h>
-#endif
 #include "GUI/GuiElement.h"
 #include "Drawing/Render.h"
 #include "GUI/CallbackFunctions.h"
@@ -246,14 +243,12 @@ static bool dragging = false;
 
 static bool Engine_handleDragElement(const Renderer *renderer) {
     if (!mouseCapturedElement) return false;
-    if (!mouseCapturedElement->flags.draggable) return false;
+    if (!mouseCapturedElement->callbacks.requestMove) return false;
 
     Element* element = mouseCapturedElement;
     static Vec2i offset;
 
-    const bool isMouseDown = isMousePressed(renderer->window, GLFW_MOUSE_BUTTON_LEFT);
-
-    if (!isMouseDown) {
+    if (isMousePressed(renderer->window, GLFW_MOUSE_BUTTON_LEFT)) {
         dragging = false;
         mouseCapturedElement = nullptr;
         return false;
@@ -266,9 +261,12 @@ static bool Engine_handleDragElement(const Renderer *renderer) {
             offset.y = renderer->mousePos.y - element->dims.worldPos.y;
             dragging = true;
         } else {
+            Vec2i newPos = {
+                (renderer->mousePos.x - parentWorldPos.x) - offset.x,
+                (renderer->mousePos.y - parentWorldPos.y) - offset.y
+            };
+            element->callbacks.requestMove(element, newPos);
             element->positionMode = POS_RELATIVE;
-            element->dims.pos.x = (renderer->mousePos.x - parentWorldPos.x) - offset.x - 0;
-            element->dims.pos.y = (renderer->mousePos.y - parentWorldPos.y) - offset.y - 0;
 
 #if GUI_DEBUG_TRACE_DRAGGING
             only_every_do(100, {
@@ -282,6 +280,21 @@ static bool Engine_handleDragElement(const Renderer *renderer) {
 #endif
 
         }
+        return true;
+    }
+    return false;
+}
+
+bool click(GLFWwindow *window, const int mouseButton) {
+    static bool wasClicked = false;
+    const bool isMouseDown = isMousePressed(window, mouseButton);
+
+    if (!isMouseDown) {
+        wasClicked = false;
+        return false;
+    }
+    if (!wasClicked) {
+        wasClicked = true;
         return true;
     }
     return false;

@@ -5,24 +5,16 @@
 #pragma once
 #include "GuiDefines.h"
 #include "GuiTypes.h"
+#include "Utils/Math/Vector.h"
 
+void onRequestMove_SimpleDrag(Element* element, Vec2i pos);
 
 bool runTaskFun(Element *element, Renderer *renderer);
-bool sliderCallbackFun(Element *element, Renderer *renderer);
-bool click(GLFWwindow *window, int mouseButton);
 bool defaultHoverFun(Element *element, Renderer *renderer);
 bool changeColorOnHoverFun(Element *element, Renderer *renderer);
 
-void syncWithScreen(Element *element);
 void updateColorRainbow(Element *element);
 void displayCurrentTime(Element *element);
-void incrementWidth(Element *element);
-void incrementHeight(Element *element);
-void shiftPosition(Element *element);
-void changeTextSize(Element *element);
-
-bool textField_runTask(Element *element, Renderer *renderer);
-bool textField_onClick(Element *element, Renderer *renderer);
 
 #define CHANGE_COLOR_ON_HOVER(color)\
 .elementData = (color),\
