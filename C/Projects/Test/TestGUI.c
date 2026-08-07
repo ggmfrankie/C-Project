@@ -5,6 +5,7 @@
 #include "TestGUI.h"
 
 #include "../../Render/GUI/GuiElement.h"
+#include "../../Render/GUI/ElementTypes/TextField.h"
 #include "../../Render/GUI/CallbackFunctions.h"
 
 void generateTestGUI(Element *guiRoot) {
@@ -30,7 +31,7 @@ void generateTestGUI(Element *guiRoot) {
                 .padding = (Padding){10,10,10,10},
                 .text = "This is a test and yes Text Positioning must be refractored",
             }),
-            TextFieldElement_new((ElementSettings){
+            TextField_new((ElementSettings){
                 .padding = {10,10,10,10},
                 .minHeight = 20,
                 .minWidth = 100,
@@ -44,7 +45,6 @@ void generateTestGUI(Element *guiRoot) {
                     .childGap = 5,
                     .padding = (Padding){10, 10, 10, 10},
                     .maxHeight = true,
-                    .onUpdate = incrementHeight,
                 }),
                 createElement((ElementSettings){
                     .onHover = defaultHoverFun,

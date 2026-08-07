@@ -11,7 +11,7 @@
 #include <stb/stb_truetype.h>
 #include "Render.h"
 #include "RenderTypes.h"
-#include "Utils/CString_v1.h"
+#include "../../Utils/_Deprecated_/CString_v1.h"
 #include "Render/GUI/GuiElement.h"
 #include "Utils/DataStructures/CArrayList.h"
 #include "Utils/Makros/Defer.h"

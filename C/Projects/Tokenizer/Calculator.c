@@ -10,8 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../../../OtherProjects/C/Informatik/WinAdapt.h"
-#include "Utils/UtilsTypedef.h"
+#include "Utils/Typedef.h"
 
 #define MAX_TOKENS 64
 #define MAX_TOKEN_LENGTH 16

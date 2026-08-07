@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "DataStructures/CArrayList.h"
+#include "../DataStructures/CArrayList.h"
 #include "StringBuilder.h"
 
 StringFunctions Strings = {

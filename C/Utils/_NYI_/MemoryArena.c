@@ -10,7 +10,7 @@
 
 Arena createArena(const size_t size) {
     void *memory = malloc(size);
-    if (memory == NULL) ERROR("failed to allocate memory for Arena");
+    if (memory == NULL) ERROR_("failed to allocate memory for Arena");
     
     return (Arena) {
         .size = size,
@@ -29,7 +29,7 @@ void freeArena(Arena *arena) {
 
 void* alloc(Arena *arena, const size_t size) {
     if (arena->size <= size) {
-        WARNING("Not enough memory in Arena");
+        WARNING_("Not enough memory in Arena");
         return NULL;
     }
     void *allocated = arena->stackPointer;

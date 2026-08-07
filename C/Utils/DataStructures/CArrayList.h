@@ -8,63 +8,73 @@
 
 #include <stdint.h>
 #include <stdlib.h>
+#include "../Logging/Logging.h"
+#include "../Makros/Helper.h"
 
 typedef struct {
     size_t size;
     size_t capacity;
-} __Array_Header_;
+} _Array_Header_;
 
 #define ArrayInitCapacity 16
 
-#define _arrayGetHead(array) (((__Array_Header_*)(array))[-1])
+#define _arrayGetHead(array) (&((_Array_Header_*)(array))[-1])
 
-#define arrLen(array) ((array) ? _arrayGetHead(array).size : 0)
+#define arrLen(array) ((array) ? _arrayGetHead(array)->size : 0)
 
 #define arrIsEmpty(array) (arrLen(array) == 0)
 
 #define arrPush(array, ...) \
     do {\
         if((array) == nullptr) {\
-            __Array_Header_* header = malloc(sizeof(*(array)) * ArrayInitCapacity + sizeof(__Array_Header_));\
+            _Array_Header_* header = malloc(sizeof(*(array)) * ArrayInitCapacity + sizeof(_Array_Header_));\
             assert(header != nullptr);\
             header->capacity = ArrayInitCapacity;\
             header->size = 0;\
             (array) = (void*) (header+1);\
         }\
-        __Array_Header_* header = &_arrayGetHead(array);\
+        _Array_Header_* header = _arrayGetHead(array);\
         if (header->capacity <= header->size) {\
             assert(header->capacity != 0);\
             const size_t newCapacity = header->capacity * 2;\
-            __Array_Header_* newHeader = realloc(header, sizeof(__Array_Header_) + sizeof(*(array)) * newCapacity);\
+            _Array_Header_* newHeader = realloc(header, sizeof(_Array_Header_) + sizeof(*(array)) * newCapacity);\
             if (newHeader) {\
                 header = newHeader;\
                 header->capacity = newCapacity;\
                 (array) = (void*) (header+1);\
             } else {\
-                puts("Failed to realloc ArrayList");\
+                ERROR_("Failed to realloc ArrayList");\
             }\
         }\
         (array)[header->size++] = __VA_ARGS__;\
     } while (0)
 
-#define arrTryGet(array, index) ({\
-    typeof(array) out = nullptr;\
-    if ((array) != nullptr && _arrayGetHead(array).size > (index)) out = &(array)[index];\
-    (typeof(array))out;\
+#define arrTryGet(array, index)\
+    ({\
+        typeof(array) out = nullptr;\
+        if ((array) != nullptr && _arrayGetHead(array)->size > (index)) out = &(array)[index];\
+        (typeof(array))out;\
     })
 
 #define arrGetLast(array) ((array) ? &(array)[arrLen(array)-1]: nullptr)
 
+#define arrPop(array)\
+({\
+    if (array == nullptr || arrIsEmpty(array)) ERROR_("Array does not contain any Items");\
+    _arrayGetHead(array)->size--;\
+    (array)[arrLen(array)];\
+})
+
 #define arrClear(array)\
     do {\
         if ((array) == nullptr) break;\
-        _arrayGetHead(array).size = 0;\
+        _arrayGetHead(array)->size = 0;\
     } while (0)
 
-#define arrDel(array) \
+#define arrDelete(array) \
     do {\
-        assert((array) != nullptr);\
-        free(&_arrayGetHead(array));\
+        if((array) == nullptr) break;\
+        free(_arrayGetHead(array));\
         (array) = nullptr;\
     } while (0)
 
@@ -89,4 +99,14 @@ typedef struct {
         } \
     } while (0)
 
+#define arrContains(array, item) ({\
+    bool CONCAT(_local, __LINE__) = false;\
+    for_eachArr(value, array, {\
+        if (*value == item) {\
+            CONCAT(_local, __LINE__) = true;\
+            break;\
+        }\
+    });\
+    CONCAT(_local, __LINE__);\
+})
 

@@ -3,7 +3,7 @@
 //
 
 #include "../GUI/Texture.h"
-#include "../../Utils/CString_v1.h"
+#include "../../Utils/_Deprecated_/CString_v1.h"
 #define STB_IMAGE_IMPLEMENTATION
 
 #include <stb/stb_image.h>
@@ -71,7 +71,7 @@ void f_loadTextures(TextureAtlas *atlas, const char *first, va_list args) {
 
     for (int i = 0; i < index; i++) {
         if (!rects[i].was_packed) {
-            WARNING("Atlas pack failed for rect %d (%s)\n", i, names[i]);
+            WARNING_("Atlas pack failed for rect %d (%s)\n", i, names[i]);
             continue;
         }
 
@@ -139,7 +139,7 @@ Basic_Texture *loadTextureFromPng(char *fileName) {
     byte* data = stbi_load(fullPath.m, &width, &height, &channels, 0);
 
     if (!data) {
-        WARNING("Failed to load image\n");
+        WARNING_("Failed to load image\n");
         return nullptr;
     }
     const GLuint ID = uploadTextureToGPU(width, height, channels, data);
@@ -150,7 +150,7 @@ Basic_Texture *loadTextureFromPng(char *fileName) {
 
 Texture getTexture(const char* name) {
     if (name == nullptr) {
-        WARNING("Error loading texture: no name provided");
+        WARNING_("Error loading texture: no name provided");
         return (Texture){};
     }
     const Texture* texture = mapGet(g_map_textureMap, name);

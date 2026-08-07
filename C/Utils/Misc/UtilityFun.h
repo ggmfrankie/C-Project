@@ -3,7 +3,7 @@
 //
 #pragma once
 #include "GuiDefines.h"
-#include "Math/Vector.h"
+#include "../Math/Vector.h"
 
 Vec3f hsv_to_rgb(float h, float s, float v);
 bool only_every(int n);

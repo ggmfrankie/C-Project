@@ -7,7 +7,7 @@
 #include "GuiElementData.h"
 #include "../Drawing/Render.h"
 #include "../../Utils/Os/Time.h"
-#include "../../Utils/UtilityFun.h"
+#include "../../Utils/Misc/UtilityFun.h"
 #ifdef _WIN32
 #include <windows.h>
 #endif

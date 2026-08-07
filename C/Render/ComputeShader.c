@@ -8,7 +8,7 @@
 
 #include "Shader.h"
 #include "Render/GUI/Texture.h"
-#include "../Utils/CString_v1.h"
+#include "../Utils/_Deprecated_/CString_v1.h"
 #include "../Utils/Math/Vector.h"
 #include "../Utils/DataStructures/CArrayList.h"
 #include "../Utils/DataStructures/CHashMap.h"

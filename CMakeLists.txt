@@ -24,8 +24,8 @@ include_directories(
 add_library(GUI STATIC
         C/Utils/_Deprecated_/GenericLinkedList.h
         Main.c
-        C/Utils/CString_v1.c
-        C/Utils/CString_v1.h
+        C/Utils/_Deprecated_/CString_v1.c
+        C/Utils/_Deprecated_/CString_v1.h
         C/Render/Drawing/Render.c
         C/Render/Drawing/Render.h
         C/Render/Drawing/Mesh.c
@@ -40,8 +40,8 @@ add_library(GUI STATIC
         C/Utils/_Deprecated_/HashMap.h
         C/Utils/Os/FileIO.c
         C/Utils/Os/FileIO.h
-        C/Utils/StringBuilder.c
-        C/Utils/StringBuilder.h
+        C/Utils/_Deprecated_/StringBuilder.c
+        C/Utils/_Deprecated_/StringBuilder.h
         C/Render/GUI/GuiElement.c
         C/Render/GUI/GuiElement.h
         C/Render/ComputeShader.c
@@ -64,8 +64,8 @@ add_library(GUI STATIC
         C/Projects/Chess/ChessGame.h
         C/Utils/Os/Network.c
         C/Utils/Os/Network.h
-        C/Utils/UtilityFun.c
-        C/Utils/UtilityFun.h
+        C/Utils/Misc/UtilityFun.c
+        C/Utils/Misc/UtilityFun.h
         C/Projects/Test/TestGUI.c
         C/Projects/ChessNewandImproved/ChessBetter2.c
         C/Projects/ChessNewandImproved/ChessBetter2.c
@@ -84,7 +84,7 @@ add_library(GUI STATIC
         C/Utils/DataStructures/CHashMap.h
         C/Utils/DataStructures/Test.h
         C/Utils/DataStructures/CHashMap.c
-        C/Utils/UtilsTypedef.h
+        C/Utils/Typedef.h
         C/Utils/Makros/Defer.c
         C/Utils/DataStructures/CString.c
         C/Utils/DataStructures/CString.h
@@ -94,6 +94,11 @@ add_library(GUI STATIC
         OtherProjects/C/Informatik/GameBoard.c
         C/Utils/Makros/NamedParameters.h
         C/Render/GUI/ElementTypes/TextField.c
+        C/Utils/Test.c
+        C/Utils/DataStructures/CSparseSet.c
+        C/Utils/DataStructures/CSparseSet.h
+        C/Utils/Makros/Defer.h
+        C/Utils/Test.h
 )
 
 set_target_properties(GUI PROPERTIES LINKER_LANGUAGE C)
@@ -194,7 +199,6 @@ add_executable(C-Project
 )
 
 target_compile_definitions(C-Project PUBLIC JPH_ENABLE_ASSERTS)
-target_link_options(C-Project PRIVATE -static-libgcc -static)
 
 if (WIN32)
 set(GLFW_LIB "${CMAKE_SOURCE_DIR}/Dependencies/lib-mingw-w64/libglfw3.a")

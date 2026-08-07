@@ -5,10 +5,11 @@
 #include "ChessGame.h"
 
 #include "Render/GUI/CallbackFunctions.h"
-#include "../../Utils/Makros/Makros.h"
-#include "Utils/UtilityFun.h"
+#include "Utils/Makros/Makros.h"
+#include "Utils/Misc/UtilityFun.h"
 #include "GuiInterface.h"
 #include "Render/GUI/GuiElement.h"
+#include "Render/GUI/ElementTypes/TextField.h"
 
 
 static constexpr Vec3f COOL_COLOR =  {.2f, .3f, .3f};
@@ -707,7 +708,7 @@ static void createChessBoard(Element* root) {
                         .flexGrow = 1.0,
                         .wantGrowVertical = true
                     }),
-                    TextFieldElement_new((ElementSettings){
+                    TextField_new((ElementSettings){
                         .color = COLOR_GRAY,
                         .padding = {10,10,10,10},
                         .text = "",

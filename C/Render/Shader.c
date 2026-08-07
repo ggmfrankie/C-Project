@@ -24,13 +24,13 @@ Shader newShader(const char* vertexShaderFile, const char* fragmentShaderFile) {
     glGetShaderiv(vertexId, GL_COMPILE_STATUS, &success);
     if (!success) {
         glGetShaderInfoLog(vertexId, 512, nullptr, infoLog);
-        ERROR("Vertex Shader Compile Error:\n%s\n", infoLog);
+        ERROR_("Vertex Shader Compile Error:\n%s\n", infoLog);
     }
 
     glGetShaderiv(fragmentId, GL_COMPILE_STATUS, &success);
     if (!success) {
         glGetShaderInfoLog(fragmentId, 512, nullptr, infoLog);
-        ERROR("Fragment Shader Compile Error:\n%s\n", infoLog);
+        ERROR_("Fragment Shader Compile Error:\n%s\n", infoLog);
     }
 
     glLinkProgram(programId);
@@ -38,7 +38,7 @@ Shader newShader(const char* vertexShaderFile, const char* fragmentShaderFile) {
     glGetProgramiv(programId, GL_LINK_STATUS, &success);
     if (!success) {
         glGetProgramInfoLog(programId, 512, nullptr, infoLog);
-        ERROR("Shader Program Link Error:\n%s\n", infoLog);
+        ERROR_("Shader Program Link Error:\n%s\n", infoLog);
     }
 
     return (Shader){
@@ -52,7 +52,7 @@ Shader newShader(const char* vertexShaderFile, const char* fragmentShaderFile) {
 void Shader_createUniform(Shader *shader, const char* name) {
     const int uniformLocation = glGetUniformLocation(shader->programId, name);
 
-    if(uniformLocation < 0) ERROR("Error creating Uniform: %s", name);
+    if(uniformLocation < 0) ERROR_("Error creating Uniform: %s", name);
     mapInsert(shader->mUniforms, name, uniformLocation);
 }
 

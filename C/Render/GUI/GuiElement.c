@@ -216,7 +216,6 @@ Element *Element_addElement(
     lastElement->name = name;
     lastElement->positionMode = positionMode;
     lastElement->childGap = childGap;
-    lastElement->callbacks.reset = Element_defaultReset;
     lastElement->elementData = elementData;
     lastElement->layoutDirection = layoutDirection;
     lastElement->callbacks.whileSelected = whileSelected;

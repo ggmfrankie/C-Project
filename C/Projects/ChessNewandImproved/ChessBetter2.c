@@ -314,8 +314,8 @@ void chess_loadChessPosition(char* fen) {
     }
     chess_board.turn = aFenPieces[1].m[0] == 'b' ? Black : White;
 
-    arrDel(aFenPieces);
-    arrDel(aRanks);
+    arrDelete(aFenPieces);
+    arrDelete(aRanks);
 }
 
 void chess_loadTextures() {

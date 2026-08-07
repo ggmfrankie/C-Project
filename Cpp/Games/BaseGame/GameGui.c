@@ -12,6 +12,7 @@
 #include "Projects/Chess/ChessGame.h"
 #include "Projects/TFE/TFE.h"
 #include "Render/GUI/GuiElement.h"
+#include "Render/GUI/ElementTypes/TextField.h"
 
 
 void quitTask(void*) {
@@ -68,7 +69,7 @@ void generateMainMenuGui(Element* guiRoot) {
                 .cantBeSelected = true,
                 .text = "Home Screen",
             }),
-            TextFieldElement_new((ElementSettings){
+            TextField_new((ElementSettings){
                 .padding = {10,10,10,10},
                 .minHeight = 20,
                 .minWidth = 100,
@@ -76,7 +77,7 @@ void generateMainMenuGui(Element* guiRoot) {
                 .cornerRadius = 10,
                 .task = runCommand
 
-            }, textField_runTask),
+            }, TextField_runTask),
             Element_new((ElementSettings){
                 .padding = {10,10,10,10},
                 .minHeight = 20,

@@ -159,7 +159,7 @@ void gui_setColor(const char* name, const float r, const float g, const float b)
 void gui_resetColor(const char* name) {
     assert(name != nullptr);
     Thread_Locked(
-        const Element* e = Element_getElement(name);
+        Element* e = Element_getElement(name);
         assert(e != nullptr);
         Element_setColor(e, e->visuals.defaultColor);
     )

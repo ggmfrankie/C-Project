@@ -76,7 +76,7 @@ void namensliste_langsam() {
     enterName(&nameCounterMap);
 
     free(nameCounterMap.content);
-    arrDel(names);
+    arrDelete(names);
 }
 
 void addOrIncrement(NameCounterMap *ncm, char *key) {

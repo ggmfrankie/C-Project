@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../CString_v1.h"
+#include "../_Deprecated_/CString_v1.h"
 #include "../Makros/Defer.h"
 #include "Utils/Logging/Logging.h"
 
@@ -15,7 +15,7 @@ Str readFile(const char* fileName) {
     defer(defer_closeFile) FILE *file = fopen(fileName, "rb");
 
     if (!file) {
-        WARNING("Failed to open file: %s\n", fileName);
+        WARNING_("Failed to open file: %s\n", fileName);
         return nullptr;
     }
 
@@ -35,14 +35,14 @@ void writeFile(const char* fileName, CStr content) {
     defer(defer_closeFile) FILE *file = fopen(fileName, "wb");
 
     if (!file) {
-        WARNING("Failed to open file: %s\n", fileName);
+        WARNING_("Failed to open file: %s\n", fileName);
         return;
     }
 
     const size_t len = strLen(content);
     const size_t writtenChars = fwrite(content, 1, len, file);
 
-    if (writtenChars != len) WARNING("Failed to write complete data");
+    if (writtenChars != len) WARNING_("Failed to write complete data");
 }
 
 String readFilev1(const String *fileName) {

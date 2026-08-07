@@ -86,21 +86,21 @@ Str strFrom_int(int val) {
 }
 
 size_t strLen(CStr s) {
-    if (!_strIsStr(s)) ERROR("Provided char* is not a Str");
+    if (!_strIsStr(s)) ERROR_("Provided char* is not a Str");
     if (s == nullptr) return 0;
     const struct _StringHeader_* header = _strGetHeader(s);
     return header->size;
 }
 
 size_t strCap(CStr s) {
-    if (!_strIsStr(s)) ERROR("Provided char* is not a Str");
+    if (!_strIsStr(s)) ERROR_("Provided char* is not a Str");
     if (s == nullptr) return 0;
     const struct _StringHeader_* header = _strGetHeader(s);
     return header->capacity;
 }
 
 Str strConcat(CStr a, CStr b) {
-    if (!_strIsStr(a) || _strIsStr(b)) ERROR("Provided char* is not a Str");
+    if (!_strIsStr(a) || _strIsStr(b)) ERROR_("Provided char* is not a Str");
     assert(a != nullptr && b != nullptr);
     const size_t lenA = strLen(a);
     const size_t lenB = strLen(b);
@@ -118,11 +118,11 @@ Str strConcat(CStr a, CStr b) {
 }
 
 Str* strSplit(CStr s, char del) {
-    TODO("Not Implemented");
+    TODO_("Not Implemented");
 }
 
 char strAt(CStr s, size_t idx) {
-    if (!_strIsStr(s)) ERROR("Provided char* is not a Str");
+    if (!_strIsStr(s)) ERROR_("Provided char* is not a Str");
     const size_t len = strLen(s);
     assert(len > idx);
     return s[idx];
@@ -146,7 +146,7 @@ bool strStartsWith(CStr src, CStr p) {
 }
 
 void strAppend(Str s, char c){
-    TODO("KB");
+    TODO_("KB");
 }
 
 void strFit(Str s) {
@@ -174,7 +174,7 @@ char* cstrConcat(const char* a, const char* b) {
     const size_t lenB = strlen(b);
 
     struct _StringHeader_* header = malloc(sizeof(struct _StringHeader_) + lenA + lenB + 1);
-    if (header == nullptr) ERROR("Allocation failed");
+    if (header == nullptr) ERROR_("Allocation failed");
 
     char* data = (void*) (header+1);
 
@@ -194,7 +194,7 @@ void cstrbConcat(char *buff, size_t size, char *a, const char *b) {
     const size_t total = lenA + lenB;
 
     if(size < total + 1) {
-        WARNING("Buffer of size: %llu is not sufficient for string length %llu\n", size, total);
+        WARNING_("Buffer of size: %llu is not sufficient for string length %llu\n", size, total);
         return;
     }
     memcpy(buff, a, lenA);

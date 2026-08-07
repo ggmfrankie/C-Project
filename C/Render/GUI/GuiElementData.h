@@ -6,7 +6,7 @@
 #include "GuiDefines.h"
 #include <pthread.h>
 
-#include "../../Utils/CString_v1.h"
+#include "../../Utils/_Deprecated_/CString_v1.h"
 
 struct Element;
 struct Renderer;

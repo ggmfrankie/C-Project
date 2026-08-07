@@ -3,7 +3,7 @@
 //
 #pragma once
 #include "GuiDefines.h"
-#include "../Utils/CString_v1.h"
+#include "../Utils/_Deprecated_/CString_v1.h"
 #include "../Utils/Math/Vector.h"
 #include "../../Dependencies/include/glad/gl.h"
 #include "Utils/DataStructures/CString.h"

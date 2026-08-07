@@ -8,7 +8,7 @@
 
 #include "Utils/Math/Vector.h"
 #include "Render/Drawing/TextDisplaying.h"
-#include "Utils/UtilsTypedef.h"
+#include "Utils/Typedef.h"
 
 typedef struct Padding {
     int left;
@@ -184,7 +184,6 @@ Element* addChildrenAsGridWithGenerator(ElementSettings parentData, ElementSetti
 void Element_setOnClickCallback(Element* element, bool (*onClick)(Element* element, Renderer* renderer));
 void Element_setOnHoverCallback(Element* element, bool (*onHover)(Element* element, Renderer* renderer));
 void Element_setBoundingBox(Element* element, bool (*isMouseOver)(const Element *element, Vec2i mousePos));
-void Element_defaultReset(Element* element);
 
 Element* Element_getElement(const char* name);
 void Element_setText(Element* element, const char* text);

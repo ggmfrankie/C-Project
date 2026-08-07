@@ -5,7 +5,7 @@
 #pragma once
 #include "../DataStructures/CString.h"
 #include "GuiDefines.h"
-#include "../CString_v1.h"
+#include "../_Deprecated_/CString_v1.h"
 
 String readFilev1(const String *fileName);
 void writeFilev1(const String *fileName, const String *content);

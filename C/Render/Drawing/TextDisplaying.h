@@ -11,7 +11,7 @@
 #include "../../../Dependencies/include/stb/stb_truetype.h"
 #include "Utils/Math/Vector.h"
 #include "Render/GUI/Texture.h"
-#include "Utils/CString_v1.h"
+#include "../../Utils/_Deprecated_/CString_v1.h"
 
 typedef struct Font {
     Basic_Texture fontAtlas;

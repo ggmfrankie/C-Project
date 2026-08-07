@@ -6,7 +6,7 @@
 
 #include <math.h>
 
-#include "Math/Vector.h"
+#include "../Math/Vector.h"
 
 Vec3f hsv_to_rgb(const float h, const float s, const float v)
 {
