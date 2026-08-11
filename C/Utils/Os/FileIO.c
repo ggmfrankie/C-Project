@@ -23,7 +23,7 @@ Str readFile(const char* fileName) {
     const long size = ftell(file);
     rewind(file);
 
-    Str buffer = strNew_c(size+1);
+    const Str buffer = strNew_c(size+1);
 
     fread(buffer, 1, size, file);
 
@@ -75,7 +75,7 @@ void writeFilev1(const String *fileName, const String *content) {
     FILE *file = fopen(fileName->m, "wb");
     const size_t writtenChars = fwrite(content->m, 1, content->length, file);
     if (writtenChars != content->length) {
-        perror("Failed to write complete data");
+        WARNING_("Failed to write complete data");
         fclose(file);
         exit(1);
     }

@@ -10,7 +10,7 @@
 #include "Cpp/Test/Test.hpp"
 #include "C/Utils/DataStructures/CString.h"
 
-#if 0
+#if 1
 int main() {
 
     try {

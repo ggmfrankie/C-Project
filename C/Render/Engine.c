@@ -4,6 +4,7 @@
 #include "GuiDefines.h"
 #include "Engine.h"
 #include <stdarg.h>
+#include <string.h>
 #include <unistd.h>
 
 #include "GUI/GuiElement.h"

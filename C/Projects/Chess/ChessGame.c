@@ -4,6 +4,8 @@
 
 #include "ChessGame.h"
 
+#include <stdlib.h>
+
 #include "Render/GUI/CallbackFunctions.h"
 #include "Utils/Makros/Makros.h"
 #include "Utils/Misc/UtilityFun.h"

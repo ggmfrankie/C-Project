@@ -16,7 +16,7 @@
 #include "C/Utils/DataStructures/CString.h"
 #include "C/Utils/DataStructures/Test.h"
 #include "C/Utils/Test.h"
-#if 1
+#if 0
 int main(){
     Test_run();
 

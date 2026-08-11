@@ -10,5 +10,10 @@ FEATURES
 - Make a resize Element that attaches to sides and makes dynamic resizing possible
 - text field improvements
 - finish slider element
+- liquid glass background
+- networking (maybe simple messanger)
+- serialisation
+- JSON lib
+- try out odin/c3?
 
-- Maybey make Concord discord app
+- Maybe make Concord discord app

@@ -59,8 +59,8 @@ Str strNew_n(const char *s, size_t count) {
     assert(header != nullptr);
 
     char* data = (void*) (header+1);
-    const errno_t result = strncpy_s(data, len + 1, s, len);
-    assert(result == 0);
+    const char* result = strncpy(data, s, len);
+    assert(result == nullptr);
 
     header->capacity = header->size = len;
     return data;
