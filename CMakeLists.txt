@@ -196,6 +196,8 @@ add_executable(C-Project
         Cpp/Render/Objects/3D/Render/RenderObject3D.cpp
         Cpp/Render/Objects/3D/Render/Texture.cpp
         Cpp/Render/Objects/3D/GameObject.cpp
+        Cpp/Utils/Async/Coroutine.cpp
+        Cpp/Utils/Async/Coroutine.hpp
 )
 
 target_compile_definitions(C-Project PUBLIC JPH_ENABLE_ASSERTS)
