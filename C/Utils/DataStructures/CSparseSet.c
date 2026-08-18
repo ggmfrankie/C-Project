@@ -20,7 +20,7 @@ static void _SparseSet_resizeData(SparseSet* set, size_t newCapacity) {
     set->data.capacity = newCapacity;
 }
 
-static int _getOffset(SparseSet* set, int idx){
+static int _getOffset(const SparseSet* set, int idx){
     return idx * set->VALUE_SIZE;
 }
 
@@ -55,8 +55,7 @@ void SparseSet_delete(SparseSet* set){
     memset(set, 0, sizeof(SparseSet));
 }
 
-size_t _SparseSet_add(SparseSet *set, void *value) {
-    size_t sizeData = set->data.size;
+ssize_t _SparseSet_add(SparseSet *set, const void *value) {
     size_t id;
     if (arrIsEmpty(set->aFreeList)) {
         if (set->numElements == set->indices.capacity) {
@@ -68,7 +67,7 @@ size_t _SparseSet_add(SparseSet *set, void *value) {
     }
 
     if (set->data.size == set->data.capacity) _SparseSet_resizeData(set, set->data.capacity*2);
-    size_t index = set->data.size++;
+    const size_t index = set->data.size++;
     memcpy(&set->data.m[_getOffset(set, index)], value, set->VALUE_SIZE);
 
     set->indices.toData[id] = index;
@@ -113,7 +112,7 @@ void _SparseSet_remove_keepOrder(SparseSet *set, size_t id) {
     arrPush(set->aFreeList, id);
 }
 
-void* _SparseSet_get(SparseSet *set, size_t id) {
+void* _SparseSet_get(const SparseSet *set, size_t id) {
     if (id >= set->indices.capacity) ERROR_("Index %llu out of bounds for size %llu", id, set->numElements);
     return &set->data.m[set->indices.toData[id] * set->VALUE_SIZE];
 }

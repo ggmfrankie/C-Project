@@ -5,4 +5,4 @@
 #pragma once
 #include "GuiDefines.h"
 #include "GuiTypes.h"
-void Mesh_loadRoundedCornerMesh2(const Element* element, GuiVertex *vertices, int *vt, int* indices, int* id);
+void Mesh_generateRoundedCornerMesh(const Element* element, GuiVertex *vertices, int *vt, int* indices, int* id);

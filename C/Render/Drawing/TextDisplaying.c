@@ -96,7 +96,7 @@ void accumulateTextQuads(const Element *element, GuiVertex *vertices, int *vt, i
     const float xOffset = (float)element->padding.left;
     const float yOffset = (float)font->maxCharHeight * element->textElement.textScale + (float)element->padding.up;
 
-    const int ID = element->ID;
+    const int ID = element->handle.ID;
 
     for_eachArr(c, aCharQuads, {
         const int texID = 1;

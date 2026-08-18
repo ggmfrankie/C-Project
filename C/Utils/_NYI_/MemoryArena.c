@@ -8,9 +8,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-Arena createArena(const size_t size) {
+Arena Arena_create(const size_t size) {
     void *memory = malloc(size);
-    if (memory == NULL) ERROR_("failed to allocate memory for Arena");
+    if (memory == nullptr) ERROR_("failed to allocate memory for Arena");
     
     return (Arena) {
         .size = size,
@@ -19,18 +19,18 @@ Arena createArena(const size_t size) {
     };
 }
 
-void freeArena(Arena *arena) {
-    if (arena == NULL) return;
+void Arena_free(Arena *arena) {
+    if (arena == nullptr) return;
     if (arena->memory) free(arena->memory);
-    arena->memory = NULL;
+    arena->memory = nullptr;
     arena->size = 0;
-    arena->stackPointer = NULL;
+    arena->stackPointer = nullptr;
 }
 
-void* alloc(Arena *arena, const size_t size) {
+void* Arena_alloc(Arena *arena, const size_t size) {
     if (arena->size <= size) {
         WARNING_("Not enough memory in Arena");
-        return NULL;
+        return nullptr;
     }
     void *allocated = arena->stackPointer;
     arena->stackPointer += size;

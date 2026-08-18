@@ -12,12 +12,12 @@
 #include "../../Utils/DataStructures/CArrayList.h"
 #include "../../Utils/Makros/Makros.h"
 
-static void accumulateMeshes(Element *element, const Renderer *renderer, GuiVertex *vertices, int *vt, int *indices, int *id);
+static void accumulateMeshes(const Element *element, const Renderer *renderer, GuiVertex *vertices, int *vt, int *indices, int *id);
 static Cache* cacheLayout(Element* self);
 
 static void placeChildElements(const Element* self);
 
-Element* createRootElement();
+Element createRootElement();
 
 [[deprecated]]
 GLFWwindow* initWindow(const int width, const int height, const char* name) {
@@ -102,7 +102,7 @@ void Renderer_render(const Renderer *renderer) {
     setUniform(&renderer->guiShader, "screenWidth", (float) renderer->screenWidth);
     setUniform(&renderer->guiShader, "screenHeight", (float) renderer->screenHeight);
 
-    Element* guiRoot = renderer->guiRoot;
+    const Element* guiRoot = &renderer->guiRoot;
 
     accumulateMeshes(guiRoot,
             renderer,
@@ -119,7 +119,7 @@ void Renderer_render(const Renderer *renderer) {
     Shader_unbindProgram();
 }
 
-static void accumulateMeshes(Element *element, const Renderer *renderer, GuiVertex *vertices, int *vt, int *indices, int *id) {
+static void accumulateMeshes(const Element *element, const Renderer *renderer, GuiVertex *vertices, int *vt, int *indices, int *id) {
     if (element == nullptr || !element->flags.isActive) return;
 
     //beginScissor(element, renderer->screenHeight);
@@ -140,16 +140,16 @@ static void accumulateMeshes(Element *element, const Renderer *renderer, GuiVert
     //endScissor();
 
     for_eachArr(flowElement, element->aFlowElements, {
-        accumulateMeshes(*flowElement, renderer, vertices, vt, indices, id);
+        accumulateMeshes(Element_get(*flowElement), renderer, vertices, vt, indices, id);
     });
 
     for_eachArr(staticElement, element->aStaticElements, {
-        accumulateMeshes(*staticElement, renderer, vertices, vt, indices, id);
+        accumulateMeshes(Element_get(*staticElement), renderer, vertices, vt, indices, id);
     });
 }
 
-void Renderer_updateLayout(const Renderer *renderer) {
-    Element* root = renderer->guiRoot;
+void Renderer_updateLayout(Renderer *renderer) {
+    Element* root = &renderer->guiRoot;
 
     root->dims.worldWidth  = renderer->screenWidth;
     root->dims.worldHeight = renderer->screenHeight;
@@ -159,8 +159,7 @@ void Renderer_updateLayout(const Renderer *renderer) {
 
     cacheLayout(root);
 
-    placeChildElements(renderer->guiRoot);
-    //layoutElement(renderer->guiRoot);
+    placeChildElements(&renderer->guiRoot);
 }
 
 static void clearCache(Element* self) {
@@ -198,7 +197,7 @@ static Vec2i getDimsFromFlowChildren(const Element* self) {
     Line* currLine = &lines[0];
 
     for_eachArr(childPtr, self->aFlowElements, {
-        Element* child = *childPtr;
+        Element* child = Element_get(*childPtr);
         //First calculate sizes of children
         const Cache* childCache = cacheLayout(child);
         const int childGap = self->childGap;
@@ -264,7 +263,7 @@ static Vec2i getDimsFromFlowChildren(const Element* self) {
 static Vec2i getDimsFromStaticChildren(const Element* self) {
     Vec2i extend = {0, 0};
     for_eachArr(childPtr, self->aStaticElements, {
-        Element* child = *childPtr;
+        Element* child = Element_get(*childPtr);
         const Vec2i pos = child->dims.pos;
         //Children first
         const Cache* childCache = cacheLayout(child);
@@ -313,12 +312,13 @@ struct FlexData {
     Vec2i totalMinSize;
 };
 
-static struct FlexData calculateTotalLineFlex(const Line* line, Element** elements) {
+static struct FlexData calculateTotalLineFlex(const Line* line, ElementHandle* elements) {
     struct FlexData data = {};
     for (int i = line->start; i < line->end; ++i) {
-        data.totalFlex += elements[i]->dims.flexGrow;
-        data.totalMinSize.x += elements[i]->layoutCache.minWidth;
-        data.totalMinSize.y += elements[i]->layoutCache.minHeight;
+        const Element* curr = Element_get(elements[i]);
+        data.totalFlex += curr->dims.flexGrow;
+        data.totalMinSize.x += curr->layoutCache.minWidth;
+        data.totalMinSize.y += curr->layoutCache.minHeight;
     }
     return data;
 }
@@ -341,7 +341,7 @@ static void placeFlowElements(const Element* self) {
         const struct FlexData flexData = calculateTotalLineFlex(&currLine, self->aFlowElements);
 
         for (int j = currLine.start; j < currLine.end; ++j) {
-            Element* curr = self->aFlowElements[j];
+            Element* curr = Element_get(self->aFlowElements[j]);
 
             Vec2i dims = {
                 curr->layoutCache.minWidth,
@@ -399,7 +399,7 @@ static void placeFlowElements(const Element* self) {
 
 static void placeStaticElements(const Element* self) {
     for_eachArr(elementPtr, self->aStaticElements, {
-        Element* curr = * elementPtr;
+        Element* curr = Element_get(*elementPtr);
         placeElementAt(curr,
             (Vec2i){
                 self->dims.worldPos.x + curr->dims.pos.x + self->padding.up,
@@ -418,8 +418,8 @@ static void placeChildElements(const Element* self) {
     placeFlowElements(self);
     placeStaticElements(self);
 
-    for_eachArr(flowElement, self->aFlowElements, { placeChildElements(*flowElement); });
-    for_eachArr(staticElement, self->aStaticElements,{ placeChildElements(*staticElement); });
+    for_eachArr(flowElement, self->aFlowElements, { placeChildElements(Element_get(*flowElement)); });
+    for_eachArr(staticElement, self->aStaticElements,{ placeChildElements(Element_get(*staticElement)); });
 
 #if GUI_DEBUG
     const bool correctElement = (self->name) ? (strcmp(GUI_DEBUG_OBSERVE_ELEMENT_PLACE_CHILDREN, self->name) == 0) : false;
@@ -452,10 +452,11 @@ Renderer newGUIRenderer(GLFWwindow* window, const int width, const int height, c
     };
 }
 
-Element* createRootElement() {
-    const auto e = Element_allocateNew((Vec2i){}, 0, 0);
-    e->name = "GUI_ROOT";
-    e->flags.invisible = true;
+Element createRootElement() {
+    const Element e = {
+        .name = "GUI_ROOT",
+        .flags.invisible = true,
+    };
     return e;
 }
 

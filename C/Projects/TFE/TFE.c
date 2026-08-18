@@ -70,7 +70,7 @@ void TFE_createGUI(Element* root) {
             )
         )
     );
-    Element_setActive(Element_getElement("TFE_board"), false);
+    Element_setActive_ptr(Element_getElement_ptr("TFE_board"), false);
 }
 
 void TFE_run() {

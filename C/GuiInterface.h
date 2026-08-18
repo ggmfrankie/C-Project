@@ -26,8 +26,8 @@ typedef void (*GUI_onKeyPressAction)(int key, int scancode, int action, int mods
     void gui_update();
     void gui_render();
 
-    void f_gui_loadTextures(char* first, ...);
-    #define gui_loadTextures(first, ...) f_gui_loadTextures(first, __VA_ARGS__, nullptr)
+    void _gui_loadTextures(char* first, ...);
+    #define gui_loadTextures(first, ...) _gui_loadTextures(first, __VA_ARGS__, nullptr)
     void gui_setTexture(Element* e, const char* name);
 
     void gui_charCallback(GLFWwindow*, unsigned int codepoint);
@@ -39,6 +39,7 @@ typedef void (*GUI_onKeyPressAction)(int key, int scancode, int action, int mods
     void gui_toggleVisible(const char* name);
     void gui_setText(const char* name, const char* text);
     void gui_setColor(const char* name, float r, float g, float b);
+    void gui_setColor_ptr(Element* ptr, float r, float g, float b);
     void gui_resetColor(const char* name);
     void gui_setCornerRadius(const char* name, int radius);
     void gui_onKeyPressCallback(GUI_onKeyPressAction action);

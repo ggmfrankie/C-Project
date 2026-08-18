@@ -99,6 +99,7 @@ add_library(GUI STATIC
         C/Utils/DataStructures/CSparseSet.h
         C/Utils/Makros/Defer.h
         C/Utils/Test.h
+        C/Utils/Makros/Helper.h
 )
 
 set_target_properties(GUI PROPERTIES LINKER_LANGUAGE C)

@@ -11,4 +11,4 @@
 
 void Batcher_init();
 void uploadBatchedQuads(const GuiVertex *vertices, int vt, const int* indices, int id);
-void uploadElementData(Element* element);
+void uploadElementData(const Element* element);

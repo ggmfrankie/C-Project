@@ -60,13 +60,13 @@ void Mesh_connectFans(const struct ArcInfo* a1, const struct ArcInfo* a2, int* i
     indices[(*id)++] = a1->corner;
 }
 
-void Mesh_loadRoundedCornerMesh2(const Element* element, GuiVertex *vertices, int *vt, int* indices, int* id) {
+void Mesh_generateRoundedCornerMesh(const Element* element, GuiVertex *vertices, int *vt, int* indices, int* id) {
     const float width = (float)element->dims.worldWidth;
     const float height = (float)element->dims.worldHeight;
     const float radius = min((float)element->dims.cornerRadius, min(width, height) * 0.5f);
 
-    const float r90 = (float)M_PI * 0.5f;
-    const int numTriangles = 12;
+    constexpr float r90 = (float)M_PI * 0.5f;
+    constexpr int numTriangles = 12;
 
     const int start = *vt;
 
@@ -143,7 +143,7 @@ void Mesh_loadRoundedCornerMesh2(const Element* element, GuiVertex *vertices, in
             uv0.x * (1.0f - uNorm) + uv1.x * uNorm,
             uv0.y * (1.0f - vNorm) + uv1.y * vNorm
         };
-        p->ID = element->ID;
+        p->ID = element->handle.ID;
         p->texID = 0;
     }
 }

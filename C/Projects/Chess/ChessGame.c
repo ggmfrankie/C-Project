@@ -358,18 +358,18 @@ static void joinGame(const char* ip) {
 #endif
 
 static void startChessGameTask(void*) {
-    Element* mainMenu = Element_getElement("start screen");
-    Element* chessBoard = Element_getElement("game board");
-    Element_setActive(mainMenu, false);
-    Element_setActive(chessBoard, true);
+    Element* mainMenu = Element_getElement_ptr("start screen");
+    Element* chessBoard = Element_getElement_ptr("game board");
+    Element_setActive_ptr(mainMenu, false);
+    Element_setActive_ptr(chessBoard, true);
 }
 
 static void showWinnerScreen(const bool winner) {
-    Element* endScreen = Element_getElement("end screen");
-    Element_setActive(endScreen, true);
-    Element* colorDisplay = Element_getElement("color display");
-    Element_setColor(colorDisplay, winner ? COLOR_WHITE : COLOR_GRAY);
-    Element_setText(colorDisplay, winner ? "White won" : "Black won");
+    Element* endScreen = Element_getElement_ptr("end screen");
+    Element_setActive_ptr(endScreen, true);
+    Element* colorDisplay = Element_getElement_ptr("color display");
+    Element_setColor_ptr(colorDisplay, winner ? COLOR_WHITE : COLOR_GRAY);
+    Element_setText_ptr(colorDisplay, winner ? "White won" : "Black won");
 }
 
 static void onSquareClicked2(void* el) {
@@ -489,13 +489,13 @@ static void resetBoard(void*) {
     setUpPieces();
     unmarkAll(0,0,0,0);
 
-    Element_setActive(Element_getElement("end screen"), false);
+    Element_setActive_ptr(Element_getElement_ptr("end screen"), false);
 
     syncGui();
 }
 
 static Vec2i getPosition(const Element* element) {
-    const Element* parent = element->parentElement;
+    const Element* parent = Element_get(element->parentElement);
      return (Vec2i) {
         element->dims.pos.x / (parent->dims.width/8),
         element->dims.pos.y / (parent->dims.height/8)

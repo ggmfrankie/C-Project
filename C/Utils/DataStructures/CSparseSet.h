@@ -23,19 +23,19 @@ typedef struct CSparseSet{
 SparseSet _SparseSet_new(size_t valueSize, size_t capacity);
 void SparseSet_delete(SparseSet* set);
 
-size_t _SparseSet_add(SparseSet* set, void* value);
+ssize_t _SparseSet_add(SparseSet *set, const void *value);
 void _SparseSet_remove(SparseSet* set, size_t id);
 void _SparseSet_remove_keepOrder(SparseSet* set, size_t id);
 
-void* _SparseSet_get(SparseSet* set, size_t id);
+void* _SparseSet_get(const SparseSet* set, size_t id);
 
 #define _SparseSet_typeCheck(set, type) if ((set)->VALUE_SIZE != sizeof(type)) ERROR_("Types dont match")
 
 #define SparseSet_new(type, capacity) _SparseSet_new(sizeof(type), capacity)
 
-#define SparseSet_add(set, value) ({\
-    _SparseSet_typeCheck(set, typeof(value));\
+#define SparseSet_add(set, value...) ({\
     typeof(value) CONCAT(_local, __LINE__) = value;\
+    _SparseSet_typeCheck(set, typeof(CONCAT(_local, __LINE__)));\
     _SparseSet_add((set), &CONCAT(_local, __LINE__));\
 })
 

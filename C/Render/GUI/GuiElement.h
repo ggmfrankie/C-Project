@@ -54,6 +54,10 @@ typedef struct {
     Line* aLines;
 } Cache;
 
+typedef struct ElementHandle {
+    ssize_t ID;
+} ElementHandle;
+
 typedef struct Element {
     char* name;
     ElementType type;
@@ -101,7 +105,7 @@ typedef struct Element {
 
     Cache layoutCache;
 
-    int ID;
+    ElementHandle handle;
 
     PositionMode positionMode;
     LayoutDirection layoutDirection;
@@ -122,19 +126,15 @@ typedef struct Element {
     TextElement textElement;
 
     Task task;
-    Element* parentElement;
-    Element** aFlowElements;
-    Element** aStaticElements;
+    ElementHandle parentElement;
+    ElementHandle* aFlowElements;
+    ElementHandle* aStaticElements;
     int childGap;
 
     void* elementData;
 
 } Element;
 
-typedef struct ElementHandle {
-    int generation;
-    int index;
-} ElementHandle;
 
 typedef struct ElementSettings {
     char* name;
@@ -174,29 +174,31 @@ typedef struct ElementSettings {
 
 } ElementSettings;
 
-Element* Element_allocateNew(Vec2i pos, int width, int height);
-Element* Element_addChildElements(Element* parent, ...);
-Element* Element_addChildElements_vaList(Element* parent, va_list args);
+ElementHandle Element_addChildElements(ElementHandle parent, ...);
 
-Element* addChildrenAsGrid(ElementSettings parentData, ElementSettings es, int numX, int numY);
-Element* addChildrenAsGridWithGenerator(ElementSettings parentData, ElementSettings es, int numX, int numY, Element* (*generateElement)(int row, int col, ElementSettings));
+ElementHandle Element_addChildElements_vaList(ElementHandle parentHandle, va_list args);
+
+Element* Element_get(ElementHandle handle);
+
+ElementHandle addChildrenAsGrid(ElementSettings parentData, ElementSettings es, int numX, int numY);
+ElementHandle addChildrenAsGridWithGenerator(ElementSettings parentData, ElementSettings es, int numX, int numY, ElementHandle (*generateElement)(int row, int col, ElementSettings));
 
 void Element_setOnClickCallback(Element* element, bool (*onClick)(Element* element, Renderer* renderer));
 void Element_setOnHoverCallback(Element* element, bool (*onHover)(Element* element, Renderer* renderer));
 void Element_setBoundingBox(Element* element, bool (*isMouseOver)(const Element *element, Vec2i mousePos));
 
-Element* Element_getElement(const char* name);
-void Element_setText(Element* element, const char* text);
+Element *Element_getElement_ptr(const char *name);
+void Element_setText_ptr(Element* element, const char* text);
 void Element_setText_int(Element* element, int i);
-void Element_setActive(Element* element, bool b);
-void Element_toggleVisible(Element* element);
-void Element_setColor(Element* element, Vec3f color);
+void Element_setActive_ptr(Element* element, bool b);
+void Element_toggleVisible_ptr(Element* element);
+void Element_setColor_ptr(Element* element, Vec3f color);
 
 void Element_printDebug(const Element* element);
 
 bool Element_isQuadBB(const Element *element, Vec2i mousePos);
 
-Element *Element_addElement(
+ElementHandle Element_addElement(
     char *name,
     Vec2i pos,
     int width,
@@ -222,9 +224,9 @@ Element *Element_addElement(
     canBeHovered
 );
 
-Element* createElement(ElementSettings es);
+ElementHandle createElement(ElementSettings es);
 
-Element* _Element_new(ElementSettings es, ...);
+ElementHandle _Element_new(ElementSettings es, ...);
 
-#define Element_new(settings, ...) _Element_new(settings, __VA_ARGS__, nullptr)
-#define addChildElements(parent, ...) Element_addChildElements(parent, __VA_ARGS__, nullptr)
+#define Element_new(settings, ...) _Element_new(settings, __VA_ARGS__, (ElementHandle){-1})
+#define addChildElements(parent, ...) Element_addChildElements(parent, __VA_ARGS__, (ElementHandle){-1})

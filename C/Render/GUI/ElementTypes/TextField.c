@@ -65,7 +65,7 @@ bool TextField_runTask(Element *element, Renderer *renderer) {
 
     str_clear(&data->text);
     data->cursor.byteIndex = 0;
-    Element_setText(element,"");
+    Element_setText_ptr(element,"");
 
     if (element->task.func && !element->task.isBlocked) {
         pushTask(element->task.func, newBuffer);

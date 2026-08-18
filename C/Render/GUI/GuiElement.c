@@ -15,62 +15,59 @@
 #include "Utils/Makros/Makros.h"
 #include "Utils/DataStructures/CArrayList.h"
 #include "Utils/DataStructures/CHashMap.h"
+#include "Utils/DataStructures/CSparseSet.h"
 
-#define MAX_ELEMENTS 1024
-static struct {
-    Element m[MAX_ELEMENTS];
-    size_t size;
-} g_Elements;
+static SparseSet gElements;
+static ElementHandle* gmElements;
 
-static Element** g_map_Elements;
-
-Element* Element_allocateNew(const Vec2i pos, const int width, const int height) {
-    g_Elements.m[g_Elements.size] = (Element){
-        .name = nullptr,
-        .state = UI_STATE_NORMAL,
-        .dims = {
-            .width = width,
-            .height = height,
-            .pos = pos,
-            .worldPos = pos,
-            .worldWidth = width,
-            .worldHeight = height,
-            .maxWidth = INT32_MAX,
-            .maxHeight = INT32_MAX
-        },
-        .callbacks = {
-            .onClick = nullptr,
-            .onHover = nullptr,
-            .isMouseOver = nullptr,
-            .onUpdate = nullptr,
-            .reset = nullptr,
-            .whileSelected = nullptr,
-            .requestMove = nullptr
-        },
-        .visuals = {
-            .brightness = 1.0f,
-            .texture = {},
-            .transparency = 0,
-        },
-        .textElement = {.aCharQuads = nullptr, .textScale = 1.0f},
-        .parentElement = nullptr,
-        .aFlowElements = nullptr,
-        .padding = {0,0,0,0},
-        .flags = {.isActive = true, .needsDeletion = true},
-        .task = (Task){nullptr, nullptr},
-        .childGap = 0,
-        .elementData = nullptr,
-        .positionMode = POS_FIT,
-        .layoutDirection = 0,
-        .type = 0,
-        .ID = (int)g_Elements.size,
-        .generateMesh = Mesh_loadRoundedCornerMesh2,
+ElementHandle Element_allocateNewV2(const Vec2i pos, const int width, const int height) {
+    const ElementHandle handle = {
+        .ID = SparseSet_add(&gElements, (Element){
+                    .name = nullptr,
+                    .state = UI_STATE_NORMAL,
+                    .dims = {
+                        .width = width,
+                        .height = height,
+                        .pos = pos,
+                        .worldPos = pos,
+                        .worldWidth = width,
+                        .worldHeight = height,
+                        .maxWidth = INT32_MAX,
+                        .maxHeight = INT32_MAX
+                      },
+                    .callbacks = {
+                        .onClick = nullptr,
+                        .onHover = nullptr,
+                        .isMouseOver = nullptr,
+                        .onUpdate = nullptr,
+                        .reset = nullptr,
+                        .whileSelected = nullptr,
+                        .requestMove = nullptr
+                      },
+                    .visuals = {
+                        .brightness = 1.0f,
+                        .texture = {},
+                        .transparency = 0,
+                      },
+                  .textElement = {.aCharQuads = nullptr, .textScale = 1.0f},
+                  .parentElement = 0,
+                  .aFlowElements = nullptr,
+                  .padding = {0, 0, 0, 0},
+                  .flags = {.isActive = true, .needsDeletion = true},
+                  .task = (Task){nullptr, nullptr},
+                  .childGap = 0,
+                  .elementData = nullptr,
+                  .positionMode = POS_FIT,
+                  .layoutDirection = 0,
+                  .type = 0,
+                  .generateMesh = Mesh_generateRoundedCornerMesh
+        })
     };
-    assert(g_Elements.size < MAX_ELEMENTS);
-    return &g_Elements.m[g_Elements.size++];
+    Element_get(handle)->handle = handle;
+    return handle;
 }
 
-Element* Element_addChildElements(Element* parent, ...) {
+ElementHandle Element_addChildElements(ElementHandle parent, ...) {
     va_list args;
     va_start(args, parent);
     Element_addChildElements_vaList(parent, args);
@@ -78,24 +75,30 @@ Element* Element_addChildElements(Element* parent, ...) {
     return parent;
 }
 
-Element* Element_addChildElements_vaList(Element* parent, va_list args) {
-    assert(parent != nullptr);
+ElementHandle Element_addChildElements_vaList(ElementHandle parentHandle, va_list args) {
+    assert(parentHandle.ID != -1);
     while (1) {
-        Element* child = va_arg(args, Element*);
+        const ElementHandle childHandle = va_arg(args, ElementHandle);
+        if (childHandle.ID == -1) break;
 
-        if (child == nullptr) break;
+        Element* element = Element_get(childHandle);
 
-        child->parentElement = parent;
-        switch (child->positionMode) {
+        element->parentElement = parentHandle;
+        Element* parent = Element_get(parentHandle);
+        switch (element->positionMode) {
             case POS_FIT:
-                arrPush(parent->aFlowElements, child);
+                arrPush(parent->aFlowElements, childHandle);
                 break;
             case POS_RELATIVE:
-                arrPush(parent->aStaticElements, child);
+                arrPush(parent->aStaticElements, childHandle);
                 break;
         }
     }
-    return parent;
+    return parentHandle;
+}
+
+Element* Element_get(ElementHandle handle) {
+    return SparseSet_get(&gElements, handle.ID, Element);
 }
 
 void Element_setOnClickCallback(Element* element, bool (*onClick)(Element* element, Renderer* renderer)) {
@@ -113,7 +116,7 @@ void Element_setBoundingBox(Element* element, bool (*isMouseOver)(const Element 
     element->callbacks.isMouseOver = isMouseOver;
 }
 
-void Element_setText(Element* element, const char* text) {
+void Element_setText_ptr(Element* element, const char* text) {
     assert(element != nullptr);
     Strings.copyInto(&element->textElement.text, text);
     element->textElement.hasText = true;
@@ -124,27 +127,27 @@ void Element_setText_int(Element* element, const int i) {
     assert(element != nullptr);
     char tempText[512];
     Strings.fromInt(tempText, 512, i);
-    Element_setText(element, tempText);
+    Element_setText_ptr(element, tempText);
 }
 
-void Element_setActive(Element* element, const bool b) {
+void Element_setActive_ptr(Element* element, const bool b) {
     assert(element != nullptr);
     element->flags.isActive = b;
 }
 
-void Element_toggleVisible(Element* element) {
+void Element_toggleVisible_ptr(Element* element) {
     assert(element != nullptr);
     element->flags.isActive = !element->flags.isActive;
 }
 
-void Element_setColor(Element* element, const Vec3f color) {
+void Element_setColor_ptr(Element* element, const Vec3f color) {
     assert(element != nullptr);
     element->visuals.color = color;
 }
 
-Element* Element_getElement(const char* name) {
+Element *Element_getElement_ptr(const char *name) {
     assert(name != nullptr);
-    Element* out = *mapGet(g_map_Elements, name);
+    Element* out = Element_get(*mapGet(gmElements, name));
     assert(out != nullptr);
     return out;
 }
@@ -157,7 +160,7 @@ bool Element_isQuadBB(const Element *element, const Vec2i mousePos) {
     return false;
 }
 
-Element *Element_addElement(
+ElementHandle Element_addElement(
     char *name,
     const Vec2i pos,
     const int width,
@@ -190,7 +193,9 @@ Element *Element_addElement(
     bool canBeHovered
 )
 {
-    Element* lastElement = Element_allocateNew(pos, width, height);
+    const ElementHandle handle = Element_allocateNewV2(pos, width, height);
+    Element* lastElement = Element_get(handle);
+
     if (mouseOver) {
         lastElement->callbacks.isMouseOver = mouseOver;
         if (hover) lastElement->callbacks.onHover = hover;
@@ -247,7 +252,7 @@ Element *Element_addElement(
     if (notSelectable) lastElement->callbacks.isMouseOver = nullptr;
 
     if (name) {
-        mapInsert(g_map_Elements, name, lastElement);
+        mapInsert(gmElements, name, handle);
     }
 
     if (text) {
@@ -259,13 +264,13 @@ Element *Element_addElement(
         t->forceResize = forceResize,
         t->pos = (Vec2f){};
         t->width = 0;
-        Element_setText(lastElement, text);
+        Element_setText_ptr(lastElement, text);
         reloadTextQuads(getFont(), lastElement);
     }
-    return lastElement;
+    return handle;
 }
 
-Element* createElement(const ElementSettings es) {
+ElementHandle createElement(const ElementSettings es) {
     return Element_addElement(es.name,
                               es.pos,
                               es.minWidth,
@@ -299,8 +304,8 @@ Element* createElement(const ElementSettings es) {
     );
 }
 
-Element* _Element_new(ElementSettings es, ...) {
-    Element* element = createElement(es);
+ElementHandle _Element_new(ElementSettings es, ...) {
+    const ElementHandle element = createElement(es);
     va_list args;
     va_start(args, es);
     Element_addChildElements_vaList(element, args);
@@ -308,16 +313,17 @@ Element* _Element_new(ElementSettings es, ...) {
     return element;
 }
 
-static Element* defaultGenerator(int, int, ElementSettings es) {
+static ElementHandle defaultGenerator(int, int, ElementSettings es) {
     return createElement(es);
 }
 
-Element* addChildrenAsGrid(const ElementSettings parentData, const ElementSettings es, const int numX, const int numY) {
+ElementHandle addChildrenAsGrid(const ElementSettings parentData, const ElementSettings es, const int numX, const int numY) {
     return addChildrenAsGridWithGenerator(parentData, es, numX, numY, defaultGenerator);
 }
 
-Element* addChildrenAsGridWithGenerator(const ElementSettings parentData, ElementSettings es, const int numX, const int numY, Element* (*generateElement)(int, int, ElementSettings)) {
-    Element* parent = createElement(parentData);
+ElementHandle addChildrenAsGridWithGenerator(const ElementSettings parentData, ElementSettings es, const int numX, const int numY, ElementHandle (*generateElement)(int, int, ElementSettings)) {
+    ElementHandle parentHandle = createElement(parentData);
+    Element* parent = Element_get(parentHandle);
     const int childWidth = parent->dims.width/numX;
     const int childHeight = parent->dims.height/numY;
 
@@ -329,10 +335,10 @@ Element* addChildrenAsGridWithGenerator(const ElementSettings parentData, Elemen
         for (int ii = 0; ii < numY; ii++) {
             es.pos.x = (parentData.childGap + childWidth) * i;
             es.pos.y = (parentData.childGap + childHeight) * ii;
-            addChildElements(parent, generateElement(i, ii, es));
+            addChildElements(parentHandle, generateElement(i, ii, es));
         }
     }
-    return parent;
+    return parentHandle;
 }
 
 void Element_printDebug(const Element* element) {

@@ -160,6 +160,9 @@ inline int test() {
     standard::vector<int> Numbers(oneHundred);
     standard::iota(IotaARGS);
 
+    std::string s = "sdfa";
+    stoi(s);
+
     /*
     standard::for_each(standard::execution::par_unseq,
         Numbers.begin(), Numbers.end(),

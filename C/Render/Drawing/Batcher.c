@@ -86,9 +86,9 @@ static size_t ssboOffsetBytes(const int index) {
     return (size_t)index * sizeof(InstanceData);
 }
 
-void uploadElementData(Element* element) {
+void uploadElementData(const Element* element) {
     if (!element) return;
-    const int id = element->ID;
+    const int id = element->handle.ID;
     if (id < 0 || id >= MAX_GUI_INSTANCES) return;
 
     const InstanceData data = instanceFromElement(element);

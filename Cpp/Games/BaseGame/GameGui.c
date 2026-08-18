@@ -132,7 +132,7 @@ void generateMainMenuGui(Element* guiRoot) {
         )
     );
 
-    Element_setActive(Element_getElement("Home Screen"), false);
+    Element_setActive_ptr(Element_getElement_ptr("Home Screen"), false);
 }
 
 void generateGUI(Element* guiRoot) {

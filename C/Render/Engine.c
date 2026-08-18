@@ -53,7 +53,7 @@ static UserCallbacks g_Callbacks;
 
 static void Engine_resetStates(Element* self);
 static void Engine_processInput(Renderer *renderer);
-static bool Engine_processInputRec(Element *element, Renderer *renderer);
+static bool Engine_processInputRec(ElementHandle elementHandle, Renderer *renderer);
 static bool Engine_handleDragElement(const Renderer *renderer);
 static void gui_processDebug();
 
@@ -80,7 +80,7 @@ void gui_init(GLFWwindow* window, const int width, const int height, void (*gene
 
     Renderer_init(&g_Renderer);
 
-    generateGUI(g_Renderer.guiRoot);
+    generateGUI(&g_Renderer.guiRoot);
 
     guiInitialized = true;
     pthread_cond_broadcast(&guiInitCond);
@@ -90,7 +90,7 @@ void gui_init(GLFWwindow* window, const int width, const int height, void (*gene
 
 void gui_update() {
     lock();
-    Engine_resetStates(g_Renderer.guiRoot);
+    Engine_resetStates(&g_Renderer.guiRoot);
     Engine_handleDragElement(&g_Renderer);
     Renderer_updateLayout(&g_Renderer);
     gui_popUpdate();
@@ -107,7 +107,7 @@ void gui_render() {
     unlock();
 }
 
-void f_gui_loadTextures(char* first, ...) {
+void _gui_loadTextures(char* first, ...) {
     assert(first != nullptr);
     va_list args;
     va_start(args, first);
@@ -131,14 +131,14 @@ void gui_setTexture(Element* e, const char* name) {
 void gui_setActive(const char* name, const bool b) {
     assert(name != nullptr);
     Thread_Locked(
-        Element_setActive(Element_getElement(name), b);
+        Element_setActive_ptr(Element_getElement_ptr(name), b);
     )
 }
 
 void gui_toggleVisible(const char* name) {
     assert(name != nullptr);
     Thread_Locked(
-        Element_toggleVisible(Element_getElement(name));
+        Element_toggleVisible_ptr(Element_getElement_ptr(name));
     )
 }
 
@@ -146,36 +146,43 @@ void gui_setText(const char* name, const char* text) {
     assert(name != nullptr);
     assert(text != nullptr);
     Thread_Locked(
-        Element_setText(Element_getElement(name), text);
+        Element_setText_ptr(Element_getElement_ptr(name), text);
     )
 }
 
 void gui_setColor(const char* name, const float r, const float g, const float b) {
     assert(name != nullptr);
     Thread_Locked(
-        Element_setColor(Element_getElement(name), (Vec3f){r, g, b});
+        Element_setColor_ptr(Element_getElement_ptr(name), (Vec3f){r, g, b});
     )
 }
 
 void gui_resetColor(const char* name) {
     assert(name != nullptr);
     Thread_Locked(
-        Element* e = Element_getElement(name);
+        Element* e = Element_getElement_ptr(name);
         assert(e != nullptr);
-        Element_setColor(e, e->visuals.defaultColor);
+        Element_setColor_ptr(e, e->visuals.defaultColor);
+    )
+}
+
+void gui_setColor_ptr(Element* ptr, float r, float g, float b) {
+    assert(ptr != nullptr);
+    Thread_Locked(
+        Element_setColor_ptr(ptr, (Vec3f){r, g, b});
     )
 }
 
 void gui_setCornerRadius(const char* name, const int radius) {
     assert(name != nullptr);
     Thread_Locked(
-        Element_getElement(name)->dims.cornerRadius = radius;
+        Element_getElement_ptr(name)->dims.cornerRadius = radius;
     )
 }
 
 static void gui_processDebug() {
-    const Element* gameBoard = Element_getElement("game board");
-    const Element* parent = gameBoard->parentElement;
+    const Element* gameBoard = Element_getElement_ptr("game board");
+    const Element* parent = Element_get(gameBoard->parentElement);
     assert(strcmp(parent->name, "GUI_ROOT") == 0);
 }
 
@@ -188,7 +195,7 @@ void gui_onKeyPressCallback(GUI_onKeyPressAction action) {
 bool gui_getActive(const char* name) {
     bool status = false;
     Thread_Locked(
-        status = Element_getElement(name)->flags.isActive;
+        status = Element_getElement_ptr(name)->flags.isActive;
     )
     return status;
 }
@@ -234,8 +241,8 @@ static void Engine_resetStates(Element* self) {
     if (!self || !self->flags.isActive) return;
     self->state = UI_STATE_NORMAL;
 
-    for_eachArr(child, self->aFlowElements, { Engine_resetStates(*child); });
-    for_eachArr(child, self->aStaticElements, { Engine_resetStates(*child); });
+    for_eachArr(child, self->aFlowElements, { Engine_resetStates(Element_get(*child)); });
+    for_eachArr(child, self->aStaticElements, { Engine_resetStates(Element_get(*child)); });
 }
 
 static Element* focusedElement = nullptr;
@@ -256,13 +263,14 @@ static bool Engine_handleDragElement(const Renderer *renderer) {
     }
 
     if (glfwGetKey(renderer->window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-        const Vec2i parentWorldPos = element->parentElement ? element->parentElement->dims.worldPos : (Vec2i){0, 0};
+        const Element* parent = Element_get(element->parentElement);
+        const Vec2i parentWorldPos = parent ? parent->dims.worldPos : (Vec2i){0, 0};
         if (!dragging) {
             offset.x = renderer->mousePos.x - element->dims.worldPos.x;
             offset.y = renderer->mousePos.y - element->dims.worldPos.y;
             dragging = true;
         } else {
-            Vec2i newPos = {
+            const Vec2i newPos = {
                 (renderer->mousePos.x - parentWorldPos.x) - offset.x,
                 (renderer->mousePos.y - parentWorldPos.y) - offset.y
             };
@@ -301,17 +309,31 @@ bool click(GLFWwindow *window, const int mouseButton) {
     return false;
 }
 
-static void Engine_processInput(Renderer *renderer) {
-    renderer->guiRoot->dims.width = renderer->screenWidth;
-    renderer->guiRoot->dims.height = renderer->screenHeight;
+static bool Engine_processInputRoot(Renderer *renderer) {
+    Element* element = &renderer->guiRoot;
+    for_eachRevArr(const child, element->aFlowElements,
+        //return if input was consumed by child element
+        if (Engine_processInputRec(*child, renderer)) return true;
+    );
+    for_eachRevArr(const child, element->aStaticElements,
+        //return if input was consumed by child element
+        if (Engine_processInputRec(*child, renderer)) return true;
+    );
+    return false;
+}
 
-    const bool consumed = Engine_processInputRec(renderer->guiRoot, renderer);
+static void Engine_processInput(Renderer *renderer) {
+    renderer->guiRoot.dims.width = renderer->screenWidth;
+    renderer->guiRoot.dims.height = renderer->screenHeight;
+
+    const bool consumed = Engine_processInputRoot(renderer);
 
     if (click(renderer->window, GLFW_MOUSE_BUTTON_LEFT) && !consumed) focusedElement = nullptr;
     if (focusedElement && focusedElement->callbacks.whileSelected) focusedElement->callbacks.whileSelected(focusedElement);
 }
 
-static bool Engine_processInputRec(Element *element, Renderer *renderer) {
+static bool Engine_processInputRec(ElementHandle elementHandle, Renderer *renderer) {
+    Element* element = Element_get(elementHandle);
     if (element == nullptr || !element->flags.isActive) return false;
     if (element->callbacks.onUpdate) element->callbacks.onUpdate(element);
 
@@ -349,7 +371,7 @@ void gui_charCallback(GLFWwindow* window, const unsigned int codepoint) {
         if (codepoint < 128) {
             str_appendCharAt(&tfd->text, (char) codepoint, tfd->cursor.byteIndex++);
 
-            Element_setText(focusedElement, tfd->text.m);
+            Element_setText_ptr(focusedElement, tfd->text.m);
         }
     }
 }
@@ -368,7 +390,7 @@ void gui_keyCallback(GLFWwindow* window, int key, int scancode, int action, int 
             TextFieldData* tfd = focusedElement->elementData;
             if (key == GLFW_KEY_BACKSPACE && tfd->cursor.byteIndex != 0) {
                 str_popCharAt(&tfd->text, --tfd->cursor.byteIndex);
-                Element_setText(focusedElement,  tfd->text.m);
+                Element_setText_ptr(focusedElement,  tfd->text.m);
             }
             else if (key == GLFW_KEY_LEFT && tfd->cursor.byteIndex != 0) {
                 tfd->cursor.byteIndex--;

@@ -6,51 +6,43 @@
 
 #include <stdio.h>
 
-#if 0
-void initSockets() {
+#include "Utils/Logging/Logging.h"
+
 #ifdef _WIN32
+void initSockets() {
     WSADATA wsa;
-    if (WSAStartup(MAKEWORD(2,2), &wsa) != 0) {
-        printf("WSAStartup failed.\n");
-        exit(1);
-    }
-#endif
+    if (WSAStartup(MAKEWORD(2,2), &wsa) != 0) ERROR_("WSAStartup failed.\n");
 }
 
 SOCKET createServerSocket(const int port) {
     const SOCKET serverSock = socket(AF_INET, SOCK_STREAM, 0);
-    if (serverSock == INVALID_SOCKET) { perror("socket"); exit(1); }
+    if (serverSock == INVALID_SOCKET) ERROR_("Socket was invalid");
 
     struct sockaddr_in addr;
     addr.sin_family = AF_INET;
     addr.sin_port = htons(port);
     addr.sin_addr.s_addr = INADDR_ANY;
 
-    if (bind(serverSock, (struct sockaddr*)&addr, sizeof(addr)) < 0) {
-        perror("bind"); exit(1);
-    }
-
-    if (listen(serverSock, 1) < 0) { perror("listen"); exit(1); }
+    if (bind(serverSock, (struct sockaddr*)&addr, sizeof(addr)) < 0) ERROR_("Binding failed");
+    if (listen(serverSock, 1) < 0) ERROR_("Listening failed");
 
     printf("Waiting for client...\n");
-    const SOCKET clientSock = accept(serverSock, NULL, NULL);
+    const SOCKET clientSock = accept(serverSock, nullptr, nullptr);
     closesocket(serverSock);
     printf("Client connected!\n");
     return clientSock;
 }
 
 SOCKET createClientSocket(const char* ip, const int port) {
-    SOCKET sock = socket(AF_INET, SOCK_STREAM, 0);
-    if (sock == INVALID_SOCKET) { perror("socket"); exit(1); }
+    const SOCKET sock = socket(AF_INET, SOCK_STREAM, 0);
+    if (sock == INVALID_SOCKET) ERROR_("Socket creation failed");
 
     struct sockaddr_in addr;
     addr.sin_family = AF_INET;
     addr.sin_port = htons(port);
     addr.sin_addr.s_addr = inet_addr(ip);
 
-    if (connect(sock, (struct sockaddr*)&addr, sizeof(addr)) < 0) {
-        perror("connect"); exit(1);
-    }
+    if (connect(sock, (struct sockaddr*)&addr, sizeof(addr)) < 0) ERROR_("Connection failed");
 
     printf("Connected to server!\n");
     return sock;
