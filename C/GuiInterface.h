@@ -45,9 +45,6 @@ typedef void (*GUI_onKeyPressAction)(int key, int scancode, int action, int mods
     void gui_onKeyPressCallback(GUI_onKeyPressAction action);
 
     bool gui_getActive(const char* name);
-
-    void gui_processDebug();
-
 #ifdef __cplusplus
 }
 #endif

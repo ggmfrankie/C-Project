@@ -9,7 +9,6 @@
 
 #include "GUI/GuiElement.h"
 #include "Drawing/Render.h"
-#include "GUI/CallbackFunctions.h"
 #include "GLFW/glfw3.h"
 
 #include "GUI/GuiElementData.h"
@@ -18,6 +17,8 @@
 #include "Utils/Makros/Makros.h"
 #include "Render/Drawing/TextDisplaying.h"
 #include "Utils/DataStructures/CArrayList.h"
+
+#include "GuiInterface.h"
 
 #define WIDTH 4096
 #define HEIGHT 600
