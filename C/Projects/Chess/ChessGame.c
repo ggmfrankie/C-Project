@@ -82,7 +82,7 @@ typedef void (*MarkerFun)(PieceColor color, int row, int column, MarkType type);
 typedef bool (*Marker)(int row, int column, int pieceRow, int pieceCol, PieceColor color);
 
 static Square board[8][8] = {};
-static Element* pieceSlots[8][8] = {};
+static ElementHandle pieceSlots[8][8] = {};
 static BoardDirection boardDirection = whiteDown;
 static bool turnPosCanCastle = true;
 static bool turnNegCanCastle = true;
@@ -601,12 +601,13 @@ static void setUpPiecesForTest() {
 static void syncGui() {
     for (int i = 0; i < 8; i++) {
         for (int ii = 0; ii < 8; ii++) {
-            gui_setTexture(pieceSlots[i][ii], getTextureForPiece(board[i][ii].piece));
+            Element* element = Element_get(pieceSlots[i][ii]);
+            gui_setTexture(element, getTextureForPiece(board[i][ii].piece));
 
-            const Vec3f d = pieceSlots[i][ii]->parentElement->visuals.defaultColor;
+            const Vec3f d = Element_get(element->parentElement)->visuals.defaultColor;
             const Vec3f defaultColor = {d.x,d.y,d.z};
             const Vec3f color = board[i][ii].isMarked ? Vec3f_Add(COLOR_DARKYELLOW, Vec3f_Mul(defaultColor, 0.2f)) : defaultColor;
-            Element_setColor(pieceSlots[i][ii]->parentElement, color);
+            Element_setColor_ptr(Element_get(element->parentElement), color);
         }
     }
 }
@@ -650,7 +651,7 @@ static void closeGame(void*) {
     resetBoard(nullptr);
 }
 
-static Element* createChessSquares(const int row, const int col, ElementSettings es) {
+static ElementHandle createChessSquares(const int row, const int col, ElementSettings es) {
     es.color = ((row+col) % 2 ? COLOR_GRAY : COLOR_WHITE);
 
     const ElementSettings pieceDisplaySettings = {
@@ -661,11 +662,11 @@ static Element* createChessSquares(const int row, const int col, ElementSettings
         .transparency = 1.0f,
     };
 
-    Element* square = createElement(es);
-    Element* piece = createElement(pieceDisplaySettings);
+    ElementHandle square = createElement(es);
+    ElementHandle piece = createElement(pieceDisplaySettings);
 
     pieceSlots[col][row] = piece;
-    return addChildElements(square, piece);
+    return addChildElements(Element_get(square), piece);
 }
 
 static void createChessBoard(Element* root) {

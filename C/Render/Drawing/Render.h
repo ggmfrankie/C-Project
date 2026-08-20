@@ -22,14 +22,14 @@ typedef struct Renderer {
     Font font;
     TextureAtlas texAtlas;
 
-    Element guiRoot;
+    ElementHandle guiRoot;
 } Renderer;
 
 Renderer newGUIRenderer(GLFWwindow* window, int width, int height, const char *fontFile);
 void Renderer_init(Renderer *renderer);
 
 void Renderer_render(const Renderer *renderer);
-void Renderer_updateLayout(Renderer *renderer);
+void Renderer_updateLayout(const Renderer *renderer);
 void Renderer_destroy(const Renderer *renderer);
 
 bool isMousePressed(GLFWwindow* window, int mouseButton);

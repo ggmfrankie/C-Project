@@ -174,7 +174,8 @@ typedef struct ElementSettings {
 
 } ElementSettings;
 
-ElementHandle Element_addChildElements(ElementHandle parent, ...);
+void Element_init();
+ElementHandle Element_addChildElements(Element *parent, ...);
 
 ElementHandle Element_addChildElements_vaList(ElementHandle parentHandle, va_list args);
 

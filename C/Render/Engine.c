@@ -76,11 +76,13 @@ static void* workerThreadInit(void* args) {
 
 void gui_init(GLFWwindow* window, const int width, const int height, void (*generateGUI)(Element* guiRoot)) {
     g_mainThread = pthread_self();
+    Element_init();
+
     g_Renderer = newGUIRenderer(window, width, height, "ARIAL.TTF");
 
     Renderer_init(&g_Renderer);
 
-    generateGUI(&g_Renderer.guiRoot);
+    generateGUI(Element_get(g_Renderer.guiRoot));
 
     guiInitialized = true;
     pthread_cond_broadcast(&guiInitCond);
@@ -90,7 +92,7 @@ void gui_init(GLFWwindow* window, const int width, const int height, void (*gene
 
 void gui_update() {
     lock();
-    Engine_resetStates(&g_Renderer.guiRoot);
+    Engine_resetStates(Element_get(g_Renderer.guiRoot));
     Engine_handleDragElement(&g_Renderer);
     Renderer_updateLayout(&g_Renderer);
     gui_popUpdate();
@@ -310,12 +312,16 @@ bool click(GLFWwindow *window, const int mouseButton) {
 }
 
 static bool Engine_processInputRoot(Renderer *renderer) {
-    Element* element = &renderer->guiRoot;
-    for_eachRevArr(const child, element->aFlowElements,
+    Element* root = Element_get(renderer->guiRoot);
+
+    root->dims.width = renderer->screenWidth;
+    root->dims.height = renderer->screenHeight;
+
+    for_eachRevArr(const child, root->aFlowElements,
         //return if input was consumed by child element
         if (Engine_processInputRec(*child, renderer)) return true;
     );
-    for_eachRevArr(const child, element->aStaticElements,
+    for_eachRevArr(const child, root->aStaticElements,
         //return if input was consumed by child element
         if (Engine_processInputRec(*child, renderer)) return true;
     );
@@ -323,9 +329,6 @@ static bool Engine_processInputRoot(Renderer *renderer) {
 }
 
 static void Engine_processInput(Renderer *renderer) {
-    renderer->guiRoot.dims.width = renderer->screenWidth;
-    renderer->guiRoot.dims.height = renderer->screenHeight;
-
     const bool consumed = Engine_processInputRoot(renderer);
 
     if (click(renderer->window, GLFW_MOUSE_BUTTON_LEFT) && !consumed) focusedElement = nullptr;

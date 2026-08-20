@@ -20,6 +20,10 @@
 static SparseSet gElements;
 static ElementHandle* gmElements;
 
+void Element_init() {
+    gElements = SparseSet_new(Element, 512);
+}
+
 ElementHandle Element_allocateNewV2(const Vec2i pos, const int width, const int height) {
     const ElementHandle handle = {
         .ID = SparseSet_add(&gElements, (Element){
@@ -67,12 +71,12 @@ ElementHandle Element_allocateNewV2(const Vec2i pos, const int width, const int 
     return handle;
 }
 
-ElementHandle Element_addChildElements(ElementHandle parent, ...) {
+ElementHandle Element_addChildElements(Element *parent, ...) {
     va_list args;
     va_start(args, parent);
-    Element_addChildElements_vaList(parent, args);
+    Element_addChildElements_vaList(parent->handle, args);
     va_end(args);
-    return parent;
+    return parent->handle;
 }
 
 ElementHandle Element_addChildElements_vaList(ElementHandle parentHandle, va_list args) {
@@ -335,7 +339,7 @@ ElementHandle addChildrenAsGridWithGenerator(const ElementSettings parentData, E
         for (int ii = 0; ii < numY; ii++) {
             es.pos.x = (parentData.childGap + childWidth) * i;
             es.pos.y = (parentData.childGap + childHeight) * ii;
-            addChildElements(parentHandle, generateElement(i, ii, es));
+            addChildElements(parent, generateElement(i, ii, es));
         }
     }
     return parentHandle;

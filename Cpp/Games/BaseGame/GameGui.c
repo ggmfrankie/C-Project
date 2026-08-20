@@ -22,23 +22,22 @@ void quitTask(void*) {
 
 void generateDebugGui(Element* guiRoot) {
     addChildElements(guiRoot,
-        addChildElements(
-            createElement((ElementSettings){
+            Element_new((ElementSettings){
                 .minHeight = 20,
                 .maxHeight = true,
                 .cantBeSelected = true,
                 .invisible = true,
                 .color = {},
                 .posMode = POS_RELATIVE
-            }),
-            createElement((ElementSettings){
-                .minWidth = 20,
-                .text = "fps",
-                .cantBeSelected = true,
-                .invisible = true,
-                .name = "fps display"
-            })
-        )
+            },
+                Element_new((ElementSettings){
+                    .minWidth = 20,
+                    .text = "fps",
+                    .cantBeSelected = true,
+                    .invisible = true,
+                    .name = "fps display"
+                })
+            )
     );
 }
 

@@ -26,51 +26,11 @@ void TFE_newGame() {
 }
 
 Element* TFE_createSquare(int, int, ElementSettings es) {
-    return addChildElements(
-        createElement(es),
-        createElement((ElementSettings){
-            .text = "test",
-            .pos = {20, 30},
-            .posMode = POS_RELATIVE,
-            .transparency = 1.0f
-        })
-    );
+    return nullptr;
 }
 
 void TFE_createGUI(Element* root) {
 
-    addChildElements(root,
-        addChildElements(
-            createElement((ElementSettings){
-                .pos = {400, 400},
-                .cornerRadius = 10,
-                .draggable = true,
-                .color = {0.4, 0.6, 0.7},
-                .name = "TFE_board"
-            }),
-            createElement((ElementSettings){
-                .text = "Hello to 2048",
-                .transparency = 1.0f,
-                .cantBeSelected = true
-            }),
-            addChildrenAsGridWithGenerator(
-                (ElementSettings){
-                    .color = {0.4, 0.6, 0.7},
-                    .minWidth = 400,
-                    .minHeight = 400,
-                    .maxWidth = true,
-                    .maxHeight = true,
-                    .padding = {10,10,10,10},
-                    .childGap = 10
-                },
-                (ElementSettings){
-                    .color = {0.3, 0.3, 0.3},
-                    .cornerRadius = 20
-                }, 4, 4, TFE_createSquare
-            )
-        )
-    );
-    Element_setActive_ptr(Element_getElement_ptr("TFE_board"), false);
 }
 
 void TFE_run() {

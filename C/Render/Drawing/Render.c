@@ -12,12 +12,12 @@
 #include "../../Utils/DataStructures/CArrayList.h"
 #include "../../Utils/Makros/Makros.h"
 
-static void accumulateMeshes(const Element *element, const Renderer *renderer, GuiVertex *vertices, int *vt, int *indices, int *id);
+static void accumulateMeshes(ElementHandle element, const Renderer *renderer, GuiVertex *vertices, int *vt, int *indices, int *id);
 static Cache* cacheLayout(Element* self);
 
 static void placeChildElements(const Element* self);
 
-Element createRootElement();
+ElementHandle createRootElement();
 
 [[deprecated]]
 GLFWwindow* initWindow(const int width, const int height, const char* name) {
@@ -102,14 +102,14 @@ void Renderer_render(const Renderer *renderer) {
     setUniform(&renderer->guiShader, "screenWidth", (float) renderer->screenWidth);
     setUniform(&renderer->guiShader, "screenHeight", (float) renderer->screenHeight);
 
-    const Element* guiRoot = &renderer->guiRoot;
 
-    accumulateMeshes(guiRoot,
-            renderer,
-            vertices,
-            &numVertices,
-            indices,
-            &numIndices
+
+    accumulateMeshes(renderer->guiRoot,
+                     renderer,
+                     vertices,
+                     &numVertices,
+                     indices,
+                     &numIndices
     );
 
     uploadBatchedQuads(vertices, numVertices, indices, numIndices);
@@ -119,7 +119,8 @@ void Renderer_render(const Renderer *renderer) {
     Shader_unbindProgram();
 }
 
-static void accumulateMeshes(const Element *element, const Renderer *renderer, GuiVertex *vertices, int *vt, int *indices, int *id) {
+static void accumulateMeshes(const ElementHandle elementHandle, const Renderer *renderer, GuiVertex *vertices, int *vt, int *indices, int *id) {
+    Element* element = Element_get(elementHandle);
     if (element == nullptr || !element->flags.isActive) return;
 
     //beginScissor(element, renderer->screenHeight);
@@ -140,16 +141,16 @@ static void accumulateMeshes(const Element *element, const Renderer *renderer, G
     //endScissor();
 
     for_eachArr(flowElement, element->aFlowElements, {
-        accumulateMeshes(Element_get(*flowElement), renderer, vertices, vt, indices, id);
+        accumulateMeshes(*flowElement, renderer, vertices, vt, indices, id);
     });
 
     for_eachArr(staticElement, element->aStaticElements, {
-        accumulateMeshes(Element_get(*staticElement), renderer, vertices, vt, indices, id);
+        accumulateMeshes(*staticElement, renderer, vertices, vt, indices, id);
     });
 }
 
-void Renderer_updateLayout(Renderer *renderer) {
-    Element* root = &renderer->guiRoot;
+void Renderer_updateLayout(const Renderer *renderer) {
+    Element* root = Element_get(renderer->guiRoot);
 
     root->dims.worldWidth  = renderer->screenWidth;
     root->dims.worldHeight = renderer->screenHeight;
@@ -159,7 +160,7 @@ void Renderer_updateLayout(Renderer *renderer) {
 
     cacheLayout(root);
 
-    placeChildElements(&renderer->guiRoot);
+    placeChildElements(root);
 }
 
 static void clearCache(Element* self) {
@@ -452,12 +453,13 @@ Renderer newGUIRenderer(GLFWwindow* window, const int width, const int height, c
     };
 }
 
-Element createRootElement() {
-    const Element e = {
+ElementHandle createRootElement() {
+    const ElementHandle root = Element_new((ElementSettings){
+        .invisible = true,
         .name = "GUI_ROOT",
-        .flags.invisible = true,
-    };
-    return e;
+        .cantBeSelected = true
+    });
+    return root;
 }
 
 void Renderer_destroy(const Renderer *renderer) {

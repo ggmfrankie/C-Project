@@ -322,7 +322,7 @@ void chess_loadTextures() {
 
 }
 
-static Element* createChessSquares(const int row, const int col, ElementSettings es) {
+static ElementHandle createChessSquares(const int row, const int col, ElementSettings es) {
     es.color = ((row+col) % 2 ? COLOR_GRAY : COLOR_WHITE);
 
     const ElementSettings pieceDisplaySettings = {
@@ -333,14 +333,14 @@ static Element* createChessSquares(const int row, const int col, ElementSettings
         .transparency = 0.0f,
     };
 
-    Element* square = createElement(es);
-    Element* piece = createElement(pieceDisplaySettings);
+    ElementHandle square = createElement(es);
+    ElementHandle piece = createElement(pieceDisplaySettings);
 
-    return addChildElements(square, piece);
+    return addChildElements(Element_get(square), piece);
 }
 
 void chess_createChessBoard(Element* element) {
-    Element* board = addChildrenAsGridWithGenerator(
+    ElementHandle board = addChildrenAsGridWithGenerator(
                  (ElementSettings){
                      .color = {0.5f, 0.0f, 0.3f},
                      .minWidth = 400,
@@ -354,58 +354,5 @@ void chess_createChessBoard(Element* element) {
                  createChessSquares
                 );
 
-    addChildElements(element,
-        addChildElements(createElement((ElementSettings){
-            .draggable = true,
-            .pos = {200, 200},
-            .color = COLOR_DARKYELLOW,
-            .padding = {10, 10, 10, 10},
-        }
-            ),
-            createElement((ElementSettings){
-                .text = "Chess",
-                .color = COLOR_DARKYELLOW,
-                .padding = {10,1,10,10},
-                .cantBeSelected = true
-            }  ),
-            addChildElements(
-                createElement((ElementSettings){
-                    .minHeight = 600,
-                    .maxHeight = true,
-                    .cantBeSelected = true,
-                    .color = COLOR_GRAY,
-                }),
-                board
-                ,addChildElements(
-                    createElement((ElementSettings){
-                        .layoutDirection = LAYOUT_RIGHT
-                    })
-                    ,createElement((ElementSettings){.color =  0.5,0,0.25,.minWidth = 400/8,.minHeight = 400/8, .text = "a"})
-                    ,createElement((ElementSettings){.color =  0.5,0,0.25,.minWidth = 400/8,.minHeight = 400/8, .text = "b"})
-                    ,createElement((ElementSettings){.color =  0.5,0,0.25,.minWidth = 400/8,.minHeight = 400/8, .text = "c"})
-                    ,createElement((ElementSettings){.color =  0.5,0,0.25,.minWidth = 400/8,.minHeight = 400/8, .text = "d"})
-                    ,createElement((ElementSettings){.color =  0.5,0,0.25,.minWidth = 400/8,.minHeight = 400/8, .text = "e"})
-                    ,createElement((ElementSettings){.color =  0.5,0,0.25,.minWidth = 400/8,.minHeight = 400/8, .text = "f"})
-                    ,createElement((ElementSettings){.color =  0.5,0,0.25,.minWidth = 400/8,.minHeight = 400/8, .text = "g"})
-                    ,createElement((ElementSettings){.color =  0.5,0,0.25,.minWidth = 400/8,.minHeight = 400/8, .text = "h"})
-                    ),
-                    addChildElements(
-                createElement((ElementSettings){
-                        .layoutDirection = LAYOUT_DOWN,
-                    })
 
-                    ,createElement((ElementSettings){.color =  0.5,0,0.25,.minWidth = 400/8,.minHeight = 400/8,.text = "1"})
-                    ,createElement((ElementSettings){.color =  0.5,0,0.25,.minWidth = 400/8,.minHeight = 400/8,.text = "2"})
-                    ,createElement((ElementSettings){.color =  0.5,0,0.25,.minWidth = 400/8,.minHeight = 400/8,.text = "3"})
-                    ,createElement((ElementSettings){.color =  0.5,0,0.25,.minWidth = 400/8,.minHeight = 400/8,.text = "4"})
-                    ,createElement((ElementSettings){.color =  0.5,0,0.25,.minWidth = 400/8,.minHeight = 400/8,.text = "5"})
-                    ,createElement((ElementSettings){.color =  0.5,0,0.25,.minWidth = 400/8,.minHeight = 400/8,.text = "6"})
-                    ,createElement((ElementSettings){.color =  0.5,0,0.25,.minWidth = 400/8,.minHeight = 400/8,.text = "7"})
-                    ,createElement((ElementSettings){.color =  0.5,0,0.25,.minWidth = 400/8,.minHeight = 400/8,.text = "8"})
-                )
-             )
-
-
-             )
-    );
 }

@@ -7,11 +7,11 @@
 #include "Render/GUI/GuiElementData.h"
 #include "Utils/DataStructures/CArrayList.h"
 
-Element *TextField_new(const ElementSettings elementSettings, bool (*onEnterCallback)(Element* element, Renderer *renderer)) {
-    Element* element = createElement(elementSettings);
+ElementHandle TextField_new(const ElementSettings elementSettings, bool (*onEnterCallback)(Element *element, Renderer *renderer)) {
+    ElementHandle element = createElement(elementSettings);
     TextFieldData* textData = calloc(1, sizeof(TextFieldData));
     textData->onEnterCallback = onEnterCallback;
-    Element* textField = createElement(
+    ElementHandle textField = createElement(
         (ElementSettings){
             .minWidth = elementSettings.minWidth,
             .minHeight = elementSettings.minHeight,
@@ -23,9 +23,9 @@ Element *TextField_new(const ElementSettings elementSettings, bool (*onEnterCall
             .task = elementSettings.task,
         }
     );
-    textField->type = t_textField;
-    element->type = t_textField;
-    addChildElements(element, textField);
+    Element_get(textField)->type = t_textField;
+    Element_get(element)->type = t_textField;
+    addChildElements(Element_get(element), textField);
 
     return element;
 }
