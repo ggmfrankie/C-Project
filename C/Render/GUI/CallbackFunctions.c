@@ -11,30 +11,19 @@
 #ifdef _WIN32
 #include <windows.h>
 #endif
+#include "CallbackFunctions.h"
 #include "GuiElement.h"
 #include "GLFW/glfw3.h"
+#include <stdint.h>
 #include "../../Utils/DataStructures/CArrayList.h"
-#include "CallbackFunctions.h"
 
-bool isSelectedCharacter(Vec2f pos, float width, float height, const Vec2i mousePos) {
-    if ((float)mousePos.x <= pos.x+width && (float)mousePos.x >= pos.x &&
-        (float)mousePos.y <= pos.y+height && (float)mousePos.y >= pos.y) {
-        return true;
-        }
-    return false;
-}
-
-bool defaultHoverFun(Element *element, Renderer *renderer) {
-
-    return false;
-}
-
-bool changeColorOnHoverFun(Element *element, Renderer *renderer) {
+bool onHover_changeColor(Element *element, Renderer *renderer) {
     element->visuals.color = *(Vec3f*) (element->elementData);
     return false;
 }
 
 void onRequestMove_SimpleDrag(Element *element, Vec2i pos) {
+    element->dims.pos = pos;
 }
 
 bool runTaskFun(Element *element, Renderer *renderer) {
@@ -77,7 +66,7 @@ void updateColorRainbow(Element *element) {
     const unsigned long long timeNs = currentTime - lastTime;
 
     hue += 120.0 * (double)timeNs * 1e-9;
-    if (hue >= 360.0) hue -= 360.0;
+    if (hue >= 360.0) hue = 0;
 
     const Vec3f color = hsv_to_rgb((float)hue, .3f, 1.0f);
     element->visuals.color = color;

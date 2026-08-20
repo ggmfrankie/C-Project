@@ -93,8 +93,7 @@ namespace Engine {
             auto [command, rawArgs] = extractCommandAndArgs(tokens);
 
             const auto it = commands.find(command);
-            if (it == commands.end())
-                throw std::runtime_error("Unknown command: " + command);
+            if (it == commands.end()) return;
 
             it->second->run(rawArgs);
         }

@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include "../../Render/GUI/CallbackFunctions.h"
 #include "../../Utils/DataStructures/CArrayList.h"
+#include "Utils/Makros/Defer.h"
 
 #define COOL_COLOR (Vec3f){.2, .3, .3}
 #define COLOR_WHITE (Vec3f){1, 1, 1}
@@ -279,14 +280,14 @@ void chess_getMoves (ChessPiece piece, int row, int col) {
 
 void chess_loadChessPosition(char* fen) {
     const String fenString = stringOf(fen);
-    String* aFenPieces = str_split(&fenString, " ");
+    defer(defer_arrDelete) String* aFenPieces = str_split(&fenString, " ");
 
-    String* aRanks = str_split(&aFenPieces[0], "/");
-    for (int i = 0; i < arrLen(aRanks); i++) {
-        const String* rank = &aRanks[i];
+    defer(defer_arrDelete) String* aRanks = str_split(&aFenPieces[0], "/");
+
+    for_eachArr(rank, aRanks, {
         int col = 0;
         for (int j = 0; j < rank->length; j++) {
-            char c = rank->m[j];
+            const char c = rank->m[j];
             switch (c) {
                 case 'p': chess_board.squares[i][col++].piece = blackPawn; break;
                 case 'n': chess_board.squares[i][col++].piece = blackKing; break;
@@ -311,11 +312,8 @@ void chess_loadChessPosition(char* fen) {
                     break;
             }
         }
-    }
+    });
     chess_board.turn = aFenPieces[1].m[0] == 'b' ? Black : White;
-
-    arrDelete(aFenPieces);
-    arrDelete(aRanks);
 }
 
 void chess_loadTextures() {
@@ -328,13 +326,13 @@ static ElementHandle createChessSquares(const int row, const int col, ElementSet
     const ElementSettings pieceDisplaySettings = {
         .minWidth = es.minWidth,
         .minHeight = es.minHeight,
-        .cantBeSelected = true,
+        .canNotBeSelected = true,
         .color = {},
         .transparency = 0.0f,
     };
 
-    ElementHandle square = createElement(es);
-    ElementHandle piece = createElement(pieceDisplaySettings);
+    const ElementHandle square = createElement(es);
+    const ElementHandle piece = createElement(pieceDisplaySettings);
 
     return addChildElements(Element_get(square), piece);
 }
@@ -348,7 +346,6 @@ void chess_createChessBoard(Element* element) {
                  },
                  (ElementSettings){
                      .color = COLOR_WHITE,
-                     .onHover = defaultHoverFun,
                      .onClick = runTaskFun,
                  }, 8, 8,
                  createChessSquares

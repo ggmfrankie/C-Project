@@ -652,18 +652,18 @@ static void closeGame(void*) {
 }
 
 static ElementHandle createChessSquares(const int row, const int col, ElementSettings es) {
-    es.color = ((row+col) % 2 ? COLOR_GRAY : COLOR_WHITE);
+    es.color = (row+col) % 2 ? COLOR_GRAY : COLOR_WHITE;
 
     const ElementSettings pieceDisplaySettings = {
         .minWidth = es.minWidth,
         .minHeight = es.minHeight,
-        .cantBeSelected = true,
+        .canNotBeSelected = true,
         .color = {},
         .transparency = 1.0f,
     };
 
-    ElementHandle square = createElement(es);
-    ElementHandle piece = createElement(pieceDisplaySettings);
+    const ElementHandle square = createElement(es);
+    const ElementHandle piece = createElement(pieceDisplaySettings);
 
     pieceSlots[col][row] = piece;
     return addChildElements(Element_get(square), piece);
@@ -690,7 +690,7 @@ static void createChessBoard(Element* root) {
                     .padding = {10,10,10,10}
                 },(ElementSettings){
                     .color = COLOR_WHITE,
-                    .onHover = defaultHoverFun,
+                    .canBeHovered = true,
                     .onClick = runTaskFun,
                     .task = {onSquareClicked2, THIS_ELEMENT}
                 },
@@ -729,7 +729,7 @@ static void createChessBoard(Element* root) {
                     .wantGrowHorizontal = true,
                     .maxWidth = 400,
                     .layoutDirection = LAYOUT_RIGHT,
-                    .cantBeSelected = true,
+                    .canNotBeSelected = true,
                     .cornerRadius = 10,
                     .name = "panel"
                 },
@@ -791,7 +791,7 @@ static void createStartScreen(Element* root) {
                 Element_new((ElementSettings){
                     .color = {.2, .3, .3},
                     .text = "Chess Game",
-                    .cantBeSelected = true
+                    .canNotBeSelected = true
                 }),
                 Element_new((ElementSettings){
                     .layoutDirection = LAYOUT_RIGHT,
@@ -846,7 +846,6 @@ static void createEndScreen(Element* root) {
                     .color = {.8, .0, .0},
                     .padding = {10,10,10,10},
                     .text = "End it all",
-                    .onHover = defaultHoverFun,
                     .onClick = runTaskFun,
                     .task = closeProgram
                 })

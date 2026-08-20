@@ -4,6 +4,8 @@
 #include "../../../Dependencies/include/glad/gl.h"
 #include "Render.h"
 
+#include <string.h>
+
 #include "Batcher.h"
 #include "RenderTypes.h"
 #include "../../Utils/Math/Vector.h"
@@ -11,6 +13,7 @@
 #include "Render/GUI/GuiElement.h"
 #include "../../Utils/DataStructures/CArrayList.h"
 #include "../../Utils/Makros/Makros.h"
+#include "Utils/Misc/UtilityFun.h"
 
 static void accumulateMeshes(ElementHandle element, const Renderer *renderer, GuiVertex *vertices, int *vt, int *indices, int *id);
 static Cache* cacheLayout(Element* self);
@@ -457,7 +460,7 @@ ElementHandle createRootElement() {
     const ElementHandle root = Element_new((ElementSettings){
         .invisible = true,
         .name = "GUI_ROOT",
-        .cantBeSelected = true
+        .canNotBeSelected = true
     });
     return root;
 }

@@ -69,7 +69,6 @@ typedef struct Element {
         bool canBeHovered: 1;
         bool fixedWidth: 1;
         bool fixedHeight: 1;
-        bool draggable: 1;
         bool needsDeletion: 1;
         bool wantGrowHorizontal: 1;
         bool wantGrowVertical: 1;
@@ -165,7 +164,7 @@ typedef struct ElementSettings {
     bool canBeHovered;
     bool autoFit;
     bool invisible;
-    bool cantBeSelected;
+    bool canNotBeSelected;
     bool draggable;
     bool wantGrowHorizontal;
     bool wantGrowVertical;

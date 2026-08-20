@@ -25,7 +25,7 @@ void generateDebugGui(Element* guiRoot) {
             Element_new((ElementSettings){
                 .minHeight = 20,
                 .maxHeight = true,
-                .cantBeSelected = true,
+                .canNotBeSelected = true,
                 .invisible = true,
                 .color = {},
                 .posMode = POS_RELATIVE
@@ -33,7 +33,7 @@ void generateDebugGui(Element* guiRoot) {
                 Element_new((ElementSettings){
                     .minWidth = 20,
                     .text = "fps",
-                    .cantBeSelected = true,
+                    .canNotBeSelected = true,
                     .invisible = true,
                     .name = "fps display"
                 })
@@ -65,7 +65,7 @@ void generateMainMenuGui(Element* guiRoot) {
         },
             Element_new((ElementSettings){
                 .invisible = true,
-                .cantBeSelected = true,
+                .canNotBeSelected = true,
                 .text = "Home Screen",
             }),
             TextField_new((ElementSettings){

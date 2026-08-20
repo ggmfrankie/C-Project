@@ -72,3 +72,11 @@ bool TextField_runTask(Element *element, Renderer *renderer) {
     }
     return true;
 }
+
+bool isSelectedCharacter(Vec2f pos, float width, float height, const Vec2i mousePos) {
+    if ((float)mousePos.x <= pos.x+width && (float)mousePos.x >= pos.x &&
+        (float)mousePos.y <= pos.y+height && (float)mousePos.y >= pos.y) {
+        return true;
+        }
+    return false;
+}

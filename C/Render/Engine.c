@@ -259,39 +259,34 @@ static bool Engine_handleDragElement(const Renderer *renderer) {
     Element* element = mouseCapturedElement;
     static Vec2i offset;
 
-    if (isMousePressed(renderer->window, GLFW_MOUSE_BUTTON_LEFT)) {
+    if (!isMousePressed(renderer->window, GLFW_MOUSE_BUTTON_LEFT)) {
         dragging = false;
         mouseCapturedElement = nullptr;
         return false;
     }
 
-    if (glfwGetKey(renderer->window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-        const Element* parent = Element_get(element->parentElement);
-        const Vec2i parentWorldPos = parent ? parent->dims.worldPos : (Vec2i){0, 0};
-        if (!dragging) {
-            offset.x = renderer->mousePos.x - element->dims.worldPos.x;
-            offset.y = renderer->mousePos.y - element->dims.worldPos.y;
-            dragging = true;
-        } else {
-            const Vec2i newPos = {
-                (renderer->mousePos.x - parentWorldPos.x) - offset.x,
-                (renderer->mousePos.y - parentWorldPos.y) - offset.y
-            };
-            element->callbacks.requestMove(element, newPos);
-            element->positionMode = POS_RELATIVE;
-
+    const Element *parent = Element_get(element->parentElement);
+    const Vec2i parentWorldPos = parent ? parent->dims.worldPos : (Vec2i){0, 0};
+    if (!dragging) {
+        offset.x = renderer->mousePos.x - element->dims.worldPos.x;
+        offset.y = renderer->mousePos.y - element->dims.worldPos.y;
+        dragging = true;
+    } else {
+        const Vec2i newPos = {
+            (renderer->mousePos.x - parentWorldPos.x) - offset.x,
+            (renderer->mousePos.y - parentWorldPos.y) - offset.y
+        };
+        element->callbacks.requestMove(element, newPos);
 #if GUI_DEBUG_TRACE_DRAGGING
-            only_every_do(100, {
-                printf("World pos is: %i, %i, Relative pos is: %i, %i\n",
-                    element->dims.worldPos.x,
-                    element->dims.worldPos.y,
-                    element->dims.pos.x,
-                    element->dims.pos.y
-                );
-            });
+        only_every_do(100, {
+                      printf("World pos is: %i, %i, Relative pos is: %i, %i\n",
+                          element->dims.worldPos.x,
+                          element->dims.worldPos.y,
+                          element->dims.pos.x,
+                          element->dims.pos.y
+                      );
+                      });
 #endif
-
-        }
         return true;
     }
     return false;

@@ -228,7 +228,6 @@ ElementHandle Element_addElement(
     lastElement->elementData = elementData;
     lastElement->layoutDirection = layoutDirection;
     lastElement->callbacks.whileSelected = whileSelected;
-    lastElement->flags.draggable = draggable;
     lastElement->callbacks.onUpdate = onUpdate;
     lastElement->flags.wantGrowHorizontal = wantGrowHorizontal;
     lastElement->flags.wantGrowVertical = wantGrowVertical;
@@ -239,6 +238,10 @@ ElementHandle Element_addElement(
     lastElement->dims.cornerRadius = cornerRadius;
     lastElement->dims.flexGrow = flexGrow;
     lastElement->flags.canBeHovered = canBeHovered;
+
+    if (draggable) {
+        lastElement->callbacks.requestMove = onRequestMove_SimpleDrag;
+    }
 
     if (maxWidth) {
         lastElement->dims.maxWidth = maxWidth;
@@ -290,7 +293,7 @@ ElementHandle createElement(const ElementSettings es) {
                               true,
                               es.posMode,
                               es.elementData,
-                              es.cantBeSelected,
+                              es.canNotBeSelected,
                               es.layoutDirection,
                               es.maxWidth,
                               es.maxHeight,

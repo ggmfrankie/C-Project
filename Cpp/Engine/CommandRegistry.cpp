@@ -87,10 +87,10 @@ namespace Engine {
             {anyState, '\0', State::start, resetState}
         };
 
-        for (auto &t : transitions) {
-            if (prevMatches(t.prevState, state) && charMatches(t.event, ch)) {
-                if (t.actionFun.has_value()) t.actionFun.value()(tokens, str);
-                state = t.nextState;
+        for (auto &[prevState, event, nextState, actionFun] : transitions) {
+            if (prevMatches(prevState, state) && charMatches(event, ch)) {
+                if (actionFun.has_value()) actionFun.value()(tokens, str);
+                state = nextState;
                 break;
             }
         }
