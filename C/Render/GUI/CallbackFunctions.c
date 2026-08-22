@@ -4,7 +4,6 @@
 
 #include "../GUI/CallbackFunctions.h"
 
-#include "GuiElementData.h"
 #include "../Drawing/Render.h"
 #include "../../Utils/Os/Time.h"
 #include "../../Utils/Misc/UtilityFun.h"
@@ -22,7 +21,7 @@ bool onHover_changeColor(Element *element, Renderer *renderer) {
     return false;
 }
 
-void onRequestMove_SimpleDrag(Element *element, Vec2i pos) {
+void onRequestMove_SimpleDrag(Element *element, Vec2f pos) {
     element->dims.pos = pos;
 }
 

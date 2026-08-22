@@ -52,7 +52,7 @@ void generateMainMenuGui(Element* guiRoot) {
     addChildElements(guiRoot,
         Element_new((ElementSettings){
             .name = "Home Screen",
-            .pos = (Vec2i){0, 0},
+            .pos = {0, 0},
             .padding = (Padding){10, 10, 10, 10},
             .color = {0.78f, 0.78f, 0.78f},
             .draggable = true,

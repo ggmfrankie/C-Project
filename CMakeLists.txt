@@ -58,8 +58,6 @@ add_library(GUI STATIC
         C/Render/GUI/Tasks.c
         C/Render/GUI/Tasks.h
         C/Utils/_NYI_/MemoryArena.c
-        C/Render/GUI/GuiElementData.c
-        C/Render/GUI/GuiElementData.h
         C/Projects/Chess/ChessGame.c
         C/Projects/Chess/ChessGame.h
         C/Utils/Os/Network.c

@@ -22,7 +22,7 @@ typedef struct Basic_Texture {
     uint32_t ID;
 
     NinePatchData npd;
-} Basic_Texture;
+} StandaloneTexture;
 
 typedef struct Texture {
     Vec2f uv0;
@@ -35,11 +35,11 @@ typedef struct TextureAtlas {
     Texture* map_textures;
 } TextureAtlas;
 
-Basic_Texture *newTexture(int width, int height, uint32_t textureId);
+StandaloneTexture *newTexture(int width, int height, uint32_t textureId);
 
-Basic_Texture *newEmptyTexture(int width, int height);
+StandaloneTexture *newEmptyTexture(int width, int height);
 
-Basic_Texture *loadTextureFromPng(char *fileName);
+StandaloneTexture *loadTextureFromPng(char *fileName);
 
 TextureAtlas loadTextureAtlas(int width, int height);
 void f_loadTextures(TextureAtlas *atlas, const char *first, va_list args);

@@ -9,8 +9,8 @@
 extern bool guiInitialized;
 
 void startEngine(void (*generateGUI)(Element* guiRoot));
-Vec2i getMousePos();
-Vec2i getWindowSize();
+Vec2f getMousePos();
+Vec2f getWindowSize();
 Font* getFont();
 double graphingFunction(double x);
 

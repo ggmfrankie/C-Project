@@ -31,7 +31,7 @@ namespace Engine {
         struct Arg {using type = T;};
 
     template<typename T>
-            static T convert(const std::string& s) {
+    static T convert(const std::string& s) {
         if constexpr (std::is_same_v<T, int>) {
             return std::stoi(s);
         }

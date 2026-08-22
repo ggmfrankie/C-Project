@@ -11,10 +11,10 @@
 #include "Utils/Typedef.h"
 
 typedef struct Padding {
-    int left;
-    int up;
-    int right;
-    int down;
+    float left;
+    float up;
+    float right;
+    float down;
 } Padding;
 
 typedef enum PositionMode: byte {
@@ -47,8 +47,8 @@ typedef struct {
 } Line;
 
 typedef struct {
-    int minWidth;
-    int minHeight;
+    float minWidth;
+    float minHeight;
 
     //layout lines
     Line* aLines;
@@ -65,29 +65,32 @@ typedef struct Element {
 
     struct {
         bool isActive: 1;
-        bool invisible: 1;
+        bool isInvisible: 1;
         bool canBeHovered: 1;
+
         bool fixedWidth: 1;
         bool fixedHeight: 1;
-        bool needsDeletion: 1;
+        bool relativeWidth: 1;
+        bool relativeHeight: 1;
+
         bool wantGrowHorizontal: 1;
         bool wantGrowVertical: 1;
         bool hasTexture: 1;
     } flags;
 
     struct {
-        Vec2i pos;
-        Vec2i worldPos;
+        Vec2f pos;
+        Vec2f worldPos;
 
-        int width;
-        int height;
-        int maxWidth;
-        int maxHeight;
+        float width;
+        float height;
+        float maxWidth;
+        float maxHeight;
 
-        int worldWidth;
-        int worldHeight;
+        float worldWidth;
+        float worldHeight;
 
-        int cornerRadius;
+        float cornerRadius;
 
         float flexGrow;
     } dims;
@@ -112,13 +115,13 @@ typedef struct Element {
     void (*generateMesh)(const Element* element, GuiVertex *vertices, int *vt, int *indices, int *id);
 
     struct {
-        bool (*isMouseOver)(const Element* element, Vec2i mousePos);
+        bool (*isMouseOver)(const Element* element, Vec2f mousePos);
         bool (*onClick)(Element* element, Renderer *renderer);
         bool (*onHover)(Element* element, Renderer *renderer);
         void (*whileSelected)(Element* element);
         void (*onUpdate)(Element* element);
         void (*reset)(Element* element);
-        void (*requestMove)(Element* element, Vec2i pos);
+        void (*requestMove)(Element* element, Vec2f pos);
     } callbacks;
 
     Padding padding;
@@ -128,7 +131,7 @@ typedef struct Element {
     ElementHandle parentElement;
     ElementHandle* aFlowElements;
     ElementHandle* aStaticElements;
-    int childGap;
+    float childGap;
 
     void* elementData;
 
@@ -137,15 +140,15 @@ typedef struct Element {
 
 typedef struct ElementSettings {
     char* name;
-    Vec2i pos;
+    Vec2f pos;
     PositionMode posMode;
     LayoutDirection layoutDirection;
 
-    int cornerRadius;
-    int minWidth;
-    int minHeight;
-    int maxWidth;
-    int maxHeight;
+    float cornerRadius;
+    float minWidth;
+    float minHeight;
+    float maxWidth;
+    float maxHeight;
     float flexGrow;
 
     char* texture;
@@ -160,7 +163,7 @@ typedef struct ElementSettings {
 
     Task task;
     Padding padding;
-    int childGap;
+    float childGap;
     bool canBeHovered;
     bool autoFit;
     bool invisible;
@@ -185,7 +188,7 @@ ElementHandle addChildrenAsGridWithGenerator(ElementSettings parentData, Element
 
 void Element_setOnClickCallback(Element* element, bool (*onClick)(Element* element, Renderer* renderer));
 void Element_setOnHoverCallback(Element* element, bool (*onHover)(Element* element, Renderer* renderer));
-void Element_setBoundingBox(Element* element, bool (*isMouseOver)(const Element *element, Vec2i mousePos));
+void Element_setBoundingBox(Element* element, bool (*isMouseOver)(const Element *element, Vec2f mousePos));
 
 Element *Element_getElement_ptr(const char *name);
 void Element_setText_ptr(Element* element, const char* text);
@@ -196,37 +199,10 @@ void Element_setColor_ptr(Element* element, Vec3f color);
 
 void Element_printDebug(const Element* element);
 
-bool Element_isQuadBB(const Element *element, Vec2i mousePos);
-
-ElementHandle Element_addElement(
-    char *name,
-    Vec2i pos,
-    int width,
-    int height,
-    Vec3f color,
-    Padding padding,
-    int childGap,
-    bool (*mouseOver)(const Element *, Vec2i),
-    bool (*hover)(Element *, Renderer *),
-    bool (*click)(Element *, Renderer *),
-    Task task,
-    const char *text,
-    bool forceResize,
-    PositionMode positionMode,
-    void *elementData,
-    bool notSelectable,
-    LayoutDirection layoutDirection,
-    int maxWidth,
-    int maxHeight,
-    void (*whileSelected)(Element *element), bool draggable, void (*onUpdate)(Element *element),
-    bool wantGrowHorizontal, bool
-    wantGrowVertical, float transparency, const char *texture, bool invisible, int cornerRadius, float flexGrow, bool
-    canBeHovered
-);
 
 ElementHandle createElement(ElementSettings es);
 
 ElementHandle _Element_new(ElementSettings es, ...);
 
-#define Element_new(settings, ...) _Element_new(settings, __VA_ARGS__, (ElementHandle){-1})
-#define addChildElements(parent, ...) Element_addChildElements(parent, __VA_ARGS__, (ElementHandle){-1})
+#define Element_new(...) _Element_new(__VA_ARGS__, (ElementHandle){-1})
+#define addChildElements(...) Element_addChildElements(__VA_ARGS__, (ElementHandle){-1})

@@ -4,14 +4,13 @@
 
 #include "../GuiElement.h"
 #include "Render/Engine.h"
-#include "Render/GUI/GuiElementData.h"
 #include "Utils/DataStructures/CArrayList.h"
 
 ElementHandle TextField_new(const ElementSettings elementSettings, bool (*onEnterCallback)(Element *element, Renderer *renderer)) {
-    ElementHandle element = createElement(elementSettings);
+    const ElementHandle element = createElement(elementSettings);
     TextFieldData* textData = calloc(1, sizeof(TextFieldData));
     textData->onEnterCallback = onEnterCallback;
-    ElementHandle textField = createElement(
+    const ElementHandle textField = createElement(
         (ElementSettings){
             .minWidth = elementSettings.minWidth,
             .minHeight = elementSettings.minHeight,
@@ -37,9 +36,9 @@ bool TextField_onClick(Element *element, Renderer *renderer) {
     if (Strings.isEmpty(&data->text)) return false;
 
     Character* charQuads = element->textElement.aCharQuads;
-    Vec2i mousePos = getMousePos();
+    Vec2f mousePos = getMousePos();
 
-    const Vec2f relMousePos = {(float)(mousePos.x - element->dims.pos.x), (float)(mousePos.y - element->dims.pos.y)};
+    const Vec2f relMousePos = {(mousePos.x - element->dims.pos.x), (mousePos.y - element->dims.pos.y)};
     mousePos.x -= element->dims.pos.x;
     mousePos.y -= element->dims.pos.y;
     int i = 0;

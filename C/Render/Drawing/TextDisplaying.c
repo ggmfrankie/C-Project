@@ -36,7 +36,7 @@ Font loadFontAtlas(const char* file) {
     assert(f != nullptr);
     const size_t bytesRead = fread(ttf_buffer, 1, 1<<20, f);
     if (bytesRead == 0) {
-        printf("Failed to read font file\n");
+        WARNING_("Failed to read font file\n");
         // ReSharper disable once CppDFAMemoryLeak
         return (Font){};
     }
@@ -71,7 +71,7 @@ Font loadFontAtlas(const char* file) {
         temp_bitmap
     );
 
-    const GLint swizzle[] = { GL_ONE, GL_ONE, GL_ONE, GL_RED };
+    constexpr GLint swizzle[] = { GL_ONE, GL_ONE, GL_ONE, GL_RED };
     glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_RGBA, swizzle);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -79,7 +79,7 @@ Font loadFontAtlas(const char* file) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    font.fontAtlas = (Basic_Texture){
+    font.fontAtlas = (StandaloneTexture){
         .width = FONT_ATLAS_SIZE,
         .height = FONT_ATLAS_SIZE,
         .ID = tex
@@ -94,7 +94,7 @@ void accumulateTextQuads(const Element *element, GuiVertex *vertices, int *vt, i
     if (aCharQuads == nullptr || arrIsEmpty(aCharQuads)) return;
 
     const float xOffset = (float)element->padding.left;
-    const float yOffset = (float)font->maxCharHeight * element->textElement.textScale + (float)element->padding.up;
+    const float yOffset = (float)font->maxCharHeight * element->textElement.textScale + element->padding.up;
 
     const int ID = element->handle.ID;
 
@@ -130,10 +130,10 @@ void accumulateTextQuads(const Element *element, GuiVertex *vertices, int *vt, i
     });
 }
 
-Vec2i measureElementText(const TextElement* textElement) {
+Vec2f measureElementText(const TextElement* textElement) {
 
     if (arrIsEmpty(textElement->aCharQuads)) {
-        return (Vec2i){0, 0};
+        return (Vec2f){0, 0};
     }
 
     float minX =  FLT_MAX;
@@ -156,13 +156,13 @@ Vec2i measureElementText(const TextElement* textElement) {
     const float width  = maxX - minX;
     const float height = maxY - minY;
 
-    return (Vec2i){
+    return (Vec2f){
         (int)width,
         (int)height
     };
 }
 
-Vec2i measureText(const Font *font, const String *text) {
+static Vec2f measureText(const Font *font, const String *text) {
     float x = 0.0f;
     float y = 0.0f;
 
@@ -182,7 +182,7 @@ Vec2i measureText(const Font *font, const String *text) {
         );
     }
 
-    return (Vec2i){
+    return (Vec2f){
         (int)(x),
         (int)(font->maxCharHeight)
     };
@@ -199,13 +199,14 @@ void reloadTextQuads(const Font* font, Element *element) {
 
     const float textScale = textElement->textScale;
 
-    const Vec2i startPos = {
+    const Vec2f startPos = {
         .x = 0,
         .y = 0
     };
-    auto cursor = (Vec2f){
-        .x = (float)startPos.x,
-        .y = (float)startPos.y
+
+    Vec2f cursor = {
+        .x = startPos.x,
+        .y = startPos.y
     };
 
     glBindTexture(GL_TEXTURE_2D, font->fontAtlas.ID);
@@ -244,6 +245,6 @@ void reloadTextQuads(const Font* font, Element *element) {
 
 void measureFont(Font *font) {
     const String allChars = stringOf("' !#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~'");
-    const Vec2i fontSize = measureText(font, &allChars);
+    const Vec2f fontSize = measureText(font, &allChars);
     font->maxCharHeight = fontSize.y;
 }

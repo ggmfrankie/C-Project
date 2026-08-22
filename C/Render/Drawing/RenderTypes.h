@@ -11,7 +11,6 @@ typedef struct GuiVertex {
     int ID;
     int texID;
     char _pad[8];
-#pragma GCC poison _pad
 } GuiVertex;
 
 typedef struct InstanceData {
@@ -25,13 +24,4 @@ typedef struct InstanceData {
     float _pad2;
     Vec3f textColor;
     float _pad3;
-#pragma GCC poison _pad0
-#pragma GCC poison _pad1
-#pragma GCC poison _pad2
-#pragma GCC poison _pad3
 } InstanceData;
-
-struct test {
-    GuiVertex v;
-    InstanceData a;
-};

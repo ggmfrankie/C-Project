@@ -13,7 +13,7 @@ typedef struct Renderer {
     int screenWidth;
     int screenHeight;
     GLFWwindow *window;
-    Vec2i mousePos;
+    Vec2f mousePos;
 
     Shader guiShader;
 
@@ -25,7 +25,7 @@ typedef struct Renderer {
     ElementHandle guiRoot;
 } Renderer;
 
-Renderer newGUIRenderer(GLFWwindow* window, int width, int height, const char *fontFile);
+Renderer Renderer_new(GLFWwindow* window, int width, int height, const char *fontFile);
 void Renderer_init(Renderer *renderer);
 
 void Renderer_render(const Renderer *renderer);

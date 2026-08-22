@@ -17,7 +17,7 @@
 static constexpr int MAX_ATLAS_TEXTURES = 512;
 
 typedef struct {
-    Basic_Texture m[256];
+    StandaloneTexture m[256];
     size_t capacity;
     size_t size;
 } TextureList;
@@ -27,9 +27,9 @@ static GLuint uploadTextureToGPU(int width, int height, int channels, const unsi
 static Texture* g_map_textureMap;
 static auto g_Textures = (TextureList){.capacity = 256, .size = 0};
 
-Basic_Texture* newTexture(const int width, const int height, const GLuint textureId) {
+StandaloneTexture* newTexture(const int width, const int height, const GLuint textureId) {
     assert(g_Textures.size < g_Textures.capacity);
-    g_Textures.m[g_Textures.size] = (Basic_Texture){.width = width, .height = height, .ID = textureId};
+    g_Textures.m[g_Textures.size] = (StandaloneTexture){.width = width, .height = height, .ID = textureId};
     return &g_Textures.m[g_Textures.size++];
 }
 
@@ -103,7 +103,7 @@ void f_loadTextures(TextureAtlas *atlas, const char *first, va_list args) {
     }
 }
 
-Basic_Texture *newEmptyTexture(const int width, const int height) {
+StandaloneTexture *newEmptyTexture(const int width, const int height) {
     GLuint ID;
     glGenTextures(1, &ID);
     glBindTexture(GL_TEXTURE_2D, ID);
@@ -129,7 +129,7 @@ Basic_Texture *newEmptyTexture(const int width, const int height) {
     return newTexture(width, height, ID);
 }
 
-Basic_Texture *loadTextureFromPng(char *fileName) {
+StandaloneTexture *loadTextureFromPng(char *fileName) {
     const String fileNameString = stringOf(fileName);
     const String defaultPath = stringOf("../Resources/Textures/");
     defer(str_delete) const String fullPath = Strings.combine(&defaultPath, &fileNameString);

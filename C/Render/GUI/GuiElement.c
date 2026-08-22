@@ -4,13 +4,13 @@
 
 #include "../GUI/GuiElement.h"
 
+#include <float.h>
 #include <pthread.h>
 #include <stdarg.h>
 #include "Render/Drawing/TextDisplaying.h"
 #include "CallbackFunctions.h"
 #include "../Drawing/Render.h"
 #include "../Engine.h"
-#include "GuiElementData.h"
 #include "Render/Drawing/Mesh.h"
 #include "Utils/Makros/Makros.h"
 #include "Utils/DataStructures/CArrayList.h"
@@ -24,7 +24,7 @@ void Element_init() {
     gElements = SparseSet_new(Element, 512);
 }
 
-ElementHandle Element_allocateNewV2(const Vec2i pos, const int width, const int height) {
+ElementHandle Element_allocateNewV2(const Vec2f pos, const int width, const int height) {
     const ElementHandle handle = {
         .ID = SparseSet_add(&gElements, (Element){
                     .name = nullptr,
@@ -36,8 +36,8 @@ ElementHandle Element_allocateNewV2(const Vec2i pos, const int width, const int 
                         .worldPos = pos,
                         .worldWidth = width,
                         .worldHeight = height,
-                        .maxWidth = INT32_MAX,
-                        .maxHeight = INT32_MAX
+                        .maxWidth = FLT_MAX,
+                        .maxHeight = FLT_MAX
                       },
                     .callbacks = {
                         .onClick = nullptr,
@@ -57,7 +57,7 @@ ElementHandle Element_allocateNewV2(const Vec2i pos, const int width, const int 
                   .parentElement = 0,
                   .aFlowElements = nullptr,
                   .padding = {0, 0, 0, 0},
-                  .flags = {.isActive = true, .needsDeletion = true},
+                  .flags = {.isActive = true},
                   .task = (Task){nullptr, nullptr},
                   .childGap = 0,
                   .elementData = nullptr,
@@ -115,7 +115,7 @@ void Element_setOnHoverCallback(Element* element, bool (*onHover)(Element* eleme
     element->callbacks.onHover = onHover;
 }
 
-void Element_setBoundingBox(Element* element, bool (*isMouseOver)(const Element *element, Vec2i mousePos)) {
+void Element_setBoundingBox(Element* element, bool (*isMouseOver)(const Element *element, Vec2f mousePos)) {
     assert(element != nullptr);
     element->callbacks.isMouseOver = isMouseOver;
 }
@@ -156,7 +156,7 @@ Element *Element_getElement_ptr(const char *name) {
     return out;
 }
 
-bool Element_isQuadBB(const Element *element, const Vec2i mousePos) {
+static bool Element_isQuadBB(const Element *element, Vec2f mousePos) {
     if (mousePos.x <= element->dims.worldPos.x+element->dims.worldWidth && mousePos.x >= element->dims.worldPos.x &&
         mousePos.y <= element->dims.worldPos.y+element->dims.worldHeight && mousePos.y >= element->dims.worldPos.y) {
         return true;
@@ -164,15 +164,15 @@ bool Element_isQuadBB(const Element *element, const Vec2i mousePos) {
     return false;
 }
 
-ElementHandle Element_addElement(
+static ElementHandle Element_addElement(
     char *name,
-    const Vec2i pos,
-    const int width,
-    const int height,
+    Vec2f pos,
+    float width,
+    float height,
     const Vec3f color,
     const Padding padding,
-    const int childGap,
-    bool (*mouseOver)(const Element *, Vec2i),
+    float childGap,
+    bool (*mouseOver)(const Element*, Vec2f),
     bool (*hover)(Element *, Renderer *),
     bool (*click)(Element *, Renderer *),
     const Task task,
@@ -182,8 +182,8 @@ ElementHandle Element_addElement(
     void *elementData,
     const bool notSelectable,
     const LayoutDirection layoutDirection,
-    int maxWidth,
-    int maxHeight,
+    float maxWidth,
+    float maxHeight,
     void (*whileSelected)(Element *element),
     bool draggable,
     void (*onUpdate)(Element *element),
@@ -192,7 +192,7 @@ ElementHandle Element_addElement(
     float transparency,
     const char *texture,
     bool invisible,
-    int cornerRadius,
+    float cornerRadius,
     float flexGrow,
     bool canBeHovered
 )
@@ -233,7 +233,7 @@ ElementHandle Element_addElement(
     lastElement->flags.wantGrowVertical = wantGrowVertical;
     lastElement->visuals.transparency = transparency;
     lastElement->flags.hasTexture = false;
-    lastElement->flags.invisible = invisible;
+    lastElement->flags.isInvisible = invisible;
     lastElement->visuals.brightness = 1.0f;
     lastElement->dims.cornerRadius = cornerRadius;
     lastElement->dims.flexGrow = flexGrow;
@@ -349,7 +349,7 @@ ElementHandle addChildrenAsGridWithGenerator(const ElementSettings parentData, E
 }
 
 void Element_printDebug(const Element* element) {
-    printf("World pos is: %i, %i, Relative pos is: %i, %i\n dims = %i, %i, worldDims = %i, %i\n",
+    printf("World pos is: %f, %f, Relative pos is: %f, %f\n dims = %f, %f, worldDims = %f, %f\n",
            element->dims.worldPos.x,
            element->dims.worldPos.y,
            element->dims.pos.x,

@@ -7,7 +7,7 @@
 #include "GuiTypes.h"
 #include "Utils/Math/Vector.h"
 
-void onRequestMove_SimpleDrag(Element* element, Vec2i pos);
+void onRequestMove_SimpleDrag(Element* element, Vec2f pos);
 
 bool runTaskFun(Element *element, Renderer *renderer);
 bool onHover_changeColor(Element *element, Renderer *renderer);

@@ -88,7 +88,7 @@ typedef struct {
 
 
 Board chess_board = {};
-Basic_Texture* chess_pieceTextures[13] = {};
+StandaloneTexture* chess_pieceTextures[13] = {};
 
 Color chess_getPieceColor(ChessPiece piece) {
 

@@ -11,14 +11,13 @@
 #include "Drawing/Render.h"
 #include "GLFW/glfw3.h"
 
-#include "GUI/GuiElementData.h"
-
 #include "GUI/Update.h"
 #include "Utils/Makros/Makros.h"
 #include "Render/Drawing/TextDisplaying.h"
 #include "Utils/DataStructures/CArrayList.h"
 
 #include "GuiInterface.h"
+#include "GUI/ElementTypes/TextField.h"
 
 #define WIDTH 4096
 #define HEIGHT 600
@@ -77,9 +76,10 @@ static void* workerThreadInit(void* args) {
 
 void gui_init(GLFWwindow* window, const int width, const int height, void (*generateGUI)(Element* guiRoot)) {
     g_mainThread = pthread_self();
+
     Element_init();
 
-    g_Renderer = newGUIRenderer(window, width, height, "ARIAL.TTF");
+    g_Renderer = Renderer_new(window, width, height, "ARIAL.TTF");
 
     Renderer_init(&g_Renderer);
 
@@ -205,11 +205,11 @@ bool gui_getActive(const char* name) {
 
 [[deprecated]]
 void startEngine(void (*generateGUI)(Element* guiRoot)) {
-    const int width = 512;
-    const int height = 512;
+    constexpr int width = 512;
+    constexpr int height = 512;
     gui_init(initWindow(width, height, "Chess"), width, height, generateGUI);
 
-    Basic_Texture* graphTexture = newEmptyTexture(WIDTH, HEIGHT);
+    StandaloneTexture* graphTexture = newEmptyTexture(WIDTH, HEIGHT);
     g_Renderer.computeShader = newComputeShader(nullptr, 1024);
     g_Renderer.computeShader.texture = graphTexture;
     g_Renderer.computeShader.thickness = 2;
@@ -235,7 +235,7 @@ void startEngine(void (*generateGUI)(Element* guiRoot)) {
 
         gui_render();
 
-        nanosleep(&(struct timespec){.tv_sec = 0, .tv_nsec = 1000000000L}, NULL);
+        nanosleep(&(struct timespec){.tv_sec = 0, .tv_nsec = 1000000000L}, nullptr);
     }
     glfwTerminate();
 }
@@ -257,7 +257,7 @@ static bool Engine_handleDragElement(const Renderer *renderer) {
     if (!mouseCapturedElement->callbacks.requestMove) return false;
 
     Element* element = mouseCapturedElement;
-    static Vec2i offset;
+    static Vec2f offset;
 
     if (!isMousePressed(renderer->window, GLFW_MOUSE_BUTTON_LEFT)) {
         dragging = false;
@@ -266,20 +266,20 @@ static bool Engine_handleDragElement(const Renderer *renderer) {
     }
 
     const Element *parent = Element_get(element->parentElement);
-    const Vec2i parentWorldPos = parent ? parent->dims.worldPos : (Vec2i){0, 0};
+    const Vec2f parentWorldPos = parent ? parent->dims.worldPos : (Vec2f){0, 0};
     if (!dragging) {
         offset.x = renderer->mousePos.x - element->dims.worldPos.x;
         offset.y = renderer->mousePos.y - element->dims.worldPos.y;
         dragging = true;
     } else {
-        const Vec2i newPos = {
+        const Vec2f newPos = {
             (renderer->mousePos.x - parentWorldPos.x) - offset.x,
             (renderer->mousePos.y - parentWorldPos.y) - offset.y
         };
         element->callbacks.requestMove(element, newPos);
 #if GUI_DEBUG_TRACE_DRAGGING
         only_every_do(100, {
-                      printf("World pos is: %i, %i, Relative pos is: %i, %i\n",
+                      printf("World pos is: %f, %f, Relative pos is: %f, %f\n",
                           element->dims.worldPos.x,
                           element->dims.worldPos.y,
                           element->dims.pos.x,
@@ -418,18 +418,18 @@ void gui_cursorPositionCallback(GLFWwindow* window, const double xPos, const dou
     g_Renderer.mousePos.y = (int)yPos;
 }
 
-Vec2i getMousePos() {
-    Vec2i mousePos;
+Vec2f getMousePos() {
+    Vec2f mousePos;
     Thread_Locked(
         mousePos = g_Renderer.mousePos;
     )
     return mousePos;
 }
 
-Vec2i getWindowSize() {
-    Vec2i windowSize;
+Vec2f getWindowSize() {
+    Vec2f windowSize;
     Thread_Locked(
-        windowSize = (Vec2i){g_Renderer.screenWidth, g_Renderer.screenHeight};
+        windowSize = (Vec2f){g_Renderer.screenWidth, g_Renderer.screenHeight};
     )
     return windowSize;
 }

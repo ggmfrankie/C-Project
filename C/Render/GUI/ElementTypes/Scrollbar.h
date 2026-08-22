@@ -1,16 +1,22 @@
 #pragma once
 #include "GuiTypes.h"
-#include <Vector.h>
+#include "Render/GUI/GuiElement.h"
+#include "Utils/Math/Vector.h"
 
 typedef struct {
     struct {
         float normPos;
-        int absPos;
+        float absPos;
     } slider;
     
-    int length;
+    float length;
 } ScrollbarData;
 
+typedef struct {
+    Vec2f pos;
+    float railWidth;
+    float sliderWidth;
+} ScrollbarSettings;
 
-
-void handleSliderDragging(Element* element, Vec2i pos);
+ElementHandle Scrollbar_new(ScrollbarSettings settings);
+void handleSliderDragging(Element* element, Vec2f pos);

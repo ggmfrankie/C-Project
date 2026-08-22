@@ -14,7 +14,7 @@
 #include "../../Utils/_Deprecated_/CString_v1.h"
 
 typedef struct Font {
-    Basic_Texture fontAtlas;
+    StandaloneTexture fontAtlas;
     stbtt_packedchar glyphs[96];
     float fontSize;
     int maxCharHeight;
@@ -52,5 +52,4 @@ typedef struct TextElement {
 Font loadFontAtlas(const char* file);
 void reloadTextQuads(const Font* font, Element *element);
 void accumulateTextQuads(const Element *element, GuiVertex *vertices, int *vt, int *indices, int *id, const Font *font);
-Vec2i measureText(const Font *font, const String *text);
-Vec2i measureElementText(const TextElement* textElement);
+Vec2f measureElementText(const TextElement* textElement);
