@@ -10,8 +10,6 @@ include_directories(
 
 add_executable(McpServer
         main.cpp
-        Utils/Json.cpp
-        Utils/Json.hpp
         Test/TicTacToe.cpp
         Test/TicTacToe.hpp
         Network/Server.cpp
@@ -20,9 +18,10 @@ add_executable(McpServer
         Network/Client.hpp
         Dependencies/cpp-httpLib/httplib.hpp
         Dependencies/json/json.hpp
-        Utils/McpFunctionRegistry.cpp
-        Utils/McpFunctionRegistry.hpp
+        Mcp/McpFunctionRegistry.hpp
         Utils/LazyStream.hpp
         Utils/Utils.cpp
         Utils/Parsing.cpp
-        Utils/Parsing.hpp)
+        Utils/Parsing.hpp
+        Mcp/ReturnTypes.cpp
+        Mcp/ReturnTypes.hpp)

@@ -17,22 +17,24 @@ class Server {
 public:
     explicit Server(string name, std::optional<string> authToken = std::nullopt);
 
-    std::optional<Json> handleRequest(Json json);
-    static Json generateRequest(int id, const string& method, std::initializer_list<Parameter> params = {});
-    static Json generateResponse(int id, const Json& result);
-    static Json generateError(int id, int code, const string& message, const std::optional<Json>& data = std::nullopt);
-    static Json generateNotification(const string& method, std::initializer_list<Parameter> params = {});
-    Json generateServerInformation(int id);
+    Json handleRequest(Json payload);
+    static Json generateError(const Json &id, int code, const string& message, const std::optional<Json>& data = std::nullopt);
+    Json generateServerInformation(const Json &id);
 
-    void start();
+    static Json toolsList(const Json& id);
+    static Json toolsCall(const Json& id, const Json &params);
+    static Json resourcesList(const Json& id);
+
+    void run();
     void setAuthToken(const string& token);
     void clearAuthToken();
 
 private:
     httplib::Server mServer;
     string mName;
+    string mIp;
+    int mPort;
     std::optional<string> mAuthBearerToken;
 
-    static Json generateAllMethodsInformation(int id);
     bool isAuthorized(const httplib::Request& req, httplib::Response& res) const;
 };

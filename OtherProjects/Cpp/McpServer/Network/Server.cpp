@@ -8,10 +8,11 @@
 #include <iostream>
 #include <string_view>
 #include <utility>
+#include <cassert>
 
 #include "../Dependencies/json/json.hpp"
 #include "../Test/TicTacToe.hpp"
-#include "../Utils/McpFunctionRegistry.hpp"
+#include "../Mcp/McpFunctionRegistry.hpp"
 
 
 namespace Utils {
@@ -24,7 +25,10 @@ using std::string, std::optional;
 using nlohmann::json;
 
 Server::Server(string name, optional<string> authToken):
+    mServer(),
     mName(std::move(name)),
+    mIp("localhost"),
+    mPort(8080),
     mAuthBearerToken(std::move(authToken))
 {
     if (!mAuthBearerToken.has_value()) {
@@ -32,51 +36,31 @@ Server::Server(string name, optional<string> authToken):
     }
 }
 
-optional<Server::Json> Server::handleRequest(Json json) {
-    static bool initialized = false;
-    const string method = json["method"];
-    const int id = json["id"];
+Server::Json Server::handleRequest(Json payload) {
+    static bool initialized = true;
+    const string method = payload["method"];
+    const Json id = payload["id"];
 
     std::cout << method << "\n";
     if (method == "initialize") return generateServerInformation(id);
 
-    if (method == "notifications/initialize") {
-        initialized = true;
-        return std::nullopt;
-    }
+    if (method == "server/discover") return generateServerInformation(id);
+
+    // if (method == "notifications/initialize") {
+    //     initialized = true;
+    //     return std::nullopt;
+    // }
+
     if (!initialized) return generateError(id, -33, "Client is not initialized");
 
-    if (method == "tools/list") return generateAllMethodsInformation(id);
+    if (method == "tools/list") return toolsList(id);
 
-    if (method == "tools/call") {
+    if (method == "tools/call") return toolsCall(id, payload["params"]);
 
-    }
-
-    return std::nullopt;
+    return generateError(id, -200, "Method not implemented");
 }
 
-Server::Json Server::generateRequest(int id, const string &method, std::initializer_list<Parameter> params) {
-    Json out = {
-        {"jsonrpc", "2.0"},
-        {"id", id},
-        {"method", method}
-    };
-    for (auto&[type, name]: params) {
-        out["params"] += {type, name};
-    }
-    return out;
-}
-
-Server::Json Server::generateResponse(int id, const Json& result) {
-    Json out = {
-        {"jsonrpc", "2.0"},
-        {"id", id}
-    };
-    out += result;
-    return out;
-}
-
-Server::Json Server::generateError(int id, int code, const string &message, const std::optional<Json>& data) {
+Server::Json Server::generateError(const Json &id, int code, const string &message, const std::optional<Json>& data) {
     Json out = {
         {"jsonrpc", "2.0"},
         {"id", id}
@@ -85,63 +69,34 @@ Server::Json Server::generateError(int id, int code, const string &message, cons
         {"code", code},
         {"message", message}
     };
-    if (data.has_value()) out["error"] += *data;
+    if (data.has_value()) out["error"] = *data;
 
     return out;
 }
 
-Server::Json Server::generateNotification(const string &method, std::initializer_list<Parameter> params) {
-    Json out = {
-        {"jsonrpc", "2.0"},
-        {"method", method}
-    };
-    for (auto&[type, name]: params) {
-        out["params"] += {type, name};
-    }
-    return out;
-}
-
-Server::Json Server::generateServerInformation(int id) {
+Server::Json Server::generateServerInformation(const Json &id) {
     Json out = {
         {"jsonrpc", "2.0"},
         {"id", id},
-        {"result",
-            {"protocolVersion", "2025-11-25"}
-        }
+        {"result", {
+            {"resultType", "complete"},
+            {"supportedVersions", {"2026-07-28"}},
+        }}
     };
     out["result"]["capabilities"] = {
-        {"logging", {}},
-        {"prompts",
-            {"listChanged", true}
-        },
-        {"resources",
-            {"subscribe", false},
-            {"listChanged", true}
-        },
-        {"tools",
-            {"listChanged", true}
-        },
-        {"tasks",
-            {"list", {}},
-            {"cancel", {}},
-            {"request",
-                {"tools",
-                    {"call", {}}
-                }
-            }
-        }
+        {"tools", {
+            {"listChanged", false}
+        }}
     };
-    out["serverInfo"] = {
+    out["result"]["_meta"]["io.modelcontextprotocol/serverInfo"] = {
         {"name", mName},
-        {"title", mName},
         {"version", "1.0.0"},
-        {"description", "server"}
     };
 
     return out;
 }
 
-void Server::start() {
+void Server::run() {
     mServer.Post("/mcp",
         [this](const Request& req, Response& res) {
             if (!isAuthorized(req, res)) {
@@ -152,25 +107,38 @@ void Server::start() {
             try {
                 request = json::parse(req.body);
             } catch (const json::parse_error& e) {
-                const Json error = generateError(-1, -32700, "Parse Error", e.what());
+                const Json error = generateError("Error", -32700, "Parse Error", e.what());
                 res.status = 400;
                 res.set_content(error.dump(), "application/json");
+                return;
+            } catch (const std::exception& e) {
+                std::cerr << "Unhandled exception: " << e.what() << '\n';
+                const Json err = generateError(request.value("id", nullptr), -32603, "Internal error", e.what());
+                res.status = 200;
+                res.set_content(err.dump(), "application/json");
                 return;
             }
 
             std::cout << "Request:\n" << request.dump(2) << '\n';
 
-            if (const optional<Json> response = handleRequest(request);
-                response.has_value()
-            ){
-                std::cout << "Response:\n" << response->dump(2) << '\n';
-
-                res.set_content(response->dump(), "application/json");
+            Json response;
+            try {
+                response = handleRequest(request);
+            } catch (const std::exception& e){
+                std::cerr << "Unhandled exception: " << e.what() << '\n';
+                const Json err = generateError(request.value("id", nullptr), -32603, "Internal error", e.what());
+                res.status = 200;
+                res.set_content(err.dump(), "application/json");
+                return;
             }
+            
+            std::cout << "Response:\n" << response.dump(2) << '\n';
+
+            res.set_content(response.dump(), "application/json");
         }
     );
-
-    mServer.listen("localhost", 8080);
+    std::cout << "Listening on: " << mIp << ":" << mPort << "\n";
+    mServer.listen(mIp, mPort);
 }
 
 void Server::setAuthToken(const string& token) {
@@ -190,7 +158,7 @@ bool Server::isAuthorized(const Request& req, Response& res) const {
     constexpr std::string_view bearerPrefix = "Bearer ";
 
     if (!authHeader.starts_with(bearerPrefix)) {
-        const Json error = generateError(-1, -32001, "Unauthorized");
+        const Json error = generateError("Error", -32001, "Unauthorized");
 
         res.status = 401;
         res.set_header("WWW-Authenticate", "Bearer realm=\"mcp\"");
@@ -199,10 +167,10 @@ bool Server::isAuthorized(const Request& req, Response& res) const {
     }
 
     if (const string token = authHeader.substr(bearerPrefix.size()); token != *mAuthBearerToken) {
-        const Json error = generateError(-1, -32001, "Unauthorized");
+        const Json error = generateError("Error", -32001, "Unauthorized");
 
         res.status = 401;
-        res.set_header("WWW-Authenticate", "Bearer realm=\"mcp\", error=\"invalid_token\"");
+        res.set_header("WWW-Authenticate", R"(Bearer realm="mcp", error="invalid_token")");
         res.set_content(error.dump(), "application/json");
         return false;
     }
@@ -210,34 +178,39 @@ bool Server::isAuthorized(const Request& req, Response& res) const {
     return true;
 }
 
-Server::Json Server::generateAllMethodsInformation(int id) {
+Server::Json Server::toolsList(const Json& id) {
     Json out;
     out["jsonrpc"] = "2.0";
     out["id"] = id;
 
-
-    out["result"]["tools"] = {
-        {
-            {"name", "getBoard"},
-            {"description", "Returns current Board as String"}
-        },
-        {
-            {"name", "makeMove"},
-            {"description", "Makes a Move"},
-            {"inputSchema",
-                {
-                    {"type", "object"},
-                    {"properties",
-                        {
-                            {"row", {{"type", "integer"}, {"description", "Row of the Move"}}},
-                            {"col", {{"type", "integer"}, {"description", "Col of the Move"}}}
-                        }
-                    },
-                    {"required", {"row", "col"}}
-                }
-            }
-        }
+    out["result"] = {
+        {"resultType", "complete"},
+        {"tools", McpFunctionRegistry::Get().getAllFunctions()},
+        {"ttlMs", 300000},
+        {"cacheScope", "public"}
     };
 
+    return out;
+}
+
+Server::Json Server::toolsCall(const Json &id, const Json &params) {
+    Json out;
+    out["jsonrpc"] = "2.0";
+    out["id"] = id;
+
+    const string funcName = params["name"];
+    const Json& args = params["arguments"];
+
+    out["result"] = McpFunctionRegistry::Get().invokeFunction(funcName, args);
+
+    return out;
+}
+
+Server::Json Server::resourcesList(const Json &id) {
+    Json out;
+    out["jsonrpc"] = "2.0";
+    out["id"] = id;
+    assert(false);
+    //TODO
     return out;
 }

@@ -11,7 +11,7 @@
 namespace ggm {
     using std::string_view, std::string, std::vector;
 
-    Parsing::Function Parsing::extractParameters(const std::string_view funcBody) {
+    Parsing::Function Parsing::parseFunction(const std::string_view funcBody) {
         int start = 0, end = 0;
         bool foundParameters = false;
         Function out;

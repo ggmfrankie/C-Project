@@ -22,6 +22,11 @@
 	"module-dir" : "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio/CMakeFiles/McpServer.dir",
 	"sources" : 
 	{
+		"CMakeFiles/McpServer.dir/Mcp/ReturnTypes.cpp.obj" : 
+		{
+			"language" : "CXX",
+			"source" : "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/Mcp/ReturnTypes.cpp"
+		},
 		"CMakeFiles/McpServer.dir/Network/Client.cpp.obj" : 
 		{
 			"language" : "CXX",
@@ -36,16 +41,6 @@
 		{
 			"language" : "CXX",
 			"source" : "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/Test/TicTacToe.cpp"
-		},
-		"CMakeFiles/McpServer.dir/Utils/Json.cpp.obj" : 
-		{
-			"language" : "CXX",
-			"source" : "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/Utils/Json.cpp"
-		},
-		"CMakeFiles/McpServer.dir/Utils/McpFunctionRegistry.cpp.obj" : 
-		{
-			"language" : "CXX",
-			"source" : "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/Utils/McpFunctionRegistry.cpp"
 		},
 		"CMakeFiles/McpServer.dir/Utils/Parsing.cpp.obj" : 
 		{

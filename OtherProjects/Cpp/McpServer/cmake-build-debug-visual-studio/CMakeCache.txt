@@ -209,15 +209,6 @@ CMAKE_STATIC_LINKER_FLAGS_RELWITHDEBINFO:STRING=
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 
 //Value Computed by CMake
-Camera_BINARY_DIR:STATIC=C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio
-
-//Value Computed by CMake
-Camera_IS_TOP_LEVEL:STATIC=ON
-
-//Value Computed by CMake
-Camera_SOURCE_DIR:STATIC=C:/git/oth/C-Project/OtherProjects/Cpp/McpServer
-
-//Value Computed by CMake
 McpServer_BINARY_DIR:STATIC=C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio
 
 //Value Computed by CMake

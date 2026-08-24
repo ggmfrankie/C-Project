@@ -7,7 +7,7 @@ ElementHandle Scrollbar_new(ScrollbarSettings settings) {
         .wantGrowVertical = true
     },
         Element_new((ElementSettings){
-            pos
+            .pos = {0, 0}
         })
     );
 

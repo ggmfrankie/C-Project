@@ -24,7 +24,7 @@ namespace ggm {
             std::vector<Parameter> parameters;
         };
 
-        static Function extractParameters(std::string_view funcBody);
+        static Function parseFunction(std::string_view funcBody);
     private:
     };
 } // ggm

@@ -64,6 +64,7 @@ events:
       - "C:/Users/ertls/AppData/Local/Programs/Git/cmd/"
       - "C:/msys64/mingw64/bin/"
       - "C:/Users/ertls/AppData/Local/Python/bin/"
+      - "C:/Users/ertls/AppData/Local/Programs/Git LFS/"
       - "C:/Program Files (x86)/Microsoft Visual Studio/18/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/"
       - "C:/Program Files (x86)/Microsoft Visual Studio/18/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/"
       - "C:/Program Files (x86)/Microsoft Visual Studio/18/BuildTools/Common7/IDE/VC/Linux/bin/ConnectionManagerExe/"
@@ -110,6 +111,7 @@ events:
         - "C:\\Users\\ertls\\AppData\\Local\\Programs\\Git\\cmd"
         - "C:\\msys64\\mingw64\\bin"
         - "C:\\Users\\ertls\\AppData\\Local\\Python\\bin"
+        - "C:\\Users\\ertls\\AppData\\Local\\Programs\\Git LFS"
         - "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin"
         - "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\Ninja"
         - "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\Common7\\IDE\\VC\\Linux\\bin\\ConnectionManagerExe"
@@ -172,6 +174,7 @@ events:
         - "C:\\Users\\ertls\\AppData\\Local\\Programs\\Git\\cmd"
         - "C:\\msys64\\mingw64\\bin"
         - "C:\\Users\\ertls\\AppData\\Local\\Python\\bin"
+        - "C:\\Users\\ertls\\AppData\\Local\\Programs\\Git LFS"
         - "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin"
         - "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\Ninja"
         - "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\Common7\\IDE\\VC\\Linux\\bin\\ConnectionManagerExe"
@@ -216,7 +219,7 @@ events:
       Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CMakeCCompilerId.obj"
       
       The C compiler identification is MSVC, found in:
-        C:/git/oth/C-Project/OtherProjects/Cpp/Camera/cmake-build-debug-visual-studio/CMakeFiles/4.3.1/CompilerIdC/CMakeCCompilerId.exe
+        C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio/CMakeFiles/4.3.1/CompilerIdC/CMakeCCompilerId.exe
       
   -
     kind: "message-v1"
@@ -228,7 +231,7 @@ events:
     message: |
       Detecting C compiler /showIncludes prefix:
         main.c
-        Hinweis: Einlesen der Datei: C:\\git\\oth\\C-Project\\OtherProjects\\Cpp\\Camera\\cmake-build-debug-visual-studio\\CMakeFiles\\ShowIncludes\\foo.h
+        Hinweis: Einlesen der Datei: C:\\git\\oth\\C-Project\\OtherProjects\\Cpp\\McpServer\\cmake-build-debug-visual-studio\\CMakeFiles\\ShowIncludes\\foo.h
         
       Found prefix "Hinweis: Einlesen der Datei: "
   -
@@ -283,6 +286,7 @@ events:
       - "C:/Users/ertls/AppData/Local/Programs/Git/cmd/"
       - "C:/msys64/mingw64/bin/"
       - "C:/Users/ertls/AppData/Local/Python/bin/"
+      - "C:/Users/ertls/AppData/Local/Programs/Git LFS/"
       - "C:/Program Files (x86)/Microsoft Visual Studio/18/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/"
       - "C:/Program Files (x86)/Microsoft Visual Studio/18/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/"
       - "C:/Program Files (x86)/Microsoft Visual Studio/18/BuildTools/Common7/IDE/VC/Linux/bin/ConnectionManagerExe/"
@@ -323,6 +327,7 @@ events:
         - "C:\\Users\\ertls\\AppData\\Local\\Programs\\Git\\cmd"
         - "C:\\msys64\\mingw64\\bin"
         - "C:\\Users\\ertls\\AppData\\Local\\Python\\bin"
+        - "C:\\Users\\ertls\\AppData\\Local\\Programs\\Git LFS"
         - "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin"
         - "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\Ninja"
         - "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\Common7\\IDE\\VC\\Linux\\bin\\ConnectionManagerExe"
@@ -380,6 +385,7 @@ events:
       - "C:/Users/ertls/AppData/Local/Programs/Git/cmd/"
       - "C:/msys64/mingw64/bin/"
       - "C:/Users/ertls/AppData/Local/Python/bin/"
+      - "C:/Users/ertls/AppData/Local/Programs/Git LFS/"
       - "C:/Program Files (x86)/Microsoft Visual Studio/18/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/"
       - "C:/Program Files (x86)/Microsoft Visual Studio/18/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/"
       - "C:/Program Files (x86)/Microsoft Visual Studio/18/BuildTools/Common7/IDE/VC/Linux/bin/ConnectionManagerExe/"
@@ -476,6 +482,9 @@ events:
       - "C:/Users/ertls/AppData/Local/Python/bin/lld-link.com"
       - "C:/Users/ertls/AppData/Local/Python/bin/lld-link.exe"
       - "C:/Users/ertls/AppData/Local/Python/bin/lld-link"
+      - "C:/Users/ertls/AppData/Local/Programs/Git LFS/lld-link.com"
+      - "C:/Users/ertls/AppData/Local/Programs/Git LFS/lld-link.exe"
+      - "C:/Users/ertls/AppData/Local/Programs/Git LFS/lld-link"
       - "C:/Program Files (x86)/Microsoft Visual Studio/18/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/lld-link.com"
       - "C:/Program Files (x86)/Microsoft Visual Studio/18/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/lld-link.exe"
       - "C:/Program Files (x86)/Microsoft Visual Studio/18/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/lld-link"
@@ -524,6 +533,7 @@ events:
         - "C:\\Users\\ertls\\AppData\\Local\\Programs\\Git\\cmd"
         - "C:\\msys64\\mingw64\\bin"
         - "C:\\Users\\ertls\\AppData\\Local\\Python\\bin"
+        - "C:\\Users\\ertls\\AppData\\Local\\Programs\\Git LFS"
         - "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin"
         - "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\Ninja"
         - "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\Common7\\IDE\\VC\\Linux\\bin\\ConnectionManagerExe"
@@ -579,6 +589,7 @@ events:
       - "C:/Users/ertls/AppData/Local/Programs/Git/cmd/"
       - "C:/msys64/mingw64/bin/"
       - "C:/Users/ertls/AppData/Local/Python/bin/"
+      - "C:/Users/ertls/AppData/Local/Programs/Git LFS/"
       - "C:/Program Files (x86)/Microsoft Visual Studio/18/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/"
       - "C:/Program Files (x86)/Microsoft Visual Studio/18/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/"
       - "C:/Program Files (x86)/Microsoft Visual Studio/18/BuildTools/Common7/IDE/VC/Linux/bin/ConnectionManagerExe/"
@@ -619,6 +630,7 @@ events:
         - "C:\\Users\\ertls\\AppData\\Local\\Programs\\Git\\cmd"
         - "C:\\msys64\\mingw64\\bin"
         - "C:\\Users\\ertls\\AppData\\Local\\Python\\bin"
+        - "C:\\Users\\ertls\\AppData\\Local\\Programs\\Git LFS"
         - "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin"
         - "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\Ninja"
         - "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\Common7\\IDE\\VC\\Linux\\bin\\ConnectionManagerExe"
@@ -674,6 +686,7 @@ events:
       - "C:/Users/ertls/AppData/Local/Programs/Git/cmd/"
       - "C:/msys64/mingw64/bin/"
       - "C:/Users/ertls/AppData/Local/Python/bin/"
+      - "C:/Users/ertls/AppData/Local/Programs/Git LFS/"
       - "C:/Program Files (x86)/Microsoft Visual Studio/18/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/"
       - "C:/Program Files (x86)/Microsoft Visual Studio/18/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/"
       - "C:/Program Files (x86)/Microsoft Visual Studio/18/BuildTools/Common7/IDE/VC/Linux/bin/ConnectionManagerExe/"
@@ -729,6 +742,7 @@ events:
         - "C:\\Users\\ertls\\AppData\\Local\\Programs\\Git\\cmd"
         - "C:\\msys64\\mingw64\\bin"
         - "C:\\Users\\ertls\\AppData\\Local\\Python\\bin"
+        - "C:\\Users\\ertls\\AppData\\Local\\Programs\\Git LFS"
         - "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin"
         - "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\Ninja"
         - "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\Common7\\IDE\\VC\\Linux\\bin\\ConnectionManagerExe"
@@ -784,6 +798,7 @@ events:
       - "C:/Users/ertls/AppData/Local/Programs/Git/cmd/"
       - "C:/msys64/mingw64/bin/"
       - "C:/Users/ertls/AppData/Local/Python/bin/"
+      - "C:/Users/ertls/AppData/Local/Programs/Git LFS/"
       - "C:/Program Files (x86)/Microsoft Visual Studio/18/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/"
       - "C:/Program Files (x86)/Microsoft Visual Studio/18/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/"
       - "C:/Program Files (x86)/Microsoft Visual Studio/18/BuildTools/Common7/IDE/VC/Linux/bin/ConnectionManagerExe/"
@@ -824,6 +839,7 @@ events:
         - "C:\\Users\\ertls\\AppData\\Local\\Programs\\Git\\cmd"
         - "C:\\msys64\\mingw64\\bin"
         - "C:\\Users\\ertls\\AppData\\Local\\Python\\bin"
+        - "C:\\Users\\ertls\\AppData\\Local\\Programs\\Git LFS"
         - "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin"
         - "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\Ninja"
         - "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\Common7\\IDE\\VC\\Linux\\bin\\ConnectionManagerExe"
@@ -896,6 +912,7 @@ events:
         - "C:\\Users\\ertls\\AppData\\Local\\Programs\\Git\\cmd"
         - "C:\\msys64\\mingw64\\bin"
         - "C:\\Users\\ertls\\AppData\\Local\\Python\\bin"
+        - "C:\\Users\\ertls\\AppData\\Local\\Programs\\Git LFS"
         - "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin"
         - "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\Ninja"
         - "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\Common7\\IDE\\VC\\Linux\\bin\\ConnectionManagerExe"
@@ -958,6 +975,7 @@ events:
         - "C:\\Users\\ertls\\AppData\\Local\\Programs\\Git\\cmd"
         - "C:\\msys64\\mingw64\\bin"
         - "C:\\Users\\ertls\\AppData\\Local\\Python\\bin"
+        - "C:\\Users\\ertls\\AppData\\Local\\Programs\\Git LFS"
         - "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin"
         - "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\Ninja"
         - "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\Common7\\IDE\\VC\\Linux\\bin\\ConnectionManagerExe"
@@ -1002,7 +1020,7 @@ events:
       Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CMakeCXXCompilerId.obj"
       
       The CXX compiler identification is MSVC, found in:
-        C:/git/oth/C-Project/OtherProjects/Cpp/Camera/cmake-build-debug-visual-studio/CMakeFiles/4.3.1/CompilerIdCXX/CMakeCXXCompilerId.exe
+        C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio/CMakeFiles/4.3.1/CompilerIdCXX/CMakeCXXCompilerId.exe
       
   -
     kind: "message-v1"
@@ -1014,7 +1032,7 @@ events:
     message: |
       Detecting CXX compiler /showIncludes prefix:
         main.c
-        Hinweis: Einlesen der Datei: C:\\git\\oth\\C-Project\\OtherProjects\\Cpp\\Camera\\cmake-build-debug-visual-studio\\CMakeFiles\\ShowIncludes\\foo.h
+        Hinweis: Einlesen der Datei: C:\\git\\oth\\C-Project\\OtherProjects\\Cpp\\McpServer\\cmake-build-debug-visual-studio\\CMakeFiles\\ShowIncludes\\foo.h
         
       Found prefix "Hinweis: Einlesen der Datei: "
   -
@@ -1069,6 +1087,7 @@ events:
       - "C:/Users/ertls/AppData/Local/Programs/Git/cmd/"
       - "C:/msys64/mingw64/bin/"
       - "C:/Users/ertls/AppData/Local/Python/bin/"
+      - "C:/Users/ertls/AppData/Local/Programs/Git LFS/"
       - "C:/Program Files (x86)/Microsoft Visual Studio/18/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/"
       - "C:/Program Files (x86)/Microsoft Visual Studio/18/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/"
       - "C:/Program Files (x86)/Microsoft Visual Studio/18/BuildTools/Common7/IDE/VC/Linux/bin/ConnectionManagerExe/"
@@ -1165,6 +1184,9 @@ events:
       - "C:/Users/ertls/AppData/Local/Python/bin/lld-link.com"
       - "C:/Users/ertls/AppData/Local/Python/bin/lld-link.exe"
       - "C:/Users/ertls/AppData/Local/Python/bin/lld-link"
+      - "C:/Users/ertls/AppData/Local/Programs/Git LFS/lld-link.com"
+      - "C:/Users/ertls/AppData/Local/Programs/Git LFS/lld-link.exe"
+      - "C:/Users/ertls/AppData/Local/Programs/Git LFS/lld-link"
       - "C:/Program Files (x86)/Microsoft Visual Studio/18/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/lld-link.com"
       - "C:/Program Files (x86)/Microsoft Visual Studio/18/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/lld-link.exe"
       - "C:/Program Files (x86)/Microsoft Visual Studio/18/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/lld-link"
@@ -1213,6 +1235,7 @@ events:
         - "C:\\Users\\ertls\\AppData\\Local\\Programs\\Git\\cmd"
         - "C:\\msys64\\mingw64\\bin"
         - "C:\\Users\\ertls\\AppData\\Local\\Python\\bin"
+        - "C:\\Users\\ertls\\AppData\\Local\\Programs\\Git LFS"
         - "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin"
         - "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\Ninja"
         - "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\Common7\\IDE\\VC\\Linux\\bin\\ConnectionManagerExe"
@@ -1271,6 +1294,7 @@ events:
       - "C:/Users/ertls/AppData/Local/Programs/Git/cmd/"
       - "C:/msys64/mingw64/bin/"
       - "C:/Users/ertls/AppData/Local/Python/bin/"
+      - "C:/Users/ertls/AppData/Local/Programs/Git LFS/"
       - "C:/Program Files (x86)/Microsoft Visual Studio/18/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/"
       - "C:/Program Files (x86)/Microsoft Visual Studio/18/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/"
       - "C:/Program Files (x86)/Microsoft Visual Studio/18/BuildTools/Common7/IDE/VC/Linux/bin/ConnectionManagerExe/"
@@ -1338,6 +1362,7 @@ events:
         - "C:\\Users\\ertls\\AppData\\Local\\Programs\\Git\\cmd"
         - "C:\\msys64\\mingw64\\bin"
         - "C:\\Users\\ertls\\AppData\\Local\\Python\\bin"
+        - "C:\\Users\\ertls\\AppData\\Local\\Programs\\Git LFS"
         - "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin"
         - "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\Ninja"
         - "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\Common7\\IDE\\VC\\Linux\\bin\\ConnectionManagerExe"
@@ -1358,8 +1383,8 @@ events:
     checks:
       - "Detecting C compiler ABI info"
     directories:
-      source: "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio/CMakeFiles/CMakeScratch/TryCompile-t1pq6a"
-      binary: "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio/CMakeFiles/CMakeScratch/TryCompile-t1pq6a"
+      source: "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio/CMakeFiles/CMakeScratch/TryCompile-z795f0"
+      binary: "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio/CMakeFiles/CMakeScratch/TryCompile-z795f0"
     cmakeVariables:
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS"
@@ -1369,11 +1394,11 @@ events:
       variable: "CMAKE_C_ABI_COMPILED"
       cached: true
       stdout: |
-        Change Dir: 'C:/git/oth/C-Project/OtherProjects/Cpp/Camera/cmake-build-debug-visual-studio/CMakeFiles/CMakeScratch/TryCompile-t1pq6a'
+        Change Dir: 'C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio/CMakeFiles/CMakeScratch/TryCompile-z795f0'
         
-        Run Build Command(s): "C:/Users/ertls/AppData/Local/Programs/CLion 2026.2.0.1/bin/ninja/win/x64/ninja.exe" -v cmTC_c3259
-        [1/2] C:\\PROGRA~2\\MICROS~4\\18\\BUILDT~1\\VC\\Tools\\MSVC\\1450~1.357\\bin\\Hostx64\\x64\\cl.exe  /nologo -D_MBCS  /DWIN32 /D_WINDOWS  /Ob0 /Od -MDd -RTC1 -Zi /showIncludes /FoCMakeFiles\\cmTC_c3259.dir\\CMakeCCompilerABI.c.obj /FdCMakeFiles\\cmTC_c3259.dir\\ /FS -c "C:\\Users\\ertls\\AppData\\Local\\Programs\\CLion 2026.2.0.1\\bin\\cmake\\win\\x64\\share\\cmake-4.3\\Modules\\CMakeCCompilerABI.c"
-        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && "C:\\Users\\ertls\\AppData\\Local\\Programs\\CLion 2026.2.0.1\\bin\\cmake\\win\\x64\\bin\\cmake.exe" -E vs_link_exe --msvc-ver=1950 --intdir=CMakeFiles\\cmTC_c3259.dir --rc=C:\\PROGRA~2\\WI3CF2~1\\10\\bin\\100261~1.0\\x64\\rc.exe --mt=C:\\PROGRA~2\\WI3CF2~1\\10\\bin\\100261~1.0\\x64\\mt.exe --manifests  -- C:\\PROGRA~2\\MICROS~4\\18\\BUILDT~1\\VC\\Tools\\MSVC\\1450~1.357\\bin\\Hostx64\\x64\\link.exe /nologo CMakeFiles\\cmTC_c3259.dir\\CMakeCCompilerABI.c.obj  /out:cmTC_c3259.exe /implib:cmTC_c3259.lib /pdb:cmTC_c3259.pdb /version:0.0 -machine:x64 /debug /INCREMENTAL /subsystem:console  kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib && cd ."
+        Run Build Command(s): "C:/Users/ertls/AppData/Local/Programs/CLion 2026.2.0.1/bin/ninja/win/x64/ninja.exe" -v cmTC_48e20
+        [1/2] C:\\PROGRA~2\\MICROS~4\\18\\BUILDT~1\\VC\\Tools\\MSVC\\1450~1.357\\bin\\Hostx64\\x64\\cl.exe  /nologo -D_MBCS  /DWIN32 /D_WINDOWS  /Ob0 /Od -MDd -RTC1 -Zi /showIncludes /FoCMakeFiles\\cmTC_48e20.dir\\CMakeCCompilerABI.c.obj /FdCMakeFiles\\cmTC_48e20.dir\\ /FS -c "C:\\Users\\ertls\\AppData\\Local\\Programs\\CLion 2026.2.0.1\\bin\\cmake\\win\\x64\\share\\cmake-4.3\\Modules\\CMakeCCompilerABI.c"
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && "C:\\Users\\ertls\\AppData\\Local\\Programs\\CLion 2026.2.0.1\\bin\\cmake\\win\\x64\\bin\\cmake.exe" -E vs_link_exe --msvc-ver=1950 --intdir=CMakeFiles\\cmTC_48e20.dir --rc=C:\\PROGRA~2\\WI3CF2~1\\10\\bin\\100261~1.0\\x64\\rc.exe --mt=C:\\PROGRA~2\\WI3CF2~1\\10\\bin\\100261~1.0\\x64\\mt.exe --manifests  -- C:\\PROGRA~2\\MICROS~4\\18\\BUILDT~1\\VC\\Tools\\MSVC\\1450~1.357\\bin\\Hostx64\\x64\\link.exe /nologo CMakeFiles\\cmTC_48e20.dir\\CMakeCCompilerABI.c.obj  /out:cmTC_48e20.exe /implib:cmTC_48e20.lib /pdb:cmTC_48e20.pdb /version:0.0 -machine:x64 /debug /INCREMENTAL /subsystem:console  kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib && cd ."
         
       exitCode: 0
   -
@@ -1413,8 +1438,8 @@ events:
     checks:
       - "Detecting CXX compiler ABI info"
     directories:
-      source: "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio/CMakeFiles/CMakeScratch/TryCompile-2a14tm"
-      binary: "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio/CMakeFiles/CMakeScratch/TryCompile-2a14tm"
+      source: "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio/CMakeFiles/CMakeScratch/TryCompile-8k76r8"
+      binary: "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio/CMakeFiles/CMakeScratch/TryCompile-8k76r8"
     cmakeVariables:
       CMAKE_CXX_FLAGS: "/DWIN32 /D_WINDOWS /EHsc"
       CMAKE_CXX_FLAGS_DEBUG: "/Ob0 /Od"
@@ -1425,11 +1450,11 @@ events:
       variable: "CMAKE_CXX_ABI_COMPILED"
       cached: true
       stdout: |
-        Change Dir: 'C:/git/oth/C-Project/OtherProjects/Cpp/Camera/cmake-build-debug-visual-studio/CMakeFiles/CMakeScratch/TryCompile-2a14tm'
+        Change Dir: 'C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio/CMakeFiles/CMakeScratch/TryCompile-8k76r8'
         
-        Run Build Command(s): "C:/Users/ertls/AppData/Local/Programs/CLion 2026.2.0.1/bin/ninja/win/x64/ninja.exe" -v cmTC_03429
-        [1/2] C:\\PROGRA~2\\MICROS~4\\18\\BUILDT~1\\VC\\Tools\\MSVC\\1450~1.357\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -D_MBCS  /DWIN32 /D_WINDOWS /EHsc  /Ob0 /Od -MDd -RTC1 -Zi /showIncludes /FoCMakeFiles\\cmTC_03429.dir\\CMakeCXXCompilerABI.cpp.obj /FdCMakeFiles\\cmTC_03429.dir\\ /FS -c "C:\\Users\\ertls\\AppData\\Local\\Programs\\CLion 2026.2.0.1\\bin\\cmake\\win\\x64\\share\\cmake-4.3\\Modules\\CMakeCXXCompilerABI.cpp"
-        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && "C:\\Users\\ertls\\AppData\\Local\\Programs\\CLion 2026.2.0.1\\bin\\cmake\\win\\x64\\bin\\cmake.exe" -E vs_link_exe --msvc-ver=1950 --intdir=CMakeFiles\\cmTC_03429.dir --rc=C:\\PROGRA~2\\WI3CF2~1\\10\\bin\\100261~1.0\\x64\\rc.exe --mt=C:\\PROGRA~2\\WI3CF2~1\\10\\bin\\100261~1.0\\x64\\mt.exe --manifests  -- C:\\PROGRA~2\\MICROS~4\\18\\BUILDT~1\\VC\\Tools\\MSVC\\1450~1.357\\bin\\Hostx64\\x64\\link.exe /nologo CMakeFiles\\cmTC_03429.dir\\CMakeCXXCompilerABI.cpp.obj  /out:cmTC_03429.exe /implib:cmTC_03429.lib /pdb:cmTC_03429.pdb /version:0.0 -machine:x64 /debug /INCREMENTAL /subsystem:console  kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib && cd ."
+        Run Build Command(s): "C:/Users/ertls/AppData/Local/Programs/CLion 2026.2.0.1/bin/ninja/win/x64/ninja.exe" -v cmTC_09d9d
+        [1/2] C:\\PROGRA~2\\MICROS~4\\18\\BUILDT~1\\VC\\Tools\\MSVC\\1450~1.357\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -D_MBCS  /DWIN32 /D_WINDOWS /EHsc  /Ob0 /Od -MDd -RTC1 -Zi /showIncludes /FoCMakeFiles\\cmTC_09d9d.dir\\CMakeCXXCompilerABI.cpp.obj /FdCMakeFiles\\cmTC_09d9d.dir\\ /FS -c "C:\\Users\\ertls\\AppData\\Local\\Programs\\CLion 2026.2.0.1\\bin\\cmake\\win\\x64\\share\\cmake-4.3\\Modules\\CMakeCXXCompilerABI.cpp"
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && "C:\\Users\\ertls\\AppData\\Local\\Programs\\CLion 2026.2.0.1\\bin\\cmake\\win\\x64\\bin\\cmake.exe" -E vs_link_exe --msvc-ver=1950 --intdir=CMakeFiles\\cmTC_09d9d.dir --rc=C:\\PROGRA~2\\WI3CF2~1\\10\\bin\\100261~1.0\\x64\\rc.exe --mt=C:\\PROGRA~2\\WI3CF2~1\\10\\bin\\100261~1.0\\x64\\mt.exe --manifests  -- C:\\PROGRA~2\\MICROS~4\\18\\BUILDT~1\\VC\\Tools\\MSVC\\1450~1.357\\bin\\Hostx64\\x64\\link.exe /nologo CMakeFiles\\cmTC_09d9d.dir\\CMakeCXXCompilerABI.cpp.obj  /out:cmTC_09d9d.exe /implib:cmTC_09d9d.lib /pdb:cmTC_09d9d.pdb /version:0.0 -machine:x64 /debug /INCREMENTAL /subsystem:console  kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib && cd ."
         
       exitCode: 0
   -
