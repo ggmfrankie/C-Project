@@ -1,0 +1,25 @@
+{
+    "C_Cpp.files.exclude": {
+        "**/.git/**": true,
+        "**/build/**": true,
+        "**/cmake-build-debug/**": true,
+        "**/cmake-build-debug-visual-studio/**": true
+    },
+    "C_Cpp.intelliSenseEngineFallback": "Disabled",
+    "C_Cpp.workspaceParsingPriority": "low",
+    "files.watcherExclude": {
+        "**/build/**": true,
+        "**/cmake-build-debug/**": true,
+        "**/cmake-build-debug-visual-studio/**": true
+    },
+    "files.exclude": {
+        "**/build": true,
+        "**/cmake-build-debug": true,
+        "**/cmake-build-debug-visual-studio": true
+    },
+    "search.exclude": {
+        "**/build": true,
+        "**/cmake-build-debug": true,
+        "**/cmake-build-debug-visual-studio": true
+    }
+}

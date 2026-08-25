@@ -10,7 +10,6 @@
 #include <stdexcept>
 #include <utility>
 
-#include "../Utils/LazyStream.hpp"
 #include "../Utils/Parsing.hpp"
 #include "../Utils/Utils.hpp"
 
@@ -42,19 +41,21 @@ class McpFunctionRegistry {
         return "Invalid";
     }
 
-    struct Function {
+    struct IFunction {
         using Metadata = ggm::Parsing::Function;
 
-        virtual ~Function() = default;
+        virtual ~IFunction() = default;
         virtual const Metadata& getMetadata() = 0;
+        virtual const string& getDescription() = 0;
         virtual Json operator()(const Json& args) = 0;
     };
 
     template<typename F>
-    struct FunctionWrapper: public Function {
+    struct FunctionWrapper: public IFunction {
 
-        explicit FunctionWrapper(F function, Metadata  metadata):
+        explicit FunctionWrapper(F function, Metadata  metadata, const string& description):
             mMetaData(std::move(metadata)),
+            mDescription(description),
             mFunction(function)
         {}
 
@@ -125,12 +126,17 @@ class McpFunctionRegistry {
             return mMetaData;
         }
 
+        const string& getDescription() override {
+            return mDescription;
+        }
+
     private:
         Metadata mMetaData;
+        string mDescription;
         F mFunction;
     };
 
-    std::unordered_map<string, std::unique_ptr<Function>> mRequestableFunctions{};
+    std::unordered_map<string, std::unique_ptr<IFunction>> mRequestableFunctions{};
 
 public:
     static McpFunctionRegistry& Get() {
@@ -140,11 +146,12 @@ public:
 
     Json getAllFunctions() {
         Json out = Json::array();
-        for (const auto &function: mRequestableFunctions | std::views::values) {
+        for (const auto&[_, function]: mRequestableFunctions) {
             Json func;
             auto& meta = function->getMetadata();
             
             func["name"] = meta.name;
+            func["description"] = function->getDescription();
             func["inputSchema"]["type"] = "object";
 
             for (const auto&[type, name]: meta.parameters) {
@@ -162,7 +169,7 @@ public:
         const auto it = mRequestableFunctions.find(name);
         if (it == mRequestableFunctions.end()) throw std::runtime_error("Function not found");
 
-        const std::unique_ptr<Function>& func = it->second;
+        const std::unique_ptr<IFunction>& func = it->second;
 
         Json result = (*func)(params);
 
@@ -179,17 +186,17 @@ public:
     }
 
     template<typename F>
-    bool registerFunction(F function, const std::string_view signature) {
+    bool registerFunction(F function, const std::string& description, const std::string& signature) {
         const auto metadata = ggm::Parsing::parseFunction(signature);
 
-        mRequestableFunctions[metadata.name] = std::make_unique<FunctionWrapper<F>>(function, metadata);
+        mRequestableFunctions[metadata.name] = std::make_unique<FunctionWrapper<F>>(function, metadata, description);
         return false;
     }
 
-#define MakeRequestableFunction(funcPtr, ...)\
+#define MakeRequestableFunction(funcPtr, description, ...)\
     __VA_ARGS__;\
     inline static const bool MCP_CAT(_mcp_registrated_, __COUNTER__) = \
-        McpFunctionRegistry::Get().registerFunction(funcPtr, #__VA_ARGS__);\
+        McpFunctionRegistry::Get().registerFunction(funcPtr, description, #__VA_ARGS__);\
         __VA_ARGS__
 
 };

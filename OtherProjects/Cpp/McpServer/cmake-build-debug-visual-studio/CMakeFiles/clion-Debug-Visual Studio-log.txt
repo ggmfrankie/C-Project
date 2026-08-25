@@ -1,4 +1,4 @@
 "C:\Users\ertls\AppData\Local\Programs\CLion 2026.2.0.1\bin\cmake\win\x64\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug "-DCMAKE_MAKE_PROGRAM=C:/Users/ertls/AppData/Local/Programs/CLion 2026.2.0.1/bin/ninja/win/x64/ninja.exe" -G Ninja -S C:\git\oth\C-Project\OtherProjects\Cpp\McpServer -B C:\git\oth\C-Project\OtherProjects\Cpp\McpServer\cmake-build-debug-visual-studio
--- Configuring done (0.5s)
--- Generating done (0.1s)
+-- Configuring done (0.3s)
+-- Generating done (0.4s)
 -- Build files have been written to: C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio

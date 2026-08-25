@@ -13,6 +13,7 @@
 #include "../Dependencies/json/json.hpp"
 #include "../Test/TicTacToe.hpp"
 #include "../Mcp/McpFunctionRegistry.hpp"
+#include "../Mcp/McpResourceRegistry.hpp"
 
 
 namespace Utils {
@@ -29,33 +30,36 @@ Server::Server(string name, optional<string> authToken):
     mName(std::move(name)),
     mIp("localhost"),
     mPort(8080),
-    mAuthBearerToken(std::move(authToken))
-{
-    if (!mAuthBearerToken.has_value()) {
-        mAuthBearerToken = "mcp_test";
-    }
+    mSseQueue()
+{}
+
+Server::~Server() {
+    stop();
 }
 
-Server::Json Server::handleRequest(Json payload) {
-    static bool initialized = true;
+std::optional<Server::Json> Server::handleRequest(Json payload) {
     const string method = payload["method"];
-    const Json id = payload["id"];
+
+    if (!payload.contains("id")) {
+        if (method == "notifications/initialized") return std::nullopt;
+        return generateError("-2", -300, "Notification not implemented");
+    }
+
+    const Json& id = payload["id"];
+    const Json& params = payload["params"];
 
     std::cout << method << "\n";
     if (method == "initialize") return generateServerInformation(id);
 
     if (method == "server/discover") return generateServerInformation(id);
 
-    // if (method == "notifications/initialize") {
-    //     initialized = true;
-    //     return std::nullopt;
-    // }
-
-    if (!initialized) return generateError(id, -33, "Client is not initialized");
-
     if (method == "tools/list") return toolsList(id);
 
-    if (method == "tools/call") return toolsCall(id, payload["params"]);
+    if (method == "tools/call") return toolsCall(id, params);
+
+    if (method == "resources/list") return resourcesList(id);
+
+    if (method == "resources/read") return resourcesRead(id, params);
 
     return generateError(id, -200, "Method not implemented");
 }
@@ -74,35 +78,45 @@ Server::Json Server::generateError(const Json &id, int code, const string &messa
     return out;
 }
 
+Server::Json Server::getMeta() {
+    return Json {
+        "_meta", {
+            {"io.modelcontextprotocoll/protocolVersion", PROTOCOL_VERSION},
+            {"io.modecontextprotocol/serverInfo", {
+                {"name", mName},
+                {"version", "1.0.0"}
+            }}
+        }
+    };
+}
+
 Server::Json Server::generateServerInformation(const Json &id) {
-    Json out = {
-        {"jsonrpc", "2.0"},
-        {"id", id},
-        {"result", {
-            {"resultType", "complete"},
-            {"supportedVersions", {"2026-07-28"}},
+    Json out;
+    out["jsonrpc"] = "2.0";
+    out["id"] = id;
+    out["result"] = {
+        {"protocolVersion", PROTOCOL_VERSION},
+        {"capabilities", {
+            {"tools", Json::object()},
+            {"resources", {
+                {"listChanged", true}
+            }},
+            {"logging", Json::object()}
+        }},
+        {"serverInfo", {
+            {"name", mName},
+            {"version", "1.0.0"}
         }}
-    };
-    out["result"]["capabilities"] = {
-        {"tools", {
-            {"listChanged", false}
-        }}
-    };
-    out["result"]["_meta"]["io.modelcontextprotocol/serverInfo"] = {
-        {"name", mName},
-        {"version", "1.0.0"},
     };
 
     return out;
 }
 
 void Server::run() {
+    mRunning.store(true, std::memory_order_release);
+
     mServer.Post("/mcp",
         [this](const Request& req, Response& res) {
-            if (!isAuthorized(req, res)) {
-                return;
-            }
-
             Json request;
             try {
                 request = json::parse(req.body);
@@ -121,7 +135,7 @@ void Server::run() {
 
             std::cout << "Request:\n" << request.dump(2) << '\n';
 
-            Json response;
+            std::optional<Json> response;
             try {
                 response = handleRequest(request);
             } catch (const std::exception& e){
@@ -131,51 +145,57 @@ void Server::run() {
                 res.set_content(err.dump(), "application/json");
                 return;
             }
-            
-            std::cout << "Response:\n" << response.dump(2) << '\n';
 
-            res.set_content(response.dump(), "application/json");
+            if (!response.has_value()) return;
+            std::cout << "Response:\n" << response->dump(2) << '\n';
+            res.set_content(response->dump(), "application/json");
         }
     );
+
+    mServer.Get("/mcp", [this](const Request&, Response& res) {
+        res.set_chunked_content_provider("text/event-stream",
+            [this](size_t, httplib::DataSink& sink) {
+                std::unique_lock lock(mSseMutex);
+                mSseCv.wait(lock, [this] { return !mSseQueue.empty() || !mRunning; });
+
+                if (!mRunning) return false;
+
+                Json notification = mSseQueue.front();
+                mSseQueue.pop();
+                lock.unlock();
+
+                const string data = "data: " + notification.dump() + "\n\n";
+                return sink.write(data.c_str(), data.size());
+            }
+        );
+    });
+
     std::cout << "Listening on: " << mIp << ":" << mPort << "\n";
     mServer.listen(mIp, mPort);
+    mRunning.store(false, std::memory_order_release);
 }
 
-void Server::setAuthToken(const string& token) {
-    mAuthBearerToken = token;
+void Server::startAsync() {
+    if (mThread.joinable()) return;
+    mThread = std::jthread([this](std::stop_token) {
+        mRunning.store(true, std::memory_order_release);
+        this->run();
+        mRunning.store(false, std::memory_order_release);
+    });
 }
 
-void Server::clearAuthToken() {
-    mAuthBearerToken = std::nullopt;
+bool Server::isRunning() const {
+    return mRunning.load(std::memory_order_acquire);
 }
 
-bool Server::isAuthorized(const Request& req, Response& res) const {
-    if (!mAuthBearerToken.has_value()) {
-        return true;
+void Server::stop() {
+    mRunning.store(false, std::memory_order_release);
+    mSseCv.notify_all();
+    mServer.stop();
+    if (mThread.joinable()) {
+        mThread.request_stop();
+        mThread.join();
     }
-
-    const string authHeader = req.get_header_value("Authorization");
-    constexpr std::string_view bearerPrefix = "Bearer ";
-
-    if (!authHeader.starts_with(bearerPrefix)) {
-        const Json error = generateError("Error", -32001, "Unauthorized");
-
-        res.status = 401;
-        res.set_header("WWW-Authenticate", "Bearer realm=\"mcp\"");
-        res.set_content(error.dump(), "application/json");
-        return false;
-    }
-
-    if (const string token = authHeader.substr(bearerPrefix.size()); token != *mAuthBearerToken) {
-        const Json error = generateError("Error", -32001, "Unauthorized");
-
-        res.status = 401;
-        res.set_header("WWW-Authenticate", R"(Bearer realm="mcp", error="invalid_token")");
-        res.set_content(error.dump(), "application/json");
-        return false;
-    }
-
-    return true;
 }
 
 Server::Json Server::toolsList(const Json& id) {
@@ -210,7 +230,32 @@ Server::Json Server::resourcesList(const Json &id) {
     Json out;
     out["jsonrpc"] = "2.0";
     out["id"] = id;
-    assert(false);
-    //TODO
+    
+    out["result"] = {
+        {"resultType", "complete"},
+        {"resources", McpResourceRegistry::Get().listResources()},
+        {"ttlMs", 300000},
+        {"cacheScope", "public"}
+    };
+
     return out;
+}
+
+Server::Json Server::resourcesRead(const Json &id, const Json &params) {
+    Json out;
+    out["jsonrpc"] = "2.0";
+    out["id"] = id;
+    
+    out["result"] = {
+        {"resultType", "complete"}
+    };
+    return Json();
+}
+
+void Server::notify(const Json &notification) {
+    {
+        std::lock_guard lock(mSseMutex);
+        mSseQueue.push(notification);
+    }
+    mSseCv.notify_all();
 }

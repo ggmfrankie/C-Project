@@ -19,4 +19,4 @@ typedef struct {
 } ScrollbarSettings;
 
 ElementHandle Scrollbar_new(ScrollbarSettings settings);
-void handleSliderDragging(Element* element, Vec2f pos);
+void Scrollbar_handleDragging(Element* element, Vec2f pos);

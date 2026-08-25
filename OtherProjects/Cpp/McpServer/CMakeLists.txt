@@ -19,9 +19,13 @@ add_executable(McpServer
         Dependencies/cpp-httpLib/httplib.hpp
         Dependencies/json/json.hpp
         Mcp/McpFunctionRegistry.hpp
-        Utils/LazyStream.hpp
         Utils/Utils.cpp
         Utils/Parsing.cpp
         Utils/Parsing.hpp
         Mcp/ReturnTypes.cpp
-        Mcp/ReturnTypes.hpp)
+        Mcp/ReturnTypes.hpp
+        Mcp/McpResourceRegistry.hpp)
+
+if (WIN32)
+        target_link_libraries(McpServer PRIVATE ws2_32)
+endif()
