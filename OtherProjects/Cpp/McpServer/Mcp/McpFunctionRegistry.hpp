@@ -5,7 +5,7 @@
 #pragma once
 #include <concepts>
 #include <execution>
-#include <json.hpp>
+#include "../Dependencies/json/json.hpp"
 #include <memory>
 #include <stdexcept>
 #include <utility>
@@ -15,6 +15,7 @@
 
 #define MCP_CAT(a,b) a##b
 
+namespace mcp {
 class McpFunctionRegistry {
     using Json = nlohmann::basic_json<>;
     using string = std::string;
@@ -196,7 +197,14 @@ public:
 #define MakeRequestableFunction(funcPtr, description, ...)\
     __VA_ARGS__;\
     inline static const bool MCP_CAT(_mcp_registrated_, __COUNTER__) = \
-        McpFunctionRegistry::Get().registerFunction(funcPtr, description, #__VA_ARGS__);\
+        mcp::McpFunctionRegistry::Get().registerFunction(funcPtr, description, #__VA_ARGS__);\
+        __VA_ARGS__
+
+#define MakeRequestableFunction_class(funcPtr, description, ...)\
+    inline static const bool MCP_CAT(_mcp_registrated_, __COUNTER__) = \
+        mcp::McpFunctionRegistry::Get().registerFunction(funcPtr, description, #__VA_ARGS__);\
         __VA_ARGS__
 
 };
+};
+

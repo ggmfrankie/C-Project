@@ -26,7 +26,7 @@ void chess_loadChessPosition(char* fen);
 
 typedef enum {
 
-    empty = 0,
+    PIECE_NONE = 0,
 
     whitePawn = 1,
     whiteKnight = 2,
@@ -108,7 +108,7 @@ void chess_setUpPieces () {
     int j = 0;
     for (int i = 0; j < 8; i++) {
 
-        chess_board.squares[j][i].piece = empty;
+        chess_board.squares[j][i].piece = PIECE_NONE;
 
         if (i == 7) {
 
@@ -306,7 +306,7 @@ void chess_loadChessPosition(char* fen) {
                 default:
                     if (c >= '0' && c <= '9') {
                         for (int a = 0; a < c - '0'; a++) {
-                            chess_board.squares[i][col++].piece = empty;
+                            chess_board.squares[i][col++].piece = PIECE_NONE;
                         }
                     }
                     break;

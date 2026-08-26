@@ -2,9 +2,7 @@
     "configurations": [
         {
             "name": "Win32",
-            "includePath": [
-                "${workspaceFolder}/**"
-            ],
+            "compileCommands": "${workspaceFolder}/build/compile_commands.json",
             "defines": [
                 "_DEBUG",
                 "UNICODE",
@@ -14,7 +12,7 @@
             "compilerPath": "C:/msys64/mingw64/bin/c++.exe",
             "cStandard": "gnu23",
             "cppStandard": "c++23",
-            "intelliSenseMode": "windows-clang-x64"
+            "intelliSenseMode": "windows-gcc-x64"
         }
     ],
     "version": 4

@@ -13,6 +13,8 @@
 #include "Render/Objects/3D/Physics/PhysicsFactory.hpp"
 #include "Render/Transformation/Camera.hpp"
 #include "../Controller/Player.hpp"
+#include "Projects/Chess/ChessGame.h"
+#include "Math/Vector.hpp"
 
 
 template<typename T>
@@ -73,7 +75,7 @@ namespace Game {
             Engine::Arg<std::string>
         >(
             "say",
-            [](std::string a) {
+            [](const std::string &a) {
                 std::cout << a << std::endl;
             }
         );
@@ -116,6 +118,7 @@ namespace Game {
 
     void BaseGame::postInit() {
         gui_init(mScreen->getWindowHandle(), mScreen->getWidth(), mScreen->getHeight(), generateGUI);
+        mMcpServer.startAsync();
     }
 
     void BaseGame::onUpdate(double deltaTime) {
@@ -156,5 +159,15 @@ namespace Game {
         } else {
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         }
+    }
+
+    MakeRequestableFunction_class(BaseGame::getBoard, "Returns the FEN string of the current board",
+    nlohmann::json BaseGame::getBoard())
+    {
+        char* fen = Chess_getBoardFEN();
+        auto out = mcp::ReturnTypes::asText(fen);
+
+        free(fen);
+        return out;
     }
 }

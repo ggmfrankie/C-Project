@@ -14,11 +14,15 @@ add_subdirectory(Dependencies/JoltPhysics/Build)
 target_compile_definitions(Jolt PUBLIC JPH_ENABLE_ASSERTS)
 target_compile_options(Jolt PRIVATE -fno-lto -Wno-array-bounds)
 
+add_subdirectory(OtherProjects/Cpp/McpServer)
+
 include_directories(
+        "${CMAKE_SOURCE_DIR}"
         "${CMAKE_SOURCE_DIR}/Dependencies/include"
         "${CMAKE_SOURCE_DIR}/C"
         "${CMAKE_SOURCE_DIR}/Cpp"
         "${CMAKE_SOURCE_DIR}/Dependencies/JoltPhysics"
+        "${CMAKE_SOURCE_DIR}/Cpp/Utils"
 )
 
 add_library(GUI STATIC
@@ -241,6 +245,7 @@ target_link_libraries(C-Project PRIVATE
         GUI
         Jolt
         winpthread
+        McpServerLib
         #TBB::tbb
 )
 endif (WIN32)
@@ -252,6 +257,7 @@ if (UNIX)
             GUI
             Jolt
             OpenGL::OpenGL
+            McpServerLib
             #TBB::tbb
             #RustGame
     )

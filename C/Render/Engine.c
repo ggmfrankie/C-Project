@@ -94,10 +94,12 @@ void gui_init(GLFWwindow* window, const int width, const int height, void (*gene
 void gui_update() {
     lock();
     Engine_resetStates(Element_get(g_Renderer.guiRoot));
-    Engine_handleDragElement(&g_Renderer);
-    Renderer_updateLayout(&g_Renderer);
+
     gui_popUpdate();
     Engine_processInput(&g_Renderer);
+    Engine_handleDragElement(&g_Renderer);
+
+    Renderer_updateLayout(&g_Renderer);
 #if GUI_DEBUG && GUI_DEBUG_PROCESS_DEBUG
     gui_processDebug();
 #endif
@@ -271,24 +273,24 @@ static bool Engine_handleDragElement(const Renderer *renderer) {
         offset.x = renderer->mousePos.x - element->dims.worldPos.x;
         offset.y = renderer->mousePos.y - element->dims.worldPos.y;
         dragging = true;
-    } else {
-        const Vec2f newPos = {
-            (renderer->mousePos.x - parentWorldPos.x) - offset.x,
-            (renderer->mousePos.y - parentWorldPos.y) - offset.y
-        };
-        element->callbacks.requestMove(element, newPos);
-#if GUI_DEBUG_TRACE_DRAGGING
-        only_every_do(100, {
-                      printf("World pos is: %f, %f, Relative pos is: %f, %f\n",
-                          element->dims.worldPos.x,
-                          element->dims.worldPos.y,
-                          element->dims.pos.x,
-                          element->dims.pos.y
-                      );
-                      });
-#endif
-        return true;
     }
+    const Vec2f newPos = {
+        (renderer->mousePos.x - parentWorldPos.x) - offset.x,
+        (renderer->mousePos.y - parentWorldPos.y) - offset.y
+    };
+    element->callbacks.requestMove(element, newPos);
+#if GUI_DEBUG_TRACE_DRAGGING
+    only_every_do(100, {
+                  printf("World pos is: %f, %f, Relative pos is: %f, %f\n",
+                      element->dims.worldPos.x,
+                      element->dims.worldPos.y,
+                      element->dims.pos.x,
+                      element->dims.pos.y
+                  );
+                  });
+#endif
+    return true;
+
     return false;
 }
 

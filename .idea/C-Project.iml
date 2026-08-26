@@ -57,6 +57,7 @@
       <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Cpp/McpServer/cmake-build-debug/CMakeFiles/pkgRedirects" />
       <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Cpp/McpServer/cmake-build-debug/Dependencies/beast/CMakeFiles" />
       <excludeFolder url="file://$MODULE_DIR$/cmake-build-debug-mingw-gcc" />
+      <excludeFolder url="file://$MODULE_DIR$/build" />
     </content>
     <orderEntry type="jdk" jdkName="C:\git\oth\C-Project\.venv" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />

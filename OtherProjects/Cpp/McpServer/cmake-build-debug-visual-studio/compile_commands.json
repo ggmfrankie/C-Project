@@ -1,6 +1,36 @@
 [
 {
   "directory": "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio",
+  "command": "C:\\PROGRA~2\\MICROS~4\\18\\BUILDT~1\\VC\\Tools\\MSVC\\1450~1.357\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -D_MBCS -IC:\\git\\oth\\C-Project\\OtherProjects\\Cpp\\McpServer\\Dependencies\\cpp-httpLib -IC:\\git\\oth\\C-Project\\OtherProjects\\Cpp\\McpServer\\Dependencies\\json /DWIN32 /D_WINDOWS /EHsc /Ob0 /Od -std:c++latest -MDd -RTC1 -Zi @CMakeFiles\\McpServerLib.dir\\Network\\Server.cpp.obj.modmap /FoCMakeFiles\\McpServerLib.dir\\Network\\Server.cpp.obj /FdCMakeFiles\\McpServerLib.dir\\McpServerLib.pdb /FS -c C:\\git\\oth\\C-Project\\OtherProjects\\Cpp\\McpServer\\Network\\Server.cpp",
+  "file": "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/Network/Server.cpp",
+  "output": "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio/CMakeFiles/McpServerLib.dir/Network/Server.cpp.obj"
+},
+{
+  "directory": "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio",
+  "command": "C:\\PROGRA~2\\MICROS~4\\18\\BUILDT~1\\VC\\Tools\\MSVC\\1450~1.357\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -D_MBCS -IC:\\git\\oth\\C-Project\\OtherProjects\\Cpp\\McpServer\\Dependencies\\cpp-httpLib -IC:\\git\\oth\\C-Project\\OtherProjects\\Cpp\\McpServer\\Dependencies\\json /DWIN32 /D_WINDOWS /EHsc /Ob0 /Od -std:c++latest -MDd -RTC1 -Zi @CMakeFiles\\McpServerLib.dir\\Network\\Client.cpp.obj.modmap /FoCMakeFiles\\McpServerLib.dir\\Network\\Client.cpp.obj /FdCMakeFiles\\McpServerLib.dir\\McpServerLib.pdb /FS -c C:\\git\\oth\\C-Project\\OtherProjects\\Cpp\\McpServer\\Network\\Client.cpp",
+  "file": "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/Network/Client.cpp",
+  "output": "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio/CMakeFiles/McpServerLib.dir/Network/Client.cpp.obj"
+},
+{
+  "directory": "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio",
+  "command": "C:\\PROGRA~2\\MICROS~4\\18\\BUILDT~1\\VC\\Tools\\MSVC\\1450~1.357\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -D_MBCS -IC:\\git\\oth\\C-Project\\OtherProjects\\Cpp\\McpServer\\Dependencies\\cpp-httpLib -IC:\\git\\oth\\C-Project\\OtherProjects\\Cpp\\McpServer\\Dependencies\\json /DWIN32 /D_WINDOWS /EHsc /Ob0 /Od -std:c++latest -MDd -RTC1 -Zi @CMakeFiles\\McpServerLib.dir\\Utils\\Utils.cpp.obj.modmap /FoCMakeFiles\\McpServerLib.dir\\Utils\\Utils.cpp.obj /FdCMakeFiles\\McpServerLib.dir\\McpServerLib.pdb /FS -c C:\\git\\oth\\C-Project\\OtherProjects\\Cpp\\McpServer\\Utils\\Utils.cpp",
+  "file": "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/Utils/Utils.cpp",
+  "output": "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio/CMakeFiles/McpServerLib.dir/Utils/Utils.cpp.obj"
+},
+{
+  "directory": "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio",
+  "command": "C:\\PROGRA~2\\MICROS~4\\18\\BUILDT~1\\VC\\Tools\\MSVC\\1450~1.357\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -D_MBCS -IC:\\git\\oth\\C-Project\\OtherProjects\\Cpp\\McpServer\\Dependencies\\cpp-httpLib -IC:\\git\\oth\\C-Project\\OtherProjects\\Cpp\\McpServer\\Dependencies\\json /DWIN32 /D_WINDOWS /EHsc /Ob0 /Od -std:c++latest -MDd -RTC1 -Zi @CMakeFiles\\McpServerLib.dir\\Utils\\Parsing.cpp.obj.modmap /FoCMakeFiles\\McpServerLib.dir\\Utils\\Parsing.cpp.obj /FdCMakeFiles\\McpServerLib.dir\\McpServerLib.pdb /FS -c C:\\git\\oth\\C-Project\\OtherProjects\\Cpp\\McpServer\\Utils\\Parsing.cpp",
+  "file": "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/Utils/Parsing.cpp",
+  "output": "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio/CMakeFiles/McpServerLib.dir/Utils/Parsing.cpp.obj"
+},
+{
+  "directory": "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio",
+  "command": "C:\\PROGRA~2\\MICROS~4\\18\\BUILDT~1\\VC\\Tools\\MSVC\\1450~1.357\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -D_MBCS -IC:\\git\\oth\\C-Project\\OtherProjects\\Cpp\\McpServer\\Dependencies\\cpp-httpLib -IC:\\git\\oth\\C-Project\\OtherProjects\\Cpp\\McpServer\\Dependencies\\json /DWIN32 /D_WINDOWS /EHsc /Ob0 /Od -std:c++latest -MDd -RTC1 -Zi @CMakeFiles\\McpServerLib.dir\\Mcp\\ReturnTypes.cpp.obj.modmap /FoCMakeFiles\\McpServerLib.dir\\Mcp\\ReturnTypes.cpp.obj /FdCMakeFiles\\McpServerLib.dir\\McpServerLib.pdb /FS -c C:\\git\\oth\\C-Project\\OtherProjects\\Cpp\\McpServer\\Mcp\\ReturnTypes.cpp",
+  "file": "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/Mcp/ReturnTypes.cpp",
+  "output": "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio/CMakeFiles/McpServerLib.dir/Mcp/ReturnTypes.cpp.obj"
+},
+{
+  "directory": "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio",
   "command": "C:\\PROGRA~2\\MICROS~4\\18\\BUILDT~1\\VC\\Tools\\MSVC\\1450~1.357\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -D_MBCS -IC:\\git\\oth\\C-Project\\OtherProjects\\Cpp\\McpServer\\Dependencies\\cpp-httpLib -IC:\\git\\oth\\C-Project\\OtherProjects\\Cpp\\McpServer\\Dependencies\\json /DWIN32 /D_WINDOWS /EHsc /Ob0 /Od -std:c++latest -MDd -RTC1 -Zi @CMakeFiles\\McpServer.dir\\main.cpp.obj.modmap /FoCMakeFiles\\McpServer.dir\\main.cpp.obj /FdCMakeFiles\\McpServer.dir\\ /FS -c C:\\git\\oth\\C-Project\\OtherProjects\\Cpp\\McpServer\\main.cpp",
   "file": "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/main.cpp",
   "output": "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio/CMakeFiles/McpServer.dir/main.cpp.obj"
@@ -10,35 +40,5 @@
   "command": "C:\\PROGRA~2\\MICROS~4\\18\\BUILDT~1\\VC\\Tools\\MSVC\\1450~1.357\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -D_MBCS -IC:\\git\\oth\\C-Project\\OtherProjects\\Cpp\\McpServer\\Dependencies\\cpp-httpLib -IC:\\git\\oth\\C-Project\\OtherProjects\\Cpp\\McpServer\\Dependencies\\json /DWIN32 /D_WINDOWS /EHsc /Ob0 /Od -std:c++latest -MDd -RTC1 -Zi @CMakeFiles\\McpServer.dir\\Test\\TicTacToe.cpp.obj.modmap /FoCMakeFiles\\McpServer.dir\\Test\\TicTacToe.cpp.obj /FdCMakeFiles\\McpServer.dir\\ /FS -c C:\\git\\oth\\C-Project\\OtherProjects\\Cpp\\McpServer\\Test\\TicTacToe.cpp",
   "file": "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/Test/TicTacToe.cpp",
   "output": "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio/CMakeFiles/McpServer.dir/Test/TicTacToe.cpp.obj"
-},
-{
-  "directory": "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio",
-  "command": "C:\\PROGRA~2\\MICROS~4\\18\\BUILDT~1\\VC\\Tools\\MSVC\\1450~1.357\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -D_MBCS -IC:\\git\\oth\\C-Project\\OtherProjects\\Cpp\\McpServer\\Dependencies\\cpp-httpLib -IC:\\git\\oth\\C-Project\\OtherProjects\\Cpp\\McpServer\\Dependencies\\json /DWIN32 /D_WINDOWS /EHsc /Ob0 /Od -std:c++latest -MDd -RTC1 -Zi @CMakeFiles\\McpServer.dir\\Network\\Server.cpp.obj.modmap /FoCMakeFiles\\McpServer.dir\\Network\\Server.cpp.obj /FdCMakeFiles\\McpServer.dir\\ /FS -c C:\\git\\oth\\C-Project\\OtherProjects\\Cpp\\McpServer\\Network\\Server.cpp",
-  "file": "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/Network/Server.cpp",
-  "output": "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio/CMakeFiles/McpServer.dir/Network/Server.cpp.obj"
-},
-{
-  "directory": "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio",
-  "command": "C:\\PROGRA~2\\MICROS~4\\18\\BUILDT~1\\VC\\Tools\\MSVC\\1450~1.357\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -D_MBCS -IC:\\git\\oth\\C-Project\\OtherProjects\\Cpp\\McpServer\\Dependencies\\cpp-httpLib -IC:\\git\\oth\\C-Project\\OtherProjects\\Cpp\\McpServer\\Dependencies\\json /DWIN32 /D_WINDOWS /EHsc /Ob0 /Od -std:c++latest -MDd -RTC1 -Zi @CMakeFiles\\McpServer.dir\\Network\\Client.cpp.obj.modmap /FoCMakeFiles\\McpServer.dir\\Network\\Client.cpp.obj /FdCMakeFiles\\McpServer.dir\\ /FS -c C:\\git\\oth\\C-Project\\OtherProjects\\Cpp\\McpServer\\Network\\Client.cpp",
-  "file": "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/Network/Client.cpp",
-  "output": "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio/CMakeFiles/McpServer.dir/Network/Client.cpp.obj"
-},
-{
-  "directory": "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio",
-  "command": "C:\\PROGRA~2\\MICROS~4\\18\\BUILDT~1\\VC\\Tools\\MSVC\\1450~1.357\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -D_MBCS -IC:\\git\\oth\\C-Project\\OtherProjects\\Cpp\\McpServer\\Dependencies\\cpp-httpLib -IC:\\git\\oth\\C-Project\\OtherProjects\\Cpp\\McpServer\\Dependencies\\json /DWIN32 /D_WINDOWS /EHsc /Ob0 /Od -std:c++latest -MDd -RTC1 -Zi @CMakeFiles\\McpServer.dir\\Utils\\Utils.cpp.obj.modmap /FoCMakeFiles\\McpServer.dir\\Utils\\Utils.cpp.obj /FdCMakeFiles\\McpServer.dir\\ /FS -c C:\\git\\oth\\C-Project\\OtherProjects\\Cpp\\McpServer\\Utils\\Utils.cpp",
-  "file": "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/Utils/Utils.cpp",
-  "output": "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio/CMakeFiles/McpServer.dir/Utils/Utils.cpp.obj"
-},
-{
-  "directory": "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio",
-  "command": "C:\\PROGRA~2\\MICROS~4\\18\\BUILDT~1\\VC\\Tools\\MSVC\\1450~1.357\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -D_MBCS -IC:\\git\\oth\\C-Project\\OtherProjects\\Cpp\\McpServer\\Dependencies\\cpp-httpLib -IC:\\git\\oth\\C-Project\\OtherProjects\\Cpp\\McpServer\\Dependencies\\json /DWIN32 /D_WINDOWS /EHsc /Ob0 /Od -std:c++latest -MDd -RTC1 -Zi @CMakeFiles\\McpServer.dir\\Utils\\Parsing.cpp.obj.modmap /FoCMakeFiles\\McpServer.dir\\Utils\\Parsing.cpp.obj /FdCMakeFiles\\McpServer.dir\\ /FS -c C:\\git\\oth\\C-Project\\OtherProjects\\Cpp\\McpServer\\Utils\\Parsing.cpp",
-  "file": "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/Utils/Parsing.cpp",
-  "output": "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio/CMakeFiles/McpServer.dir/Utils/Parsing.cpp.obj"
-},
-{
-  "directory": "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio",
-  "command": "C:\\PROGRA~2\\MICROS~4\\18\\BUILDT~1\\VC\\Tools\\MSVC\\1450~1.357\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -D_MBCS -IC:\\git\\oth\\C-Project\\OtherProjects\\Cpp\\McpServer\\Dependencies\\cpp-httpLib -IC:\\git\\oth\\C-Project\\OtherProjects\\Cpp\\McpServer\\Dependencies\\json /DWIN32 /D_WINDOWS /EHsc /Ob0 /Od -std:c++latest -MDd -RTC1 -Zi @CMakeFiles\\McpServer.dir\\Mcp\\ReturnTypes.cpp.obj.modmap /FoCMakeFiles\\McpServer.dir\\Mcp\\ReturnTypes.cpp.obj /FdCMakeFiles\\McpServer.dir\\ /FS -c C:\\git\\oth\\C-Project\\OtherProjects\\Cpp\\McpServer\\Mcp\\ReturnTypes.cpp",
-  "file": "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/Mcp/ReturnTypes.cpp",
-  "output": "C:/git/oth/C-Project/OtherProjects/Cpp/McpServer/cmake-build-debug-visual-studio/CMakeFiles/McpServer.dir/Mcp/ReturnTypes.cpp.obj"
 }
 ]

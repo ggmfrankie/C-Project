@@ -3,16 +3,15 @@
 //
 
 #pragma once
-#define CPPHTTPLIB_USE_WIN32
-#include "httplib.hpp"
+#include "../Dependencies/cpp-httpLib/httplib.hpp"
 #include <string>
 #include <optional>
 #include <queue>
-#include <deque>
 #include <thread>
 #include "../Dependencies/json/json.hpp"
 #include "../Utils/Parsing.hpp"
 
+namespace mcp {
 class Server {
     using Json = nlohmann::json;
     using string = std::string;
@@ -57,3 +56,4 @@ private:
     std::condition_variable mSseCv;
     std::queue<Json> mSseQueue;
 };
+}

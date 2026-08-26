@@ -7,6 +7,7 @@
 #include "Utils/Parsing.hpp"
 
 using Json = nlohmann::json;
+using namespace mcp;
 
 MakeRequestableFunction(testerFunc, "Returns the square root",
 nlohmann::json testerFunc(int i)){

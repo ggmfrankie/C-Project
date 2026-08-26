@@ -25,6 +25,7 @@ using httplib::Response;
 using std::string, std::optional;
 using nlohmann::json;
 
+namespace mcp {
 Server::Server(string name, optional<string> authToken):
     mServer(),
     mName(std::move(name)),
@@ -249,7 +250,7 @@ Server::Json Server::resourcesRead(const Json &id, const Json &params) {
     out["result"] = {
         {"resultType", "complete"}
     };
-    return Json();
+    return out;
 }
 
 void Server::notify(const Json &notification) {
@@ -258,4 +259,5 @@ void Server::notify(const Json &notification) {
         mSseQueue.push(notification);
     }
     mSseCv.notify_all();
+}
 }

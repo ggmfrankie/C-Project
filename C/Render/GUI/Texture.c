@@ -45,7 +45,7 @@ void f_loadTextures(TextureAtlas *atlas, const char *first, va_list args) {
         const String defaultPath = stringOf("../Resources/Textures/");
 
         defer(str_delete) String fileNameString = newString_c(file);
-        defer(str_delete) const String fullPath = Strings.combine(&defaultPath, &fileNameString);
+        defer(str_delete) String fullPath = Strings.combine(&defaultPath, &fileNameString);
 
         int width, height, channels;
 
@@ -132,7 +132,7 @@ StandaloneTexture *newEmptyTexture(const int width, const int height) {
 StandaloneTexture *loadTextureFromPng(char *fileName) {
     const String fileNameString = stringOf(fileName);
     const String defaultPath = stringOf("../Resources/Textures/");
-    defer(str_delete) const String fullPath = Strings.combine(&defaultPath, &fileNameString);
+    defer(str_delete) String fullPath = Strings.combine(&defaultPath, &fileNameString);
 
     int width, height, channels;
 

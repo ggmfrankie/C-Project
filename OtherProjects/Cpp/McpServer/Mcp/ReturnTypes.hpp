@@ -3,9 +3,9 @@
 //
 
 #pragma once
-#include "json.hpp"
+#include "../Dependencies/json/json.hpp"
 
-namespace ReturnTypes {
+namespace mcp::ReturnTypes {
     using Json = nlohmann::json;
 
     template<typename T>
@@ -14,6 +14,13 @@ namespace ReturnTypes {
         return {
             {"type", "text"},
             {"text", std::to_string((value))}
+        };
+    }
+
+    static Json asText(const char* value) {
+        return {
+            {"type", "text"},
+            {"text", std::string((value))}
         };
     }
 }

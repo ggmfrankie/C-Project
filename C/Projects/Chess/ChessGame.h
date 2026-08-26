@@ -11,6 +11,7 @@ extern "C" {
 struct Element;
 
 void createChessGUI(struct Element *root);
+char* Chess_getBoardFEN();
 
 #ifdef __cplusplus
     }

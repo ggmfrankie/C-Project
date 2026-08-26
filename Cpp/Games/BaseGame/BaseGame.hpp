@@ -5,7 +5,9 @@
 #pragma once
 #include "../EngineDefines.hpp"
 #include "../IGame.hpp"
-
+#include "OtherProjects/Cpp/McpServer/Network/Server.hpp"
+#include "OtherProjects/Cpp/McpServer/Mcp/McpFunctionRegistry.hpp"
+#include "OtherProjects/Cpp/McpServer/Mcp/ReturnTypes.hpp"
 #include "Games/Scene/3D/Scene3D.hpp"
 
 struct GLFWwindow;
@@ -27,11 +29,15 @@ namespace Game {
         void onUpdate(double deltaTime) override;
         void onShutdown() override;
 
+        static nlohmann::json getBoard();
+
     private:
         Render::Camera* mCamera = nullptr;
         Render::Input* mInput = nullptr;
         Render::Screen* mScreen = nullptr;
         Engine::CommandRegistry* mCommandRegistry = nullptr;
+        
+        mcp::Server mMcpServer {"chessServer"};
 
         Scene3D mScene;
 

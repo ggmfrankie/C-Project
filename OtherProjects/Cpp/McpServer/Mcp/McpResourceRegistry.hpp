@@ -7,6 +7,7 @@
 #include <concepts>
 #include "../Dependencies/json/json.hpp"
 
+namespace mcp {
 class McpResourceRegistry {
 public:
     enum class MimeType {
@@ -111,3 +112,4 @@ public:
         mResources[uri] = std::make_unique<ResourceWrapper<R>>(ResourceMeta{uri, name, description, mime}, reader);
     }
 };
+}

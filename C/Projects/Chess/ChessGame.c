@@ -14,31 +14,32 @@
 #include "Render/GUI/ElementTypes/TextField.h"
 
 
-static constexpr Vec3f COOL_COLOR =  {.2f, .3f, .3f};
-static constexpr Vec3f COLOR_WHITE  = {1.f, 1.f, 1.f};
-static constexpr Vec3f COLOR_BLACK = {0, 0, 0};
-static constexpr Vec3f COLOR_GRAY = {0.2f, 0.2f, 0.2f};
-static constexpr Vec3f COLOR_LIGHTGREY = {0.8f, 0.8f, 0.8f};
-static constexpr Vec3f COLOR_DARKYELLOW = {0.5f, 0.5f, 0.0f};
-static constexpr Vec3f COLOR_HOVER = {0.8f, 0.8f, 1.0f};
+#define COOL_COLOR (Vec3f){.2f, .3f, .3f}
+#define COLOR_WHITE (Vec3f){1.f, 1.f, 1.f}
+#define COLOR_BLACK (Vec3f){0, 0, 0}
+#define COLOR_GRAY (Vec3f){0.2f, 0.2f, 0.2f}
+#define COLOR_LIGHTGREY (Vec3f){0.8f, 0.8f, 0.8f}
+#define COLOR_DARKYELLOW (Vec3f){0.5f, 0.5f, 0.0f}
+#define COLOR_HOVER (Vec3f){0.8f, 0.8f, 1.0f}
+
 #define CHESS_PORT 52345
 
 typedef enum {
-    empty = 0,
+    PIECE_NONE = 0,
 
-    down_Pawn = 1,
-    down_Knight = 2,
-    down_Bishop = 3,
-    down_Rook = 4,
-    down_Queen = 5,
-    down_King = 6,
+    PIECE_BLACK_PAWN = 1,
+    PIECE_BLACK_KNIGHT = 2,
+    PIECE_BLACK_BISHOP = 3,
+    PIECE_BLACK_ROOK = 4,
+    PIECE_BLACK_QUEEN = 5,
+    PIECE_BLACK_KING = 6,
 
-    up_Pawn = -1,
-    up_Knight = -2,
-    up_Bishop = -3,
-    up_Rook = -4,
-    up_Queen = -5,
-    up_King = -6
+    PIECE_WHITE_PAWN = -1,
+    PIECE_WHITE_KNIGHT = -2,
+    PIECE_WHITE_BISHOP = -3,
+    PIECE_WHITE_ROOK = -4,
+    PIECE_WHITE_QUEEN = -5,
+    PIECE_WHITE_KING = -6
 
 } ChessPiece;
 
@@ -54,18 +55,19 @@ typedef struct {
 } ChessMove;
 
 typedef enum {
-    null = 0,
-    pawn = 1,
-    knight = 2,
-    bishop = 3,
-    rook = 4,
-    queen = 5,
-    king = 6,
+    TYPE_NONE = 0,
+    TYPE_PAWN = 1,
+    TYPE_KNIGHT = 2,
+    TYPE_BISHOP = 3,
+    TYPE_ROOK = 4,
+    TYPE_QUEEN = 5,
+    TYPE_KING = 6,
 } PieceType;
 
 typedef enum {
-    down = -1,
-    up = 1
+    COL_NONE = 0,
+    COL_BLACK = 1,
+    COL_WHITE = -1
 } PieceColor;
 
 typedef enum {
@@ -75,7 +77,7 @@ typedef enum {
 
 typedef enum {
     whiteDown = 0,
-    blackDown = 1
+    whiteUp = 1
 } BoardDirection;
 
 typedef void (*MarkerFun)(PieceColor color, int row, int column, MarkType type);
@@ -84,8 +86,8 @@ typedef bool (*Marker)(int row, int column, int pieceRow, int pieceCol, PieceCol
 static Square board[8][8] = {};
 static ElementHandle pieceSlots[8][8] = {};
 static BoardDirection boardDirection = whiteDown;
-static bool turnPosCanCastle = true;
-static bool turnNegCanCastle = true;
+static bool blackCanCastle = true;
+static bool whiteCanCastle = true;
 static bool isMultiplayer = false;
 
 static pthread_t multiplayerListener;
@@ -126,8 +128,8 @@ static void runMarking(ChessPiece piece, int row, int column, MarkType type);
 static void runMarkAllPieces(PieceColor color, MarkType type);
 static void unmarkAll(PieceColor color, int row, int column, MarkType type);
 
-static int getColor(int piece) {
-    return piece ? sig(piece) : 0;
+static PieceColor getColor(int piece) {
+    return piece ? sig(piece) : COL_NONE;
 }
 
 static void markPawn(const PieceColor color, const int row, const int column, const MarkType type) {
@@ -135,7 +137,7 @@ static void markPawn(const PieceColor color, const int row, const int column, co
         markedOnlyIfEnemy(row + color, column+1, row, column, color);
         markedOnlyIfEnemy(row + color, column-1, row, column, color);
         markedOnlyIfFree(row + color, column, row, column, color);
-        if (((color == 1 && row == 1 )||(color == -1 && row == 6)) && board[row+color][column].piece == empty) markedOnlyIfFree(row + 2*color, column, row, column, color);
+        if (((color == 1 && row == 1 )||(color == -1 && row == 6)) && board[row+color][column].piece == PIECE_NONE) markedOnlyIfFree(row + 2*color, column, row, column, color);
     } else {
         markDefend(row + color, column+1, row, column, color);
         markDefend(row + color, column-1, row, column, color);
@@ -198,29 +200,29 @@ static void markQueen(const PieceColor color, const int row, const int column, c
 
 static void markKing(const PieceColor color, const int row, const int column, const MarkType type) {
     if (type == attack) {
-        runMarkAllPieces(color*-1, defend);
+        runMarkAllPieces(-color, defend);
 
-        if ((color == down && turnNegCanCastle) || (color == up && turnPosCanCastle)) {
+        if ((color == COL_BLACK && whiteCanCastle) || (color == COL_WHITE && blackCanCastle)) {
             for (int i = 1;; i++) {
                 if (column+i > 7) break;
-                if (board[row][column+i].piece == empty) continue;
-                if (board[row][column+i].piece == rook * color) {
+                if (board[row][column+i].piece == PIECE_NONE) continue;
+                if (board[row][column+i].piece == TYPE_ROOK * color) {
                     chessCheckedMark(row, 6, row, column, color);
-                } else if (board[row][column+i].piece != empty) break;
+                } else if (board[row][column+i].piece != PIECE_NONE) break;
             }
             for (int i = 1;; i++) {
                 if (column-i < 0) break;
-                if (board[row][column-i].piece == empty) continue;
-                if (board[row][column-i].piece == rook * color) {
+                if (board[row][column-i].piece == PIECE_NONE) continue;
+                if (board[row][column-i].piece == TYPE_ROOK * color) {
                     chessCheckedMark(row, 2, row, column, color);
-                } else if (board[row][column-i].piece != empty) break;
+                } else if (board[row][column-i].piece != PIECE_NONE) break;
             }
         }
 
-        chessCheckedMark(row+1, column, row, column, color);
-        chessCheckedMark(row-1, column, row, column, color);
-        chessCheckedMark(row, column+1, row, column, color);
-        chessCheckedMark(row, column-1, row, column, color);
+        chessCheckedMark(row+1, column,   row, column, color);
+        chessCheckedMark(row-1, column,   row, column, color);
+        chessCheckedMark(row,   column+1, row, column, color);
+        chessCheckedMark(row,   column-1, row, column, color);
         chessCheckedMark(row+1, column+1, row, column, color);
         chessCheckedMark(row-1, column-1, row, column, color);
         chessCheckedMark(row+1, column-1, row, column, color);
@@ -228,10 +230,10 @@ static void markKing(const PieceColor color, const int row, const int column, co
 
         unmarkAll(0,0,0,0);
     } else {
-        markDefend(row+1, column, row, column, color);
-        markDefend(row-1, column, row, column, color);
-        markDefend(row, column+1, row, column, color);
-        markDefend(row, column-1, row, column, color);
+        markDefend(row+1, column,   row, column, color);
+        markDefend(row-1, column,   row, column, color);
+        markDefend(row,   column+1, row, column, color);
+        markDefend(row,   column-1, row, column, color);
         markDefend(row+1, column+1, row, column, color);
         markDefend(row-1, column-1, row, column, color);
         markDefend(row+1, column-1, row, column, color);
@@ -309,7 +311,7 @@ static bool doesMoveCauseCheck(const int row, const int column, const int pieceR
     const ChessPiece temp = board[row][column].piece;
 
     board[row][column].piece = board[pieceRow][pieceCol].piece;
-    board[pieceRow][pieceCol].piece = empty;
+    board[pieceRow][pieceCol].piece = PIECE_NONE;
 
     const bool isCheck = isKingAttacked(pieceColor);
 
@@ -331,6 +333,43 @@ void createChessGUI(Element* root) {
     createStartScreen(root);
 
     createEndScreen(root);
+}
+
+char *Chess_getBoardFEN() {
+    const char map[] = {
+        'P','N','B','R','Q','K',
+        'p','n','b','r','q','k'
+    };
+
+    char* str = calloc(128, 1);
+    int len = 0;
+    bool empty = false;
+    int numEmpty = 0;
+
+    for (int i = 0; i < 64; i++) {
+        const ChessPiece piece = board[i%8][i/8].piece;
+    
+        if (piece == PIECE_NONE) {
+            empty = true;
+            numEmpty++;
+        } else {
+            if (empty) {
+                str[len++] = '0' + numEmpty;
+            }
+            const int idx = abs(piece) + ((getColor(piece) == COL_WHITE) ? -1 : 7);
+            str[len++] = map[idx];
+        }        
+        if (len % 8 == 0) str[len++] = '/';
+    }
+    len--;
+    str[len++] = ' ';
+    str[len++] = (turn == COL_WHITE) ? 'w' : 'b';
+    str[len++] = ' ';
+    str[len++] = '-';
+    str[len++] = ' ';
+    str[len++] = '-';
+
+    return str;
 }
 #if 0
 static void sendMove(const ChessMove *move) {
@@ -372,12 +411,7 @@ static void showWinnerScreen(const bool winner) {
     Element_setText_ptr(colorDisplay, winner ? "White won" : "Black won");
 }
 
-static void onSquareClicked2(void* el) {
-    static bool isGameOver = false;
-    if (isGameOver) return;
-    const Element* element = (Element*) el;
-    const Vec2i pos = getPosition(element);
-
+static void onSquareClicked(Vec2i pos) {
     static Vec2i selectedPiecePos = {-1,-1};
 
     if (board[pos.y][pos.x].isMarked && selectedPiecePos.x != -1) {
@@ -400,6 +434,15 @@ static void onSquareClicked2(void* el) {
     syncGui();
 }
 
+static void fromGuiClicked(void* el) {
+    static bool isGameOver = false;
+    if (isGameOver) return;
+    const Element* element = (Element*) el;
+    const Vec2i pos = getPosition(element);
+
+    onSquareClicked(pos);
+}
+
 static bool applyMove(const ChessMove* move) {
     static bool isGameOver = false;
     if (isGameOver) return false;
@@ -410,27 +453,27 @@ static bool applyMove(const ChessMove* move) {
     if (!board[pos.y][pos.x].isMarked)
         return false;
 
-    if (turnPosCanCastle || turnNegCanCastle) {
-        if (abs(board[selectedPiecePos.y][selectedPiecePos.x].piece) == rook || abs(board[selectedPiecePos.y][selectedPiecePos.x].piece) == king) {
-            if (turn == 1) turnPosCanCastle = false;
-            else turnNegCanCastle = false;
+    if (blackCanCastle || whiteCanCastle) {
+        if (abs(board[selectedPiecePos.y][selectedPiecePos.x].piece) == TYPE_ROOK || abs(board[selectedPiecePos.y][selectedPiecePos.x].piece) == TYPE_KING) {
+            if (turn == 1) blackCanCastle = false;
+            else whiteCanCastle = false;
 
             if (pos.x == 2) {
                 if (pos.y == 0 || pos.y == 7) {
                     board[pos.y][3].piece = board[pos.y][0].piece;
-                    board[pos.y][0].piece = empty;
+                    board[pos.y][0].piece = PIECE_NONE;
                 }
             } else if (pos.x == 6) {
                 if (pos.y == 0 || pos.y == 7) {
                     board[pos.y][5].piece = board[pos.y][7].piece;
-                    board[pos.y][7].piece = empty;
+                    board[pos.y][7].piece = PIECE_NONE;
                 }
             }
         }
     }
 
     board[pos.y][pos.x].piece = board[selectedPiecePos.y][selectedPiecePos.x].piece;
-    board[selectedPiecePos.y][selectedPiecePos.x].piece = empty;
+    board[selectedPiecePos.y][selectedPiecePos.x].piece = PIECE_NONE;
     turn *= -1;
     unmarkAll(0,0,0,0);
     if (isCheckmate(turn)) {
@@ -445,7 +488,7 @@ static bool isKingAttacked(const PieceColor color) {
     runMarkAllPieces(color*-1, defend);
     for (int i = 0; i < 8; i++) {
         for (int ii = 0; ii < 8; ii++) {
-            if (abs(board[i][ii].piece) == king && getColor(board[i][ii].piece) == color) {
+            if (abs(board[i][ii].piece) == TYPE_KING && getColor(board[i][ii].piece) == color) {
                 bool isKingAttacked = false;
                 if (board[i][ii].isMarked) {
                     isKingAttacked = true;
@@ -484,8 +527,8 @@ static void runMarking(const ChessPiece piece, const int row, const int column, 
 
 static void resetBoard(void*) {
     turn = boardDirection ? 1 : -1;
-    turnPosCanCastle = true;
-    turnNegCanCastle = true;
+    blackCanCastle = true;
+    whiteCanCastle = true;
     setUpPieces();
     unmarkAll(0,0,0,0);
 
@@ -535,43 +578,43 @@ static void flipBoard(void*) {
 static void setUpPieces() {
     for (int r = 0; r < 8; r++) {
         for (int c = 0; c < 8; c++) {
-            board[r][c].piece = empty;
+            board[r][c].piece = PIECE_NONE;
         }
     }
     for (int i = 0; i < 8; i++) {
-        board[1][i].piece = down_Pawn;
-        board[6][i].piece = up_Pawn;
+        board[1][i].piece = PIECE_BLACK_PAWN;
+        board[6][i].piece = PIECE_WHITE_PAWN;
     }
-    board[0][0].piece = down_Rook;
-    board[0][7].piece = down_Rook;
+    board[0][0].piece = PIECE_BLACK_ROOK;
+    board[0][7].piece = PIECE_BLACK_ROOK;
 
-    board[0][1].piece = down_Knight;
-    board[0][6].piece = down_Knight;
+    board[0][1].piece = PIECE_BLACK_KNIGHT;
+    board[0][6].piece = PIECE_BLACK_KNIGHT;
 
-    board[0][2].piece = down_Bishop;
-    board[0][5].piece = down_Bishop;
+    board[0][2].piece = PIECE_BLACK_BISHOP;
+    board[0][5].piece = PIECE_BLACK_BISHOP;
 
-    board[7][0].piece = up_Rook;
-    board[7][7].piece = up_Rook;
+    board[7][0].piece = PIECE_WHITE_ROOK;
+    board[7][7].piece = PIECE_WHITE_ROOK;
 
-    board[7][1].piece = up_Knight;
-    board[7][6].piece = up_Knight;
+    board[7][1].piece = PIECE_WHITE_KNIGHT;
+    board[7][6].piece = PIECE_WHITE_KNIGHT;
 
-    board[7][2].piece = up_Bishop;
-    board[7][5].piece = up_Bishop;
+    board[7][2].piece = PIECE_WHITE_BISHOP;
+    board[7][5].piece = PIECE_WHITE_BISHOP;
 
     if (boardDirection == whiteDown) {
-        board[7][3].piece = up_Queen;
-        board[7][4].piece = up_King;
+        board[7][3].piece = PIECE_WHITE_QUEEN;
+        board[7][4].piece = PIECE_WHITE_KING;
 
-        board[0][3].piece = down_Queen;
-        board[0][4].piece = down_King;
+        board[0][3].piece = PIECE_BLACK_QUEEN;
+        board[0][4].piece = PIECE_BLACK_KING;
     } else {
-        board[7][4].piece = up_Queen;
-        board[7][3].piece = up_King;
+        board[7][4].piece = PIECE_WHITE_QUEEN;
+        board[7][3].piece = PIECE_WHITE_KING;
 
-        board[0][4].piece = down_Queen;
-        board[0][3].piece = down_King;
+        board[0][4].piece = PIECE_BLACK_QUEEN;
+        board[0][3].piece = PIECE_BLACK_KING;
     }
 }
 
@@ -580,21 +623,21 @@ static void setUpPiecesForTest() {
     // Clear board first
     for (int r = 0; r < 8; r++)
         for (int c = 0; c < 8; c++)
-            board[r][c].piece = empty;
+            board[r][c].piece = PIECE_NONE;
 
     // Black King
-    board[0][4].piece = down_King;   // e8
+    board[0][4].piece = PIECE_BLACK_KING;   // e8
 
     // Black pawns (to block escape)
-    board[1][5].piece = down_Pawn;   // f7
-    board[1][6].piece = down_Pawn;   // g7
+    board[1][5].piece = PIECE_BLACK_PAWN;   // f7
+    board[1][6].piece = PIECE_BLACK_PAWN;   // g7
 
     // White King
-    board[7][4].piece = up_King;     // e1
+    board[7][4].piece = PIECE_WHITE_KING;     // e1
 
     // White Queen
-    board[4][7].piece = up_Queen;    // h4
-    board[4][1].piece = up_Queen;
+    board[4][7].piece = PIECE_WHITE_QUEEN;    // h4
+    board[4][1].piece = PIECE_WHITE_QUEEN;
     // Set side to move: White
 }
 
@@ -692,7 +735,7 @@ static void createChessBoard(Element* root) {
                     .color = COLOR_WHITE,
                     .canBeHovered = true,
                     .onClick = runTaskFun,
-                    .task = {onSquareClicked2, THIS_ELEMENT}
+                    .task = {fromGuiClicked, THIS_ELEMENT}
                 },
                 8, 8,createChessSquares
                 ),
