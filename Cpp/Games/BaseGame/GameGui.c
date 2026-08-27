@@ -7,20 +7,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "GuiInterface.h"
 #include "Render/GUI/CallbackFunctions.h"
 #include "GuiTasks.hpp"
 #include "Projects/Chess/ChessGame.h"
 #include "Projects/TFE/TFE.h"
 #include "Render/GUI/GuiElement.h"
+#include "Render/GUI/ElementTypes/Scrollbar.h"
 #include "Render/GUI/ElementTypes/TextField.h"
 
 
-void quitTask(void*) {
+static void quitTask(void*) {
     puts("Bye World");
     exit(0);
 }
 
-void generateDebugGui(Element* guiRoot) {
+static void generateDebugGui(Element* guiRoot) {
     addChildElements(guiRoot,
             Element_new((ElementSettings){
                 .minHeight = 20,
@@ -41,7 +43,7 @@ void generateDebugGui(Element* guiRoot) {
     );
 }
 
-void generateMainMenuGui(Element* guiRoot) {
+static void generateMainMenuGui(Element* guiRoot) {
     static float fov = 70.0f;
     static float fov2 = 90.0f;
     const Task changeFov70 = {Engine_changeFOV, &fov};
@@ -134,9 +136,45 @@ void generateMainMenuGui(Element* guiRoot) {
     Element_setActive_ptr(Element_getElement_ptr("Home Screen"), false);
 }
 
+static void updatePosDisplay(float normPos, float absPos) {
+    char buf[64];
+    snprintf(buf, sizeof(buf), "Normalized: %f, Absolute: %f", normPos, absPos);
+    gui_setText("posDisplay", buf);
+}
+
+static void generateTestGui(Element* guiRoot) {
+    addChildElements(guiRoot,
+        Element_new((ElementSettings){
+            .minWidth = 200,
+            .minHeight = 200,
+            .color = {.3,.4,.4},
+            .pos = {400, 400},
+            .posMode = POS_RELATIVE,
+            .draggable = true,
+            .layoutDirection = LAYOUT_RIGHT,
+            .padding = {10,10,10, 10},
+            .cornerRadius = 10
+        },
+            Scrollbar_new((ScrollbarSettings){
+                .pos = {190, 0},
+                .railWidth = 10,
+                .sliderHeight = 20,
+                .onMove = updatePosDisplay
+            }),
+            Element_new((ElementSettings){
+                .text = "",
+                .name = "posDisplay",
+                .transparency = 1,
+                .textScale = .5
+            })
+        )
+    );
+}
+
 void generateGUI(Element* guiRoot) {
     generateDebugGui(guiRoot);
     generateMainMenuGui(guiRoot);
     createChessGUI(guiRoot);
+    generateTestGui(guiRoot);
     TFE_createGUI(guiRoot);
 }

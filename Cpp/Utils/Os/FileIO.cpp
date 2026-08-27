@@ -22,7 +22,6 @@ namespace ggm::FileIO {
         std::istreambuf_iterator(file),
         std::istreambuf_iterator<char>()
         };
-
     }
 
     std::string readFile(const std::filesystem::path& filePath) {

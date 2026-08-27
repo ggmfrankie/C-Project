@@ -139,7 +139,7 @@ static void accumulateMeshes(const ElementHandle elementHandle, const Renderer *
         element->generateMesh(element, vertices, vt, indices, id);
     }
     uploadElementData(element);
-    accumulateTextQuads(element, vertices, vt, indices, id, &renderer->font);
+    accumulateTextQuads(element, vertices, vt, indices, id);
 
     //endScissor();
 
@@ -299,14 +299,14 @@ static Cache* cacheLayout(Element* self) {
     const Vec2f childDims  = getDimsFromChildren(self);
 
     self->layoutCache.minWidth  =
-        max(self->dims.cornerRadius, self->padding.left) +
+        self->padding.left +
         max(textDims.x, max(manualDims.x, childDims.x)) +
-        max(self->dims.cornerRadius, self->padding.right);
+        self->padding.right;
 
     self->layoutCache.minHeight =
-        max(self->dims.cornerRadius, self->padding.up) +
+        self->padding.up +
         max(textDims.y, max(manualDims.y, childDims.y)) +
-        max(self->dims.cornerRadius, self->padding.down);
+        self->padding.down;
 
     return &self->layoutCache;
 }
@@ -363,16 +363,14 @@ static void placeFlowElements(const Element* self) {
                     dims.x += flexFactor * (self->dims.worldWidth  - flexData.totalMinSize.x - totalChildGap - totalPadding.x);
                     //Want to grow
                     if (i == len-1 && curr->flags.wantGrowVertical) {
-                        const float parentSpace = (self->dims.worldHeight - totalPadding.y);
-                        const float freeSpace = parentSpace - dims.y;
-                        dims.y += freeSpace;
+                        const float freeSpace = (self->dims.worldHeight - totalPadding.y);
+                        dims.y = freeSpace;
                     }
                     break;
                 case LAYOUT_DOWN:
                     if (i == len-1 && curr->flags.wantGrowHorizontal) {
-                        const float parentSpace = (self->dims.worldWidth - totalPadding.x);
-                        const float freeSpace = parentSpace - dims.x;
-                        dims.x += freeSpace;
+                        const float freeSpace = (self->dims.worldWidth - totalPadding.x);
+                        dims.x = freeSpace;
                     }
                     dims.y += flexFactor * (self->dims.worldHeight - flexData.totalMinSize.y - totalChildGap - totalPadding.y);
                     break;

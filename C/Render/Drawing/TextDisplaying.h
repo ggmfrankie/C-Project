@@ -44,12 +44,12 @@ typedef struct TextElement {
     String text;
 
     Vec3f textColor;
-    float textScale;
+    float scale;
 
     Character* aCharQuads;
 } TextElement;
 
 Font loadFontAtlas(const char* file);
 void reloadTextQuads(const Font* font, Element *element);
-void accumulateTextQuads(const Element *element, GuiVertex *vertices, int *vt, int *indices, int *id, const Font *font);
+void accumulateTextQuads(const Element *element, GuiVertex *vertices, int *vt, int *indices, int *id);
 Vec2f measureElementText(const TextElement* textElement);

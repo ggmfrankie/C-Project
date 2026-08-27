@@ -4,19 +4,16 @@
 #include "Utils/Math/Vector.h"
 
 typedef struct {
-    struct {
-        float normPos;
-        float absPos;
-    } slider;
-    
-    float length;
+    float normPos;
+    float absPos;
+    void(*onMove)(float normPos, float absPos);
 } ScrollbarData;
 
 typedef struct {
     Vec2f pos;
     float railWidth;
-    float sliderWidth;
+    float sliderHeight;
+    void(*onMove)(float normPos, float absPos);
 } ScrollbarSettings;
 
 ElementHandle Scrollbar_new(ScrollbarSettings settings);
-void Scrollbar_handleDragging(Element* element, Vec2f pos);

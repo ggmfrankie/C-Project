@@ -4,7 +4,7 @@
 
 #pragma once
 #include "../EngineDefines.hpp"
-#include "Utils/Utils.hpp"
+#include "Utils/StringUtils.hpp"
 #include <iostream>
 #include <filesystem>
 

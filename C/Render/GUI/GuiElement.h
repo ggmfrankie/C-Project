@@ -116,8 +116,8 @@ typedef struct Element {
 
     struct {
         bool (*isMouseOver)(const Element* element, Vec2f mousePos);
-        bool (*onClick)(Element* element, Renderer *renderer);
-        bool (*onHover)(Element* element, Renderer *renderer);
+        bool (*onClick)(Element* element);
+        bool (*onHover)(Element* element);
         void (*whileSelected)(Element* element);
         void (*onUpdate)(Element* element);
         void (*reset)(Element* element);
@@ -133,7 +133,10 @@ typedef struct Element {
     ElementHandle* aStaticElements;
     float childGap;
 
-    void* elementData;
+    struct {
+        void* ptr;
+        bool needsFree;
+    } elementData;
 
 } Element;
 
@@ -154,9 +157,12 @@ typedef struct ElementSettings {
     char* texture;
     Vec3f color;
     float transparency;
+
     char* text;
-    bool (*onClick)(Element* element, Renderer *renderer);
-    bool (*onHover)(Element* element, Renderer *renderer);
+    float textScale;
+
+    bool (*onClick)(Element* element);
+    bool (*onHover)(Element* element);
     void (*whileSelected)(Element* element);
     void (*onUpdate)(Element* element);
     void (*reset)(Element* element);
@@ -186,8 +192,8 @@ Element* Element_get(ElementHandle handle);
 ElementHandle addChildrenAsGrid(ElementSettings parentData, ElementSettings es, int numX, int numY);
 ElementHandle addChildrenAsGridWithGenerator(ElementSettings parentData, ElementSettings es, int numX, int numY, ElementHandle (*generateElement)(int row, int col, ElementSettings));
 
-void Element_setOnClickCallback(Element* element, bool (*onClick)(Element* element, Renderer* renderer));
-void Element_setOnHoverCallback(Element* element, bool (*onHover)(Element* element, Renderer* renderer));
+void Element_setOnClickCallback(Element* element, bool (*onClick)(Element* element));
+void Element_setOnHoverCallback(Element* element, bool (*onHover)(Element* element));
 void Element_setBoundingBox(Element* element, bool (*isMouseOver)(const Element *element, Vec2f mousePos));
 
 Element *Element_getElement_ptr(const char *name);

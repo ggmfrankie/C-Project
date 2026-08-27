@@ -14,7 +14,5 @@ namespace ggm {
 
     typedef float f32;
     typedef double f64;
-
-    constexpr auto toRad(const float degree){return degree * (static_cast<float>(std::numbers::pi) / 180);};
 }
 

@@ -8,7 +8,7 @@
 #include <Jolt/Physics/PhysicsSystem.h>
 #include <Jolt/Core/JobSystemThreadPool.h>
 #include "Render/Objects/3D/Physics/PhysicsObjectRef.hpp"
-#include "Utils/Math/ggmdef.hpp"
+#include "../../../../Utils/ggmdef.hpp"
 
 namespace Obj3D {
     struct PhysicsSettings;

@@ -4,7 +4,7 @@
 
 #include "Game2D.hpp"
 
-#include "Utils/Utils.hpp"
+#include "Utils/StringUtils.hpp"
 #include "DebugLayer.hpp"
 #include "Game2DGui.h"
 #include "GuiInterface.h"

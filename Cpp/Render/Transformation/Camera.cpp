@@ -4,7 +4,7 @@
 
 #include "Camera.hpp"
 
-#include "../../Utils/Utils.hpp"
+#include "../../Utils/StringUtils.hpp"
 
 namespace Render {
     void Camera::lookAt() {

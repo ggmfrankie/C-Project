@@ -16,16 +16,11 @@
 #include <stdint.h>
 #include "../../Utils/DataStructures/CArrayList.h"
 
-bool onHover_changeColor(Element *element, Renderer *renderer) {
-    element->visuals.color = *(Vec3f*) (element->elementData);
-    return false;
-}
-
 void onRequestMove_SimpleDrag(Element *element, Vec2f pos) {
     element->dims.pos = pos;
 }
 
-bool runTaskFun(Element *element, Renderer *renderer) {
+bool runTaskFun(Element *element) {
     if (element->task.func && !element->task.isBlocked) pushTask(element->task.func, element->task.userdata);
     return true;
 }

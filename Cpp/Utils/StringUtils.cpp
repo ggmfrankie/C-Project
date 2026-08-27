@@ -2,9 +2,9 @@
 // Created by ertls on 18.02.2026.
 //
 
-#include "Utils.hpp"
+#include "StringUtils.hpp"
 
-#include "Math/ggmdef.hpp"
+#include "ggmdef.hpp"
 #include <cmath>
 #include <iostream>
 

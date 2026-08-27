@@ -12,7 +12,7 @@
 #include "Render/Objects/3D/Physics/PhysicsHandler3D.hpp"
 
 namespace Game {
-    class Scene3D final : public IScene{
+    class Scene3D final : public IScene {
         ggm::InlineVector<Obj3D::GameObject, 64> mGameObjects{};
 
         PhysicsHandler3D mPhysicsHandler{};

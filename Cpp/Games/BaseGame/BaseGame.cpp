@@ -153,6 +153,8 @@ namespace Game {
 
     }
 
+    
+
     void BaseGame::toggleCursorMode(GLFWwindow* window, const bool guiMode) {
         if (guiMode) {
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
@@ -169,5 +171,27 @@ namespace Game {
 
         free(fen);
         return out;
+    }
+
+    MakeRequestableFunction_class(BaseGame::getMoves, "Allows to view the moves the selected piece has",
+    nlohmann::json BaseGame::getMoves(int row, int col))
+    {
+        const u_int64 fen = Chess_getMoves(row, col);
+
+        std::ostringstream buf;
+
+        for (int i = 0; i < 64; i++) {
+            if ((fen & (1 << i)) == 1) {
+                buf << "(Move: row = " << i/8 << " col = " << i%8 << ")";
+            }
+        }
+        auto out = mcp::ReturnTypes::asText(buf.str());
+        return out;
+    }
+
+    MakeRequestableFunction_class(BaseGame::makeMove, "Simulates a player clicking on a square to then move the piece if possible. White is at row 7+6 and black is at 0+1",
+    nlohmann::json BaseGame::makeMove(int row, int col))
+    {
+        return mcp::ReturnTypes::asText(Chess_makeMove(row, col));
     }
 }

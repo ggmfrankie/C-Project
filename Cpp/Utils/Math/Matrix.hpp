@@ -2,30 +2,25 @@
 // Created by ertls on 17.02.2026.
 //
 
-#ifndef MIXEDPROJECT_MATRIX_H
-#define MIXEDPROJECT_MATRIX_H
+#pragma once
+
 #include <array>
 #include <cmath>
 #include <numbers>
 
-#include "ggmdef.hpp"
+#include "Math.hpp"
+#include "../ggmdef.hpp"
 #include "Quaternion.hpp"
 #include "Vector.hpp"
 
 namespace ggm {
     class Matrix3f {
-    public:
-
-        constexpr Matrix3f() = default;
-
-        constexpr explicit Matrix3f(const std::array<float, 9> &a): m(a){}
-
-        constexpr explicit Matrix3f(const std::array<float, 9> &&a): m(a){}
-    private:
-
-
         std::array<float, 9> m{};
     public:
+        constexpr Matrix3f() = default;
+        constexpr explicit Matrix3f(const std::array<float, 9> &a): m(a){}
+        constexpr explicit Matrix3f(const std::array<float, 9> &&a): m(a){}
+
         static constexpr int idx(int row, int col) { return col * 3 + row; }
 
         constexpr float  operator()(int row, int col) const { return m[idx(row, col)]; }
@@ -35,11 +30,17 @@ namespace ggm {
 
             const auto& a = m;
 
-            float a00 = a[0], a01 = a[3], a02 = a[6];
-            float a10 = a[1], a11 = a[4], a12 = a[7];
-            float a20 = a[2], a21 = a[5], a22 = a[8];
+            const float a00 = a[0];
+            const float a01 = a[3];
+            const float a02 = a[6];
+            const float a10 = a[1];
+            const float a11 = a[4];
+            const float a12 = a[7];
+            const float a20 = a[2];
+            const float a21 = a[5];
+            const float a22 = a[8];
 
-            float det =
+            const float det =
                 a00 * (a11 * a22 - a12 * a21) -
                 a01 * (a10 * a22 - a12 * a20) +
                 a02 * (a10 * a21 - a11 * a20);
@@ -47,7 +48,7 @@ namespace ggm {
             if (std::fabs(det) < 1e-8f)
                 return Matrix3f({1,0,0, 0,1,0, 0,0,1});
 
-            float invDet = 1.0f / det;
+            const float invDet = 1.0f / det;
 
             return Matrix3f({
 
@@ -171,12 +172,12 @@ namespace ggm {
             return I;
         }
 
-        static constexpr Matrix4f Scale(const float scale) noexcept {
+        static constexpr Matrix4f Scale(const float s) noexcept {
             Matrix4f M{};
             M.m = {
-                    scale,0,0,0,
-                    0,scale,0,0,
-                    0,0,scale,0,
+                    s,0,0,0,
+                    0,s,0,0,
+                    0,0,s,0,
                     0,0,0,1
             };
             return M;
@@ -388,7 +389,3 @@ namespace ggm {
 
 
 } // Math
-
-
-
-#endif //MIXEDPROJECT_MATRIX_H

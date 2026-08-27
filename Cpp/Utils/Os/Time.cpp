@@ -28,8 +28,8 @@ namespace ggm::Time {
         return ts;
     }
 
-    double getNow() {
-
+    static double getNow() {
+        return 2.0;
     }
 }
 

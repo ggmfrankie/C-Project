@@ -22,9 +22,9 @@ namespace Render {
         bool mRightMouseDown = false;
         bool mLeftMouseDown = false;
 
-        bool mKeysDown[KEY_COUNT]{};
-        bool mKeysPressed[KEY_COUNT]{};
-        bool mKeysReleased[KEY_COUNT]{};
+        std::array<bool, KEY_COUNT> mKeysDown{};
+        std::array<bool, KEY_COUNT> mKeysPressed{};
+        std::array<bool, KEY_COUNT> mKeysReleased{};
 
         GLuint mLastChar = 0;
 
@@ -48,7 +48,7 @@ namespace Render {
 
     public:
         void init(GLFWwindow *window);
-        ggm::Vector2f getMousePos();
+        ggm::Vector2f getMousePos() const;
         [[nodiscard]] bool isKeyDown(int key) const;
 
         [[nodiscard]] bool wasKeyPressed(int key) const;

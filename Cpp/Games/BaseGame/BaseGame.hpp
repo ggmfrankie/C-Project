@@ -30,6 +30,8 @@ namespace Game {
         void onShutdown() override;
 
         static nlohmann::json getBoard();
+        static nlohmann::json getMoves(int row, int col);
+        static nlohmann::json makeMove(int row, int col);
 
     private:
         Render::Camera* mCamera = nullptr;

@@ -53,7 +53,7 @@ ElementHandle Element_allocateNewV2(const Vec2f pos, const int width, const int 
                         .texture = {},
                         .transparency = 0,
                       },
-                  .textElement = {.aCharQuads = nullptr, .textScale = 1.0f},
+                  .textElement = {.aCharQuads = nullptr, .scale = 1.0f},
                   .parentElement = 0,
                   .aFlowElements = nullptr,
                   .padding = {0, 0, 0, 0},
@@ -105,12 +105,12 @@ Element* Element_get(ElementHandle handle) {
     return SparseSet_get(&gElements, handle.ID, Element);
 }
 
-void Element_setOnClickCallback(Element* element, bool (*onClick)(Element* element, Renderer* renderer)) {
+void Element_setOnClickCallback(Element* element, bool (*onClick)(Element* element)) {
     assert(element != nullptr);
     element->callbacks.onClick = onClick;
 }
 
-void Element_setOnHoverCallback(Element* element, bool (*onHover)(Element* element, Renderer* renderer)) {
+void Element_setOnHoverCallback(Element* element, bool (*onHover)(Element* element)) {
     assert(element != nullptr);
     element->callbacks.onHover = onHover;
 }
@@ -173,8 +173,8 @@ static ElementHandle Element_addElement(
     const Padding padding,
     float childGap,
     bool (*mouseOver)(const Element*, Vec2f),
-    bool (*hover)(Element *, Renderer *),
-    bool (*click)(Element *, Renderer *),
+    bool (*hover)(Element *),
+    bool (*click)(Element *),
     const Task task,
     const char *text,
     const bool forceResize,
@@ -194,7 +194,8 @@ static ElementHandle Element_addElement(
     bool invisible,
     float cornerRadius,
     float flexGrow,
-    bool canBeHovered
+    bool canBeHovered,
+    float textScale
 )
 {
     const ElementHandle handle = Element_allocateNewV2(pos, width, height);
@@ -212,20 +213,14 @@ static ElementHandle Element_addElement(
         }
     }
 
-    const Padding p = {
-        max(padding.left, cornerRadius),
-        max(padding.up, cornerRadius),
-        max(padding.right, cornerRadius),
-        max(padding.up, cornerRadius),
-    };
 
     lastElement->visuals.color = color;
     lastElement->visuals.defaultColor = color;
-    lastElement->padding = p;
+    lastElement->padding = padding;
     lastElement->name = name;
     lastElement->positionMode = positionMode;
     lastElement->childGap = childGap;
-    lastElement->elementData = elementData;
+    lastElement->elementData.ptr = elementData;
     lastElement->layoutDirection = layoutDirection;
     lastElement->callbacks.whileSelected = whileSelected;
     lastElement->callbacks.onUpdate = onUpdate;
@@ -271,6 +266,7 @@ static ElementHandle Element_addElement(
         t->forceResize = forceResize,
         t->pos = (Vec2f){};
         t->width = 0;
+        t->scale = textScale ? textScale : 1.0f;
         Element_setText_ptr(lastElement, text);
         reloadTextQuads(getFont(), lastElement);
     }
@@ -307,7 +303,8 @@ ElementHandle createElement(const ElementSettings es) {
                               es.invisible,
                               es.cornerRadius,
                               es.flexGrow,
-                              es.canBeHovered
+                              es.canBeHovered,
+                              es.textScale
     );
 }
 

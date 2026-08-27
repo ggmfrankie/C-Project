@@ -6,7 +6,7 @@
 #include "Render/Engine.h"
 #include "Utils/DataStructures/CArrayList.h"
 
-ElementHandle TextField_new(const ElementSettings elementSettings, bool (*onEnterCallback)(Element *element, Renderer *renderer)) {
+ElementHandle TextField_new(const ElementSettings elementSettings, bool (*onEnterCallback)(Element *element)) {
     const ElementHandle element = createElement(elementSettings);
     TextFieldData* textData = calloc(1, sizeof(TextFieldData));
     textData->onEnterCallback = onEnterCallback;
@@ -29,10 +29,10 @@ ElementHandle TextField_new(const ElementSettings elementSettings, bool (*onEnte
     return element;
 }
 
-bool TextField_onClick(Element *element, Renderer *renderer) {
+bool TextField_onClick(Element *element) {
     if(element->type != t_textField) return false;
 
-    TextFieldData* data = element->elementData;
+    TextFieldData* data = element->elementData.ptr;
     if (Strings.isEmpty(&data->text)) return false;
 
     Character* charQuads = element->textElement.aCharQuads;
@@ -53,9 +53,9 @@ bool TextField_onClick(Element *element, Renderer *renderer) {
     return true;
 }
 
-bool TextField_runTask(Element *element, Renderer *renderer) {
+bool TextField_runTask(Element *element) {
     if(element->type != t_textField) return false;
-    TextFieldData* data = element->elementData;
+    TextFieldData* data = element->elementData.ptr;
     if (data->text.length == 0) return false;
 
     char* newBuffer = malloc(data->text.length + 1);

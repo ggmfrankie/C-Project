@@ -23,4 +23,18 @@ namespace mcp::ReturnTypes {
             {"text", std::string((value))}
         };
     }
+
+    static Json asText(const std::string& value) {
+        return {
+            {"type", "text"},
+            {"text", value}
+        };
+    }
+
+    static Json asText(const bool value) {
+        return {
+            {"type", "text"},
+            {"text", value ? "true" : "false"}
+        };
+    }
 }

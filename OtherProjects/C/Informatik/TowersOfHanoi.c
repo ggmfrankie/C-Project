@@ -9,8 +9,7 @@
 #include <stdio.h>
 #include <time.h>
 
-#include "../Libraries/WinAdapt.h"
-#include "../../Utils/Vector.h"
+#include "Utils/Math/Vector.h"
 
 #define NUMFLOORS 12
 #define NUMTOWERS 3

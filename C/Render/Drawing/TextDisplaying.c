@@ -89,22 +89,21 @@ Font loadFontAtlas(const char* file) {
     return font;
 }
 
-void accumulateTextQuads(const Element *element, GuiVertex *vertices, int *vt, int *indices, int *id, const Font *font) {
+void accumulateTextQuads(const Element *element, GuiVertex *vertices, int *vt, int *indices, int *id) {
     const Character* aCharQuads = element->textElement.aCharQuads;
     if (aCharQuads == nullptr || arrIsEmpty(aCharQuads)) return;
 
-    const float xOffset = (float)element->padding.left;
-    const float yOffset = (float)font->maxCharHeight * element->textElement.textScale + element->padding.up;
+    const float xOffset = element->padding.left;
 
     const int ID = element->handle.ID;
 
     for_eachArr(c, aCharQuads, {
-        const int texID = 1;
+        constexpr int texID = 1;
 
-        const float x = c->pos.x + xOffset;
-        const float y = c->pos.y + element->dims.worldHeight - element->padding.down;
-        const float w = c->width;
-        const float h = c->height;
+        const float x = (c->pos.x + xOffset);
+        const float y = (c->pos.y + element->dims.worldHeight - element->padding.down);
+        const float w = (c->width);
+        const float h = (c->height);
 
         const Vec2f start = c->texPosStart;
         const Vec2f end   = c->texPosEnd;
@@ -197,7 +196,7 @@ void reloadTextQuads(const Font* font, Element *element) {
         return;
     }
 
-    const float textScale = textElement->textScale;
+    const float textScale = textElement->scale;
 
     const Vec2f startPos = {
         .x = 0,

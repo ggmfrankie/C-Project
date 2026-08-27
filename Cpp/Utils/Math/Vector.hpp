@@ -1,9 +1,8 @@
 //
 // Created by ertls on 17.02.2026.
 //
+#pragma once
 
-#ifndef MIXEDPROJECT_VECTOR_H
-#define MIXEDPROJECT_VECTOR_H
 #include <cmath>
 #include <iostream>
 
@@ -265,7 +264,6 @@ template <>
         size_t h2 = std::hash<float>{}(v.y);
         size_t h3 = std::hash<float>{}(v.z);
 
-        // Combine hashes (boost-style)
         size_t seed = h1;
         seed ^= h2 + 0x9e3779b9 + (seed << 6) + (seed >> 2);
         seed ^= h3 + 0x9e3779b9 + (seed << 6) + (seed >> 2);
@@ -273,5 +271,3 @@ template <>
         return seed;
     }
 };
-
-#endif //MIXEDPROJECT_VECTOR_H

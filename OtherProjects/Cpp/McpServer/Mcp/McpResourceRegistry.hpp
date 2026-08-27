@@ -46,11 +46,11 @@ private:
             mReader(reader)
         {}
 
-        const ResourceMeta& getMeta() {
+        const ResourceMeta& getMeta() override {
             return mMeta;
         }
 
-        Json read(const Json& args) {
+        Json read(const Json& args) override {
             return std::invoke(mReader, args);
         }
     };
@@ -63,7 +63,7 @@ private:
             "application/octet-stream"
         };
 
-        return map[(int)mime];
+        return map[static_cast<int>(mime)];
     }
 
     std::unordered_map<string, std::unique_ptr<IResource>> mResources;
@@ -77,13 +77,13 @@ public:
     Json listResources() {
         Json out = Json::array();
 
-        for (const auto&[_, resource] : mResources) {
-            const ResourceMeta& meta = resource->getMeta();
+        for (const auto& resource: mResources | std::views::values) {
+            const auto&[uri, name, description, mimeType] = resource->getMeta();
             Json res = {
-                {"uri", meta.uri},
-                {"name", meta.name},
-                {"description", meta.description},
-                {"mimeType", meta.mimeType}
+                {"uri", uri},
+                {"name", name},
+                {"description", description},
+                {"mimeType", mimeType}
             };
             out.push_back(res);
         }
@@ -109,7 +109,7 @@ public:
     template<typename R>
     requires std::invocable<R, const Json&>
     void addResource(const string& name, const string& uri, MimeType mime, R reader, const string& description = "") {
-        mResources[uri] = std::make_unique<ResourceWrapper<R>>(ResourceMeta{uri, name, description, mime}, reader);
+        mResources[uri] = std::make_unique<ResourceWrapper<R>>(ResourceMeta{.uri = uri, .name = name, .description = description, .mimeType = mime}, reader);
     }
 };
 }

@@ -9,8 +9,7 @@
 
 void onRequestMove_SimpleDrag(Element* element, Vec2f pos);
 
-bool runTaskFun(Element *element, Renderer *renderer);
-bool onHover_changeColor(Element *element, Renderer *renderer);
+bool runTaskFun(Element *element);
 
 void updateColorRainbow(Element *element);
 void displayCurrentTime(Element *element);

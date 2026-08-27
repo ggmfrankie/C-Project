@@ -44,15 +44,15 @@ typedef enum {
 } ChessPiece;
 
 typedef struct {
-    ChessPiece piece;
-    int isMarked;
-} Square;
-
-typedef struct {
     int fromRow, fromCol;
     int toRow, toCol;
     ChessPiece promotion;
 } ChessMove;
+
+typedef struct {
+    ChessPiece piece;
+    int isMarked;
+} Square;
 
 typedef enum {
     TYPE_NONE = 0,
@@ -346,20 +346,29 @@ char *Chess_getBoardFEN() {
     bool empty = false;
     int numEmpty = 0;
 
-    for (int i = 0; i < 64; i++) {
-        const ChessPiece piece = board[i%8][i/8].piece;
-    
-        if (piece == PIECE_NONE) {
-            empty = true;
-            numEmpty++;
-        } else {
-            if (empty) {
-                str[len++] = '0' + numEmpty;
-            }
-            const int idx = abs(piece) + ((getColor(piece) == COL_WHITE) ? -1 : 7);
-            str[len++] = map[idx];
-        }        
-        if (len % 8 == 0) str[len++] = '/';
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++){
+            const ChessPiece piece = board[i][j].piece;
+        
+            if (piece == PIECE_NONE) {
+                empty = true;
+                numEmpty++;
+            } else {
+                if (empty) {
+                    str[len++] = '0' + numEmpty;
+                    numEmpty = 0;
+                    empty = false;
+                }
+                const int idx = abs(piece) + ((getColor(piece) == COL_WHITE) ? -1 : 5);
+                str[len++] = map[idx];
+            }        
+        }
+        if (empty) {
+            str[len++] = '0' + numEmpty;
+            numEmpty = 0;
+            empty = false;
+        }
+        str[len++] = '/';
     }
     len--;
     str[len++] = ' ';
@@ -371,6 +380,7 @@ char *Chess_getBoardFEN() {
 
     return str;
 }
+
 #if 0
 static void sendMove(const ChessMove *move) {
     if (!isMultiplayer) return;
@@ -411,9 +421,9 @@ static void showWinnerScreen(const bool winner) {
     Element_setText_ptr(colorDisplay, winner ? "White won" : "Black won");
 }
 
-static void onSquareClicked(Vec2i pos) {
+static bool onSquareClicked(Vec2i pos) {
     static Vec2i selectedPiecePos = {-1,-1};
-
+    bool success = false;
     if (board[pos.y][pos.x].isMarked && selectedPiecePos.x != -1) {
         const ChessMove move = {
             .fromRow = selectedPiecePos.y,
@@ -422,16 +432,32 @@ static void onSquareClicked(Vec2i pos) {
             .toCol = pos.x,
             .promotion = 0
         };
-        applyMove(&move);
+        success = applyMove(&move);
         //sendMove(&move);
     } else {
         unmarkAll(0,0,0,0);
         if (getColor(board[pos.y][pos.x].piece) == turn) {
             runMarking(board[pos.y][pos.x].piece, pos.y, pos.x, attack);
             selectedPiecePos = pos;
+            success = true;
         }
     }
     syncGui();
+    return success;
+}
+
+bool Chess_makeMove(int row, int col) {
+    if (!onSquareClicked((Vec2i){col, row})) return false;
+    return true;
+}
+
+uint64_t Chess_getMoves(int row, int col) {
+    onSquareClicked((Vec2i){col, row});
+    uint64_t validSquares = 0;
+    for (int i = 0; i < 64; i++) {
+        validSquares |= (uint64_t)board[i/8][i%8].isMarked << i;
+    }
+    return validSquares;
 }
 
 static void fromGuiClicked(void* el) {

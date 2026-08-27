@@ -18,7 +18,7 @@ namespace Render {
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     }
 
-    ggm::Vector2f Input::getMousePos() {
+    ggm::Vector2f Input::getMousePos() const {
         return mCurrMousePos;
     }
 
@@ -87,7 +87,6 @@ namespace Render {
         mInWindow = entered;
     }
 
-
     bool Input::isKeyDown(const int key) const {
         return mKeysDown[key];
     }
@@ -107,10 +106,7 @@ namespace Render {
     }
 
     void Input::endFrame() {
-        for (int i = 0; i < KEY_COUNT; ++i) {
-            mKeysPressed[i] = false;
-            mKeysReleased[i] = false;
-        }
+        mKeysPressed.fill(false);
+        mKeysPressed.fill(false);
     }
-
-} // Render
+}

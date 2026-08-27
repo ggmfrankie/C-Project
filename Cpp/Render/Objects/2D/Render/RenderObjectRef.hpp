@@ -6,7 +6,7 @@
 #include "../EngineDefines.hpp"
 #include "RenderObject.hpp"
 #include "Utils/DataStorage/SparseSet.hpp"
-#include "Utils/Math/ggmdef.hpp"
+#include "../../../../Utils/ggmdef.hpp"
 
 namespace Game2D {
 

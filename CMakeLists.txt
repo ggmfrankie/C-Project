@@ -20,9 +20,10 @@ include_directories(
         "${CMAKE_SOURCE_DIR}"
         "${CMAKE_SOURCE_DIR}/Dependencies/include"
         "${CMAKE_SOURCE_DIR}/C"
+        "${CMAKE_SOURCE_DIR}/C/Utils"
         "${CMAKE_SOURCE_DIR}/Cpp"
-        "${CMAKE_SOURCE_DIR}/Dependencies/JoltPhysics"
         "${CMAKE_SOURCE_DIR}/Cpp/Utils"
+        "${CMAKE_SOURCE_DIR}/Dependencies/JoltPhysics"
 )
 
 add_library(GUI STATIC
@@ -102,6 +103,7 @@ add_library(GUI STATIC
         C/Utils/Makros/Defer.h
         C/Utils/Test.h
         C/Utils/Makros/Helper.h
+        C/Render/GUI/ElementTypes/Scrollbar.c
 )
 
 set_target_properties(GUI PROPERTIES LINKER_LANGUAGE C)
@@ -118,16 +120,16 @@ add_executable(C-Project
         Cpp/Utils/Math/Vector.hpp
         Cpp/Render/Shader/Shader.cpp
         Cpp/Render/Shader/Shader.hpp
-        Cpp/Utils/FileIO.cpp
-        Cpp/Utils/FileIO.hpp
+        Cpp/Utils/Os/FileIO.cpp
+        Cpp/Utils/Os/FileIO.hpp
         Cpp/Utils/Math/Matrix.hpp
         Cpp/Render/Transformation/Camera.cpp
         Cpp/Render/Transformation/Camera.hpp
-        Cpp/Utils/Utils.cpp
-        Cpp/Utils/Utils.hpp
+        Cpp/Utils/StringUtils.cpp
+        Cpp/Utils/StringUtils.hpp
         Cpp/Utils/Math/Quaternion.hpp
         Cpp/Utils/DataStorage/InlineVector.hpp
-        Cpp/Utils/Math/ggmdef.hpp
+        Cpp/Utils/ggmdef.hpp
         Cpp/Games/IGame.hpp
         Cpp/Engine/IO/Input.cpp
         Cpp/Engine/IO/Input.hpp
@@ -151,8 +153,8 @@ add_executable(C-Project
         Cpp/Utils/DataStorage/SparseSet.hpp
         Cpp/Engine/Debug/Logger.cpp
         Cpp/Engine/Debug/Logger.hpp
-        Cpp/Utils/Time.cpp
-        Cpp/Utils/Time.hpp
+        Cpp/Utils/Os/Time.cpp
+        Cpp/Utils/Os/Time.hpp
         Cpp/Engine/Core/PhysixBox2D/PointMass.hpp
         Cpp/Engine/Core/PhysixBox2D/PhysicsSystem.cpp
         Cpp/Engine/Core/PhysixBox2D/PhysicsSystem.hpp
@@ -201,6 +203,7 @@ add_executable(C-Project
         Cpp/Render/Objects/3D/GameObject.cpp
         Cpp/Utils/Async/Coroutine.cpp
         Cpp/Utils/Async/Coroutine.hpp
+        Cpp/Utils/Math/Math.hpp
 )
 
 target_compile_definitions(C-Project PUBLIC JPH_ENABLE_ASSERTS)

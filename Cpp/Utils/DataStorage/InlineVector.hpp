@@ -11,7 +11,7 @@
 #include <new>
 #include <cstddef>
 
-#include "../Math/ggmdef.hpp"
+#include "../ggmdef.hpp"
 
 namespace ggm {
     template <typename T, u64 InlineCapacity = 0>

@@ -4,7 +4,7 @@
 
 #include "PhysicsObjectRef.hpp"
 
-#include "Utils/Math/ggmdef.hpp"
+#include "../../../../Utils/ggmdef.hpp"
 #include "Utils/Math/Quaternion.hpp"
 
 namespace Obj3D {

@@ -13,7 +13,9 @@
 #include "../Utils/Parsing.hpp"
 #include "../Utils/Utils.hpp"
 
-#define MCP_CAT(a,b) a##b
+#define MCP_CAT_IMPL(a, b) a##b
+#define MCP_CAT(a, b) MCP_CAT_IMPL(a, b)
+#define MCP_UNIQUE_NAME(name) MCP_CAT(name, __COUNTER__)
 
 namespace mcp {
 class McpFunctionRegistry {
@@ -58,7 +60,10 @@ class McpFunctionRegistry {
             mMetaData(std::move(metadata)),
             mDescription(description),
             mFunction(function)
-        {}
+        {
+            const auto idx = mMetaData.name.find_first_of("::");
+            mMetaData.name.replace(idx, 3, "__");
+        }
 
         template<typename T> struct FunctionTraits;
 
@@ -147,7 +152,7 @@ public:
 
     Json getAllFunctions() {
         Json out = Json::array();
-        for (const auto&[_, function]: mRequestableFunctions) {
+        for (const auto& function: mRequestableFunctions | std::views::values) {
             Json func;
             auto& meta = function->getMetadata();
             
@@ -196,12 +201,12 @@ public:
 
 #define MakeRequestableFunction(funcPtr, description, ...)\
     __VA_ARGS__;\
-    inline static const bool MCP_CAT(_mcp_registrated_, __COUNTER__) = \
+    inline static const bool MCP_UNIQUE_NAME(_mcp_registrated_) = \
         mcp::McpFunctionRegistry::Get().registerFunction(funcPtr, description, #__VA_ARGS__);\
         __VA_ARGS__
 
 #define MakeRequestableFunction_class(funcPtr, description, ...)\
-    inline static const bool MCP_CAT(_mcp_registrated_, __COUNTER__) = \
+    inline static const bool MCP_UNIQUE_NAME(_mcp_registrated_) = \
         mcp::McpFunctionRegistry::Get().registerFunction(funcPtr, description, #__VA_ARGS__);\
         __VA_ARGS__
 

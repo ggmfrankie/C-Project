@@ -7,7 +7,7 @@
 #include <sstream>
 
 #include "Utils/DataStorage/InlineVector.hpp"
-#include "Utils/Math/ggmdef.hpp"
+#include "../ggmdef.hpp"
 
 namespace ggm {
     template <typename T>

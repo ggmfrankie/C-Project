@@ -351,13 +351,13 @@ static bool Engine_processInputRec(ElementHandle elementHandle, Renderer *render
     if (element->callbacks.isMouseOver && element->callbacks.isMouseOver(element, renderer->mousePos)) {
         if (element->flags.canBeHovered) {
             element->state = UI_STATE_HOVER;
-            if (element->callbacks.onHover && element->callbacks.onHover(element, renderer)) return true;
+            if (element->callbacks.onHover && element->callbacks.onHover(element)) return true;
         }
         if (click(renderer->window, GLFW_MOUSE_BUTTON_LEFT)) {
             mouseCapturedElement = element;
             focusedElement = element;
             element->state = UI_STATE_PRESSED;
-            if (element->callbacks.onClick && element->callbacks.onClick(element, renderer)) return true;
+            if (element->callbacks.onClick && element->callbacks.onClick(element)) return true;
         }
         return true;
     }
@@ -368,7 +368,7 @@ void gui_charCallback(GLFWwindow* window, const unsigned int codepoint) {
     if (focusedElement == nullptr || focusedElement->type == t_defaultElement) return;
 
     if (focusedElement->type == t_textField) {
-        TextFieldData* tfd = focusedElement->elementData;
+        TextFieldData* tfd = focusedElement->elementData.ptr;
         if (codepoint < 128) {
             str_appendCharAt(&tfd->text, (char) codepoint, tfd->cursor.byteIndex++);
 
@@ -388,7 +388,7 @@ void gui_keyCallback(GLFWwindow* window, int key, int scancode, int action, int 
     if (focusedElement->type == t_textField) {
         if (action == GLFW_PRESS || action == GLFW_REPEAT)
         {
-            TextFieldData* tfd = focusedElement->elementData;
+            TextFieldData* tfd = focusedElement->elementData.ptr;
             if (key == GLFW_KEY_BACKSPACE && tfd->cursor.byteIndex != 0) {
                 str_popCharAt(&tfd->text, --tfd->cursor.byteIndex);
                 Element_setText_ptr(focusedElement,  tfd->text.m);
@@ -401,7 +401,7 @@ void gui_keyCallback(GLFWwindow* window, int key, int scancode, int action, int 
             }
             else if (key == GLFW_KEY_ENTER) {
                 if (tfd->onEnterCallback) {
-                    tfd->onEnterCallback(focusedElement, &g_Renderer);
+                    tfd->onEnterCallback(focusedElement);
                 }
                 focusedElement = nullptr;
             }
