@@ -8,20 +8,20 @@
 typedef struct GuiVertex {
     Vec2f pos;
     Vec2f uv;
+    int bufferBinding;
     int ID;
-    int texID;
-    char _pad[8];
 } GuiVertex;
 
-typedef struct InstanceData {
-    float brightness;
-    float transparency;
-    int   hasTexture;
-    float _pad0;
+typedef struct ElementInstanceData {
+    Vec4f color;
     Vec2f worldPos;
-    float _pad1[2];
-    Vec3f color;
-    float _pad2;
-    Vec3f textColor;
-    float _pad3;
-} InstanceData;
+    int atlasID;
+    int _pad[1];
+} ElementInstanceData;
+
+typedef struct CharInstanceData {
+    Vec4f color;
+    int ownerID;
+    int atlasID;
+    int _pad[2];
+} CharInstanceData;

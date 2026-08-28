@@ -10,5 +10,5 @@
 #define MAX_GUI_INDICES 163840
 
 void Batcher_init();
-void uploadBatchedQuads(const GuiVertex *vertices, int vt, const int* indices, int id);
+void uploadBatchedQuads(GuiVertex **aVertices, int **aIndices);
 void uploadElementData(const Element* element);

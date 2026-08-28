@@ -2,6 +2,7 @@
 // Created by ertls on 16.02.2026.
 //
 #include "EngineDefines.hpp"
+#include "Test.h"
 #include "Dependencies/JoltPhysics/Jolt/Jolt.h"
 
 #include "Cpp/GameEngine.hpp"
@@ -12,7 +13,7 @@
 
 #if 1
 int main() {
-
+    Test_run();
     try {
         JPH::RegisterDefaultAllocator();
         Game::BaseGame game{};

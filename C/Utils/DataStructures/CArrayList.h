@@ -16,9 +16,16 @@ typedef struct {
     size_t capacity;
 } _Array_Header_;
 
+void* _arrInit(void **array, size_t typeSize, size_t size);
+void _arrResize(void **array, size_t typeSize, size_t newSize);
+
+void _arrGrowIfNeeded(void **array, size_t typeSize);
+
 #define ArrayInitCapacity 16
 
 #define _arrayGetHead(array) (&((_Array_Header_*)(array))[-1])
+
+#define arrNew(array, size) _arrInit((void**)&(array), sizeof(*array), (size))
 
 #define arrLen(array) ((array) ? _arrayGetHead(array)->size : 0)
 
@@ -26,27 +33,9 @@ typedef struct {
 
 #define arrPush(array, ...) \
     do {\
-        if((array) == nullptr) {\
-            _Array_Header_* header = malloc(sizeof(*(array)) * ArrayInitCapacity + sizeof(_Array_Header_));\
-            assert(header != nullptr);\
-            header->capacity = ArrayInitCapacity;\
-            header->size = 0;\
-            (array) = (void*) (header+1);\
-        }\
-        _Array_Header_* header = _arrayGetHead(array);\
-        if (header->capacity <= header->size) {\
-            assert(header->capacity != 0);\
-            const size_t newCapacity = header->capacity * 2;\
-            _Array_Header_* newHeader = realloc(header, sizeof(_Array_Header_) + sizeof(*(array)) * newCapacity);\
-            if (newHeader) {\
-                header = newHeader;\
-                header->capacity = newCapacity;\
-                (array) = (void*) (header+1);\
-            } else {\
-                ERROR_("Failed to realloc ArrayList");\
-            }\
-        }\
-        (array)[header->size++] = __VA_ARGS__;\
+        if((array) == nullptr) arrNew((array), ArrayInitCapacity);\
+        _arrGrowIfNeeded((void**)&(array), sizeof(*(array)));\
+        (array)[_arrayGetHead(array)->size++] = __VA_ARGS__;\
     } while (0)
 
 #define arrTryGet(array, index)\
@@ -56,7 +45,14 @@ typedef struct {
         (typeof(array))out;\
     })
 
-#define arrGetLast(array) ((array) ? &(array)[arrLen(array)-1]: nullptr)
+#define arrGetLast(array)\
+({\
+    typeof(array) CONCAT(_local, __LINE__) = nullptr;\
+    if (!arrIsEmpty(array)) {\
+        CONCAT(_local, __LINE__) = &(array)[arrLen(array)-1];\
+    }\
+    CONCAT(_local, __LINE__);\
+})
 
 #define arrPop(array)\
 ({\

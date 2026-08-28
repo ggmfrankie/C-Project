@@ -12,6 +12,7 @@
 #include "Utils/Math/Vector.h"
 #include "Render/GUI/Texture.h"
 #include "../../Utils/_Deprecated_/CString_v1.h"
+#include "Render/GUI/ElementHandler.h"
 
 typedef struct Font {
     StandaloneTexture fontAtlas;
@@ -51,5 +52,5 @@ typedef struct TextElement {
 
 Font loadFontAtlas(const char* file);
 void reloadTextQuads(const Font* font, Element *element);
-void accumulateTextQuads(const Element *element, GuiVertex *vertices, int *vt, int *indices, int *id);
+void accumulateTextQuads(const Element *element, GuiVertex **aVertices, int **aIndices);
 Vec2f measureElementText(const TextElement* textElement);

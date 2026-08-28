@@ -3,8 +3,12 @@
 #include "Render/GUI/GuiElement.h"
 
 typedef struct {
-    int byteIndex;
-    float posX;
+    int index;
+    float abs;
+} TextFieldCursorPos;
+
+typedef struct {
+    TextFieldCursorPos pos;
 
     float blinkTimer;
     bool cursorVisible;

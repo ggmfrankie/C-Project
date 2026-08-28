@@ -89,7 +89,8 @@ Font loadFontAtlas(const char* file) {
     return font;
 }
 
-void accumulateTextQuads(const Element *element, GuiVertex *vertices, int *vt, int *indices, int *id) {
+//@brief only adds the parent world pos and adds it to the vertexBuffer
+void accumulateTextQuads(const Element *element, GuiVertex **aVertices, int **aIndices) {
     const Character* aCharQuads = element->textElement.aCharQuads;
     if (aCharQuads == nullptr || arrIsEmpty(aCharQuads)) return;
 
@@ -113,19 +114,19 @@ void accumulateTextQuads(const Element *element, GuiVertex *vertices, int *vt, i
         const Vec2f uv2 = end;
         const Vec2f uv3 = (Vec2f){ start.x, end.y };
 
-        const int v0 = *vt;
+        const int v0 = arrLen(*aVertices);
 
-        vertices[(*vt)++] = (GuiVertex){{x,   y},   uv0, ID, texID};
-        vertices[(*vt)++] = (GuiVertex){{x+w, y},   uv1, ID, texID};
-        vertices[(*vt)++] = (GuiVertex){{x+w, y+h}, uv2, ID, texID};
-        vertices[(*vt)++] = (GuiVertex){{x,   y+h}, uv3, ID, texID};
+        arrPush(*aVertices, (GuiVertex){{x,   y},   uv0, ID, texID});
+        arrPush(*aVertices, (GuiVertex){{x+w, y},   uv1, ID, texID});
+        arrPush(*aVertices, (GuiVertex){{x+w, y+h}, uv2, ID, texID});
+        arrPush(*aVertices, (GuiVertex){{x,   y+h}, uv3, ID, texID});
 
         const int v1 = v0 + 1;
         const int v2 = v0 + 2;
         const int v3 = v0 + 3;
 
-        indices[(*id)++] = v0; indices[(*id)++] = v1; indices[(*id)++] = v2;
-        indices[(*id)++] = v0; indices[(*id)++] = v2; indices[(*id)++] = v3;
+        arrPush(*aIndices, v0); arrPush(*aIndices, v1); arrPush(*aIndices, v2);
+        arrPush(*aIndices, v0); arrPush(*aIndices, v2); arrPush(*aIndices, v3);
     });
 }
 

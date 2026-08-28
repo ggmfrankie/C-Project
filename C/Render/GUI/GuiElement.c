@@ -64,7 +64,7 @@ ElementHandle Element_allocateNewV2(const Vec2f pos, const int width, const int 
                   .positionMode = POS_FIT,
                   .layoutDirection = 0,
                   .type = 0,
-                  .generateMesh = Mesh_generateRoundedCornerMesh
+                  .generateMesh = Mesh_generateRoundedCorner
         })
     };
     Element_get(handle)->handle = handle;
@@ -164,148 +164,78 @@ static bool Element_isQuadBB(const Element *element, Vec2f mousePos) {
     return false;
 }
 
-static ElementHandle Element_addElement(
-    char *name,
-    Vec2f pos,
-    float width,
-    float height,
-    const Vec3f color,
-    const Padding padding,
-    float childGap,
-    bool (*mouseOver)(const Element*, Vec2f),
-    bool (*hover)(Element *),
-    bool (*click)(Element *),
-    const Task task,
-    const char *text,
-    const bool forceResize,
-    const PositionMode positionMode,
-    void *elementData,
-    const bool notSelectable,
-    const LayoutDirection layoutDirection,
-    float maxWidth,
-    float maxHeight,
-    void (*whileSelected)(Element *element),
-    bool draggable,
-    void (*onUpdate)(Element *element),
-    bool wantGrowHorizontal,
-    bool wantGrowVertical,
-    float transparency,
-    const char *texture,
-    bool invisible,
-    float cornerRadius,
-    float flexGrow,
-    bool canBeHovered,
-    float textScale
-)
-{
-    const ElementHandle handle = Element_allocateNewV2(pos, width, height);
+ElementHandle createElement(const ElementSettings es) {
+    const ElementHandle handle = Element_allocateNewV2(es.pos, es.minWidth, es.minHeight);
     Element* lastElement = Element_get(handle);
 
-    if (mouseOver) {
-        lastElement->callbacks.isMouseOver = mouseOver;
-        if (hover) lastElement->callbacks.onHover = hover;
-        if (click) {
-            lastElement->callbacks.onClick = click;
-            if (task.func) {
-                lastElement->task = task;
-                if (task.userdata == nullptr) lastElement->task.userdata = lastElement;
+    if (!es.canNotBeSelected) {
+        lastElement->callbacks.isMouseOver = Element_isQuadBB;
+        if (es.onHover) lastElement->callbacks.onHover = es.onHover;
+        if (es.onClick) {
+            lastElement->callbacks.onClick = es.onClick;
+            if (es.task.func) {
+                lastElement->task = es.task;
+                if (es.task.userdata == nullptr) lastElement->task.userdata = lastElement;
             }
         }
     }
 
-
-    lastElement->visuals.color = color;
-    lastElement->visuals.defaultColor = color;
-    lastElement->padding = padding;
-    lastElement->name = name;
-    lastElement->positionMode = positionMode;
-    lastElement->childGap = childGap;
-    lastElement->elementData.ptr = elementData;
-    lastElement->layoutDirection = layoutDirection;
-    lastElement->callbacks.whileSelected = whileSelected;
-    lastElement->callbacks.onUpdate = onUpdate;
-    lastElement->flags.wantGrowHorizontal = wantGrowHorizontal;
-    lastElement->flags.wantGrowVertical = wantGrowVertical;
-    lastElement->visuals.transparency = transparency;
+    lastElement->visuals.color = es.color;
+    lastElement->visuals.defaultColor = es.color;
+    lastElement->padding = es.padding;
+    lastElement->name = es.name;
+    lastElement->positionMode = es.posMode;
+    lastElement->childGap = es.childGap;
+    lastElement->elementData.ptr = es.elementData;
+    lastElement->layoutDirection = es.layoutDirection;
+    lastElement->callbacks.whileSelected = es.whileSelected;
+    lastElement->callbacks.onUpdate = es.onUpdate;
+    lastElement->flags.wantGrowHorizontal = es.wantGrowHorizontal;
+    lastElement->flags.wantGrowVertical = es.wantGrowVertical;
+    lastElement->visuals.transparency = es.transparency;
     lastElement->flags.hasTexture = false;
-    lastElement->flags.isInvisible = invisible;
+    lastElement->flags.isInvisible = es.invisible;
     lastElement->visuals.brightness = 1.0f;
-    lastElement->dims.cornerRadius = cornerRadius;
-    lastElement->dims.flexGrow = flexGrow;
-    lastElement->flags.canBeHovered = canBeHovered;
+    lastElement->dims.cornerRadius = es.cornerRadius;
+    lastElement->dims.flexGrow = es.flexGrow;
+    lastElement->flags.canBeHovered = es.canBeHovered;
+    lastElement->callbacks.drawCustom = es.drawCustom;
 
-    if (draggable) {
+    if (es.draggable) {
         lastElement->callbacks.requestMove = onRequestMove_SimpleDrag;
     }
 
-    if (maxWidth) {
-        lastElement->dims.maxWidth = maxWidth;
+    if (es.maxWidth) {
+        lastElement->dims.maxWidth = es.maxWidth;
     }
 
-    if (maxHeight) {
-        lastElement->dims.maxHeight = maxHeight;
+    if (es.maxHeight) {
+        lastElement->dims.maxHeight = es.maxHeight;
     }
 
-    if (texture) {
-        lastElement->visuals.texture = getTexture(texture);
+    if (es.texture) {
+        lastElement->visuals.texture = getTexture(es.texture);
         lastElement->flags.hasTexture = true;
     }
 
-    if (notSelectable) lastElement->callbacks.isMouseOver = nullptr;
-
-    if (name) {
-        mapInsert(gmElements, name, handle);
+    if (es.name) {
+        mapInsert(gmElements, es.name, handle);
     }
 
-    if (text) {
+    if (es.text) {
         TextElement* t = &lastElement->textElement;
         t->hasText = true;
         t->aCharQuads = nullptr;
         t->text = newReservedString(128),
         t->textColor = (Vec3f){.0f, .0f, .0f};
-        t->forceResize = forceResize,
+        t->forceResize = true,
         t->pos = (Vec2f){};
         t->width = 0;
-        t->scale = textScale ? textScale : 1.0f;
-        Element_setText_ptr(lastElement, text);
+        t->scale = es.textScale ? es.textScale : 1.0f;
+        Element_setText_ptr(lastElement, es.text);
         reloadTextQuads(getFont(), lastElement);
     }
     return handle;
-}
-
-ElementHandle createElement(const ElementSettings es) {
-    return Element_addElement(es.name,
-                              es.pos,
-                              es.minWidth,
-                              es.minHeight,
-                              es.color,
-                              es.padding,
-                              es.childGap,
-                              Element_isQuadBB,
-                              es.onHover,
-                              es.onClick,
-                              es.task,
-                              es.text,
-                              true,
-                              es.posMode,
-                              es.elementData,
-                              es.canNotBeSelected,
-                              es.layoutDirection,
-                              es.maxWidth,
-                              es.maxHeight,
-                              es.whileSelected,
-                              es.draggable,
-                              es.onUpdate,
-                              es.wantGrowHorizontal,
-                              es.wantGrowVertical,
-                              es.transparency,
-                              nullptr,
-                              es.invisible,
-                              es.cornerRadius,
-                              es.flexGrow,
-                              es.canBeHovered,
-                              es.textScale
-    );
 }
 
 ElementHandle _Element_new(ElementSettings es, ...) {

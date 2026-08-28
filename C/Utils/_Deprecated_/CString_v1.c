@@ -80,7 +80,7 @@ String newEmptyString(const size_t length) {
 }
 
 String newReservedString(const size_t capacity) {
-    char* content = malloc(sizeof(char) * capacity);
+    char* content = malloc(sizeof(char) * capacity + 1);
 
     return (String){
         .m = content,

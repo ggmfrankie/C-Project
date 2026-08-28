@@ -5,6 +5,7 @@
 #include "GuiDefines.h"
 #include "GuiTypes.h"
 #include "Tasks.h"
+#include "ElementHandler.h"
 
 #include "Utils/Math/Vector.h"
 #include "Render/Drawing/TextDisplaying.h"
@@ -53,10 +54,6 @@ typedef struct {
     //layout lines
     Line* aLines;
 } Cache;
-
-typedef struct ElementHandle {
-    ssize_t ID;
-} ElementHandle;
 
 typedef struct Element {
     char* name;
@@ -112,7 +109,7 @@ typedef struct Element {
     PositionMode positionMode;
     LayoutDirection layoutDirection;
 
-    void (*generateMesh)(const Element* element, GuiVertex *vertices, int *vt, int *indices, int *id);
+    void (*generateMesh)(const Element* element, GuiVertex** aVertices, int** aIndices);
 
     struct {
         bool (*isMouseOver)(const Element* element, Vec2f mousePos);
@@ -122,6 +119,7 @@ typedef struct Element {
         void (*onUpdate)(Element* element);
         void (*reset)(Element* element);
         void (*requestMove)(Element* element, Vec2f pos);
+        void (*drawCustom)(Element* element, GuiVertex** aVertices, int** aIndices);
     } callbacks;
 
     Padding padding;
@@ -166,6 +164,7 @@ typedef struct ElementSettings {
     void (*whileSelected)(Element* element);
     void (*onUpdate)(Element* element);
     void (*reset)(Element* element);
+    void (*drawCustom)(Element* element, GuiVertex** aVertices, int** aIndices);
 
     Task task;
     Padding padding;

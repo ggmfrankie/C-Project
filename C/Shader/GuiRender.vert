@@ -1,22 +1,29 @@
 #version 460
 
-layout (location = 0) in vec2 pos;
-layout (location = 1) in vec2 uv;
+layout (location = 0) in vec2 inPos;
+layout (location = 1) in vec2 inUv;
 
-layout(location = 2) in int  inElementIndex;
-layout(location = 3) in int  inAtlasIndex;
+layout(location = 2) in int  inBufferBinding;
+layout(location = 3) in int  inIdx;
 
-struct InstanceData {
-    float brightness;
-    float transparency;
-    int hasTexture;
+struct ElementInstanceData {
+    vec4 color;
     vec2 worldPos;
-    vec3 color;
-    vec3 textColor;
+    int atlasID;
+};
+
+struct CharInstanceData {
+    vec4 color;
+    int ownerID;
+    int atlasID;
 };
 
 layout(std430, binding = 0) buffer InstanceBuffer {
-    InstanceData instances[];
+    ElementInstanceData elements[];
+};
+
+layout(std430, binding = 1) buffer CharBuffer {
+    CharInstanceData chars[];
 };
 
 uniform float screenWidth;
@@ -24,28 +31,36 @@ uniform float screenHeight;
 
 out vec2 f_UV;
 out vec4 f_Color;
-flat out int f_HasTexture;
-flat out int f_AtlasIndex;
-flat out float f_Brightness;
+flat out int f_AtlasID;
+
+vec4 calculateNormPos(vec2 relPos, vec2 worldPos) {
+    vec2 wPos = relPos + worldPos;
+    vec2 normPos = vec2((wPos.x / screenWidth) * 2.0 - 1.0, 1.0 - (wPos.y / screenHeight) * 2.0);
+    return vec4(normPos, 0.0, 1.0);
+}
+
+void handleElement() {
+    ElementInstanceData inst = elements[inIdx];
+
+    gl_Position = calculateNormPos(inPos, inst.worldPos);
+    f_Color = inst.color;
+    f_AtlasID = inst.atlasID;
+}
+
+void handleChar() {
+    CharInstanceData inst = chars[inIdx];
+
+    vec2 worldPos = elements[inst.ownerID].worldPos;
+    gl_Position = calculateNormPos(inPos, worldPos);
+    f_Color = inst.color;
+    f_AtlasID = inst.atlasID;
+}
 
 void main() {
-    InstanceData inst = instances[inElementIndex];
 
-    vec2 wPos = pos + inst.worldPos;
+    if (inBufferBinding == 0) handleElement();
+    else
+    if (inBufferBinding == 1) handleChar();
 
-    vec2 normPos = vec2((wPos.x / screenWidth) * 2.0 - 1.0, 1.0 - (wPos.y / screenHeight) * 2.0);
-
-    gl_Position = vec4(normPos, 0.0, 1.0);
-
-    f_UV = uv;
-
-    if (inAtlasIndex == 1){
-        f_Color = vec4(inst.textColor,1.0);
-    } else {
-        f_Color = vec4(inst.color, inst.transparency);
-    }
-
-    f_HasTexture = inst.hasTexture;
-    f_Brightness = inst.brightness;
-    f_AtlasIndex = inAtlasIndex;
+    f_UV = inUv;
 }

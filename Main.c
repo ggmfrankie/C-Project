@@ -14,7 +14,7 @@
 #include "C/Projects/TFE/TFE.h"
 #include "C/Utils/DataStructures/CArrayList.h"
 #include "C/Utils/DataStructures/CString.h"
-#include "C/Utils/DataStructures/Test.h"
+#include "C/Utils/_Deprecated_/Test.h"
 #include "C/Utils/Test.h"
 #if 0
 int main(){

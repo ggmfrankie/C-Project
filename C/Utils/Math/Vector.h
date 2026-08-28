@@ -3,7 +3,7 @@
 //
 #pragma once
 #include "GuiDefines.h"
-    typedef struct {
+    typedef struct vec4f {
         float x,y,z,w;
     } Vec4f;
 
@@ -50,7 +50,8 @@ Vec2f: Vec2f_Sub\
 
 #define v_mul(vec1, factor) _Generic((vec1),\
 Vec2i: Vec2i_Mul,\
-Vec3f: Vec3f_Mul\
+Vec3f: Vec3f_Mul,\
+Vec4f: Vec4f_Mul\
 )(vec1, factor)
 
 #define v_add(vec1, vec2) _Generic((vec1),\

@@ -11,6 +11,7 @@
 #include "Render/GUI/GuiElement.h"
 #include "Render/GUI/Texture.h"
 #include "../../Utils/Math/Vector.h"
+#include "DataStructures/CArrayList.h"
 
 struct ArcInfo {
     int start;
@@ -18,65 +19,72 @@ struct ArcInfo {
     int corner;
 };
 
-static struct ArcInfo Mesh_triangulate(const Vec2f corner, const float radius, GuiVertex *verts, int* vt, int* indices, int* id, float startAngle, float endAngle, int numTriangles) {
+static struct ArcInfo Mesh_triangulate(const Vec2f corner, const float radius, GuiVertex **aVertices, int **aIndices, float startAngle, float endAngle, int numTriangles) {
     const float radStep = (endAngle - startAngle)/(float)numTriangles;
-    const int cornerIndex = *vt;
+    const int cornerIndex = arrLen(*aVertices);
 
-    verts[(*vt)++].pos = corner;
+    arrPush(*aVertices, (GuiVertex){.pos = corner});
 
-    const int startIndex = *vt;
+    const int startIndex = cornerIndex + 1;
 
-    verts[(*vt)++].pos = (Vec2f){
-        corner.x + cosf(startAngle)*radius,
-        corner.y + sinf(startAngle)*radius,
-    };
+    arrPush(*aVertices, (GuiVertex){
+        .pos = (Vec2f){
+            corner.x + cosf(startAngle)*radius,
+            corner.y + sinf(startAngle)*radius,
+        }
+    });
 
-    for (int i = 1 ; i <= (radius > 0 ? numTriangles : 1); i++) {
+    const int lim = (radius > 0 ? numTriangles : 1);
 
-        verts[*vt].pos = (Vec2f){
-            corner.x + cosf(startAngle + i * radStep)*radius,
-            corner.y + sinf(startAngle + i * radStep)*radius,
-        };
+    for (int i = 1 ; i <= lim; i++) {
+        const int idx = arrLen(*aVertices);
 
-        const int prev = *vt - 1;
-        const int curr = *vt;
+        arrPush(*aVertices, (GuiVertex){
+            .pos = (Vec2f){
+                corner.x + cosf(startAngle + i * radStep)*radius,
+                corner.y + sinf(startAngle + i * radStep)*radius,
+            }
+        });
 
-        indices[(*id)++] = cornerIndex;
-        indices[(*id)++] = prev;
-        indices[(*id)++] = curr;
+        const int prev = idx - 1;
+        const int curr = idx;
 
-        (*vt)++;
+        arrPush(*aIndices, cornerIndex);
+        arrPush(*aIndices, prev);
+        arrPush(*aIndices, curr);
     }
-    return (struct ArcInfo){startIndex, *vt-1, cornerIndex};
+    return (struct ArcInfo){
+        .start = startIndex,
+        .end = arrLen(*aVertices) - 1,
+        .corner = cornerIndex
+    };
 }
 
-void Mesh_connectFans(const struct ArcInfo* a1, const struct ArcInfo* a2, int* indices, int* id) {
-    indices[(*id)++] = a1->end;
-    indices[(*id)++] = a1->corner;
-    indices[(*id)++] = a2->start;
+static void Mesh_connectFans(const struct ArcInfo* a1, const struct ArcInfo* a2, int **aIndices) {
+    arrPush(*aIndices, a1->end);
+    arrPush(*aIndices, a1->corner);
+    arrPush(*aIndices, a2->start);
 
-    indices[(*id)++] = a2->corner;
-    indices[(*id)++] = a2->start;
-    indices[(*id)++] = a1->corner;
+    arrPush(*aIndices, a2->corner);
+    arrPush(*aIndices, a2->start);
+    arrPush(*aIndices, a1->corner);
 }
 
-void Mesh_generateRoundedCornerMesh(const Element* element, GuiVertex *vertices, int *vt, int* indices, int* id) {
-    const float width = (float)element->dims.worldWidth;
-    const float height = (float)element->dims.worldHeight;
+void Mesh_generateRoundedCorner(const Element* element, GuiVertex **aVertices, int **aIndices) {
+    const float width = element->dims.worldWidth;
+    const float height = element->dims.worldHeight;
     const float radius = min((float)element->dims.cornerRadius, min(width, height) * 0.5f);
 
     constexpr float r90 = (float)M_PI * 0.5f;
     constexpr int numTriangles = 12;
 
-    const int start = *vt;
+    const int start = arrLen(*aVertices);
 
     const struct ArcInfo tl = Mesh_triangulate(
         (Vec2f){radius, radius},
         radius,
-        vertices,
-        vt,
-        indices,
-        id,
+        aVertices,
+        aIndices,
         2*r90,
         3*r90,
         numTriangles
@@ -85,10 +93,8 @@ void Mesh_generateRoundedCornerMesh(const Element* element, GuiVertex *vertices,
     const struct ArcInfo tr = Mesh_triangulate(
         (Vec2f){width-radius, radius},
         radius,
-        vertices,
-        vt,
-        indices,
-        id,
+        aVertices,
+        aIndices,
         3*r90,
         4*r90,
         numTriangles
@@ -97,10 +103,8 @@ void Mesh_generateRoundedCornerMesh(const Element* element, GuiVertex *vertices,
     const struct ArcInfo br = Mesh_triangulate(
         (Vec2f){width-radius, height-radius},
         radius,
-        vertices,
-        vt,
-        indices,
-        id,
+        aVertices,
+        aIndices,
         0,
         r90,
         numTriangles
@@ -109,41 +113,57 @@ void Mesh_generateRoundedCornerMesh(const Element* element, GuiVertex *vertices,
     const struct ArcInfo bl = Mesh_triangulate(
         (Vec2f){radius, height-radius},
         radius,
-        vertices,
-        vt,
-        indices,
-        id,
+        aVertices,
+        aIndices,
         r90,
         2*r90,
         numTriangles
     );
-    Mesh_connectFans(&tl, &tr, indices, id);
-    Mesh_connectFans(&tr, &br, indices, id);
-    Mesh_connectFans(&br, &bl, indices, id);
-    Mesh_connectFans(&bl, &tl, indices, id);
+    Mesh_connectFans(&tl, &tr, aIndices);
+    Mesh_connectFans(&tr, &br, aIndices);
+    Mesh_connectFans(&br, &bl, aIndices);
+    Mesh_connectFans(&bl, &tl, aIndices);
 
-    indices[(*id)++] = tl.corner;
-    indices[(*id)++] = bl.corner;
-    indices[(*id)++] = tr.corner;
+    arrPush(*aIndices, tl.corner);
+    arrPush(*aIndices, bl.corner);
+    arrPush(*aIndices, tr.corner);
 
-    indices[(*id)++] = tr.corner;
-    indices[(*id)++] = bl.corner;
-    indices[(*id)++] = br.corner;
+    arrPush(*aIndices, tr.corner);
+    arrPush(*aIndices, bl.corner);
+    arrPush(*aIndices, br.corner);
 
     const Vec2f uv0 = element->visuals.texture.uv0;
     const Vec2f uv1 = element->visuals.texture.uv1;
 
-    for (int i = start; i < *vt; i++) {
-        GuiVertex* p = &vertices[i];
+    const int lim = arrLen(*aVertices);
 
-        const float uNorm = p->pos.x / width;
-        const float vNorm = p->pos.y / height;
+    for (int i = start; i < lim; i++) {
+        GuiVertex* v = &(*aVertices)[i];
 
-        p->uv = (Vec2f){
+        const float uNorm = v->pos.x / width;
+        const float vNorm = v->pos.y / height;
+
+        v->uv = (Vec2f){
             uv0.x * (1.0f - uNorm) + uv1.x * uNorm,
             uv0.y * (1.0f - vNorm) + uv1.y * vNorm
         };
-        p->ID = element->handle.ID;
-        p->texID = 0;
+        v->ID = element->handle.ID;
+        v->texID = 0;
     }
+}
+
+void Mesh_customQuad(const Element* element, const Vec2f pos, const Vec2f dims, GuiVertex **aVertices, int **aIndices) {
+    const int start = arrLen(*aVertices);
+    arrPush(*aVertices, (GuiVertex){.ID = element->handle.ID, .pos = pos});
+    arrPush(*aVertices, (GuiVertex){.ID = element->handle.ID, .pos = {pos.x, pos.y + dims.y}});
+    arrPush(*aVertices, (GuiVertex){.ID = element->handle.ID, .pos = {pos.x + dims.x, pos.y + dims.y}});
+    arrPush(*aVertices, (GuiVertex){.ID = element->handle.ID, .pos = {pos.x + dims.x, pos.y}});
+
+    arrPush(*aIndices, start);
+    arrPush(*aIndices, start+1);
+    arrPush(*aIndices, start+2);
+
+    arrPush(*aIndices, start);
+    arrPush(*aIndices, start+2);
+    arrPush(*aIndices, start+3);
 }

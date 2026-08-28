@@ -3,8 +3,8 @@
 //
 #pragma once
 
-#include "CArrayList.h"
-#include "CHashMap.h"
+#include "../DataStructures/CArrayList.h"
+#include "../DataStructures/CHashMap.h"
 
 static void foo(char c[static 1]){
     puts(c);
@@ -55,7 +55,7 @@ static void Utils_test() {
 
     foo("nullptr");
 
-    int x = 'FOO!';
+    //int x = 'FOO!';
 }
 
 

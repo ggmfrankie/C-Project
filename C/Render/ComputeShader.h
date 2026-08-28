@@ -18,7 +18,7 @@ typedef struct ComputeShader {
     float endX;
 } ComputeShader;
 
-ComputeShader newComputeShader(StandaloneTexture *texture, int size);
+ComputeShader ComputeShader_new(StandaloneTexture *texture, int size);
 void ComputeShader_update(const ComputeShader *computeShader, double (*func)(double x));
 void ComputeShader_createUniform(ComputeShader *shader, const char* name);
 void ComputeShader_run(const ComputeShader *computeShader);

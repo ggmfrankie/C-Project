@@ -48,7 +48,7 @@ namespace Game {
 
         std::uniform_real_distribution size(0.5f, 5.0f);
 
-        for (int i = 0; i < 200; i++) {
+        for (int i = 0; i < 10; i++) {
             ggm::Vector3f pos(posX(rng), posY(rng), posZ(rng));
 
             ggm::Vector3f rot(rotPitch(rng), rotYaw(rng), rotRoll(rng));

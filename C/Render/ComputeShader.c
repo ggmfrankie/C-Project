@@ -50,7 +50,7 @@ void ComputeShader_createUniform(ComputeShader *shader, const char* name) {
     mapInsert(shader->map_uniforms, name, uniformLocation);
 }
 
-ComputeShader newComputeShader(StandaloneTexture *texture, const int size) {
+ComputeShader ComputeShader_new(StandaloneTexture *texture, const int size) {
     const int programId = glCreateProgram();
 
     const String graphingShader = stringOf("GraphingShader.comp");

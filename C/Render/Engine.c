@@ -212,7 +212,7 @@ void startEngine(void (*generateGUI)(Element* guiRoot)) {
     gui_init(initWindow(width, height, "Chess"), width, height, generateGUI);
 
     StandaloneTexture* graphTexture = newEmptyTexture(WIDTH, HEIGHT);
-    g_Renderer.computeShader = newComputeShader(nullptr, 1024);
+    g_Renderer.computeShader = ComputeShader_new(nullptr, 1024);
     g_Renderer.computeShader.texture = graphTexture;
     g_Renderer.computeShader.thickness = 2;
 
@@ -221,11 +221,11 @@ void startEngine(void (*generateGUI)(Element* guiRoot)) {
 
     //initSockets();
 
-    //glfwSetFramebufferSizeCallback(g_Renderer.window, gui_resizeCallback);
-    //glfwSetCursorPosCallback(g_Renderer.window, gui_cursorPositionCallback);
+    glfwSetFramebufferSizeCallback(g_Renderer.window, gui_resizeCallback);
+    glfwSetCursorPosCallback(g_Renderer.window, gui_cursorPositionCallback);
 
-    //glfwSetCharCallback(g_Renderer.window, gui_charCallback);
-    //glfwSetKeyCallback(g_Renderer.window, gui_keyCallback);
+    glfwSetCharCallback(g_Renderer.window, gui_charCallback);
+    glfwSetKeyCallback(g_Renderer.window, gui_keyCallback);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -269,14 +269,17 @@ static bool Engine_handleDragElement(const Renderer *renderer) {
 
     const Element *parent = Element_get(element->parentElement);
     const Vec2f parentWorldPos = parent ? parent->dims.worldPos : (Vec2f){0, 0};
+
     if (!dragging) {
         offset.x = renderer->mousePos.x - element->dims.worldPos.x;
         offset.y = renderer->mousePos.y - element->dims.worldPos.y;
         dragging = true;
+        return false;
     }
+
     const Vec2f newPos = {
-        (renderer->mousePos.x - parentWorldPos.x) - offset.x,
-        (renderer->mousePos.y - parentWorldPos.y) - offset.y
+        .x = (renderer->mousePos.x - parentWorldPos.x) - offset.x,
+        .y = (renderer->mousePos.y - parentWorldPos.y) - offset.y
     };
     element->callbacks.requestMove(element, newPos);
 #if GUI_DEBUG_TRACE_DRAGGING
@@ -290,11 +293,9 @@ static bool Engine_handleDragElement(const Renderer *renderer) {
                   });
 #endif
     return true;
-
-    return false;
 }
 
-bool click(GLFWwindow *window, const int mouseButton) {
+static bool click(GLFWwindow *window, const int mouseButton) {
     static bool wasClicked = false;
     const bool isMouseDown = isMousePressed(window, mouseButton);
 
@@ -330,7 +331,7 @@ static void Engine_processInput(Renderer *renderer) {
     const bool consumed = Engine_processInputRoot(renderer);
 
     if (click(renderer->window, GLFW_MOUSE_BUTTON_LEFT) && !consumed) focusedElement = nullptr;
-    if (focusedElement && focusedElement->callbacks.whileSelected) focusedElement->callbacks.whileSelected(focusedElement);
+    else if (focusedElement && focusedElement->callbacks.whileSelected) focusedElement->callbacks.whileSelected(focusedElement);
 }
 
 static bool Engine_processInputRec(ElementHandle elementHandle, Renderer *renderer) {
@@ -416,8 +417,8 @@ void gui_resizeCallback(GLFWwindow *window, const int width, const int height) {
 }
 
 void gui_cursorPositionCallback(GLFWwindow* window, const double xPos, const double yPos) {
-    g_Renderer.mousePos.x = (int)xPos;
-    g_Renderer.mousePos.y = (int)yPos;
+    g_Renderer.mousePos.x = xPos;
+    g_Renderer.mousePos.y = yPos;
 }
 
 Vec2f getMousePos() {

@@ -1,21 +1,20 @@
 //
 // Created by Stefan on 10.10.2025.
 //
-#include "../../../Dependencies/include/glad/gl.h"
+#include "glad/gl.h"
 #include "Render.h"
 
 #include <string.h>
 
 #include "Batcher.h"
 #include "RenderTypes.h"
-#include "../../Utils/Math/Vector.h"
+#include "Math/Vector.h"
 #include "GLFW/glfw3.h"
 #include "Render/GUI/GuiElement.h"
-#include "../../Utils/DataStructures/CArrayList.h"
-#include "../../Utils/Makros/Makros.h"
+#include "DataStructures/CArrayList.h"
+#include "Makros/Makros.h"
 #include "Utils/Misc/UtilityFun.h"
 
-static void accumulateMeshes(ElementHandle elementHandle, const Renderer *renderer, GuiVertex *vertices, int *vt, int *indices, int *id);
 static Cache* cacheLayout(Element* self);
 
 static void placeChildElements(const Element* self);
@@ -77,12 +76,43 @@ static void endScissor() {
     glDisable(GL_SCISSOR_TEST);
 }
 
+static void accumulateMeshes(const ElementHandle elementHandle, GuiVertex **aVertices, int **aIndices) {
+    Element* self = Element_get(elementHandle);
+    if (self == nullptr || !self->flags.isActive) return;
+
+    //beginScissor(element, renderer->screenHeight);
+
+    if (!self->flags.isInvisible) {
+#if GUI_DEBUG && GUI_DEBUG_ACCUMULATE_MESHES
+        if (self->dims.worldWidth <= 0 || self->dims.worldHeight <= 0) {
+            printf("WARNING: Element '%s' has invalid dimensions: %dx%d\n",
+                   self->name ? self->name : "unnamed",
+                   self->dims.worldWidth, self->dims.worldHeight);
+        }
+#endif
+        self->generateMesh(self, aVertices, aIndices);
+    }
+    uploadElementData(self);
+    accumulateTextQuads(self, aVertices, aIndices);
+    if (self->callbacks.drawCustom) self->callbacks.drawCustom(self, aVertices, aIndices);
+
+    //endScissor();
+
+    for_eachArr(flowElement, self->aFlowElements, {
+        accumulateMeshes(*flowElement, aVertices, aIndices);
+    });
+
+    for_eachArr(staticElement, self->aStaticElements, {
+        accumulateMeshes(*staticElement, aVertices, aIndices);
+    });
+}
 
 void Renderer_render(const Renderer *renderer) {
-    static GuiVertex vertices[MAX_GUI_VERTICES];
-    int numVertices = 0;
-    static int indices[MAX_GUI_VERTICES];
-    int numIndices = 0;
+    static GuiVertex* aVertices = nullptr;
+    static int* aIndices = nullptr;
+
+    arrClear(aVertices);
+    arrClear(aIndices);
 
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
@@ -105,51 +135,13 @@ void Renderer_render(const Renderer *renderer) {
     setUniform(&renderer->guiShader, "screenWidth", (float) renderer->screenWidth);
     setUniform(&renderer->guiShader, "screenHeight", (float) renderer->screenHeight);
 
+    accumulateMeshes(renderer->guiRoot, &aVertices, &aIndices);
 
-
-    accumulateMeshes(renderer->guiRoot,
-                     renderer,
-                     vertices,
-                     &numVertices,
-                     indices,
-                     &numIndices
-    );
-
-    uploadBatchedQuads(vertices, numVertices, indices, numIndices);
-    glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, nullptr);
+    uploadBatchedQuads(&aVertices, &aIndices);
+    glDrawElements(GL_TRIANGLES, arrLen(aIndices), GL_UNSIGNED_INT, nullptr);
     glBindVertexArray(0);
     glDisable(GL_MULTISAMPLE);
     Shader_unbindProgram();
-}
-
-static void accumulateMeshes(const ElementHandle elementHandle, const Renderer *renderer, GuiVertex *vertices, int *vt, int *indices, int *id) {
-    Element* element = Element_get(elementHandle);
-    if (element == nullptr || !element->flags.isActive) return;
-
-    //beginScissor(element, renderer->screenHeight);
-
-    if (!element->flags.isInvisible) {
-#if GUI_DEBUG && GUI_DEBUG_ACCUMULATE_MESHES
-        if (element->dims.worldWidth <= 0 || element->dims.worldHeight <= 0) {
-            printf("WARNING: Element '%s' has invalid dimensions: %dx%d\n",
-                   element->name ? element->name : "unnamed",
-                   element->dims.worldWidth, element->dims.worldHeight);
-        }
-#endif
-        element->generateMesh(element, vertices, vt, indices, id);
-    }
-    uploadElementData(element);
-    accumulateTextQuads(element, vertices, vt, indices, id);
-
-    //endScissor();
-
-    for_eachArr(flowElement, element->aFlowElements, {
-        accumulateMeshes(*flowElement, renderer, vertices, vt, indices, id);
-    });
-
-    for_eachArr(staticElement, element->aStaticElements, {
-        accumulateMeshes(*staticElement, renderer, vertices, vt, indices, id);
-    });
 }
 
 void Renderer_updateLayout(const Renderer *renderer) {

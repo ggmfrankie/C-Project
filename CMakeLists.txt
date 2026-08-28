@@ -85,7 +85,7 @@ add_library(GUI STATIC
         C/Render/Drawing/RenderTypes.h
         C/GuiDefines.h
         C/Utils/DataStructures/CHashMap.h
-        C/Utils/DataStructures/Test.h
+        C/Utils/_Deprecated_/Test.h
         C/Utils/DataStructures/CHashMap.c
         C/Utils/Typedef.h
         C/Utils/Makros/Defer.c
@@ -104,6 +104,9 @@ add_library(GUI STATIC
         C/Utils/Test.h
         C/Utils/Makros/Helper.h
         C/Render/GUI/ElementTypes/Scrollbar.c
+        C/Utils/DataStructures/CArrayList.c
+        C/Render/GUI/ElementHandler.c
+        C/Render/GUI/ElementHandler.h
 )
 
 set_target_properties(GUI PROPERTIES LINKER_LANGUAGE C)

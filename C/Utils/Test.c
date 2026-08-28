@@ -3,6 +3,7 @@
 #include "DataStructures/CHashMap.h"
 #include "DataStructures/CSparseSet.h"
 #include "DataStructures/CString.h"
+#include "Os/Time.h"
 #include <assert.h>
 #include <stdio.h>
 
@@ -69,6 +70,10 @@ static void Test_sparseSet_edgeCases() {
 static void Test_arrayList() {
     int* array = nullptr;
 
+    arrNew(array, 2);
+    TEST(_arrayGetHead(array)->capacity == 2, "arrNew capacity expected 2, got %zu", _arrayGetHead(array)->capacity);
+    TEST(arrLen(array) == 0, "arrNew size expected 0, got %zu", arrLen(array));
+
     arrPush(array, 0);
     TEST(array[0] == 0, "array[0] expected 0, got %d", array[0]);
     TEST(*arrGetLast(array) == 0, "arrGetLast expected 0, got %d", *arrGetLast(array));
@@ -77,6 +82,8 @@ static void Test_arrayList() {
         arrPush(array, i);
     }
     TEST(arrLen(array) == 10, "arrLen expected 10 after pushes, got %zu", arrLen(array));
+    TEST(*arrGetLast(array) == 9, "arrGetLast expected 9 after pushes, got %d", *arrGetLast(array));
+    TEST(_arrayGetHead(array)->capacity >= 10, "capacity expected growth to >= 10, got %zu", _arrayGetHead(array)->capacity);
 
     int a = arrPop(array);
     TEST(a == 9, "arrPop expected 9, got %d", a);
@@ -94,12 +101,63 @@ static void Test_arrayList() {
     });
     TEST(0+1+2+3+4+5+6+7+8 == sum, "reverse sum mismatch, expected %d got %d", 0+1+2+3+4+5+6+7+8, sum);
 
+    typedef struct {
+        int x;
+        int y;
+    } Pair;
+
+    Pair* pairs = nullptr;
+    arrNew(pairs, 1);
+    TEST(_arrayGetHead(pairs)->capacity == 1, "pair array capacity expected 1, got %zu", _arrayGetHead(pairs)->capacity);
+
+    arrPush(pairs, ((Pair){.x = 1, .y = 2}));
+    arrPush(pairs, ((Pair){.x = 3, .y = 4}));
+    TEST(arrLen(pairs) == 2, "pair array length expected 2, got %zu", arrLen(pairs));
+    TEST(pairs[0].x == 1 && pairs[0].y == 2, "pair[0] mismatch, got {%d,%d}", pairs[0].x, pairs[0].y);
+    TEST(pairs[1].x == 3 && pairs[1].y == 4, "pair[1] mismatch, got {%d,%d}", pairs[1].x, pairs[1].y);
+
+    Pair popped = arrPop(pairs);
+    TEST(popped.x == 3 && popped.y == 4, "pair pop mismatch, got {%d,%d}", popped.x, popped.y);
+    TEST(arrLen(pairs) == 1, "pair array length expected 1 after pop, got %zu", arrLen(pairs));
+
     arrClear(array);
     TEST(_arrayGetHead(array)->capacity >= 9, "capacity expected >= 9 after clear, got %zu", _arrayGetHead(array)->capacity);
     TEST(_arrayGetHead(array)->size == 0, "size expected 0 after clear, got %zu", _arrayGetHead(array)->size);
+    TEST(arrGetLast(array) == nullptr, "arrTryGetLast on empty array should return nullptr");
 
     int* res = arrTryGet(array, 100);
     TEST(res == nullptr, "arrTryGet out-of-range expected nullptr");
+
+    arrDelete(array);
+    arrDelete(pairs);
+    TEST(array == nullptr, "arrDelete should null the pointer");
+    TEST(pairs == nullptr, "arrDelete should null the pointer for struct array");
+}
+
+static void Test_arrayListPerformance() {
+    enum { itemCount = 200000 };
+
+    int* array = nullptr;
+    volatile long long sink = 0;
+
+    const TimeNs pushStart = now_ns();
+    for (int i = 0; i < itemCount; ++i) {
+        arrPush(array, i);
+    }
+    const TimeNs pushEnd = now_ns();
+
+    const TimeNs iterateStart = now_ns();
+    for_eachArr(num, array, {
+        sink += *num;
+    });
+    const TimeNs iterateEnd = now_ns();
+
+    printf(
+        "Array benchmark: push=%lld ns, iterate=%lld ns, checksum=%lld\n",
+        (long long)(pushEnd - pushStart),
+        (long long)(iterateEnd - iterateStart),
+        sink
+    );
 
     arrDelete(array);
 }
@@ -280,6 +338,7 @@ static void Test_sparseSet(){
 
 static void Test_dataStructures() {
     Test_arrayList();
+    Test_arrayListPerformance();
     INFO_("Array passed");
     Test_hashMap();
     INFO_("Hashmap passed");
@@ -290,4 +349,3 @@ static void Test_dataStructures() {
 void Test_run() {
     Test_dataStructures();
 }
-
