@@ -13,9 +13,9 @@
 #include "RenderTypes.h"
 #include "../../Utils/_Deprecated_/CString_v1.h"
 #include "Render/GUI/GuiElement.h"
-#include "Utils/DataStructures/CArrayList.h"
-#include "Utils/Makros/Defer.h"
-#include "Utils/Makros/Makros.h"
+#include "DataStructures/CArrayList.h"
+#include "Makros/Defer.h"
+#include "Makros/Makros.h"
 
 
 #define FONT_ATLAS_SIZE 2048
