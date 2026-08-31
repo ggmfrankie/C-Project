@@ -90,9 +90,9 @@ static void Test_arrayList() {
     TEST(arrLen(array) == 9, "arrLen expected 9 after pop, got %zu", arrLen(array));
 
     int sum = 0;
-    for_eachArr(num, array, {
+    for arrEach(num, array) {
         sum += *num;
-    });
+    }
     TEST(0+1+2+3+4+5+6+7+8 == sum, "forward sum mismatch, expected %d got %d", 0+1+2+3+4+5+6+7+8, sum);
 
     sum = 0;

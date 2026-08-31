@@ -24,7 +24,7 @@ void Element_init() {
     gElements = SparseSet_new(Element, 512);
 }
 
-ElementHandle Element_allocateNewV2(const Vec2f pos, const int width, const int height) {
+static ElementHandle Element_allocateNewV2(const Vec2f pos, const int width, const int height) {
     const ElementHandle handle = {
         .ID = SparseSet_add(&gElements, (Element){
                     .name = nullptr,
@@ -64,7 +64,7 @@ ElementHandle Element_allocateNewV2(const Vec2f pos, const int width, const int 
                   .positionMode = POS_FIT,
                   .layoutDirection = 0,
                   .type = 0,
-                  .generateMesh = Mesh_generateRoundedCorner
+                  .generateMesh = nullptr
         })
     };
     Element_get(handle)->handle = handle;
@@ -194,12 +194,15 @@ ElementHandle createElement(const ElementSettings es) {
     lastElement->flags.wantGrowVertical = es.wantGrowVertical;
     lastElement->visuals.transparency = es.transparency;
     lastElement->flags.hasTexture = false;
-    lastElement->flags.isInvisible = es.invisible;
     lastElement->visuals.brightness = 1.0f;
     lastElement->dims.cornerRadius = es.cornerRadius;
     lastElement->dims.flexGrow = es.flexGrow;
     lastElement->flags.canBeHovered = es.canBeHovered;
     lastElement->callbacks.drawCustom = es.drawCustom;
+
+    if (!es.invisible) {
+        lastElement->generateMesh = Mesh_generateRoundedCorner;
+    }
 
     if (es.draggable) {
         lastElement->callbacks.requestMove = onRequestMove_SimpleDrag;
@@ -227,7 +230,7 @@ ElementHandle createElement(const ElementSettings es) {
         t->hasText = true;
         t->aCharQuads = nullptr;
         t->text = newReservedString(128),
-        t->textColor = (Vec3f){.0f, .0f, .0f};
+        t->textColor = (Vec4f){.0f, .0f, .0f, 1.0f};
         t->forceResize = true,
         t->pos = (Vec2f){};
         t->width = 0;

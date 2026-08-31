@@ -7,6 +7,7 @@
 #include <stdint.h>
 
 #include "GuiTypes.h"
+#include "RenderTypes.h"
 
 #include "../../../Dependencies/include/stb/stb_truetype.h"
 #include "Utils/Math/Vector.h"
@@ -44,7 +45,7 @@ typedef struct TextElement {
     bool forceResize;
     String text;
 
-    Vec3f textColor;
+    Vec4f textColor;
     float scale;
 
     Character* aCharQuads;
@@ -52,5 +53,5 @@ typedef struct TextElement {
 
 Font loadFontAtlas(const char* file);
 void reloadTextQuads(const Font* font, Element *element);
-void accumulateTextQuads(const Element *element, GuiVertex **aVertices, int **aIndices);
+void accumulateTextQuads(const Element *element, MeshAccumulator* meshData);
 Vec2f measureElementText(const TextElement* textElement);

@@ -6,16 +6,20 @@
 #include "Mcp/ReturnTypes.hpp"
 #include "Utils/Parsing.hpp"
 
+#include "Test/TicTacToe.hpp"
+
 using Json = nlohmann::json;
 using namespace mcp;
 
-MakeRequestableFunction(testerFunc, "Returns the square root",
-nlohmann::json testerFunc(int i)){
-    return ReturnTypes::asText<>(i*i);
+MakeRequestableFunction(makeMove, "Makes a move and places the correct symbol at the requested spot. Returns the board state after the move or tells if move was invalid. If you won it also tells you",
+nlohmann::json makeMove(int row, int col)){
+    bool success = TicTacToe::Get().makeMove(row, col);
+    TicTacToe::Get().printBoard();
+    return ReturnTypes::asText(success ? (TicTacToe::Get().isWinning() ? "You won" : TicTacToe::Get().getBoard()) : "move invalid");
 }
 
 int main() {
-    std::cout << "Starting...\n";
+    std::cout << "Starting..." << std::endl;
     McpResourceRegistry::Get().addResource(
         "test",
         "resource://test",

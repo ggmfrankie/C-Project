@@ -16,10 +16,11 @@ public:
     bool makeMove(int row, int col);
 
     [[nodiscard]] std::string getBoard() const;
-
-    static TicTacToe& New();
+    static void printBoard();
 
     static TicTacToe& Get();
+
+    bool isWinning();
 
 private:
     enum class Turn {
@@ -27,7 +28,8 @@ private:
         O
     };
 
-    static TicTacToe GAME;
+    void switchTurn();
+
     std::array<char, 10> mBoard;
     Turn mTurn;
 };

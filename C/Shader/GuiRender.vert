@@ -10,20 +10,22 @@ struct ElementInstanceData {
     vec4 color;
     vec2 worldPos;
     int atlasID;
+    int _pad;
 };
 
-struct CharInstanceData {
+struct MeshInstanceData {
     vec4 color;
     int ownerID;
     int atlasID;
+    int _pad[2];
 };
 
 layout(std430, binding = 0) buffer InstanceBuffer {
     ElementInstanceData elements[];
 };
 
-layout(std430, binding = 1) buffer CharBuffer {
-    CharInstanceData chars[];
+layout(std430, binding = 1) buffer MeshBuffer {
+    MeshInstanceData customs[];
 };
 
 uniform float screenWidth;
@@ -47,8 +49,8 @@ void handleElement() {
     f_AtlasID = inst.atlasID;
 }
 
-void handleChar() {
-    CharInstanceData inst = chars[inIdx];
+void handleOther() {
+    MeshInstanceData inst = customs[inIdx];
 
     vec2 worldPos = elements[inst.ownerID].worldPos;
     gl_Position = calculateNormPos(inPos, worldPos);
@@ -60,7 +62,7 @@ void main() {
 
     if (inBufferBinding == 0) handleElement();
     else
-    if (inBufferBinding == 1) handleChar();
+    if (inBufferBinding == 1) handleOther();
 
     f_UV = inUv;
 }

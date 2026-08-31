@@ -74,6 +74,8 @@ void _arrGrowIfNeeded(void **array, size_t typeSize);
         (array) = nullptr;\
     } while (0)
 
+#define arrEach(item, array) (typeof(*(array))* item = &(array)[0]; item < ((array) + arrLen((array))); ++item)
+
 #define for_eachArr(item, array, ...)\
     do {\
         if ((array) == nullptr) break;\

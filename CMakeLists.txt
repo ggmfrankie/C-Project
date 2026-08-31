@@ -223,9 +223,6 @@ set_target_properties(glfw PROPERTIES
         IMPORTED_LOCATION "${GLFW_LIB}"
 )
 
-
-#find_package(TBB REQUIRED)
-
 add_library(RustGame SHARED IMPORTED)
 
 set_target_properties(RustGame PROPERTIES
@@ -252,7 +249,6 @@ target_link_libraries(C-Project PRIVATE
         Jolt
         winpthread
         McpServerLib
-        #TBB::tbb
 )
 endif (WIN32)
 

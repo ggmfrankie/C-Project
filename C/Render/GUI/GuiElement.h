@@ -62,7 +62,6 @@ typedef struct Element {
 
     struct {
         bool isActive: 1;
-        bool isInvisible: 1;
         bool canBeHovered: 1;
 
         bool fixedWidth: 1;
@@ -109,7 +108,7 @@ typedef struct Element {
     PositionMode positionMode;
     LayoutDirection layoutDirection;
 
-    void (*generateMesh)(const Element* element, GuiVertex** aVertices, int** aIndices);
+    void (*generateMesh)(const Element* element, GuiVertex** aVertices, int** aIndices, ssize_t id);
 
     struct {
         bool (*isMouseOver)(const Element* element, Vec2f mousePos);
@@ -119,7 +118,7 @@ typedef struct Element {
         void (*onUpdate)(Element* element);
         void (*reset)(Element* element);
         void (*requestMove)(Element* element, Vec2f pos);
-        void (*drawCustom)(Element* element, GuiVertex** aVertices, int** aIndices);
+        void (*drawCustom)(Element* element, GuiVertex** aVertices, int** aIndices, MeshInstanceData** additional);
     } callbacks;
 
     Padding padding;
@@ -164,7 +163,7 @@ typedef struct ElementSettings {
     void (*whileSelected)(Element* element);
     void (*onUpdate)(Element* element);
     void (*reset)(Element* element);
-    void (*drawCustom)(Element* element, GuiVertex** aVertices, int** aIndices);
+    void (*drawCustom)(Element* element, GuiVertex** aVertices, int** aIndices, MeshInstanceData** additional);
 
     Task task;
     Padding padding;

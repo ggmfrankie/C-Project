@@ -9,6 +9,8 @@
 #define STB_TRUETYPE_IMPLEMENTATION
 #include <float.h>
 #include <stb/stb_truetype.h>
+
+#include "Batcher.h"
 #include "Render.h"
 #include "RenderTypes.h"
 #include "../../Utils/_Deprecated_/CString_v1.h"
@@ -89,49 +91,57 @@ Font loadFontAtlas(const char* file) {
     return font;
 }
 
+static void uploadTextInstanceData(const Element *owner, MeshInstanceData** aAdditionalData) {
+    arrPush(*aAdditionalData, (MeshInstanceData){
+        .color = owner->textElement.textColor,
+        .atlasID = 1,
+        .ownerID = owner->handle.ID
+    });
+}
+
 //@brief only adds the parent world pos and adds it to the vertexBuffer
-void accumulateTextQuads(const Element *element, GuiVertex **aVertices, int **aIndices) {
+void accumulateTextQuads(const Element *element, MeshAccumulator* meshData) {
     const Character* aCharQuads = element->textElement.aCharQuads;
     if (aCharQuads == nullptr || arrIsEmpty(aCharQuads)) return;
 
     const float xOffset = element->padding.left;
 
-    const int ID = element->handle.ID;
+    const int ID = arrLen(meshData->aMeshData);
 
     for_eachArr(c, aCharQuads, {
-        constexpr int texID = 1;
+        constexpr int TEXT_BINDING = 1;
 
-        const float x = (c->pos.x + xOffset);
-        const float y = (c->pos.y + element->dims.worldHeight - element->padding.down);
-        const float w = (c->width);
-        const float h = (c->height);
+        const float x = c->pos.x + xOffset;
+        const float y = c->pos.y + element->dims.worldHeight - element->padding.down;
+        const float w = c->width;
+        const float h = c->height;
 
         const Vec2f start = c->texPosStart;
         const Vec2f end   = c->texPosEnd;
 
         const Vec2f uv0 = start;
-        const Vec2f uv1 = (Vec2f){ end.x, start.y };
+        const Vec2f uv1 = { end.x, start.y };
         const Vec2f uv2 = end;
-        const Vec2f uv3 = (Vec2f){ start.x, end.y };
+        const Vec2f uv3 = { start.x, end.y };
 
-        const int v0 = arrLen(*aVertices);
+        const int v0 = arrLen(meshData->aVertices);
 
-        arrPush(*aVertices, (GuiVertex){{x,   y},   uv0, ID, texID});
-        arrPush(*aVertices, (GuiVertex){{x+w, y},   uv1, ID, texID});
-        arrPush(*aVertices, (GuiVertex){{x+w, y+h}, uv2, ID, texID});
-        arrPush(*aVertices, (GuiVertex){{x,   y+h}, uv3, ID, texID});
+        arrPush(meshData->aVertices, (GuiVertex){{x,   y},   uv0, TEXT_BINDING, ID});
+        arrPush(meshData->aVertices, (GuiVertex){{x+w, y},   uv1, TEXT_BINDING, ID});
+        arrPush(meshData->aVertices, (GuiVertex){{x+w, y+h}, uv2, TEXT_BINDING, ID});
+        arrPush(meshData->aVertices, (GuiVertex){{x,   y+h}, uv3, TEXT_BINDING, ID});
 
         const int v1 = v0 + 1;
         const int v2 = v0 + 2;
         const int v3 = v0 + 3;
 
-        arrPush(*aIndices, v0); arrPush(*aIndices, v1); arrPush(*aIndices, v2);
-        arrPush(*aIndices, v0); arrPush(*aIndices, v2); arrPush(*aIndices, v3);
+        arrPush(meshData->aIndices, v0); arrPush(meshData->aIndices, v1); arrPush(meshData->aIndices, v2);
+        arrPush(meshData->aIndices, v0); arrPush(meshData->aIndices, v2); arrPush(meshData->aIndices, v3);
     });
+    uploadTextInstanceData(element, &meshData->aMeshData);
 }
 
 Vec2f measureElementText(const TextElement* textElement) {
-
     if (arrIsEmpty(textElement->aCharQuads)) {
         return (Vec2f){0, 0};
     }
@@ -157,8 +167,8 @@ Vec2f measureElementText(const TextElement* textElement) {
     const float height = maxY - minY;
 
     return (Vec2f){
-        (int)width,
-        (int)height
+        width,
+        height
     };
 }
 
@@ -183,8 +193,8 @@ static Vec2f measureText(const Font *font, const String *text) {
     }
 
     return (Vec2f){
-        (int)(x),
-        (int)(font->maxCharHeight)
+         x,
+        font->maxCharHeight
     };
 }
 
@@ -219,14 +229,16 @@ void reloadTextQuads(const Font* font, Element *element) {
         arrPush(textElement->aCharQuads, (Character){});
         Character* character = arrGetLast(textElement->aCharQuads);
         stbtt_aligned_quad q;
-        stbtt_GetPackedQuad(font->glyphs,
-                            font->fontAtlas.width,
-                            font->fontAtlas.height,
-                            c - 32,
-                            &cursor.x,
-                            &cursor.y,
-                            &q,
-                            0);
+        stbtt_GetPackedQuad(
+            font->glyphs,
+            font->fontAtlas.width,
+            font->fontAtlas.height,
+            c - 32,
+            &cursor.x,
+            &cursor.y,
+            &q,
+            0
+        );
 
         const float glyphWidth  = (q.x1 - q.x0) * textScale;
         const float glyphHeight = (q.y1 - q.y0) * textScale;

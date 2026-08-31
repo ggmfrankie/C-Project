@@ -70,7 +70,7 @@ static void Mesh_connectFans(const struct ArcInfo* a1, const struct ArcInfo* a2,
     arrPush(*aIndices, a1->corner);
 }
 
-void Mesh_generateRoundedCorner(const Element* element, GuiVertex **aVertices, int **aIndices) {
+void Mesh_generateRoundedCorner(const Element* element, GuiVertex** aVertices, int** aIndices, ssize_t id) {
     const float width = element->dims.worldWidth;
     const float height = element->dims.worldHeight;
     const float radius = min((float)element->dims.cornerRadius, min(width, height) * 0.5f);
@@ -147,17 +147,19 @@ void Mesh_generateRoundedCorner(const Element* element, GuiVertex **aVertices, i
             uv0.x * (1.0f - uNorm) + uv1.x * uNorm,
             uv0.y * (1.0f - vNorm) + uv1.y * vNorm
         };
-        v->ID = element->handle.ID;
-        v->texID = 0;
+        v->ID = id;
+        v->bufferBinding = 0;
     }
 }
 
-void Mesh_customQuad(const Element* element, const Vec2f pos, const Vec2f dims, GuiVertex **aVertices, int **aIndices) {
+void Mesh_customQuad(const Element* element, const Vec2f pos, const Vec2f dims, Vec4f color, GuiVertex **aVertices, int **aIndices, MeshInstanceData** aAdditional) {
+    const int id = arrLen(*aAdditional);
     const int start = arrLen(*aVertices);
-    arrPush(*aVertices, (GuiVertex){.ID = element->handle.ID, .pos = pos});
-    arrPush(*aVertices, (GuiVertex){.ID = element->handle.ID, .pos = {pos.x, pos.y + dims.y}});
-    arrPush(*aVertices, (GuiVertex){.ID = element->handle.ID, .pos = {pos.x + dims.x, pos.y + dims.y}});
-    arrPush(*aVertices, (GuiVertex){.ID = element->handle.ID, .pos = {pos.x + dims.x, pos.y}});
+
+    arrPush(*aVertices, (GuiVertex){.ID = id, .pos = pos});
+    arrPush(*aVertices, (GuiVertex){.ID = id, .pos = {pos.x, pos.y + dims.y}});
+    arrPush(*aVertices, (GuiVertex){.ID = id, .pos = {pos.x + dims.x, pos.y + dims.y}});
+    arrPush(*aVertices, (GuiVertex){.ID = id, .pos = {pos.x + dims.x, pos.y}});
 
     arrPush(*aIndices, start);
     arrPush(*aIndices, start+1);
@@ -166,4 +168,6 @@ void Mesh_customQuad(const Element* element, const Vec2f pos, const Vec2f dims, 
     arrPush(*aIndices, start);
     arrPush(*aIndices, start+2);
     arrPush(*aIndices, start+3);
+
+    arrPush(*aAdditional, (MeshInstanceData){.color = color, .atlasID = 0, .ownerID = element->handle.ID});
 }

@@ -62,7 +62,7 @@ class McpFunctionRegistry {
             mFunction(function)
         {
             const auto idx = mMetaData.name.find_first_of("::");
-            mMetaData.name.replace(idx, 3, "__");
+           //mMetaData.name.replace(idx, 2, "__");
         }
 
         template<typename T> struct FunctionTraits;

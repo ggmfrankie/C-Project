@@ -11,7 +11,8 @@ static struct {
     GLuint VAO;
     GLuint VBO;
     GLuint EBO;
-    GLuint SSBO;
+    GLuint elementSSBO;
+    GLuint meshSSBO;
 } graphicsData;
 
 #define MAX_GUI_INSTANCES 81920
@@ -56,53 +57,51 @@ void Batcher_init() {
     glBindVertexArray(0);
 
 
-    glGenBuffers(1, &graphicsData.SSBO);
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, graphicsData.SSBO);
+    glGenBuffers(1, &graphicsData.elementSSBO);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, graphicsData.elementSSBO);
     glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(ElementInstanceData) * MAX_GUI_INSTANCES, nullptr, GL_DYNAMIC_DRAW);
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, graphicsData.SSBO);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, graphicsData.elementSSBO);
 
+    glGenBuffers(1, &graphicsData.meshSSBO);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, graphicsData.meshSSBO);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(MeshInstanceData) * MAX_GUI_INSTANCES, nullptr, GL_DYNAMIC_DRAW);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, graphicsData.meshSSBO);
 }
 
-void uploadBatchedQuads(GuiVertex **aVertices, int **aIndices) {
+static void uploadVertices(const GuiVertex *aVertices, const int *aIndices) {
     glBindVertexArray(graphicsData.VAO);
     glBindBuffer(GL_ARRAY_BUFFER, graphicsData.VBO);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GuiVertex) * arrLen(*aVertices), *aVertices);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GuiVertex) * arrLen(aVertices), aVertices);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, graphicsData.EBO);
-    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, sizeof(uint32_t) * arrLen(*aIndices), *aIndices);
+    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, sizeof(int) * arrLen(aIndices), aIndices);
 }
 
-static ElementInstanceData instanceFromElement(const Element* e) {
-    ElementInstanceData out = {};
-    const float brightness = (e->state >= UI_STATE_HOVER && e->flags.canBeHovered) ? e->visuals.brightness - 0.2 : e->visuals.brightness;
-    out.worldPos = e->dims.worldPos;
-    out.color = (Vec4f){
-        e->visuals.color.x * brightness,
-        e->visuals.color.y * brightness,
-        e->visuals.color.z * brightness,
-        1.0f - e->visuals.transparency
-    };
-    out.atlasID = 0;
-
-    return out;
-}
-
-static size_t ssboOffsetBytes(const int index) {
-    return (size_t)index * sizeof(ElementInstanceData);
-}
-
-void uploadElementData(const Element* element) {
-    if (!element) return;
-    const int id = element->handle.ID;
-    if (id < 0 || id >= MAX_GUI_INSTANCES) return;
-
-    const ElementInstanceData data = instanceFromElement(element);
-
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, graphicsData.SSBO);
+static void uploadElementData(const ElementInstanceData* aElementData) {
+    assert(aElementData != nullptr);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, graphicsData.elementSSBO);
 
     glBufferSubData(GL_SHADER_STORAGE_BUFFER,
-        (GLintptr)ssboOffsetBytes(id),
-        (GLsizeiptr)sizeof(ElementInstanceData),
-        &data
+        0,
+        arrLen(aElementData) * sizeof(ElementInstanceData),
+        aElementData
     );
+}
+
+static void uploadMeshData(const MeshInstanceData* aMeshData) {
+    assert(aMeshData != nullptr);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, graphicsData.meshSSBO);
+
+    glBufferSubData(GL_SHADER_STORAGE_BUFFER,
+        0,
+        arrLen(aMeshData) * sizeof(MeshInstanceData),
+        aMeshData
+    );
+}
+
+void uploadMeshes(const MeshAccumulator* accumulator) {
+
+    uploadVertices(accumulator->aVertices, accumulator->aIndices);
+    uploadElementData(accumulator->aElementData);
+    uploadMeshData(accumulator->aMeshData);
 }

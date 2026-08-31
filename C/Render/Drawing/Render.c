@@ -19,7 +19,7 @@ static Cache* cacheLayout(Element* self);
 
 static void placeChildElements(const Element* self);
 
-ElementHandle createRootElement();
+static ElementHandle createRootElement();
 
 [[deprecated]]
 GLFWwindow* initWindow(const int width, const int height, const char* name) {
@@ -76,13 +76,30 @@ static void endScissor() {
     glDisable(GL_SCISSOR_TEST);
 }
 
-static void accumulateMeshes(const ElementHandle elementHandle, GuiVertex **aVertices, int **aIndices) {
+static ssize_t addElementData(const Element* element, ElementInstanceData** accumulator) {
+    ElementInstanceData out = {};
+    const ssize_t id = arrLen(*accumulator);
+    const float brightness = (element->state >= UI_STATE_HOVER && element->flags.canBeHovered) ? element->visuals.brightness - 0.2 : element->visuals.brightness;
+    out.worldPos = element->dims.worldPos;
+    out.color = (Vec4f){
+        .x = element->visuals.color.x * brightness,
+        .y = element->visuals.color.y * brightness,
+        .z = element->visuals.color.z * brightness,
+        .w = 1.0f - element->visuals.transparency
+    };
+    out.atlasID = 0;
+    arrPush(*accumulator, out);
+    return id;
+}
+
+static void accumulateMeshes(const ElementHandle elementHandle, MeshAccumulator* accumulator) {
     Element* self = Element_get(elementHandle);
     if (self == nullptr || !self->flags.isActive) return;
 
-    //beginScissor(element, renderer->screenHeight);
+    const ssize_t id = addElementData(self, &accumulator->aElementData);
 
-    if (!self->flags.isInvisible) {
+    if (self->generateMesh) {
+        self->generateMesh(self, &accumulator->aVertices, &accumulator->aIndices, id);
 #if GUI_DEBUG && GUI_DEBUG_ACCUMULATE_MESHES
         if (self->dims.worldWidth <= 0 || self->dims.worldHeight <= 0) {
             printf("WARNING: Element '%s' has invalid dimensions: %dx%d\n",
@@ -90,29 +107,28 @@ static void accumulateMeshes(const ElementHandle elementHandle, GuiVertex **aVer
                    self->dims.worldWidth, self->dims.worldHeight);
         }
 #endif
-        self->generateMesh(self, aVertices, aIndices);
     }
-    uploadElementData(self);
-    accumulateTextQuads(self, aVertices, aIndices);
-    if (self->callbacks.drawCustom) self->callbacks.drawCustom(self, aVertices, aIndices);
 
-    //endScissor();
+    accumulateTextQuads(self, accumulator);
+
+    if (self->callbacks.drawCustom) self->callbacks.drawCustom(self, &accumulator->aVertices, &accumulator->aIndices, &accumulator->aMeshData);
 
     for_eachArr(flowElement, self->aFlowElements, {
-        accumulateMeshes(*flowElement, aVertices, aIndices);
+        accumulateMeshes(*flowElement, accumulator);
     });
 
     for_eachArr(staticElement, self->aStaticElements, {
-        accumulateMeshes(*staticElement, aVertices, aIndices);
+        accumulateMeshes(*staticElement, accumulator);
     });
 }
 
 void Renderer_render(const Renderer *renderer) {
-    static GuiVertex* aVertices = nullptr;
-    static int* aIndices = nullptr;
+    static MeshAccumulator accumulator = {};
 
-    arrClear(aVertices);
-    arrClear(aIndices);
+    arrClear(accumulator.aVertices);
+    arrClear(accumulator.aIndices);
+    arrClear(accumulator.aMeshData);
+    arrClear(accumulator.aElementData);
 
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
@@ -135,10 +151,11 @@ void Renderer_render(const Renderer *renderer) {
     setUniform(&renderer->guiShader, "screenWidth", (float) renderer->screenWidth);
     setUniform(&renderer->guiShader, "screenHeight", (float) renderer->screenHeight);
 
-    accumulateMeshes(renderer->guiRoot, &aVertices, &aIndices);
+    accumulateMeshes(renderer->guiRoot, &accumulator);
 
-    uploadBatchedQuads(&aVertices, &aIndices);
-    glDrawElements(GL_TRIANGLES, arrLen(aIndices), GL_UNSIGNED_INT, nullptr);
+    uploadMeshes(&accumulator);
+
+    glDrawElements(GL_TRIANGLES, arrLen(accumulator.aIndices), GL_UNSIGNED_INT, nullptr);
     glBindVertexArray(0);
     glDisable(GL_MULTISAMPLE);
     Shader_unbindProgram();

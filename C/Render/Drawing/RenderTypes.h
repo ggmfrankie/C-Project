@@ -19,9 +19,16 @@ typedef struct ElementInstanceData {
     int _pad[1];
 } ElementInstanceData;
 
-typedef struct CharInstanceData {
+typedef struct MeshInstanceData {
     Vec4f color;
     int ownerID;
     int atlasID;
     int _pad[2];
-} CharInstanceData;
+} MeshInstanceData;
+
+typedef struct {
+    GuiVertex* aVertices;
+    int* aIndices;
+    ElementInstanceData* aElementData;
+    MeshInstanceData* aMeshData;
+} MeshAccumulator;

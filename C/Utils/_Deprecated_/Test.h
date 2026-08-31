@@ -59,3 +59,10 @@ static void Utils_test() {
 }
 
 
+
+inline void etata() {
+    int* array = nullptr;
+    for arrEach(item, array) {
+
+    }
+}

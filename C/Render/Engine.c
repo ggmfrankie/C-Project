@@ -371,7 +371,7 @@ void gui_charCallback(GLFWwindow* window, const unsigned int codepoint) {
     if (focusedElement->type == t_textField) {
         TextFieldData* tfd = focusedElement->elementData.ptr;
         if (codepoint < 128) {
-            str_appendCharAt(&tfd->text, (char) codepoint, tfd->cursor.byteIndex++);
+            str_appendCharAt(&tfd->text, (char) codepoint, tfd->cursor.pos.index++);
 
             Element_setText_ptr(focusedElement, tfd->text.m);
         }
@@ -390,15 +390,15 @@ void gui_keyCallback(GLFWwindow* window, int key, int scancode, int action, int 
         if (action == GLFW_PRESS || action == GLFW_REPEAT)
         {
             TextFieldData* tfd = focusedElement->elementData.ptr;
-            if (key == GLFW_KEY_BACKSPACE && tfd->cursor.byteIndex != 0) {
-                str_popCharAt(&tfd->text, --tfd->cursor.byteIndex);
+            if (key == GLFW_KEY_BACKSPACE && tfd->cursor.pos.index != 0) {
+                str_popCharAt(&tfd->text, --tfd->cursor.pos.index);
                 Element_setText_ptr(focusedElement,  tfd->text.m);
             }
-            else if (key == GLFW_KEY_LEFT && tfd->cursor.byteIndex != 0) {
-                tfd->cursor.byteIndex--;
+            else if (key == GLFW_KEY_LEFT && tfd->cursor.pos.index != 0) {
+                tfd->cursor.pos.index--;
             }
-            else if (key == GLFW_KEY_RIGHT && tfd->cursor.byteIndex < tfd->text.length) {
-                tfd->cursor.byteIndex++;
+            else if (key == GLFW_KEY_RIGHT && tfd->cursor.pos.index< tfd->text.length) {
+                tfd->cursor.pos.index++;
             }
             else if (key == GLFW_KEY_ENTER) {
                 if (tfd->onEnterCallback) {

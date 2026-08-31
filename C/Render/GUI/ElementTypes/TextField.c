@@ -7,9 +7,17 @@
 #include "Render/Drawing/Mesh.h"
 #include "Utils/DataStructures/CArrayList.h"
 
-static void TextField_drawCursor(Element* element, GuiVertex** aVertices, int** aIndices) {
-    TextFieldData* data = element->elementData.ptr;
-    Mesh_customQuad(element, (Vec2f){data->cursor.pos.abs, element->dims.worldHeight}, (Vec2f){5, 10}, aVertices, aIndices);
+static void TextField_drawCursor(Element* element, GuiVertex** aVertices, int** aIndices, MeshInstanceData** additional) {
+    const TextFieldData* data = element->elementData.ptr;
+    Mesh_customQuad(
+        element,
+        (Vec2f){data->cursor.pos.abs, element->dims.worldHeight},
+        (Vec2f){5, 10},
+        (Vec4f){0,0,.6, 0.3},
+        aVertices,
+        aIndices,
+        additional
+    );
 }
 
 static TextFieldCursorPos TextField_getClosestCursorPos(const Character* aCharQuads, float pos) {

@@ -48,7 +48,7 @@ namespace Game {
 
         std::uniform_real_distribution size(0.5f, 5.0f);
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 0; i++) {
             ggm::Vector3f pos(posX(rng), posY(rng), posZ(rng));
 
             ggm::Vector3f rot(rotPitch(rng), rotYaw(rng), rotRoll(rng));
@@ -61,10 +61,10 @@ namespace Game {
             .rotateToDeg(rot);
         }
 
-        mScene.addObject(
-            "ground_plane/ground_plane.obj", 1.0f,
-            Obj3D::PhysicsFactory::newBox(1000,0,1000, {0,-32, -20}, JPH::EMotionType::Static)
-        );
+        //mScene.addObject(
+        //    "ground_plane/ground_plane.obj", 1.0f,
+        //    Obj3D::PhysicsFactory::newBox(1000,0,1000, {0,-32, -20}, JPH::EMotionType::Static)
+        //);
 
         mScreen->attachScene(&mScene);
 

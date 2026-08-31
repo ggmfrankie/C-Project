@@ -4,7 +4,7 @@ in vec2 f_UV;
 in vec4 f_Color;
 flat in int f_AtlasID;
 
-in vec4 fragColor;
+out vec4 fragColor;
 
 layout(binding = 0) uniform sampler2D guiSampler;
 layout(binding = 1) uniform sampler2D glyphSampler;
