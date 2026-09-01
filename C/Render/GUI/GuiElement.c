@@ -50,7 +50,7 @@ static ElementHandle Element_allocateNewV2(const Vec2f pos, const int width, con
                       },
                     .visuals = {
                         .brightness = 1.0f,
-                        .texture = {},
+                        .texture = nullptr,
                         .transparency = 0,
                       },
                   .textElement = {.aCharQuads = nullptr, .scale = 1.0f},

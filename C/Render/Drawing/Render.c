@@ -459,7 +459,7 @@ Renderer Renderer_new(GLFWwindow* window, const int width, const int height, con
         .screenHeight = height,
         .font = loadFontAtlas(fontFile),
         .guiRoot = createRootElement(),
-        .texAtlas = loadTextureAtlas(2048 , 2048)
+        .texAtlas = TextureAtlas_new(2048 , 2048)
     };
 }
 

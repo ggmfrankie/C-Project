@@ -32,17 +32,18 @@ typedef struct Texture {
 typedef struct TextureAtlas {
     uint32_t ID;
     int width, height;
+    const char** aNames;
     Texture* map_textures;
 } TextureAtlas;
 
-StandaloneTexture *newTexture(int width, int height, uint32_t textureId);
+void Texture_loadAtlas(TextureAtlas *atlas);
 
-StandaloneTexture *newEmptyTexture(int width, int height);
+StandaloneTexture* Texture_new(int width, int height);
 
-StandaloneTexture *loadTextureFromPng(char *fileName);
+StandaloneTexture* Texture_newFromPng(char *fileName);
 
-TextureAtlas loadTextureAtlas(int width, int height);
-void f_loadTextures(TextureAtlas *atlas, const char *first, va_list args);
+TextureAtlas TextureAtlas_new(int width, int height);
+void f_addTextures(TextureAtlas *atlas, const char *first, va_list args);
 Texture getTexture(const char* name);
 
 #define loadTextures(a, w, h, ...) f_loadTextures(a, w, h, __VA_ARGS__, NULL)

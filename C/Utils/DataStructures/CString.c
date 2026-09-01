@@ -187,7 +187,7 @@ char* cstrConcat(const char* a, const char* b) {
     return data;
 }
 
-void cstrbConcat(char *buff, size_t size, char *a, const char *b) {
+void cstrbConcat(char *buff, size_t size, const char *a, const char *b) {
     assert(a != nullptr && b != nullptr);
     const size_t lenA = strlen(a);
     const size_t lenB = strlen(b);

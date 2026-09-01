@@ -336,11 +336,6 @@ void createChessGUI(Element* root) {
 }
 
 char *Chess_getBoardFEN() {
-    const char map[] = {
-        'P','N','B','R','Q','K',
-        'p','n','b','r','q','k'
-    };
-
     char* str = calloc(128, 1);
     int len = 0;
     bool empty = false;
@@ -354,6 +349,10 @@ char *Chess_getBoardFEN() {
                 empty = true;
                 numEmpty++;
             } else {
+                constexpr char map[] = {
+                    'P','N','B','R','Q','K',
+                    'p','n','b','r','q','k'
+                };
                 if (empty) {
                     str[len++] = '0' + numEmpty;
                     numEmpty = 0;
@@ -683,7 +682,7 @@ static void syncGui() {
 
 
 static void chess_loadTextures() {
-    pieceTextures[0] = nullptr;
+    pieceTextures[0] = "Blank.png";
 
     pieceTextures[1] = "ChessPieces/b_pawn_1x_ns.png";
     pieceTextures[2] = "ChessPieces/b_knight_1x_ns.png";
@@ -699,7 +698,8 @@ static void chess_loadTextures() {
     pieceTextures[11] = "ChessPieces/w_queen_1x_ns.png";
     pieceTextures[12] = "ChessPieces/w_king_1x_ns.png";
 
-    gui_loadTextures(
+    gui_addTextures(
+        pieceTextures[0],
         pieceTextures[1],
         pieceTextures[2],
         pieceTextures[3],
@@ -711,7 +711,8 @@ static void chess_loadTextures() {
         pieceTextures[9],
         pieceTextures[10],
         pieceTextures[11],
-        pieceTextures[12]
+        pieceTextures[12],
+        "Noise.png"
     );
 }
 
@@ -727,8 +728,8 @@ static ElementHandle createChessSquares(const int row, const int col, ElementSet
         .minWidth = es.minWidth,
         .minHeight = es.minHeight,
         .canNotBeSelected = true,
-        .color = {},
-        .transparency = 1.0f,
+        .color = {1,1,1},
+        .texture = pieceTextures[0]
     };
 
     const ElementHandle square = createElement(es);

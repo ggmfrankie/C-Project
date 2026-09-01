@@ -9,12 +9,15 @@
 #include <stb/stb_image.h>
 #include <stb/stb_rect_pack.h>
 
+#include "DataStructures/CArrayList.h"
+#include "DataStructures/CString.h"
 #include "glad/gl.h"
 #include "Utils/DataStructures/CHashMap.h"
 #include "Utils/Logging/Logging.h"
 #include "Utils/Makros/Defer.h"
 
 static constexpr int MAX_ATLAS_TEXTURES = 512;
+static constexpr int PIXEL_SIZE = 4;
 
 typedef struct {
     StandaloneTexture m[256];
@@ -27,46 +30,49 @@ static GLuint uploadTextureToGPU(int width, int height, int channels, const unsi
 static Texture* g_map_textureMap;
 static TextureList g_Textures = {.capacity = 256, .size = 0};
 
-StandaloneTexture* newTexture(const int width, const int height, const GLuint textureId) {
+static StandaloneTexture* newTexture(const int width, const int height, const GLuint textureId) {
     assert(g_Textures.size < g_Textures.capacity);
     g_Textures.m[g_Textures.size] = (StandaloneTexture){.width = width, .height = height, .ID = textureId};
     return &g_Textures.m[g_Textures.size++];
 }
 
-void f_loadTextures(TextureAtlas *atlas, const char *first, va_list args) {
+void Texture_loadAtlas(TextureAtlas *atlas) {
     stbrp_rect rects[MAX_ATLAS_TEXTURES];
     byte* pixels[MAX_ATLAS_TEXTURES];
     const char* names[MAX_ATLAS_TEXTURES];
     int index = 0;
 
-    const char* file = first;
+    const char* defaultPath = "../Resources/Textures/";
 
-    while (file) {
-        const String defaultPath = stringOf("../Resources/Textures/");
-
-        defer(str_delete) String fileNameString = newString_c(file);
-        defer(str_delete) String fullPath = Strings.combine(&defaultPath, &fileNameString);
-
+    constexpr int padding = 2;
+    for_eachArr(namePtr, atlas->aNames, {
         int width, height, channels;
+        const char* name = *namePtr;
+        printf("Name: %s\n", name);
 
-        pixels[index] = stbi_load(fullPath.m, &width, &height, &channels, 4);
+        char fullPath[64];
+        cstrbConcat(fullPath, 64, defaultPath, name);
+
+        pixels[index] = stbi_load(fullPath, &width, &height, &channels, 4);
         if (!pixels[index]) ERROR_("Error loading texture for Atlas");
 
-        rects[index].w = width;
-        rects[index].h = height;
+        rects[index].w = width + padding*2;
+        rects[index].h = height + padding*2;
         rects[index].id = index;
-        names[index] = file;
+        names[index] = name;
 
         index++;
-        file = va_arg(args, const char*);
-    }
+    });
 
-    defer(defer_free) byte* data = calloc(atlas->width * atlas->height * 4, 1);
+    const int width = atlas->width;
+    const int height = atlas->height;
+
+    defer(defer_free) byte* data = calloc(atlas->width * atlas->height, PIXEL_SIZE);
 
     stbrp_context ctx;
-    defer(defer_free) stbrp_node* nodes = malloc(sizeof(stbrp_node) * atlas->width);
+    defer(defer_free) stbrp_node* nodes = malloc(sizeof(stbrp_node) * width);
 
-    stbrp_init_target(&ctx, atlas->width, atlas->height, nodes, atlas->width);
+    stbrp_init_target(&ctx, width, height, nodes, width);
     stbrp_pack_rects(&ctx, rects, index);
 
     for (int i = 0; i < index; i++) {
@@ -75,35 +81,49 @@ void f_loadTextures(TextureAtlas *atlas, const char *first, va_list args) {
             continue;
         }
 
-        const int dstX = rects[i].x;
-        const int dstY = rects[i].y;
-        const int w    = rects[i].w;
-        const int h    = rects[i].h;
+        // where the texture should go
+        const int dstX = rects[i].x + padding;
+        const int dstY = rects[i].y + padding;
+        const int w    = rects[i].w - padding*2;
+        const int h    = rects[i].h - padding*2;
 
+        // the textures data
         const byte* src = pixels[i];
 
         for (int row = 0; row < h; ++row) {
-            byte* dst = data + ((dstY + row) * atlas->width + dstX) * 4;
-            const byte* s = src + row * (w * 4);
-            memcpy(dst, s, (size_t)w * 4);
+            byte* dst = data + ((dstY + row) * atlas->width + dstX) * PIXEL_SIZE;
+            const byte* s = src + row * (w * PIXEL_SIZE);
+            memcpy(dst, s, w * PIXEL_SIZE);
         }
-    }
 
-    atlas->ID = uploadTextureToGPU(atlas->width, atlas->height, 4, data);
-
-    for (int i = 0; i < index; i++) {
         mapInsert(g_map_textureMap, names[i], (Texture){
-            .uv0 = {(float)rects[i].x/(float)atlas->width, (float)rects[i].y/(float)atlas->height},
-            .uv1 = {(float)(rects[i].x + rects[i].w)/(float)atlas->width, (float)(rects[i].y + rects[i].h)/(float)atlas->height}
+            .uv0 = {
+                ((float)rects[i].x + padding)/(float)atlas->width,
+                ((float)rects[i].y + padding)/(float)atlas->height
+            },
+            .uv1 = {
+                (float)(rects[i].x - padding + w)/(float)atlas->width,
+                (float)(rects[i].y - padding + h)/(float)atlas->height
+            }
         });
     }
+    atlas->ID = uploadTextureToGPU(atlas->width, atlas->height, PIXEL_SIZE, data);
 
     for (int i = 0; i < index; i++) {
         stbi_image_free(pixels[i]);
     }
 }
 
-StandaloneTexture *newEmptyTexture(const int width, const int height) {
+void f_addTextures(TextureAtlas *atlas, const char *first, va_list args) {
+    const char* file = first;
+
+    while (file) {
+        arrPush(atlas->aNames, file);
+        file = va_arg(args, const char*);
+    }
+}
+
+StandaloneTexture *Texture_new(const int width, const int height) {
     GLuint ID;
     glGenTextures(1, &ID);
     glBindTexture(GL_TEXTURE_2D, ID);
@@ -129,7 +149,7 @@ StandaloneTexture *newEmptyTexture(const int width, const int height) {
     return newTexture(width, height, ID);
 }
 
-StandaloneTexture *loadTextureFromPng(char *fileName) {
+StandaloneTexture *Texture_newFromPng(char *fileName) {
     const String fileNameString = stringOf(fileName);
     const String defaultPath = stringOf("../Resources/Textures/");
     defer(str_delete) String fullPath = Strings.combine(&defaultPath, &fileNameString);
@@ -169,14 +189,16 @@ static GLuint uploadTextureToGPU(const int width, const int height, const int ch
                  (channels == 4) ? GL_RGBA : GL_RGB,
                  GL_UNSIGNED_BYTE, pixels);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     return texture;
 }
 
-TextureAtlas loadTextureAtlas(const int width, const int height) {
+TextureAtlas TextureAtlas_new(const int width, const int height) {
     return (TextureAtlas){
         .width = width,
         .height = height,

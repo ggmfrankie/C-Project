@@ -57,7 +57,7 @@ void strClear(Str s);
 void strDelete(Str s);
 
 Str cstrConcat(const char* a, const char* b);
-void cstrbConcat(char* buff, size_t size, char* a, const char* b);
+void cstrbConcat(char* buff, size_t size, const char* a, const char* b);
 
 void _strTest();
 

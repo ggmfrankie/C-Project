@@ -83,6 +83,8 @@ void gui_init(GLFWwindow* window, const int width, const int height, void (*gene
 
     Renderer_init(&g_Renderer);
 
+    Texture_loadAtlas(&g_Renderer.texAtlas);
+
     generateGUI(Element_get(g_Renderer.guiRoot));
 
     guiInitialized = true;
@@ -112,11 +114,11 @@ void gui_render() {
     unlock();
 }
 
-void _gui_loadTextures(char* first, ...) {
+void _gui_addTextures(char* first, ...) {
     assert(first != nullptr);
     va_list args;
     va_start(args, first);
-    f_loadTextures(&g_Renderer.texAtlas, first, args);
+    f_addTextures(&g_Renderer.texAtlas, first, args);
     va_end(args);
 }
 
@@ -209,7 +211,7 @@ void startEngine(void (*generateGUI)(Element* guiRoot)) {
     const int height = 512;
     gui_init(initWindow(width, height, "Chess"), width, height, generateGUI);
 
-    StandaloneTexture* graphTexture = newEmptyTexture(WIDTH, HEIGHT);
+    StandaloneTexture* graphTexture = Texture_new(WIDTH, HEIGHT);
     g_Renderer.computeShader = ComputeShader_new(nullptr, 1024);
     g_Renderer.computeShader.texture = graphTexture;
     g_Renderer.computeShader.thickness = 2;
