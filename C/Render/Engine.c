@@ -124,11 +124,9 @@ void gui_setTexture(Element* e, const char* name) {
     assert(e != nullptr);
     Thread_Locked(
         if (name) {
-            e->visuals.texture = getTexture(name);
-            e->flags.hasTexture = true;
+            e->visuals.texture = name;
         } else {
-            e->visuals.texture = (Texture){};
-            e->flags.hasTexture = false;
+            e->visuals.texture = "White.png";
         }
     )
 }
@@ -207,8 +205,8 @@ bool gui_getActive(const char* name) {
 
 [[deprecated]]
 void startEngine(void (*generateGUI)(Element* guiRoot)) {
-    constexpr int width = 512;
-    constexpr int height = 512;
+    const int width = 512;
+    const int height = 512;
     gui_init(initWindow(width, height, "Chess"), width, height, generateGUI);
 
     StandaloneTexture* graphTexture = newEmptyTexture(WIDTH, HEIGHT);

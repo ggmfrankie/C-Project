@@ -109,7 +109,7 @@ static void accumulateMeshes(const ElementHandle elementHandle, MeshAccumulator*
 #endif
     }
 
-    accumulateTextQuads(self, accumulator);
+    accumulateTextQuads(self, accumulator, id);
 
     if (self->callbacks.drawCustom) self->callbacks.drawCustom(self, &accumulator->aVertices, &accumulator->aIndices, &accumulator->aMeshData);
 

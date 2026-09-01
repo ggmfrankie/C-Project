@@ -74,6 +74,7 @@ void Mesh_generateRoundedCorner(const Element* element, GuiVertex** aVertices, i
     const float width = element->dims.worldWidth;
     const float height = element->dims.worldHeight;
     const float radius = min((float)element->dims.cornerRadius, min(width, height) * 0.5f);
+    const Texture texture = getTexture(element->visuals.texture);
 
     constexpr float r90 = (float)M_PI * 0.5f;
     constexpr int numTriangles = 12;
@@ -132,8 +133,8 @@ void Mesh_generateRoundedCorner(const Element* element, GuiVertex** aVertices, i
     arrPush(*aIndices, bl.corner);
     arrPush(*aIndices, br.corner);
 
-    const Vec2f uv0 = element->visuals.texture.uv0;
-    const Vec2f uv1 = element->visuals.texture.uv1;
+    const Vec2f uv0 = texture.uv0;
+    const Vec2f uv1 = texture.uv1;
 
     const int lim = arrLen(*aVertices);
 

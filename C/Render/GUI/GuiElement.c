@@ -193,7 +193,6 @@ ElementHandle createElement(const ElementSettings es) {
     lastElement->flags.wantGrowHorizontal = es.wantGrowHorizontal;
     lastElement->flags.wantGrowVertical = es.wantGrowVertical;
     lastElement->visuals.transparency = es.transparency;
-    lastElement->flags.hasTexture = false;
     lastElement->visuals.brightness = 1.0f;
     lastElement->dims.cornerRadius = es.cornerRadius;
     lastElement->dims.flexGrow = es.flexGrow;
@@ -216,10 +215,7 @@ ElementHandle createElement(const ElementSettings es) {
         lastElement->dims.maxHeight = es.maxHeight;
     }
 
-    if (es.texture) {
-        lastElement->visuals.texture = getTexture(es.texture);
-        lastElement->flags.hasTexture = true;
-    }
+    lastElement->visuals.texture = (es.texture) ?: "White.png";
 
     if (es.name) {
         mapInsert(gmElements, es.name, handle);

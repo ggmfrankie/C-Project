@@ -53,5 +53,5 @@ typedef struct TextElement {
 
 Font loadFontAtlas(const char* file);
 void reloadTextQuads(const Font* font, Element *element);
-void accumulateTextQuads(const Element *element, MeshAccumulator* meshData);
+void accumulateTextQuads(const Element *element, MeshAccumulator* meshData, ssize_t id);
 Vec2f measureElementText(const TextElement* textElement);

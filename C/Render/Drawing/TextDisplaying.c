@@ -91,22 +91,20 @@ Font loadFontAtlas(const char* file) {
     return font;
 }
 
-static void uploadTextInstanceData(const Element *owner, MeshInstanceData** aAdditionalData) {
+static void uploadTextInstanceData(const Element *owner, MeshInstanceData** aAdditionalData, ssize_t id) {
     arrPush(*aAdditionalData, (MeshInstanceData){
         .color = owner->textElement.textColor,
         .atlasID = 1,
-        .ownerID = owner->handle.ID
+        .ownerID = id
     });
 }
 
 //@brief only adds the parent world pos and adds it to the vertexBuffer
-void accumulateTextQuads(const Element *element, MeshAccumulator* meshData) {
+void accumulateTextQuads(const Element *element, MeshAccumulator* meshData, ssize_t id) {
     const Character* aCharQuads = element->textElement.aCharQuads;
     if (aCharQuads == nullptr || arrIsEmpty(aCharQuads)) return;
-
-    const float xOffset = element->padding.left;
-
     const int ID = arrLen(meshData->aMeshData);
+    const float xOffset = element->padding.left;
 
     for_eachArr(c, aCharQuads, {
         constexpr int TEXT_BINDING = 1;
@@ -138,7 +136,7 @@ void accumulateTextQuads(const Element *element, MeshAccumulator* meshData) {
         arrPush(meshData->aIndices, v0); arrPush(meshData->aIndices, v1); arrPush(meshData->aIndices, v2);
         arrPush(meshData->aIndices, v0); arrPush(meshData->aIndices, v2); arrPush(meshData->aIndices, v3);
     });
-    uploadTextInstanceData(element, &meshData->aMeshData);
+    uploadTextInstanceData(element, &meshData->aMeshData, id);
 }
 
 Vec2f measureElementText(const TextElement* textElement) {

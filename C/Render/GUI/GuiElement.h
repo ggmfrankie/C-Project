@@ -71,7 +71,6 @@ typedef struct Element {
 
         bool wantGrowHorizontal: 1;
         bool wantGrowVertical: 1;
-        bool hasTexture: 1;
     } flags;
 
     struct {
@@ -92,7 +91,7 @@ typedef struct Element {
     } dims;
 
     struct {
-        Texture texture;
+        const char* texture;
 
         Vec3f color;
         Vec3f defaultColor;

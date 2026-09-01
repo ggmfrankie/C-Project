@@ -25,7 +25,7 @@ typedef struct {
 static GLuint uploadTextureToGPU(int width, int height, int channels, const unsigned char* pixels);
 
 static Texture* g_map_textureMap;
-static auto g_Textures = (TextureList){.capacity = 256, .size = 0};
+static TextureList g_Textures = {.capacity = 256, .size = 0};
 
 StandaloneTexture* newTexture(const int width, const int height, const GLuint textureId) {
     assert(g_Textures.size < g_Textures.capacity);
@@ -50,7 +50,7 @@ void f_loadTextures(TextureAtlas *atlas, const char *first, va_list args) {
         int width, height, channels;
 
         pixels[index] = stbi_load(fullPath.m, &width, &height, &channels, 4);
-        if (!pixels[index]) puts("Error loading texture for Atlas");
+        if (!pixels[index]) ERROR_("Error loading texture for Atlas");
 
         rects[index].w = width;
         rects[index].h = height;
@@ -154,6 +154,7 @@ Texture getTexture(const char* name) {
         return (Texture){};
     }
     const Texture* texture = mapGet(g_map_textureMap, name);
+    if (texture == nullptr) texture = mapGet(g_map_textureMap, "White.png");
     return *texture;
 }
 
@@ -168,12 +169,10 @@ static GLuint uploadTextureToGPU(const int width, const int height, const int ch
                  (channels == 4) ? GL_RGBA : GL_RGB,
                  GL_UNSIGNED_BYTE, pixels);
 
-    glGenerateMipmap(GL_TEXTURE_2D);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     return texture;
 }
 

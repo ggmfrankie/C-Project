@@ -100,7 +100,6 @@ static void uploadMeshData(const MeshInstanceData* aMeshData) {
 }
 
 void uploadMeshes(const MeshAccumulator* accumulator) {
-
     uploadVertices(accumulator->aVertices, accumulator->aIndices);
     uploadElementData(accumulator->aElementData);
     uploadMeshData(accumulator->aMeshData);
