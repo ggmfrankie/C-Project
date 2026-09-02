@@ -32,6 +32,8 @@ void GameEngine::loop() {
         screen.render();
         screen.endFrame();
         lastFrameTime = frameStart;
+
+
     }
     glfwTerminate();
 }

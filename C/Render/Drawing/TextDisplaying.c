@@ -102,14 +102,15 @@ static void uploadTextInstanceData(const Element *owner, MeshInstanceData** aAdd
 //@brief only adds the parent world pos and adds it to the vertexBuffer
 void accumulateTextQuads(const Element *element, MeshAccumulator* meshData, ssize_t id) {
     const Character* aCharQuads = element->textElement.aCharQuads;
+
     if (aCharQuads == nullptr || arrIsEmpty(aCharQuads)) return;
+
     const int ID = arrLen(meshData->aMeshData);
-    const float xOffset = element->padding.left;
 
     for_eachArr(c, aCharQuads, {
         constexpr int TEXT_BINDING = 1;
 
-        const float x = c->pos.x + xOffset;
+        const float x = c->pos.x + element->padding.left;
         const float y = c->pos.y + element->dims.worldHeight - element->padding.down;
         const float w = c->width;
         const float h = c->height;
@@ -241,7 +242,7 @@ void reloadTextQuads(const Font* font, Element *element) {
         const float glyphWidth  = (q.x1 - q.x0) * textScale;
         const float glyphHeight = (q.y1 - q.y0) * textScale;
 
-        character->pos = (Vec2f){ (q.x0-(float)startPos.x)*textScale + (float)startPos.x, (q.y0-(float)startPos.y)*textScale + (float)startPos.y };
+        character->pos = (Vec2f){ q.x0 * textScale, q.y0 * textScale};
         character->width = glyphWidth;
         character->height = glyphHeight;
         character->texPosStart = (Vec2f){ q.s0, q.t0 };

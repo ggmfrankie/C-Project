@@ -31,7 +31,6 @@ public class JsonWriter {
             int lastIndex = content.size()-1;
             content.set(lastIndex, content.get(lastIndex).replace(",", ""));
             content.add("}");
-            System.out.println(path);
             writer = new FileWriter(path);
             for(String s : content){
                 writer.append(s).append(System.lineSeparator());
@@ -46,7 +45,7 @@ public class JsonWriter {
         return gameEngine.getObjectLoader().getEvents().getName(clickAction);
     }
 
-    class JsonObject{
+    static class JsonObject {
 
         List<String> content;
 

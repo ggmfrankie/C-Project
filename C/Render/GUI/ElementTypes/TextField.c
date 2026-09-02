@@ -7,32 +7,40 @@
 #include "Render/Drawing/Mesh.h"
 #include "Utils/DataStructures/CArrayList.h"
 
-static void TextField_drawCursor(Element* element, GuiVertex** aVertices, int** aIndices, MeshInstanceData** additional) {
+static void TextField_drawCursor(Element* element, GuiVertex** aVertices, int** aIndices, MeshInstanceData** additional, ssize_t ownerId) {
     const TextFieldData* data = element->elementData.ptr;
+
+    const Vec2f pos = {data->cursor.pos.abs, element->dims.pos.y};
+    const Vec2f dims = {2, element->dims.worldHeight};
+
     Mesh_customQuad(
-        element,
-        (Vec2f){data->cursor.pos.abs, element->dims.worldHeight},
-        (Vec2f){5, 10},
-        (Vec4f){0,0,.6, 0.3},
+        pos,
+        dims,
+        (Vec4f){0,0.7,.6, 1.0},
         aVertices,
         aIndices,
-        additional
+        additional,
+        ownerId
     );
 }
 
-static TextFieldCursorPos TextField_getClosestCursorPos(const Character* aCharQuads, float pos) {
+static TextFieldCursorPos TextField_getClosestCursorPos(const Character* aCharQuads, float pos, float padding) {
     float prev = 0.0;
+    printf("X pos = %f\n", pos);
     for_eachArr(character, aCharQuads, {
-        const float next = character->pos.x + character->width/2;
+        const float next = padding + character->pos.x + (character->width) * 0.5;
         if (prev <= pos && pos < next) {
-            if (i == 0) return (TextFieldCursorPos){0, 0.0};
-            return (TextFieldCursorPos){i, prev + (next - prev)*0.5};
+            printf("char is %c\n", character->value);
+            if (i == 0) { return (TextFieldCursorPos){0, padding};}
+            else { return (TextFieldCursorPos){i, padding + aCharQuads[i-1].pos.x + (aCharQuads[i-1].width)};}
         }
         prev = next;
     });
     const Character* last = arrGetLast(aCharQuads);
-    return (TextFieldCursorPos){arrLen(aCharQuads)+1 ,last->pos.y + last->width + last->advance};
+    return (TextFieldCursorPos){arrLen(aCharQuads) ,padding + last->pos.x + last->width};
 }
+
+static TextFieldCursorPos TextField_moveCursorBy(){}
 
 ElementHandle TextField_new(const ElementSettings elementSettings, bool (*onEnterCallback)(Element *element)) {
     const ElementHandle element = createElement(elementSettings);
@@ -64,12 +72,12 @@ bool TextField_onClick(Element *element) {
     TextFieldData* data = element->elementData.ptr;
     if (Strings.isEmpty(&data->text)) return false;
 
-    Character* aCharQuads = element->textElement.aCharQuads;
+    const Character* aCharQuads = element->textElement.aCharQuads;
     const Vec2f mousePos = getMousePos();
 
-    const Vec2f relMousePos = {(mousePos.x - element->dims.pos.x), (mousePos.y - element->dims.pos.y)};
+    const float relMouseX = mousePos.x - element->dims.worldPos.x;
 
-    data->cursor.pos = TextField_getClosestCursorPos(aCharQuads, mousePos.x);
+    data->cursor.pos = TextField_getClosestCursorPos(aCharQuads, relMouseX, element->padding.left);
     return true;
 }
 

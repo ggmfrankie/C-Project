@@ -90,12 +90,15 @@ namespace Engine {
         void run(const std::string& input) {
             const auto tokens = tokenize(input);
 
-            auto [command, rawArgs] = extractCommandAndArgs(tokens);
+            try {
+                auto [command, rawArgs] = extractCommandAndArgs(tokens);
+                const auto it = commands.find(command);
+                if (it == commands.end()) return;
 
-            const auto it = commands.find(command);
-            if (it == commands.end()) return;
-
-            it->second->run(rawArgs);
+                it->second->run(rawArgs);
+            } catch (std::exception& e) {
+                return;
+            }
         }
     };
 }

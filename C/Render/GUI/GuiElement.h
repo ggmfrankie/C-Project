@@ -117,7 +117,7 @@ typedef struct Element {
         void (*onUpdate)(Element* element);
         void (*reset)(Element* element);
         void (*requestMove)(Element* element, Vec2f pos);
-        void (*drawCustom)(Element* element, GuiVertex** aVertices, int** aIndices, MeshInstanceData** additional);
+        void (*drawCustom)(Element* element, GuiVertex** aVertices, int** aIndices, MeshInstanceData** additional, ssize_t ownerId);
     } callbacks;
 
     Padding padding;
@@ -162,7 +162,7 @@ typedef struct ElementSettings {
     void (*whileSelected)(Element* element);
     void (*onUpdate)(Element* element);
     void (*reset)(Element* element);
-    void (*drawCustom)(Element* element, GuiVertex** aVertices, int** aIndices, MeshInstanceData** additional);
+    void (*drawCustom)(Element* element, GuiVertex** aVertices, int** aIndices, MeshInstanceData** additional, ssize_t ownerId);
 
     Task task;
     Padding padding;

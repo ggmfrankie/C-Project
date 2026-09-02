@@ -111,7 +111,10 @@ static void accumulateMeshes(const ElementHandle elementHandle, MeshAccumulator*
 
     accumulateTextQuads(self, accumulator, id);
 
-    if (self->callbacks.drawCustom) self->callbacks.drawCustom(self, &accumulator->aVertices, &accumulator->aIndices, &accumulator->aMeshData);
+    if (self->callbacks.drawCustom) {
+        self->callbacks.drawCustom(self, &accumulator->aVertices, &accumulator->aIndices, &accumulator->aMeshData, id);
+    }
+
 
     for_eachArr(flowElement, self->aFlowElements, {
         accumulateMeshes(*flowElement, accumulator);

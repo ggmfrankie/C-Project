@@ -83,9 +83,9 @@ void gui_init(GLFWwindow* window, const int width, const int height, void (*gene
 
     Renderer_init(&g_Renderer);
 
-    Texture_loadAtlas(&g_Renderer.texAtlas);
-
     generateGUI(Element_get(g_Renderer.guiRoot));
+
+    Texture_loadAtlas(&g_Renderer.texAtlas);
 
     guiInitialized = true;
     pthread_cond_broadcast(&guiInitCond);
@@ -98,8 +98,8 @@ void gui_update() {
     Engine_resetStates(Element_get(g_Renderer.guiRoot));
 
     gui_popUpdate();
-    Engine_processInput(&g_Renderer);
     Engine_handleDragElement(&g_Renderer);
+    Engine_processInput(&g_Renderer);
 
     Renderer_updateLayout(&g_Renderer);
 #if GUI_DEBUG && GUI_DEBUG_PROCESS_DEBUG
@@ -274,7 +274,6 @@ static bool Engine_handleDragElement(const Renderer *renderer) {
         offset.x = renderer->mousePos.x - element->dims.worldPos.x;
         offset.y = renderer->mousePos.y - element->dims.worldPos.y;
         dragging = true;
-        return false;
     }
 
     const Vec2f newPos = {
@@ -282,6 +281,7 @@ static bool Engine_handleDragElement(const Renderer *renderer) {
         .y = (renderer->mousePos.y - parentWorldPos.y) - offset.y
     };
     element->callbacks.requestMove(element, newPos);
+
 #if GUI_DEBUG_TRACE_DRAGGING
     only_every_do(100, {
                   printf("World pos is: %f, %f, Relative pos is: %f, %f\n",

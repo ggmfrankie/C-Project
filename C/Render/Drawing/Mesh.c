@@ -77,7 +77,7 @@ void Mesh_generateRoundedCorner(const Element* element, GuiVertex** aVertices, i
     const Texture texture = getTexture(element->visuals.texture);
 
     constexpr float r90 = (float)M_PI * 0.5f;
-    constexpr int numTriangles = 12;
+    constexpr int numTriangles = 4;
 
     const int start = arrLen(*aVertices);
 
@@ -153,14 +153,16 @@ void Mesh_generateRoundedCorner(const Element* element, GuiVertex** aVertices, i
     }
 }
 
-void Mesh_customQuad(const Element* element, const Vec2f pos, const Vec2f dims, Vec4f color, GuiVertex **aVertices, int **aIndices, MeshInstanceData** aAdditional) {
+void Mesh_customQuad(const Vec2f pos, const Vec2f dims, Vec4f color, GuiVertex **aVertices, int **aIndices, MeshInstanceData** aAdditional, ssize_t ownerId) {
     const int id = arrLen(*aAdditional);
     const int start = arrLen(*aVertices);
 
-    arrPush(*aVertices, (GuiVertex){.ID = id, .pos = pos});
-    arrPush(*aVertices, (GuiVertex){.ID = id, .pos = {pos.x, pos.y + dims.y}});
-    arrPush(*aVertices, (GuiVertex){.ID = id, .pos = {pos.x + dims.x, pos.y + dims.y}});
-    arrPush(*aVertices, (GuiVertex){.ID = id, .pos = {pos.x + dims.x, pos.y}});
+    const Texture texture = getTexture("White.png");
+
+    arrPush(*aVertices, (GuiVertex){.bufferBinding = 1, .ID = id, .uv = texture.uv0,                       .pos = pos});
+    arrPush(*aVertices, (GuiVertex){.bufferBinding = 1, .ID = id, .uv = {texture.uv0.x, texture.uv1.y}, .pos = {pos.x, pos.y + dims.y}});
+    arrPush(*aVertices, (GuiVertex){.bufferBinding = 1, .ID = id, .uv = texture.uv1,                       .pos = {pos.x + dims.x, pos.y + dims.y}});
+    arrPush(*aVertices, (GuiVertex){.bufferBinding = 1, .ID = id, .uv = {texture.uv1.x, texture.uv0.y}, .pos = {pos.x + dims.x, pos.y}});
 
     arrPush(*aIndices, start);
     arrPush(*aIndices, start+1);
@@ -170,5 +172,5 @@ void Mesh_customQuad(const Element* element, const Vec2f pos, const Vec2f dims, 
     arrPush(*aIndices, start+2);
     arrPush(*aIndices, start+3);
 
-    arrPush(*aAdditional, (MeshInstanceData){.color = color, .atlasID = 0, .ownerID = element->handle.ID});
+    arrPush(*aAdditional, (MeshInstanceData){.color = color, .atlasID = 0, .ownerID = ownerId});
 }

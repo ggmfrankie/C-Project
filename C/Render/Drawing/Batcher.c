@@ -3,6 +3,7 @@
 #include "../GUI/GuiElement.h"
 #include "RenderTypes.h"
 #include "DataStructures/CArrayList.h"
+#include "Makros/Makros.h"
 //
 // Created by ertls on 04.03.2026.
 //
@@ -69,6 +70,12 @@ void Batcher_init() {
 }
 
 static void uploadVertices(const GuiVertex *aVertices, const int *aIndices) {
+#if GUI_DEBUG && GUI_DEBUG_TRACK_VERTICES
+    only_every_do(100,
+        printf("Number of vertices: %llu\n", arrLen(aVertices))
+    );
+#endif
+
     glBindVertexArray(graphicsData.VAO);
     glBindBuffer(GL_ARRAY_BUFFER, graphicsData.VBO);
     glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GuiVertex) * arrLen(aVertices), aVertices);

@@ -81,7 +81,7 @@ void Texture_loadAtlas(TextureAtlas *atlas) {
             continue;
         }
 
-        // where the texture should go
+        // where the texture should go. It is the rectangle with the padding, so we have to subtract that
         const int dstX = rects[i].x + padding;
         const int dstY = rects[i].y + padding;
         const int w    = rects[i].w - padding*2;
