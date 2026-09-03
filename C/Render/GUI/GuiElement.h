@@ -37,7 +37,6 @@ typedef enum ElementType: byte {
 typedef enum UIState: byte {
     UI_STATE_NORMAL,
     UI_STATE_HOVER,
-    UI_STATE_PRESSED,
     UI_STATE_SELECTED,
     UI_STATE_DISABLED
 } UIState;
@@ -113,11 +112,11 @@ typedef struct Element {
         bool (*isMouseOver)(const Element* element, Vec2f mousePos);
         bool (*onClick)(Element* element);
         bool (*onHover)(Element* element);
-        void (*whileSelected)(Element* element);
+        void (*whileSelected)(Element* element, double deltaTime);
         void (*onUpdate)(Element* element);
         void (*reset)(Element* element);
         void (*requestMove)(Element* element, Vec2f pos);
-        void (*drawCustom)(Element* element, GuiVertex** aVertices, int** aIndices, MeshInstanceData** additional, ssize_t ownerId);
+        void (*drawCustom)(const Element* element, GuiVertex** aVertices, int** aIndices, MeshInstanceData** additional, ssize_t ownerId);
     } callbacks;
 
     Padding padding;
@@ -159,10 +158,10 @@ typedef struct ElementSettings {
 
     bool (*onClick)(Element* element);
     bool (*onHover)(Element* element);
-    void (*whileSelected)(Element* element);
+    void (*whileSelected)(Element* element, double deltaTime);
     void (*onUpdate)(Element* element);
     void (*reset)(Element* element);
-    void (*drawCustom)(Element* element, GuiVertex** aVertices, int** aIndices, MeshInstanceData** additional, ssize_t ownerId);
+    void (*drawCustom)(const Element* element, GuiVertex** aVertices, int** aIndices, MeshInstanceData** additional, ssize_t ownerId);
 
     Task task;
     Padding padding;
@@ -185,6 +184,7 @@ ElementHandle Element_addChildElements(Element *parent, ...);
 ElementHandle Element_addChildElements_vaList(ElementHandle parentHandle, va_list args);
 
 Element* Element_get(ElementHandle handle);
+void Element_delete(ElementHandle handle);
 
 ElementHandle addChildrenAsGrid(ElementSettings parentData, ElementSettings es, int numX, int numY);
 ElementHandle addChildrenAsGridWithGenerator(ElementSettings parentData, ElementSettings es, int numX, int numY, ElementHandle (*generateElement)(int row, int col, ElementSettings));

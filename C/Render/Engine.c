@@ -51,8 +51,7 @@ bool guiInitialized = false;
 static Renderer g_Renderer;
 static UserCallbacks g_Callbacks;
 
-static void Engine_resetStates(Element* self);
-static void Engine_processInput(Renderer *renderer);
+static void Engine_processInput(Renderer *renderer, double deltaTime);
 static bool Engine_processInputRec(ElementHandle elementHandle, Renderer *renderer);
 static bool Engine_handleDragElement(const Renderer *renderer);
 static void gui_processDebug();
@@ -79,7 +78,7 @@ void gui_init(GLFWwindow* window, const int width, const int height, void (*gene
 
     Element_init();
 
-    g_Renderer = Renderer_new(window, width, height, "ARIAL.TTF");
+    g_Renderer = Renderer_new(window, width, height, "Inktype-MAp2J.ttf");
 
     Renderer_init(&g_Renderer);
 
@@ -95,16 +94,19 @@ void gui_init(GLFWwindow* window, const int width, const int height, void (*gene
 
 void gui_update() {
     lock();
-    Engine_resetStates(Element_get(g_Renderer.guiRoot));
+    static double last = 0.0;
+    const double curr = glfwGetTime();
+    const double deltaTime = curr - last;
 
     gui_popUpdate();
     Engine_handleDragElement(&g_Renderer);
-    Engine_processInput(&g_Renderer);
+    Engine_processInput(&g_Renderer, deltaTime);
 
     Renderer_updateLayout(&g_Renderer);
 #if GUI_DEBUG && GUI_DEBUG_PROCESS_DEBUG
     gui_processDebug();
 #endif
+    last = curr;
     unlock();
 }
 
@@ -207,8 +209,8 @@ bool gui_getActive(const char* name) {
 
 [[deprecated]]
 void startEngine(void (*generateGUI)(Element* guiRoot)) {
-    const int width = 512;
-    const int height = 512;
+    constexpr int width  = 512;
+    constexpr int height = 512;
     gui_init(initWindow(width, height, "Chess"), width, height, generateGUI);
 
     StandaloneTexture* graphTexture = Texture_new(WIDTH, HEIGHT);
@@ -240,14 +242,6 @@ void startEngine(void (*generateGUI)(Element* guiRoot)) {
         nanosleep(&(struct timespec){.tv_sec = 0, .tv_nsec = 1000000000L}, nullptr);
     }
     glfwTerminate();
-}
-
-static void Engine_resetStates(Element* self) {
-    if (!self || !self->flags.isActive) return;
-    self->state = UI_STATE_NORMAL;
-
-    for_eachArr(child, self->aFlowElements, { Engine_resetStates(Element_get(*child)); });
-    for_eachArr(child, self->aStaticElements, { Engine_resetStates(Element_get(*child)); });
 }
 
 static Element* focusedElement = nullptr;
@@ -327,16 +321,21 @@ static bool Engine_processInputRoot(Renderer *renderer) {
     return false;
 }
 
-static void Engine_processInput(Renderer *renderer) {
+static void Engine_processInput(Renderer *renderer, double deltaTime) {
     const bool consumed = Engine_processInputRoot(renderer);
 
     if (click(renderer->window, GLFW_MOUSE_BUTTON_LEFT) && !consumed) focusedElement = nullptr;
-    else if (focusedElement && focusedElement->callbacks.whileSelected) focusedElement->callbacks.whileSelected(focusedElement);
+
+    else if (focusedElement) {
+        if (focusedElement->callbacks.whileSelected) focusedElement->callbacks.whileSelected(focusedElement, deltaTime);
+        focusedElement->state = UI_STATE_SELECTED;
+    }
 }
 
 static bool Engine_processInputRec(ElementHandle elementHandle, Renderer *renderer) {
     Element* element = Element_get(elementHandle);
     if (element == nullptr || !element->flags.isActive) return false;
+    element->state = UI_STATE_NORMAL;
     if (element->callbacks.onUpdate) element->callbacks.onUpdate(element);
 
     for_eachRevArr(const child, element->aFlowElements,
@@ -357,7 +356,6 @@ static bool Engine_processInputRec(ElementHandle elementHandle, Renderer *render
         if (click(renderer->window, GLFW_MOUSE_BUTTON_LEFT)) {
             mouseCapturedElement = element;
             focusedElement = element;
-            element->state = UI_STATE_PRESSED;
             if (element->callbacks.onClick && element->callbacks.onClick(element)) return true;
         }
         return true;
@@ -369,11 +367,9 @@ void gui_charCallback(GLFWwindow* window, const unsigned int codepoint) {
     if (focusedElement == nullptr || focusedElement->type == t_defaultElement) return;
 
     if (focusedElement->type == t_textField) {
-        TextFieldData* tfd = focusedElement->elementData.ptr;
-        if (codepoint < 128) {
-            str_appendCharAt(&tfd->text, (char) codepoint, tfd->cursor.pos.index++);
 
-            Element_setText_ptr(focusedElement, tfd->text.m);
+        if (codepoint < 128) {
+            TextField_insertCharAtCursor(focusedElement, (char) codepoint);
         }
     }
 }
@@ -389,18 +385,17 @@ void gui_keyCallback(GLFWwindow* window, int key, int scancode, int action, int 
     if (focusedElement->type == t_textField) {
         if (action == GLFW_PRESS || action == GLFW_REPEAT)
         {
-            TextFieldData* tfd = focusedElement->elementData.ptr;
-            if (key == GLFW_KEY_BACKSPACE && tfd->cursor.pos.index != 0) {
-                str_popCharAt(&tfd->text, --tfd->cursor.pos.index);
-                Element_setText_ptr(focusedElement,  tfd->text.m);
+            if (key == GLFW_KEY_BACKSPACE) {
+                TextField_popChar(focusedElement);
             }
-            else if (key == GLFW_KEY_LEFT && tfd->cursor.pos.index != 0) {
-                tfd->cursor.pos.index--;
+            else if (key == GLFW_KEY_LEFT) {
+                TextField_moveCursorBy(focusedElement, -1);
             }
-            else if (key == GLFW_KEY_RIGHT && tfd->cursor.pos.index< tfd->text.length) {
-                tfd->cursor.pos.index++;
+            else if (key == GLFW_KEY_RIGHT) {
+                TextField_moveCursorBy(focusedElement, +1);
             }
             else if (key == GLFW_KEY_ENTER) {
+                const TextFieldData* tfd = focusedElement->elementData.ptr;
                 if (tfd->onEnterCallback) {
                     tfd->onEnterCallback(focusedElement);
                 }

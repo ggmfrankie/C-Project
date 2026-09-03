@@ -10,20 +10,13 @@ typedef struct {
 typedef struct {
     TextFieldCursorPos pos;
 
-    float blinkTimer;
-    bool cursorVisible;
-
-    size_t selectStart;
-    size_t selectEnd;
+    double blinkTimer;
+    bool isVisible;
 } TextFieldCursor;
 
 typedef struct {
     String text;
-
     TextFieldCursor cursor;
-
-    bool focused;
-    bool selecting;
 
     bool (*onEnterCallback)(Element* element);
 } TextFieldData;
@@ -31,4 +24,10 @@ typedef struct {
 ElementHandle TextField_new(ElementSettings elementSettings,
                             bool (*onEnterCallback)(Element *element));
 bool TextField_runTask(Element *element);
-bool TextField_onClick(Element *element);
+
+void TextField_moveCursorTo(const Element* self, int index);
+
+void TextField_popChar(Element* self);
+void TextField_moveCursorBy(const Element* self, int amount);
+
+void TextField_insertCharAtCursor(Element* self, char c);

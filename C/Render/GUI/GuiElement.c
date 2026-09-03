@@ -105,6 +105,24 @@ Element* Element_get(ElementHandle handle) {
     return SparseSet_get(&gElements, handle.ID, Element);
 }
 
+void Element_delete(ElementHandle handle) {
+    Element* element = SparseSet_get(&gElements, handle.ID, Element);
+    for_eachArr(childHandle, element->aFlowElements, {
+        Element_delete(*childHandle);
+    });
+
+    for_eachArr(childHandle, element->aStaticElements, {
+        Element_delete(*childHandle);
+    });
+
+    if (element->elementData.ptr && element->elementData.needsFree) free(element->elementData.ptr);
+    str_delete(&element->textElement.text);
+
+    arrDelete(element->aFlowElements);
+    arrDelete(element->aStaticElements);
+    arrDelete(element->layoutCache.aLines);
+}
+
 void Element_setOnClickCallback(Element* element, bool (*onClick)(Element* element)) {
     assert(element != nullptr);
     element->callbacks.onClick = onClick;
