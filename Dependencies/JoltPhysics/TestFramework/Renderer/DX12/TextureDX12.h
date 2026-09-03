@@ -27,6 +27,6 @@ private:
 
 	ComPtr<ID3D12Resource>				mTexture;				///< The texture data
 
-	D3D12_CPU_DESCRIPTOR_HANDLE			mSRV { 0 };				///< Shader resource view to bind as texture
+	D3D12_CPU_DESCRIPTOR_HANDLE			mSRV { 0 };				///< GpuShader resource view to bind as texture
 	D3D12_CPU_DESCRIPTOR_HANDLE			mDSV { 0 };				///< Depth shader view to bind as render target
 };

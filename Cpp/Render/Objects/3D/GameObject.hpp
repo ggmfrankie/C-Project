@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "../EngineDefines.hpp"
+#include "EngineDefines.hpp"
 #include "Physics/PhysicsObjectRef.hpp"
 #include "Render/RenderObjectRef3D.hpp"
 

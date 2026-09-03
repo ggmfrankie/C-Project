@@ -160,7 +160,7 @@ ComputeShaderResult ComputeSystemDX12::CreateComputeShader(const char *inName, u
 		if (error_blob)
 			result.SetError((const char *)error_blob->GetBufferPointer());
 		else
-			result.SetError("Shader compile error");
+			result.SetError("GpuShader compile error");
 		return result;
 	}
 

@@ -3,7 +3,7 @@
 //
 
 #include "../Render/Mesh.hpp"
-#include "../../Cpp/Utils/Math/Vector.hpp"
+#include "Math/Vector.hpp"
 
 namespace Obj3D {
     using std::string, std::vector;

@@ -10,5 +10,5 @@ typedef struct Basic_Texture StandaloneTexture;
 typedef struct Texture Texture;
 typedef struct GUI_Update GUI_Update;
 typedef struct GuiVertex GuiVertex;
-typedef struct Renderer Renderer;
+typedef struct GuiState GuiState;
 typedef struct GLFWwindow GLFWwindow;

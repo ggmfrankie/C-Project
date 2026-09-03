@@ -5,7 +5,6 @@
 #include "Renderer3D.hpp"
 
 #include "GuiInterface.h"
-#include "GLFW/glfw3.h"
 #include "Render/Transformation/Camera.hpp"
 
 namespace Game {

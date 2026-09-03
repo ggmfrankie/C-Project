@@ -1,8 +1,9 @@
 //
 // Created by ertls on 29.05.2026.
 //
-#include "Render/GUI/GuiElement.h"
 #include "Game2DGui.h"
+
+#include "GUI/GuiElement/GuiElement.h"
 
 void generateGame2DGui(Element *guiRoot) {
     addChildElements(guiRoot,

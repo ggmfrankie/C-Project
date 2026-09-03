@@ -3,12 +3,12 @@
 //
 
 #pragma once
-#include "../EngineDefines.hpp"
+#include "EngineDefines.hpp"
 #include <Jolt/Jolt.h>
 #include <Jolt/Physics/PhysicsSystem.h>
 #include <Jolt/Core/JobSystemThreadPool.h>
 #include "Render/Objects/3D/Physics/PhysicsObjectRef.hpp"
-#include "../../../../Utils/ggmdef.hpp"
+#include "Utils/ggmdef.hpp"
 
 namespace Obj3D {
     struct PhysicsSettings;

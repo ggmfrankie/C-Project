@@ -6,12 +6,12 @@
 #endif
 
 
-#include "C/Render/Engine.h"
+#include "C/GUI/Engine.h"
 #include "C/Utils/_Deprecated_/CString_v1.h"
-#include "C/Projects/Test/TestGUI.h"
-#include "C/Projects/Chess/ChessGame.h"
-#include "C/Projects/Tokenizer/Calculator.h"
-#include "C/Projects/TFE/TFE.h"
+#include "C/_Projects_/Test/TestGUI.h"
+#include "C/_Projects_/Chess/ChessGame.h"
+#include "C/_Projects_/Tokenizer/Calculator.h"
+#include "C/_Projects_/TFE/TFE.h"
 #include "C/Utils/DataStructures/CArrayList.h"
 #include "C/Utils/DataStructures/CString.h"
 #include "C/Utils/_Deprecated_/Test.h"

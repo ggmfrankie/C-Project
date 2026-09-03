@@ -73,7 +73,7 @@ private:
 	// DirectX interfaces
 	DescriptorHeapDX12				mRTVHeap;							///< Render target view heap
 	DescriptorHeapDX12				mDSVHeap;							///< Depth stencil view heap
-	DescriptorHeapDX12				mSRVHeap;							///< Shader resource view heap
+	DescriptorHeapDX12				mSRVHeap;							///< GpuShader resource view heap
 	ComPtr<IDXGISwapChain3>			mSwapChain;
 	ComPtr<ID3D12Resource>			mRenderTargets[cFrameCount];		///< Two render targets (we're double buffering in order for the CPU to continue while the GPU is rendering)
 	D3D12_CPU_DESCRIPTOR_HANDLE		mRenderTargetViews[cFrameCount];	///< The two render views corresponding to the render targets

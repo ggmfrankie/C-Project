@@ -3,7 +3,7 @@
 //
 
 #pragma once
-#include "../EngineDefines.hpp"
+#include "EngineDefines.hpp"
 #include "glad/gl.h"
 
 #include "Utils/Math/Vector.hpp"

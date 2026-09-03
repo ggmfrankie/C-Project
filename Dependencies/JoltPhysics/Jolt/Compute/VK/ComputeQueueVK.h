@@ -55,7 +55,7 @@ private:
 	bool								mCommandBufferRecording = false;				///< If we are currently recording commands into the command buffer
 	VkFence								mFence = VK_NULL_HANDLE;
 	bool								mIsExecuting = false;							///< If Execute has been called and we are waiting for it to finish
-	RefConst<ComputeShaderVK>			mShader;										///< Shader that has been activated
+	RefConst<ComputeShaderVK>			mShader;										///< GpuShader that has been activated
 	Array<VkDescriptorBufferInfo>		mBufferInfos;									///< List of parameters that will be sent to the current shader
 	UnorderedSet<RefConst<ComputeBuffer>> mUsedBuffers;									///< Buffers that are in use by the current execution, these will be retained until execution is finished so that we don't free buffers that are in use
 	Array<BufferVK>						mDelayedFreedBuffers;							///< Hardware buffers that need to be freed after execution is done

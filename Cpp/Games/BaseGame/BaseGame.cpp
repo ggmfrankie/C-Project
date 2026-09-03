@@ -12,9 +12,8 @@
 #include "Render/Screen.hpp"
 #include "Render/Objects/3D/Physics/PhysicsFactory.hpp"
 #include "Render/Transformation/Camera.hpp"
-#include "../Controller/Player.hpp"
-#include "Projects/Chess/ChessGame.h"
 #include "Math/Vector.hpp"
+#include "_Projects_/Chess/ChessGame.h"
 
 
 template<typename T>

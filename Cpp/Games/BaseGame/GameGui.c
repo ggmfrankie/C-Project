@@ -8,13 +8,13 @@
 #include <stdlib.h>
 
 #include "GuiInterface.h"
-#include "Render/GUI/CallbackFunctions.h"
+#include "GUI/GuiElement/CallbackHelper.h"
 #include "GuiTasks.hpp"
-#include "Projects/Chess/ChessGame.h"
-#include "Projects/TFE/TFE.h"
-#include "Render/GUI/GuiElement.h"
-#include "Render/GUI/ElementTypes/Scrollbar.h"
-#include "Render/GUI/ElementTypes/TextField.h"
+#include "_Projects_/Chess/ChessGame.h"
+#include "_Projects_/TFE/TFE.h"
+#include "GUI/GuiElement/GuiElement.h"
+#include "GUI/GuiElement/ElementTypes/Scrollbar.h"
+#include "GUI/GuiElement/ElementTypes/TextField.h"
 
 
 static void quitTask(void*) {

@@ -3,7 +3,7 @@
 //
 
 #pragma once
-#include "../EngineDefines.hpp"
+#include "EngineDefines.hpp"
 #include "Utils/StringUtils.hpp"
 #include <iostream>
 #include <filesystem>

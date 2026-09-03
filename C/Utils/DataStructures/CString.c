@@ -119,6 +119,7 @@ Str strConcat(CStr a, CStr b) {
 
 Str* strSplit(CStr s, char del) {
     TODO_("Not Implemented");
+    return nullptr;
 }
 
 char strAt(CStr s, size_t idx) {

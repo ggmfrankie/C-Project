@@ -2,7 +2,7 @@
 //
 
 #pragma once
-#include "../../../../EngineDefines.hpp"
+#include "EngineDefines.hpp"
 #include "Render/Objects/2D/Physics/PhysicsObjectRef.hpp"
 #include "Utils/DataStorage/SparseSet.hpp"
 

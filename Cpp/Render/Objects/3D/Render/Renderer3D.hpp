@@ -3,7 +3,7 @@
 //
 
 #pragma once
-#include "../EngineDefines.hpp"
+#include "EngineDefines.hpp"
 #include "RenderObjectRef3D.hpp"
 #include "Render/Shader/Shader.hpp"
 #include "Utils/DataStorage/SparseSet.hpp"

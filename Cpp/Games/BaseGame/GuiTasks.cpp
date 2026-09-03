@@ -6,8 +6,8 @@
 #include "GameEngine.hpp"
 #include "GuiInterface.h"
 #include "../Scene/3D/Scene3D.hpp"
-#include "Projects/TFE/TFE.h"
-#include "Render/GUI/Update.h"
+#include "_Projects_/TFE/TFE.h"
+#include "../../../C/GUI/GuiElement/IO/Update.h"
 
 
 extern "C" void update_setFovHighlight(void* data) {

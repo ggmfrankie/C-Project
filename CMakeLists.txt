@@ -27,62 +27,36 @@ include_directories(
 )
 
 add_library(GUI STATIC
-        C/Utils/_Deprecated_/GenericLinkedList.h
         Main.c
         C/Utils/_Deprecated_/CString_v1.c
         C/Utils/_Deprecated_/CString_v1.h
-        C/Render/Drawing/Render.c
-        C/Render/Drawing/Render.h
-        C/Render/Drawing/Mesh.c
-        C/Render/Drawing/Mesh.h
         Dependencies/GL/gl.c
-        C/Render/Engine.c
-        C/Render/Engine.h
         C/Utils/Math/Vector.c
         C/Utils/Math/Vector.h
-        C/Render/Shader.c
-        C/Render/Shader.h
         C/Utils/_Deprecated_/HashMap.h
         C/Utils/Os/FileIO.c
         C/Utils/Os/FileIO.h
         C/Utils/_Deprecated_/StringBuilder.c
         C/Utils/_Deprecated_/StringBuilder.h
-        C/Render/GUI/GuiElement.c
-        C/Render/GUI/GuiElement.h
-        C/Render/ComputeShader.c
-        C/Render/ComputeShader.h
-        C/Render/GUI/Texture.c
-        C/Render/GUI/Texture.h
         C/Utils/Makros/Makros.h
         C/Utils/Os/Time.c
         C/Utils/Os/Time.h
-        C/Render/GUI/CallbackFunctions.h
-        C/Render/GUI/CallbackFunctions.c
-        C/Render/Drawing/TextDisplaying.c
-        C/Render/Drawing/TextDisplaying.h
-        C/Render/GUI/Tasks.c
-        C/Render/GUI/Tasks.h
         C/Utils/_NYI_/MemoryArena.c
-        C/Projects/Chess/ChessGame.c
-        C/Projects/Chess/ChessGame.h
+        C/_Projects_/Chess/ChessGame.c
+        C/_Projects_/Chess/ChessGame.h
         C/Utils/Os/Network.c
         C/Utils/Os/Network.h
         C/Utils/Misc/UtilityFun.c
         C/Utils/Misc/UtilityFun.h
-        C/Projects/Test/TestGUI.c
-        C/Projects/ChessNewandImproved/ChessBetter2.c
-        C/Projects/ChessNewandImproved/ChessBetter2.c
-        C/Projects/Tokenizer/Calculator.c
-        C/Projects/Tokenizer/Calculator.h
+        C/_Projects_/Test/TestGUI.c
+        C/_Projects_/ChessNewandImproved/ChessBetter2.c
+        C/_Projects_/ChessNewandImproved/ChessBetter2.c
+        C/_Projects_/Tokenizer/Calculator.c
+        C/_Projects_/Tokenizer/Calculator.h
         C/Utils/DataStructures/CArrayList.h
-        C/Projects/TFE/TFE.c
-        C/Projects/TFE/TFE.h
+        C/_Projects_/TFE/TFE.c
+        C/_Projects_/TFE/TFE.h
         C/GuiTypes.h
-        C/Render/GUI/Update.c
-        C/Render/GUI/Update.h
-        C/Render/Drawing/Batcher.c
-        C/Render/Drawing/Batcher.h
-        C/Render/Drawing/RenderTypes.h
         C/GuiDefines.h
         C/Utils/DataStructures/CHashMap.h
         C/Utils/_Deprecated_/Test.h
@@ -91,22 +65,46 @@ add_library(GUI STATIC
         C/Utils/Makros/Defer.c
         C/Utils/DataStructures/CString.c
         C/Utils/DataStructures/CString.h
-        C/Utils/Logging/Logging.c
         C/Utils/Logging/Logging.h
         OtherProjects/C/Informatik/DrunkenBishop.c
         OtherProjects/C/Informatik/GameBoard.c
         C/Utils/Makros/NamedParameters.h
-        C/Render/GUI/ElementTypes/TextField.c
         C/Utils/Test.c
         C/Utils/DataStructures/CSparseSet.c
         C/Utils/DataStructures/CSparseSet.h
         C/Utils/Makros/Defer.h
         C/Utils/Test.h
         C/Utils/Makros/Helper.h
-        C/Render/GUI/ElementTypes/Scrollbar.c
         C/Utils/DataStructures/CArrayList.c
-        C/Render/GUI/ElementHandler.c
-        C/Render/GUI/ElementHandler.h
+        C/GUI/Drawing/Mesh/Mesh.c
+        C/GUI/Drawing/Mesh/Mesh.h
+        C/GUI/Drawing/Shader/ComputeShader.c
+        C/GUI/Drawing/Shader/ComputeShader.h
+        C/GUI/Drawing/Shader/Shader.c
+        C/GUI/Drawing/Shader/Shader.h
+        C/GUI/Drawing/Texture/Texture.c
+        C/GUI/Drawing/Texture/Texture.h
+        C/GUI/Drawing/Render.c
+        C/GUI/Drawing/Render.h
+        C/GUI/Drawing/RenderTypes.h
+        C/GUI/Drawing/Text.c
+        C/GUI/Drawing/Text.h
+        C/GUI/GuiElement/ElementTypes/Scrollbar.c
+        C/GUI/GuiElement/ElementTypes/Scrollbar.h
+        C/GUI/GuiElement/ElementTypes/TextField.c
+        C/GUI/GuiElement/ElementTypes/TextField.h
+        C/GUI/GuiElement/IO/Tasks.c
+        C/GUI/GuiElement/IO/Tasks.h
+        C/GUI/GuiElement/IO/Update.c
+        C/GUI/GuiElement/IO/Update.h
+        C/GUI/GuiElement/CallbackHelper.c
+        C/GUI/GuiElement/CallbackHelper.h
+        C/GUI/GuiElement/GuiElement.c
+        C/GUI/GuiElement/GuiElement.h
+        C/GUI/Layout/Layout.c
+        C/GUI/Layout/Layout.h
+        C/GUI/Engine.c
+        C/GUI/Engine.h
 )
 
 set_target_properties(GUI PROPERTIES LINKER_LANGUAGE C)

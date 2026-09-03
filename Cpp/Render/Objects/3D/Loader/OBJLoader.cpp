@@ -4,7 +4,7 @@
 
 #include "OBJLoader.hpp"
 #include <cstring>
-#include "../../../../Utils/Os/FileIO.hpp"
+#include "Utils/Os/FileIO.hpp"
 #include <unordered_map>
 #include <charconv>
 

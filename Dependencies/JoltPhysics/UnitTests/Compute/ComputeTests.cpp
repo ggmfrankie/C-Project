@@ -196,7 +196,7 @@ TEST_SUITE("ComputeTests")
 			ComputeShaderResult shader_result = inComputeSystem->CreateComputeShader("TestCompute", cTestComputeGroupSize);
 			if (shader_result.HasError())
 			{
-				Trace("Shader could not be created: %s", shader_result.GetError().c_str());
+				Trace("GpuShader could not be created: %s", shader_result.GetError().c_str());
 				return;
 			}
 			Ref<ComputeShader> shader = shader_result.Get();
@@ -261,7 +261,7 @@ TEST_SUITE("ComputeTests")
 			ComputeShaderResult shader_result = inComputeSystem->CreateComputeShader("TestCompute2", cTestCompute2GroupSize);
 			if (shader_result.HasError())
 			{
-				Trace("Shader could not be created: %s", shader_result.GetError().c_str());
+				Trace("GpuShader could not be created: %s", shader_result.GetError().c_str());
 				return;
 			}
 			Ref<ComputeShader> shader = shader_result.Get();
