@@ -77,7 +77,6 @@ static void generateMainMenuGui(Element* guiRoot) {
                 .color = {0.88f, 0.88f, 0.91f},
                 .cornerRadius = 10,
                 .task = runCommand
-
             }, TextField_runTask),
             Element_new((ElementSettings){
                 .padding = {10,10,10,10},
@@ -132,8 +131,7 @@ static void generateMainMenuGui(Element* guiRoot) {
             })
         )
     );
-
-    Element_setActive_ptr(Element_getElement_ptr("Home Screen"), false);
+    gui_setActive("Home Screen", false);
 }
 
 static void updatePosDisplay(float normPos, float absPos) {

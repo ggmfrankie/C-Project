@@ -152,8 +152,6 @@ namespace Game {
 
     }
 
-    
-
     void BaseGame::toggleCursorMode(GLFWwindow* window, const bool guiMode) {
         if (guiMode) {
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
