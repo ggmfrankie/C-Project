@@ -59,7 +59,7 @@
       <excludeFolder url="file://$MODULE_DIR$/cmake-build-debug-mingw-gcc" />
       <excludeFolder url="file://$MODULE_DIR$/build" />
     </content>
-    <orderEntry type="jdk" jdkName="C:\git\oth\C-Project\.venv" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.14 (C-Project) (2)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Python 3.14 interpreter library" level="application" />
   </component>

@@ -172,15 +172,10 @@ def randVal(vhdl_type: str):
     return f"'{randBit()}'" if vhdl_type == "std_logic" else randVec(getLength(vhdl_type))
 
 def generateClock(name: str, iterations: int, period: int):
-    clock: list[str] = []
-    clock.append(f"    {name}_proc: process")
-    clock.append( "    begin")
-    clock.append(f"        for i in 0 to {iterations} loop")
-    clock.append(f"            {name} <= '0'; wait for {period/2} ns;")
-    clock.append(f"            {name} <= '1'; wait for {period/2} ns;")
-    clock.append( "        end loop;")
-    clock.append( "        wait;")
-    clock.append( "    end process;")
+    clock: list[str] = [f"    {name}_proc: process", "    begin", f"        for i in 0 to {iterations} loop",
+                        f"            {name} <= '0'; wait for {period / 2} ns;",
+                        f"            {name} <= '1'; wait for {period / 2} ns;", "        end loop;", "        wait;",
+                        "    end process;"]
 
     return clock
 
@@ -229,9 +224,8 @@ def createTestbench(entity: Entity, numTest=10, mode="random") -> str:
     tb.append("    begin")
     if mode == "random":
         for _ in range(numTest):
-            line: list[str] = []
-            line.append("           ")
-        
+            line: list[str] = ["           "]
+
             for input in entity.inputs:
                 line.append(f"{input.name} <= {randVal(input.type)};")
             line.append(f" wait for {time} ns;")

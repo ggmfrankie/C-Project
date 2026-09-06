@@ -73,6 +73,8 @@ typedef struct Element {
 
         bool wantGrowHorizontal: 1;
         bool wantGrowVertical: 1;
+
+        bool noLayoutContribution: 1;
     } flags;
 
     struct {
@@ -152,6 +154,11 @@ typedef struct ElementSettings {
     PositionMode posMode;
     LayoutDirection layoutDirection;
 
+    struct {
+        Vec2f pos;
+        Vec2f dims;
+    } clipArea;
+
     float cornerRadius;
     float minWidth;
     float minHeight;
@@ -183,6 +190,7 @@ typedef struct ElementSettings {
     bool draggable;
     bool wantGrowHorizontal;
     bool wantGrowVertical;
+    bool noLayoutContribution;
 
     void* elementData;
 

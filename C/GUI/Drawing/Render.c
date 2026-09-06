@@ -154,8 +154,12 @@ static ssize_t addElementData(const Element* element, ElementInstanceData** accu
 }
 
 static void pushBatch(BatchAccumulator* accumulator, const Element* clipElement) {
+
     arrPush(accumulator->aUnfinished, (Batch){
-        .clip.pos = clipElement->visuals.clip.pos,
+        .clip.pos = (Vec2f){
+            clipElement->visuals.clip.pos.x + clipElement->dims.worldPos.x,
+            clipElement->visuals.clip.pos.y + clipElement->dims.worldPos.y
+        },
         .clip.dims = clipElement->visuals.clip.dims,
     });
 }

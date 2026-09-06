@@ -214,6 +214,14 @@ ElementHandle createElement(const ElementSettings es) {
     lastElement->flags.canBeHovered = es.canBeHovered;
     lastElement->callbacks.drawCustom = es.drawCustom;
 
+    lastElement->flags.noLayoutContribution = es.noLayoutContribution;
+
+    if (es.clipArea.dims.x != 0.0 && es.clipArea.dims.y != 0.0) {
+        lastElement->visuals.clip.pos = es.clipArea.pos;
+        lastElement->visuals.clip.dims = es.clipArea.dims;
+        lastElement->visuals.clip.hasClip = true;
+    }
+
     if (!es.invisible) {
         lastElement->generateMesh = Mesh_generateRoundedCorner;
     }
