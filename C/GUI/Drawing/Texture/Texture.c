@@ -18,6 +18,7 @@
 
 static constexpr int MAX_ATLAS_TEXTURES = 512;
 static constexpr int PIXEL_SIZE = 4;
+static const char* DEFAULT_PATH = "../Resources/Textures/";
 
 typedef struct {
     StandaloneTexture m[256];
@@ -27,13 +28,13 @@ typedef struct {
 
 static GLuint uploadTextureToGPU(int width, int height, int channels, const unsigned char* pixels);
 
-static Texture* g_map_textureMap;
-static TextureList g_Textures = {.capacity = 256, .size = 0};
+static Texture* gmTextureMap;
+static TextureList gTextures = {.capacity = 256, .size = 0};
 
 static StandaloneTexture* newTexture(const int width, const int height, const GLuint textureId) {
-    assert(g_Textures.size < g_Textures.capacity);
-    g_Textures.m[g_Textures.size] = (StandaloneTexture){.width = width, .height = height, .ID = textureId};
-    return &g_Textures.m[g_Textures.size++];
+    assert(gTextures.size < gTextures.capacity);
+    gTextures.m[gTextures.size] = (StandaloneTexture){.width = width, .height = height, .ID = textureId};
+    return &gTextures.m[gTextures.size++];
 }
 
 void Texture_loadAtlas(TextureAtlas *atlas) {
@@ -42,16 +43,15 @@ void Texture_loadAtlas(TextureAtlas *atlas) {
     const char* names[MAX_ATLAS_TEXTURES];
     int index = 0;
 
-    const char* defaultPath = "../Resources/Textures/";
-
-    constexpr int padding = 10;
+    //TODO: Fix Padding
+    constexpr int padding = 0;
     for_eachArr(namePtr, atlas->aNames, {
         int width, height, channels;
         const char* name = *namePtr;
         printf("Name: %s\n", name);
 
         char fullPath[64];
-        cstrbConcat(fullPath, 64, defaultPath, name);
+        cstrbConcat(fullPath, sizeof(fullPath), DEFAULT_PATH, name);
 
         pixels[index] = stbi_load(fullPath, &width, &height, &channels, 4);
         if (!pixels[index]) ERROR_("Error loading texture for Atlas");
@@ -96,7 +96,7 @@ void Texture_loadAtlas(TextureAtlas *atlas) {
             memcpy(dst, s, w * PIXEL_SIZE);
         }
 
-        mapInsert(g_map_textureMap, names[i], (Texture){
+        mapInsert(gmTextureMap, names[i], (Texture){
             .uv0 = {
                 ((float)rects[i].x + padding)/(float)atlas->width,
                 ((float)rects[i].y + padding)/(float)atlas->height
@@ -139,8 +139,8 @@ StandaloneTexture *Texture_new(const int width, const int height) {
         GL_FLOAT,
         nullptr
     );
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
@@ -149,17 +149,16 @@ StandaloneTexture *Texture_new(const int width, const int height) {
     return newTexture(width, height, ID);
 }
 
-StandaloneTexture *Texture_newFromPng(char *fileName) {
-    const String fileNameString = stringOf(fileName);
-    const String defaultPath = stringOf("../Resources/Textures/");
-    defer(str_delete) String fullPath = Strings.combine(&defaultPath, &fileNameString);
+StandaloneTexture *Texture_newFromPng(const char *fileName) {
+    char fullPath[64];
+    cstrbConcat(fullPath, 64, DEFAULT_PATH, fileName);
 
     int width, height, channels;
 
-    byte* data = stbi_load(fullPath.m, &width, &height, &channels, 0);
+    byte* data = stbi_load(fullPath, &width, &height, &channels, 0);
 
     if (!data) {
-        WARNING_("Failed to load image\n");
+        WARNING_("Failed to load image %s\n", fileName);
         return nullptr;
     }
     const GLuint ID = uploadTextureToGPU(width, height, channels, data);
@@ -168,13 +167,13 @@ StandaloneTexture *Texture_newFromPng(char *fileName) {
     return newTexture(width, height, ID);
 }
 
-Texture getTexture(const char* name) {
+Texture Texture_get(const char* name) {
     if (name == nullptr) {
         WARNING_("Error loading texture: no name provided");
         return (Texture){};
     }
-    const Texture* texture = mapGet(g_map_textureMap, name);
-    if (texture == nullptr) texture = mapGet(g_map_textureMap, "White.png");
+    const Texture* texture = mapGet(gmTextureMap, name);
+    if (texture == nullptr) texture = mapGet(gmTextureMap, "White.png");
     return *texture;
 }
 
@@ -191,8 +190,8 @@ static GLuint uploadTextureToGPU(const int width, const int height, const int ch
 
     glGenerateMipmap(GL_TEXTURE_2D);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     return texture;

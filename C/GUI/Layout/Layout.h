@@ -6,4 +6,4 @@
 #include "GuiDefines.h"
 #include "GuiTypes.h"
 
-void Layout_updateLayout(const GuiState *renderer);
+void Layout_updateLayout(const GuiState *state);

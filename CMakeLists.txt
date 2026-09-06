@@ -105,6 +105,8 @@ add_library(GUI STATIC
         C/GUI/Layout/Layout.h
         C/GUI/Engine.c
         C/GUI/Engine.h
+        C/GUI/GuiElement/ElementTypes/ScrollArea.c
+        C/GUI/GuiElement/ElementTypes/ScrollArea.h
 )
 
 set_target_properties(GUI PROPERTIES LINKER_LANGUAGE C)

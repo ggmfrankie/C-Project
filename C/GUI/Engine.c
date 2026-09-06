@@ -55,7 +55,7 @@ static UserCallbacks g_Callbacks;
 static void Engine_processInput(GuiState *renderer, double deltaTime);
 static bool Engine_processInputRec(ElementHandle elementHandle, GuiState *renderer);
 static bool Engine_handleDragElement(const GuiState *renderer);
-static void Engine_resetState(ElementHandle handle);
+static void Engine_updateElements(ElementHandle handle, double deltaTime);
 static void gui_processDebug();
 
 static void threadExecute() {
@@ -117,7 +117,7 @@ void gui_update() {
     const double deltaTime = curr - last;
 
     gui_popUpdate();
-    Engine_resetState(gGuiState.guiRoot);
+    Engine_updateElements(gGuiState.guiRoot, deltaTime);
     Engine_handleDragElement(&gGuiState);
     Engine_processInput(&gGuiState, deltaTime);
 
@@ -323,11 +323,14 @@ static bool click(GLFWwindow *window, const int mouseButton) {
     return false;
 }
 
-static void Engine_resetState(ElementHandle handle) {
+static void Engine_updateElements(ElementHandle handle, double deltaTime) {
     Element* self = Element_get(handle);
+
+    if (self->callbacks.onUpdate) self->callbacks.onUpdate(self);
+
     self->state = UI_STATE_NORMAL;
-    for_eachRevArr(const child, self->aFlowElements,{Engine_resetState(*child);});
-    for_eachRevArr(const child, self->aStaticElements,{Engine_resetState(*child);});
+    for_eachRevArr(const child, self->aFlowElements,{Engine_updateElements(*child,deltaTime);});
+    for_eachRevArr(const child, self->aStaticElements,{Engine_updateElements(*child,deltaTime);});
 }
 
 static bool Engine_processInputRoot(GuiState *renderer) {
@@ -361,7 +364,6 @@ static void Engine_processInput(GuiState *renderer, double deltaTime) {
 static bool Engine_processInputRec(ElementHandle elementHandle, GuiState *renderer) {
     Element* element = Element_get(elementHandle);
     if (element == nullptr || !element->flags.isActive) return false;
-    if (element->callbacks.onUpdate) element->callbacks.onUpdate(element);
 
     for_eachRevArr(const child, element->aFlowElements,
         //return if input was consumed by child element

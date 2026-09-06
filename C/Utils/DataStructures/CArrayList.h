@@ -35,7 +35,7 @@ void _arrGrowIfNeeded(void **array, size_t typeSize);
     do {\
         if((array) == nullptr) arrNew((array), ArrayInitCapacity);\
         _arrGrowIfNeeded((void**)&(array), sizeof(*(array)));\
-        (array)[_arrayGetHead(array)->size++] = __VA_ARGS__;\
+        (array)[_arrayGetHead(array)->size++] = (__VA_ARGS__);\
     } while (0)
 
 #define arrTryGet(array, index)\

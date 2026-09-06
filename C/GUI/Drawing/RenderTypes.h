@@ -32,11 +32,14 @@ typedef struct {
     ElementInstanceData* aElementData;
     MeshInstanceData* aMeshData;
 
-    Vec2f clipStart;
-    Vec2f clipEnd;
-} MeshAccumulator;
+    struct {
+        Vec2f pos;
+        Vec2f dims;
+    } clip;
+
+} Batch;
 
 typedef struct {
-    MeshAccumulator* aUnfinished;
-    MeshAccumulator* aDone;
+    Batch* aUnfinished;
+    Batch* aDone;
 } BatchAccumulator;

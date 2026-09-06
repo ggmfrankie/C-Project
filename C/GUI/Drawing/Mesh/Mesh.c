@@ -71,8 +71,8 @@ static void Mesh_connectFans(const struct ArcInfo* a1, const struct ArcInfo* a2,
 void Mesh_generateRoundedCorner(const Element* element, GuiVertex** aVertices, int** aIndices, ssize_t id) {
     const float width = element->dims.worldWidth;
     const float height = element->dims.worldHeight;
-    const float radius = min((float)element->dims.cornerRadius, min(width, height) * 0.5f);
-    const Texture texture = getTexture(element->visuals.texture);
+    const float radius = min(element->dims.cornerRadius, min(width, height) * 0.5f);
+    const Texture texture = Texture_get(element->visuals.texture);
 
     constexpr float r90 = (float)M_PI * 0.5f;
     constexpr int numTriangles = 4;
@@ -155,7 +155,7 @@ void Mesh_customQuad(const Vec2f pos, const Vec2f dims, Vec4f color, GuiVertex *
     const int id = arrLen(*aAdditional);
     const int start = arrLen(*aVertices);
 
-    const Texture texture = getTexture("White.png");
+    const Texture texture = Texture_get("White.png");
 
     arrPush(*aVertices, (GuiVertex){.bufferBinding = 1, .ID = id, .uv = texture.uv0,                       .pos = pos});
     arrPush(*aVertices, (GuiVertex){.bufferBinding = 1, .ID = id, .uv = {texture.uv0.x, texture.uv1.y}, .pos = {pos.x, pos.y + dims.y}});

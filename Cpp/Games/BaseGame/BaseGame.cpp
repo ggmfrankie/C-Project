@@ -9,6 +9,7 @@
 #include "GuiInterface.h"
 #include "Engine/CommandRegistry.hpp"
 #include "../Scene/3D/Scene3D.hpp"
+#include "Makros/Makros.h"
 #include "Render/Screen.hpp"
 #include "Render/Objects/3D/Physics/PhysicsFactory.hpp"
 #include "Render/Transformation/Camera.hpp"
@@ -143,6 +144,21 @@ namespace Game {
         if (!guiMode) {
             mCamera->moveBy(cameraMovement.x * CAMERA_POS_STEP, cameraMovement.y * CAMERA_POS_STEP, cameraMovement.z * CAMERA_POS_STEP);
             mCamera->rotateBy(camRot.x * MOUSE_SENSITIVITY, 0 , camRot.y * MOUSE_SENSITIVITY);
+        }
+
+        static double fpsSum = 0.0;
+        static int frames = 0;
+
+        fpsSum += deltaTime;
+        frames++;
+
+        if (fpsSum > 0.5) {
+            char fps[64];
+            sprintf(fps, "%.2lf", frames/fpsSum);
+            gui_setText("fps display", fps);
+
+            fpsSum = 0.0;
+            frames = 0;
         }
 
         gui_update();

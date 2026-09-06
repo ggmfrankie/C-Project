@@ -7,7 +7,7 @@
 #include "../../Drawing/Mesh/Mesh.h"
 #include "Utils/DataStructures/CArrayList.h"
 #define CURSOR_WIDTH 4
-#define CURSOR_BLINK_TIMER 1.0
+#define CURSOR_BLINK_TIMER 0.5
 
 static void TextField_drawCursor(const Element* element, GuiVertex** aVertices, int** aIndices, MeshInstanceData** additional, ssize_t ownerId) {
     if (element->state != UI_STATE_SELECTED) return;
@@ -32,12 +32,9 @@ static void TextField_updateBlinkTimer(Element* self, double deltaTime) {
     TextFieldData* data = self->elementData.ptr;
     data->cursor.blinkTimer += deltaTime;
 
-    if (data->cursor.blinkTimer > 0.5 * CURSOR_BLINK_TIMER) {
-        data->cursor.isVisible = false;
-        if (data->cursor.blinkTimer > CURSOR_BLINK_TIMER) data->cursor.blinkTimer = 0.0;
-    }
-    else {
-        data->cursor.isVisible = true;
+    if (data->cursor.blinkTimer > CURSOR_BLINK_TIMER) {
+        data->cursor.isVisible = !data->cursor.isVisible;
+        data->cursor.blinkTimer = 0.0;
     }
 }
 
@@ -60,6 +57,7 @@ void TextField_moveCursorTo(const Element* self, int index) {
         cursor->pos = (TextFieldCursorPos){index, offset + aCharQuads[index-1].pos.x + (aCharQuads[index-1].advance)};
     }
     cursor->blinkTimer = 0;
+    cursor->isVisible = true;
 }
 
 void TextField_popChar(Element* self) {
@@ -135,7 +133,6 @@ ElementHandle TextField_new(const ElementSettings elementSettings, bool (*onEnte
         }
     );
     Element_get(textField)->type = t_textField;
-    Element_get(element)->type = t_textField;
     addChildElements(Element_get(element), textField);
 
     return element;

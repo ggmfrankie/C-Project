@@ -117,23 +117,23 @@ static void uploadMeshData(const MeshInstanceData* aMeshData) {
     );
 }
 
-static void uploadMeshes(const MeshAccumulator* accumulator) {
-    uploadVertices(accumulator->aVertices, accumulator->aIndices);
-    uploadElementData(accumulator->aElementData);
-    uploadMeshData(accumulator->aMeshData);
+static void beginScissor(Vec2f pos, Vec2f dims) {
+    glScissor(pos.x, pos.y, dims.x, dims.y);
 }
 
-static void beginScissor(const Element* e, const float screenHeight) {
+static void drawBatches(const BatchAccumulator *accumulator) {
     glEnable(GL_SCISSOR_TEST);
 
-    const float x = e->dims.worldPos.x;
-    const float y = screenHeight - (e->dims.worldPos.y + e->dims.worldHeight);
-    const float w = e->dims.worldWidth;
-    const float h = e->dims.worldHeight;
-    glScissor(x, y, w, h);
-}
+    for_eachArr(batch, accumulator->aDone, {
+        beginScissor(batch->clip.pos, batch->clip.dims);
 
-static void endScissor() {
+        uploadVertices(batch->aVertices, batch->aIndices);
+        uploadElementData(batch->aElementData);
+        uploadMeshData(batch->aMeshData);
+
+        glDrawElements(GL_TRIANGLES, arrLen(batch->aIndices), GL_UNSIGNED_INT, nullptr);
+    });
+
     glDisable(GL_SCISSOR_TEST);
 }
 
@@ -153,14 +153,27 @@ static ssize_t addElementData(const Element* element, ElementInstanceData** accu
     return id;
 }
 
-static void accumulateMeshes(const ElementHandle elementHandle, MeshAccumulator* accumulator) {
+static void pushBatch(BatchAccumulator* accumulator, const Element* clipElement) {
+    arrPush(accumulator->aUnfinished, (Batch){
+        .clip.pos = clipElement->visuals.clip.pos,
+        .clip.dims = clipElement->visuals.clip.dims,
+    });
+}
+
+static void popBatch(BatchAccumulator* accumulator) {
+    arrPush(accumulator->aDone, arrPop(accumulator->aUnfinished));
+}
+
+static void accumulateMeshes(const ElementHandle elementHandle, BatchAccumulator *accumulator) {
     Element* self = Element_get(elementHandle);
     if (self == nullptr || !self->flags.isActive) return;
 
-    const ssize_t id = addElementData(self, &accumulator->aElementData);
+    Batch* curr = arrGetLast(accumulator->aUnfinished);
+
+    const ssize_t id = addElementData(self, &curr->aElementData);
 
     if (self->generateMesh) {
-        self->generateMesh(self, &accumulator->aVertices, &accumulator->aIndices, id);
+        self->generateMesh(self, &curr->aVertices, &curr->aIndices, id);
 #if GUI_DEBUG && GUI_DEBUG_ACCUMULATE_MESHES
         if (self->dims.worldWidth <= 0 || self->dims.worldHeight <= 0) {
             printf("WARNING: Element '%s' has invalid dimensions: %dx%d\n",
@@ -170,29 +183,47 @@ static void accumulateMeshes(const ElementHandle elementHandle, MeshAccumulator*
 #endif
     }
 
-    Text_accumulateTextQuads(self, accumulator, id);
+    Text_accumulateTextQuads(self, curr, id);
 
     if (self->callbacks.drawCustom) {
-        self->callbacks.drawCustom(self, &accumulator->aVertices, &accumulator->aIndices, &accumulator->aMeshData, id);
+        self->callbacks.drawCustom(self, &curr->aVertices, &curr->aIndices, &curr->aMeshData, id);
     }
 
+    for_eachArr(flowElementHandle, self->aFlowElements, {
+        const Element* flowElement = Element_get(*flowElementHandle);
 
-    for_eachArr(flowElement, self->aFlowElements, {
-        accumulateMeshes(*flowElement, accumulator);
+        if (flowElement->visuals.clip.hasClip) pushBatch(accumulator, flowElement);
+        accumulateMeshes(*flowElementHandle, accumulator);
+        if (flowElement->visuals.clip.hasClip) popBatch(accumulator);
     });
 
-    for_eachArr(staticElement, self->aStaticElements, {
-        accumulateMeshes(*staticElement, accumulator);
+    for_eachArr(staticElementHandle, self->aStaticElements, {
+        const Element* staticElement = Element_get(*staticElementHandle);
+
+        if (staticElement->visuals.clip.hasClip) pushBatch(accumulator, staticElement);
+        accumulateMeshes(*staticElementHandle, accumulator);
+        if (staticElement->visuals.clip.hasClip) popBatch(accumulator);
     });
 }
 
 void Render_drawGui(const GuiState *guiState) {
-    static MeshAccumulator accumulator = {};
+    static BatchAccumulator accumulator = {};
 
-    arrClear(accumulator.aVertices);
-    arrClear(accumulator.aIndices);
-    arrClear(accumulator.aMeshData);
-    arrClear(accumulator.aElementData);
+    for_eachArr(batch, accumulator.aDone, {
+        arrClear(batch->aVertices);
+        arrClear(batch->aIndices);
+        arrClear(batch->aMeshData);
+        arrClear(batch->aElementData);
+    });
+    arrClear(accumulator.aDone);
+
+    for_eachArr(batch, accumulator.aUnfinished, {
+        arrClear(batch->aVertices);
+        arrClear(batch->aIndices);
+        arrClear(batch->aMeshData);
+        arrClear(batch->aElementData);
+    });
+    arrClear(accumulator.aUnfinished);
 
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
@@ -215,11 +246,12 @@ void Render_drawGui(const GuiState *guiState) {
     setUniform(&guiState->guiShader, "screenWidth", (float) guiState->screenWidth);
     setUniform(&guiState->guiShader, "screenHeight", (float) guiState->screenHeight);
 
+    pushBatch(&accumulator, Element_get(guiState->guiRoot));
     accumulateMeshes(guiState->guiRoot, &accumulator);
+    popBatch(&accumulator);
 
-    uploadMeshes(&accumulator);
+    drawBatches(&accumulator);
 
-    glDrawElements(GL_TRIANGLES, arrLen(accumulator.aIndices), GL_UNSIGNED_INT, nullptr);
     glBindVertexArray(0);
     glDisable(GL_MULTISAMPLE);
     Shader_unbindProgram();

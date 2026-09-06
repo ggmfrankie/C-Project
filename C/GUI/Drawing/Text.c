@@ -101,7 +101,7 @@ static void uploadTextInstanceData(const Element *owner, MeshInstanceData** aAdd
 }
 
 //@brief only adds the parent world pos and adds it to the vertexBuffer
-void Text_accumulateTextQuads(const Element *element, MeshAccumulator* meshData, ssize_t id) {
+void Text_accumulateTextQuads(const Element *element, Batch* meshData, ssize_t id) {
     const Character* aCharQuads = element->textElement.aCharQuads;
 
     if (aCharQuads == nullptr || arrIsEmpty(aCharQuads)) return;

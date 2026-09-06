@@ -19,14 +19,20 @@ static Cache* cacheLayout(Element* self);
 
 static void placeChildElements(const Element* self);
 
-void Layout_updateLayout(const GuiState *renderer) {
-    Element* root = Element_get(renderer->guiRoot);
-
+static void updateGuiRoot(const GuiState *renderer, Element* root) {
     root->dims.worldWidth  = renderer->screenWidth;
     root->dims.worldHeight = renderer->screenHeight;
 
     root->dims.maxWidth  = renderer->screenWidth;
     root->dims.maxHeight = renderer->screenHeight;
+
+    root->visuals.clip.dims = (Vec2f){renderer->screenWidth, renderer->screenHeight};
+}
+
+void Layout_updateLayout(const GuiState *state) {
+    Element* root = Element_get(state->guiRoot);
+
+    updateGuiRoot(state, root);
 
     cacheLayout(root);
 

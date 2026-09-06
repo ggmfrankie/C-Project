@@ -101,6 +101,11 @@ typedef struct Element {
         float transparency;
         float brightness;
 
+        struct {
+            Vec2f pos;
+            Vec2f dims;
+            bool hasClip;
+        } clip;
 
     } visuals;
 
