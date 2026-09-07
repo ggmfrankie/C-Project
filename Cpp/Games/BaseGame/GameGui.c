@@ -141,10 +141,20 @@ static void updatePosDisplay(float normPos, float absPos) {
     gui_setText("posDisplay", buf);
 }
 
+static ElementHandle TestElement() {
+    return Element_new((ElementSettings){
+        .minWidth = 50,
+        .minHeight = 10,
+        .color = {.4},
+        .text = "ja dies ist text",
+        .padding = {10,10,10,10}
+    });
+}
+
 static void generateTestGui(Element* guiRoot) {
     addChildElements(guiRoot,
         Element_new((ElementSettings){
-            .minWidth = 200,
+            .minWidth = 400,
             .minHeight = 200,
             .color = {.3,.4,.4},
             .pos = {400, 400},
@@ -157,9 +167,24 @@ static void generateTestGui(Element* guiRoot) {
             ScrollArea_new((ScrollAreaSettings){
                 .pos = {},
                 .height = 180,
-                .width = 180,
+                .width = 300,
                 .color = {.6,.4,.4},
-            })
+                .childGap = 10
+            },
+                TestElement(),
+                TestElement(),
+                TestElement(),
+                TestElement(),
+                TestElement(),
+                TestElement(),
+                TextField_new((ElementSettings){
+                    .padding = {10,10,10,10},
+                    .minHeight = 20,
+                    .minWidth = 100,
+                    .color = {0.88f, 0.88f, 0.91f},
+                    .cornerRadius = 10
+                }, TextField_runTask)
+            )
         )
     );
 }

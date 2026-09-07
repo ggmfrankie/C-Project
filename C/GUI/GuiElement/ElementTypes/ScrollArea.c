@@ -9,41 +9,49 @@
 
 #include "Scrollbar.h"
 typedef struct {
-    ElementHandle panel;
+    ElementHandle contentArea;
     ElementHandle scrollbar;
 } ScrollAreaData;
 
-void ScrollArea_scrollbarCallback(float norm, float abs, Element* movedElement) {
-
-}
-
-void ScrollArea_updateScrollbar(Element* scrollArea) {
+static void ScrollArea_updateScrollbar(Element* scrollArea) {
     assert(scrollArea->type == ELEMENT_TYPE_SCROLL_AREA);
 
     const ScrollAreaData* data = scrollArea->elementData.ptr;
-    Element* panel = Element_get(data->panel);
+    Element* panel = Element_get(data->contentArea);
     Element* scrollbar = Element_get(data->scrollbar);
 
     float sliderHeight = scrollArea->dims.worldHeight * (scrollArea->dims.worldHeight / panel->dims.worldHeight);
     Scrollbar_setSliderHeight(scrollbar, sliderHeight);
 }
 
+static void ScrollArea_scrollbarCallback(float norm, float abs, Element* movedElement) {
+    movedElement->dims.pos.y = -abs;
+}
+
 ElementHandle _ScrollArea_new(ScrollAreaSettings settings, ...) {
-    const ElementHandle panel = Element_new((ElementSettings){
+    const ElementHandle contentArea = Element_new((ElementSettings){
         .pos = {},
-        .minWidth = settings.width-10,
-        .wantGrowVertical = true,
+        .wantGrowHorizontal = true,
         .invisible = true,
         .noLayoutContribution = true,
-        .posMode = POS_RELATIVE
+        .posMode = POS_RELATIVE,
+        .childGap = settings.childGap,
+        .padding = settings.padding,
     });
+
+    const ElementHandle panel = Element_new((ElementSettings){
+        .invisible = true,
+        .canNotBeSelected = true
+    },
+        contentArea
+    );
 
     const ElementHandle scrollbar = Scrollbar_new((ScrollbarSettings){
         .pos = {},
         .railWidth = 10,
         .sliderHeight = 20,
         .onMove = ScrollArea_scrollbarCallback,
-        .moveElement = panel
+        .moveElement = contentArea,
     });
 
     const ElementHandle frame = Element_new((ElementSettings){
@@ -64,7 +72,7 @@ ElementHandle _ScrollArea_new(ScrollAreaSettings settings, ...) {
     scrollArea->type = ELEMENT_TYPE_SCROLL_AREA;
 
     ScrollAreaData* data = calloc(1, sizeof(ScrollAreaData));
-    data->panel = panel;
+    data->contentArea = contentArea;
     data->scrollbar = scrollbar;
 
     scrollArea->elementData.ptr = data;
@@ -73,7 +81,7 @@ ElementHandle _ScrollArea_new(ScrollAreaSettings settings, ...) {
     va_list args;
     va_start(args, settings);
 
-    Element_addChildElements_vaList(panel, args);
+    Element_addChildElements_vaList(contentArea, args);
 
     va_end(args);
 

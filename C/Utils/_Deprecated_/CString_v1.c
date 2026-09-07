@@ -32,25 +32,27 @@ StringFunctions Strings = {
 };
 
 void str_grow(String * string, const size_t newCapacity) {
-    char* oldContent = string->m;
+    const size_t safeCapacity = newCapacity > 0 ? newCapacity : 1;
     char* newContent;
+
     if (string->isHeap) {
-        newContent = realloc(oldContent, newCapacity);
+        newContent = realloc(string->m, safeCapacity + 1);
     } else {
-        newContent = malloc(newCapacity);
+        newContent = malloc(safeCapacity + 1);
         if (newContent) {
-            for (int i = 0; i < string->length; i++) {
-                newContent[i] = oldContent[i];
-            }
-            newContent[string->length] = '\0';
+            const size_t copyLen = string->length < safeCapacity ? string->length : safeCapacity;
+            memcpy(newContent, string->m, copyLen);
+            newContent[copyLen] = '\0';
+            string->length = copyLen;
         }
     }
-    if (newContent) {
-        string->m = newContent;
-        string->capacity = newCapacity;
-    } else {
+    if (!newContent) {
         puts("String growing failed, keeping old Buffer");
+        return;
     }
+
+    string->m = newContent;
+    string->capacity = safeCapacity;
     string->isHeap = true;
 }
 
@@ -135,7 +137,7 @@ void str_appendCharAt(String* string, const char value, int index) {
 
 char str_popChar(String* string) {
     if (string->length < string->capacity/3) str_grow(string, string->capacity/2);
-    const char c = string->m[string->length--];
+    const char c = string->m[--string->length];
     string->m[string->length] = '\0';
     return c;
 }
@@ -147,7 +149,7 @@ char str_popCharAt(String* string, int index) {
     for (size_t i = index; i < string->length; i++) {
         string->m[i] = string->m[i+1];
     }
-    string->m[string->length] = '\0';
+    string->m[string->length--] = '\0';
     return c;
 }
 
@@ -271,11 +273,7 @@ void str_fromInt(char* content, const size_t size, long long value) {
 }
 
 void str_recalculateLength(String* string) {
-    int length = 0;
-    while (string->length != '\0') {
-        length++;
-    }
-    string->length = length;
+    string->length = strlen(string->m);
 }
 
 void str_delete(String* string){

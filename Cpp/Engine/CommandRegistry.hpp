@@ -3,6 +3,8 @@
 //
 
 #pragma once
+#include <iostream>
+
 #include "../EngineDefines.hpp"
 #include <memory>
 
@@ -97,7 +99,7 @@ namespace Engine {
 
                 it->second->run(rawArgs);
             } catch (std::exception& e) {
-                return;
+                std::cerr << e.what() << std::endl;
             }
         }
     };

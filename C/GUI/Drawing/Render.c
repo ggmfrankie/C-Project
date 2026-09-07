@@ -134,45 +134,54 @@ static void beginScissor(Vec2f pos, Vec2f dims) {
     glScissor((GLint)pos.x, (GLint)glY, (GLsizei)dims.x, (GLsizei)dims.y);
 }
 
-static void uploadBatches(const Shader* shader, const BatchAccumulator *accumulator) {
+static void drawBatches(const Shader* shader, const BatchAccumulator *accumulator) {
     glEnable(GL_SCISSOR_TEST);
+    for_eachRevArr(const batch, accumulator->aDone, {
+        beginScissor(batch->clip.pos, batch->clip.dims);
 
+        Shader_setUniform(shader, "elementDataOffset", batch->offsets.elementData);
+        Shader_setUniform(shader, "meshDataOffset", batch->offsets.meshData);
+
+        glDrawElementsBaseVertex(
+            GL_TRIANGLES,
+            arrLen(batch->aIndices),
+            GL_UNSIGNED_INT,
+            (void*) (batch->offsets.index * sizeof(int)),
+            batch->offsets.vertex
+        );
+    });
+    glDisable(GL_SCISSOR_TEST);
+}
+
+static void uploadBatches(BatchAccumulator *accumulator) {
     int vertexOffset = 0;
     int indexOffset = 0;
 
     int elementDataOffset = 0;
     int meshDataOffset = 0;
 
-    for_eachRevArr(const batch, accumulator->aDone, {
+    for_eachArr(const batch, accumulator->aDone, {
         beginScissor(batch->clip.pos, batch->clip.dims);
 
         uploadVertices(batch->aVertices, batch->aIndices, vertexOffset, indexOffset);
         uploadElementData(batch->aElementData, elementDataOffset);
         uploadMeshData(batch->aMeshData, meshDataOffset);
 
-        Shader_setUniform(shader, "elementDataOffset", elementDataOffset);
-        Shader_setUniform(shader, "meshDataOffset", meshDataOffset);
-
-        glDrawElementsBaseVertex(
-            GL_TRIANGLES,
-            arrLen(batch->aIndices),
-            GL_UNSIGNED_INT,
-            (void*) (indexOffset * sizeof(typeof(indexOffset))),
-            vertexOffset
-        );
+        batch->offsets.vertex = vertexOffset;
+        batch->offsets.index = indexOffset;
+        batch->offsets.elementData = elementDataOffset;
+        batch->offsets.meshData = meshDataOffset;
 
         vertexOffset += arrLen(batch->aVertices);
         indexOffset += arrLen(batch->aIndices);
         elementDataOffset += arrLen(batch->aElementData);
         meshDataOffset += arrLen(batch->aMeshData);
     });
-
-    glDisable(GL_SCISSOR_TEST);
 }
 
-static ssize_t addElementData(const Element* element, ElementInstanceData** accumulator) {
+static ssize_t addElementData(const Element* element, Batch* batch) {
     ElementInstanceData out = {};
-    const ssize_t id = arrLen(*accumulator);
+    const ssize_t id = arrLen(batch->aElementData);
     const float brightness = (element->state >= UI_STATE_HOVER && element->flags.canBeHovered) ? element->visuals.brightness - 0.2 : element->visuals.brightness;
     out.worldPos = element->dims.worldPos;
     out.color = (Vec4f){
@@ -182,7 +191,7 @@ static ssize_t addElementData(const Element* element, ElementInstanceData** accu
         .w = 1.0f - element->visuals.transparency
     };
     out.atlasID = 0;
-    arrPush(*accumulator, out);
+    arrPush(batch->aElementData, out);
     return id;
 }
 
@@ -207,7 +216,7 @@ static void accumulateMeshes(const ElementHandle elementHandle, BatchAccumulator
 
     Batch* curr = arrGetLast(accumulator->aUnfinished);
 
-    const ssize_t id = addElementData(self, &curr->aElementData);
+    const ssize_t id = addElementData(self, curr);
 
     if (self->generateMesh) {
         self->generateMesh(self, &curr->aVertices, &curr->aIndices, id);
@@ -226,7 +235,7 @@ static void accumulateMeshes(const ElementHandle elementHandle, BatchAccumulator
         self->callbacks.drawCustom(self, &curr->aVertices, &curr->aIndices, &curr->aMeshData, id);
     }
 
-    for_eachArr(flowElementHandle, self->aFlowElements, {
+    for_eachArr(const flowElementHandle, self->aFlowElements, {
         const Element* flowElement = Element_get(*flowElementHandle);
 
         if (flowElement->visuals.clip.hasClip) pushBatch(accumulator, flowElement);
@@ -234,7 +243,7 @@ static void accumulateMeshes(const ElementHandle elementHandle, BatchAccumulator
         if (flowElement->visuals.clip.hasClip) popBatch(accumulator);
     });
 
-    for_eachArr(staticElementHandle, self->aStaticElements, {
+    for_eachArr(const staticElementHandle, self->aStaticElements, {
         const Element* staticElement = Element_get(*staticElementHandle);
 
         if (staticElement->visuals.clip.hasClip) pushBatch(accumulator, staticElement);
@@ -246,7 +255,7 @@ static void accumulateMeshes(const ElementHandle elementHandle, BatchAccumulator
 void Render_drawGui(const GuiState *guiState) {
     static BatchAccumulator accumulator = {};
 
-    for_eachArr(batch, accumulator.aDone, {
+    for_eachArr(const batch, accumulator.aDone, {
         arrClear(batch->aVertices);
         arrClear(batch->aIndices);
         arrClear(batch->aMeshData);
@@ -254,7 +263,7 @@ void Render_drawGui(const GuiState *guiState) {
     });
     arrClear(accumulator.aDone);
 
-    for_eachArr(batch, accumulator.aUnfinished, {
+    for_eachArr(const batch, accumulator.aUnfinished, {
         arrClear(batch->aVertices);
         arrClear(batch->aIndices);
         arrClear(batch->aMeshData);
@@ -287,7 +296,8 @@ void Render_drawGui(const GuiState *guiState) {
     accumulateMeshes(guiState->guiRoot, &accumulator);
     popBatch(&accumulator);
 
-    uploadBatches(&guiState->guiShader, &accumulator);
+    uploadBatches(&accumulator);
+    drawBatches(&guiState->guiShader, &accumulator);
 
     glBindVertexArray(0);
     glDisable(GL_MULTISAMPLE);

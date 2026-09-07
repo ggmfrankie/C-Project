@@ -107,6 +107,16 @@ namespace Game {
         );
 
         mCommandRegistry->registerCommand<
+            Engine::Arg<bool>
+        >(
+            "vsync",
+            [this](bool b) {
+                glfwMakeContextCurrent(mScreen->getWindowHandle());
+                glfwSwapInterval(b ? 1 : 0);
+            }
+        );
+
+        mCommandRegistry->registerCommand<
             Engine::Arg<float>
         >(
             "movespeed",

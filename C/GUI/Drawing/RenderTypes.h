@@ -37,6 +37,14 @@ typedef struct {
         Vec2f dims;
     } clip;
 
+    struct {
+        int vertex;
+        int index;
+
+        int elementData;
+        int meshData;
+    } offsets;
+
 } Batch;
 
 typedef struct {

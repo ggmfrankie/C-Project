@@ -139,12 +139,12 @@ static Vec2f getDimsFromFlowChildren(const Element* self) {
 
 static Vec2f getDimsFromStaticChildren(const Element* self) {
     Vec2f extend = {0, 0};
-    for_eachArr(childPtr, self->aStaticElements, {
+    for_eachArr(const childPtr, self->aStaticElements, {
         Element* child = Element_get(*childPtr);
-        if (child->flags.noLayoutContribution) continue;
         const Vec2f pos = child->dims.pos;
         //Children first
         const Cache* childCache = cacheLayout(child);
+        if (child->flags.noLayoutContribution) continue;
         extend.x = max(extend.x, pos.x + childCache->minWidth);
         extend.y = max(extend.y, pos.y + childCache->minHeight);
     });

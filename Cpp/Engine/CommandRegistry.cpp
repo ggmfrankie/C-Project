@@ -12,28 +12,24 @@
 #include <optional>
 #include <variant>
 
+
 namespace Engine {
     using std::string, std::string_view, std::array, std::vector, std::function, std::variant;
+    namespace {
+        enum class State {
+            start,
+            plainText,
+            command,
+            argument
+        };
 
-    enum class State {
-        start,
-        plainText,
-        command,
-        argument
-    };
-
-    enum class CommandState {
-        operation,
-        argument
-    };
-
-
-    struct Transition {
-        variant<function<bool(State s)>, State> prevState;
-        variant<function<bool(char c)>, char> event;
-        State nextState;
-        std::optional<function<void(vector<Token>& t, const string& s)>> actionFun;
-    };
+        struct Transition {
+            variant<function<bool(State s)>, State> prevState;
+            variant<function<bool(char c)>, char> event;
+            State nextState;
+            std::optional<function<void(vector<Token>& t, const string& s)>> actionFun;
+        };
+    }
 
     static bool prevMatches(const variant<function<bool(State s)>, State>& v, const State s) {
         if (std::holds_alternative<State>(v)) {
@@ -98,8 +94,7 @@ namespace Engine {
 
     std::pair<std::string, std::vector<std::string>> extractCommandAndArgs(const std::vector<Token>& tokens) {
         if (tokens.empty() || tokens[0].type != TokenType::command) {
-
-            throw std::runtime_error("No command found");
+            throw std::runtime_error("Command not found");
         }
 
         auto command = std::string(tokens[0].value);
