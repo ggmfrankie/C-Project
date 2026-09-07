@@ -31,6 +31,9 @@ layout(std430, binding = 1) buffer MeshBuffer {
 uniform float screenWidth;
 uniform float screenHeight;
 
+uniform int elementDataOffset;
+uniform int meshDataOffset;
+
 out vec2 f_UV;
 out vec4 f_Color;
 flat out int f_AtlasID;
@@ -42,7 +45,7 @@ vec4 calculateNormPos(vec2 relPos, vec2 worldPos) {
 }
 
 void handleElement() {
-    ElementInstanceData inst = elements[inIdx];
+    ElementInstanceData inst = elements[inIdx + elementDataOffset];
 
     gl_Position = calculateNormPos(inPos, inst.worldPos);
     f_Color = inst.color;
@@ -50,9 +53,9 @@ void handleElement() {
 }
 
 void handleOther() {
-    MeshInstanceData inst = customs[inIdx];
+    MeshInstanceData inst = customs[inIdx + meshDataOffset];
 
-    vec2 worldPos = elements[inst.ownerID].worldPos;
+    vec2 worldPos = elements[inst.ownerID + elementDataOffset].worldPos;
     gl_Position = calculateNormPos(inPos, worldPos);
     f_Color = inst.color;
     f_AtlasID = inst.atlasID;

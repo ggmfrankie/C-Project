@@ -5,8 +5,8 @@
 #pragma once
 #include "GuiDefines.h"
 #ifdef WIN32
-#include <winsock.h>
-#include <psdk_inc/_socket_types.h>
+
+typedef unsigned long long SOCKET;
 
 void initSockets();
 SOCKET createClientSocket(const char* ip, int port);

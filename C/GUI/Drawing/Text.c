@@ -93,11 +93,13 @@ Font Text_loadFontAtlas(const char* file) {
 }
 
 static void uploadTextInstanceData(const Element *owner, MeshInstanceData** aAdditionalData, ssize_t id) {
-    arrPush(*aAdditionalData, (MeshInstanceData){
-        .color = owner->textElement.textColor,
-        .atlasID = 1,
-        .ownerID = id
-    });
+    arrPush(*aAdditionalData,
+        ((MeshInstanceData){
+            .color = owner->textElement.textColor,
+            .atlasID = 1,
+            .ownerID = id
+        })
+    );
 }
 
 //@brief only adds the parent world pos and adds it to the vertexBuffer
@@ -126,10 +128,10 @@ void Text_accumulateTextQuads(const Element *element, Batch* meshData, ssize_t i
 
         const int v0 = arrLen(meshData->aVertices);
 
-        arrPush(meshData->aVertices, (GuiVertex){{x,   y},   uv0, TEXT_BINDING, ID});
-        arrPush(meshData->aVertices, (GuiVertex){{x+w, y},   uv1, TEXT_BINDING, ID});
-        arrPush(meshData->aVertices, (GuiVertex){{x+w, y+h}, uv2, TEXT_BINDING, ID});
-        arrPush(meshData->aVertices, (GuiVertex){{x,   y+h}, uv3, TEXT_BINDING, ID});
+        arrPush(meshData->aVertices, ((GuiVertex){{x,   y},   uv0, TEXT_BINDING, ID}));
+        arrPush(meshData->aVertices, ((GuiVertex){{x+w, y},   uv1, TEXT_BINDING, ID}));
+        arrPush(meshData->aVertices, ((GuiVertex){{x+w, y+h}, uv2, TEXT_BINDING, ID}));
+        arrPush(meshData->aVertices, ((GuiVertex){{x,   y+h}, uv3, TEXT_BINDING, ID}));
 
         const int v1 = v0 + 1;
         const int v2 = v0 + 2;

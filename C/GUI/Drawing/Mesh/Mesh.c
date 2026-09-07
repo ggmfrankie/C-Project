@@ -25,24 +25,24 @@ static struct ArcInfo Mesh_triangulate(const Vec2f corner, const float radius, G
 
     const int startIndex = cornerIndex + 1;
 
-    arrPush(*aVertices, (GuiVertex){
+    arrPush(*aVertices, ((GuiVertex){
         .pos = (Vec2f){
             corner.x + cosf(startAngle)*radius,
             corner.y + sinf(startAngle)*radius,
         }
-    });
+    }));
 
     const int lim = (radius > 0 ? numTriangles : 1);
 
     for (int i = 1 ; i <= lim; i++) {
         const int idx = arrLen(*aVertices);
 
-        arrPush(*aVertices, (GuiVertex){
+        arrPush(*aVertices, ((GuiVertex){
             .pos = (Vec2f){
                 corner.x + cosf(startAngle + i * radStep)*radius,
                 corner.y + sinf(startAngle + i * radStep)*radius,
             }
-        });
+        }));
 
         const int prev = idx - 1;
         const int curr = idx;
@@ -157,10 +157,10 @@ void Mesh_customQuad(const Vec2f pos, const Vec2f dims, Vec4f color, GuiVertex *
 
     const Texture texture = Texture_get("White.png");
 
-    arrPush(*aVertices, (GuiVertex){.bufferBinding = 1, .ID = id, .uv = texture.uv0,                       .pos = pos});
-    arrPush(*aVertices, (GuiVertex){.bufferBinding = 1, .ID = id, .uv = {texture.uv0.x, texture.uv1.y}, .pos = {pos.x, pos.y + dims.y}});
-    arrPush(*aVertices, (GuiVertex){.bufferBinding = 1, .ID = id, .uv = texture.uv1,                       .pos = {pos.x + dims.x, pos.y + dims.y}});
-    arrPush(*aVertices, (GuiVertex){.bufferBinding = 1, .ID = id, .uv = {texture.uv1.x, texture.uv0.y}, .pos = {pos.x + dims.x, pos.y}});
+    arrPush(*aVertices, ((GuiVertex){.bufferBinding = 1, .ID = id, .uv = texture.uv0,                       .pos = pos}));
+    arrPush(*aVertices, ((GuiVertex){.bufferBinding = 1, .ID = id, .uv = {texture.uv0.x, texture.uv1.y}, .pos = {pos.x, pos.y + dims.y}}));
+    arrPush(*aVertices, ((GuiVertex){.bufferBinding = 1, .ID = id, .uv = texture.uv1,                       .pos = {pos.x + dims.x, pos.y + dims.y}}));
+    arrPush(*aVertices, ((GuiVertex){.bufferBinding = 1, .ID = id, .uv = {texture.uv1.x, texture.uv0.y}, .pos = {pos.x + dims.x, pos.y}}));
 
     arrPush(*aIndices, start);
     arrPush(*aIndices, start+1);
@@ -170,5 +170,5 @@ void Mesh_customQuad(const Vec2f pos, const Vec2f dims, Vec4f color, GuiVertex *
     arrPush(*aIndices, start+2);
     arrPush(*aIndices, start+3);
 
-    arrPush(*aAdditional, (MeshInstanceData){.color = color, .atlasID = 0, .ownerID = ownerId});
+    arrPush(*aAdditional, ((MeshInstanceData){.color = color, .atlasID = 0, .ownerID = ownerId}));
 }

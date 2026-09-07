@@ -63,7 +63,7 @@ static Vec2f getManualDims(const Element* self) {
 
 static Line* createNewLine(Line* lines, const int i) {
     arrGetLast(lines)->end = i;
-    arrPush(lines, (Line){.start = i, .end = i});
+    arrPush(lines, ((Line){.start = i, .end = i}));
     return arrGetLast(lines);
 }
 

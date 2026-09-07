@@ -391,9 +391,9 @@ static bool Engine_processInputRec(ElementHandle elementHandle, GuiState *render
 }
 
 void gui_charCallback(GLFWwindow* window, const unsigned int codepoint) {
-    if (focusedElement == nullptr || focusedElement->type == t_defaultElement) return;
+    if (focusedElement == nullptr || focusedElement->type == ELEMENT_TYPE_DEFAULT) return;
 
-    if (focusedElement->type == t_textField) {
+    if (focusedElement->type == ELEMENT_TYPE_TEXTFIELD) {
 
         if (codepoint < 128) {
             TextField_insertCharAtCursor(focusedElement, (char) codepoint);
@@ -403,13 +403,13 @@ void gui_charCallback(GLFWwindow* window, const unsigned int codepoint) {
 
 void gui_keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     if (g_Callbacks.onKeyPress) { g_Callbacks.onKeyPress(key, scancode, action, mods);}
-    if (focusedElement == nullptr || focusedElement->type == t_defaultElement) return;
+    if (focusedElement == nullptr || focusedElement->type == ELEMENT_TYPE_DEFAULT) return;
     if (key == GLFW_KEY_ESCAPE) {
         focusedElement = nullptr;
         return;
     }
 
-    if (focusedElement->type == t_textField) {
+    if (focusedElement->type == ELEMENT_TYPE_TEXTFIELD) {
         if (action == GLFW_PRESS || action == GLFW_REPEAT)
         {
             if (key == GLFW_KEY_BACKSPACE) {

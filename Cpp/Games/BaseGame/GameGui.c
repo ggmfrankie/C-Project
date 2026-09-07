@@ -13,6 +13,7 @@
 #include "_Projects_/Chess/ChessGame.h"
 #include "_Projects_/TFE/TFE.h"
 #include "GUI/GuiElement/GuiElement.h"
+#include "GUI/GuiElement/ElementTypes/ScrollArea.h"
 #include "GUI/GuiElement/ElementTypes/Scrollbar.h"
 #include "GUI/GuiElement/ElementTypes/TextField.h"
 
@@ -153,17 +154,11 @@ static void generateTestGui(Element* guiRoot) {
             .padding = {10,10,10, 10},
             .cornerRadius = 10
         },
-            Scrollbar_new((ScrollbarSettings){
-                .pos = {190, 0},
-                .railWidth = 10,
-                .sliderHeight = 20,
-                .onMove = updatePosDisplay
-            }),
-            Element_new((ElementSettings){
-                .text = "",
-                .name = "posDisplay",
-                .transparency = 1,
-                .textScale = .5
+            ScrollArea_new((ScrollAreaSettings){
+                .pos = {},
+                .height = 180,
+                .width = 180,
+                .color = {.6,.4,.4},
             })
         )
     );

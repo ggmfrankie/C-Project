@@ -31,11 +31,11 @@ void _arrGrowIfNeeded(void **array, size_t typeSize);
 
 #define arrIsEmpty(array) (arrLen(array) == 0)
 
-#define arrPush(array, ...) \
+#define arrPush(array, item) \
     do {\
         if((array) == nullptr) arrNew((array), ArrayInitCapacity);\
         _arrGrowIfNeeded((void**)&(array), sizeof(*(array)));\
-        (array)[_arrayGetHead(array)->size++] = (__VA_ARGS__);\
+        (array)[_arrayGetHead(array)->size++] = (item);\
     } while (0)
 
 #define arrTryGet(array, index)\
@@ -82,7 +82,7 @@ void _arrGrowIfNeeded(void **array, size_t typeSize);
        \
         size_t len = arrLen(array);\
         for (size_t i = 0; i < len; ++i) {\
-            typeof(array) (item) = &(array)[i];\
+            typeof(array) item = &(array)[i];\
             __VA_ARGS__\
         }\
     } while (0)

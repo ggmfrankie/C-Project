@@ -9,8 +9,10 @@ typedef struct {
     Vec2f pos;
     float width;
     float height;
+
+    Vec3f color;
 } ScrollAreaSettings;
 
 ElementHandle _ScrollArea_new(ScrollAreaSettings settings, ...);
 
-#define ScrollArea_new(settings, ...) _ScrollArea_new(settings, __VA_ARGS__, (ElementHandle){-1})
+#define ScrollArea_new(...) _ScrollArea_new(__VA_ARGS__, (ElementHandle){-1})

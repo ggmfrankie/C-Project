@@ -9,6 +9,7 @@
 #include "Utils/Logging/Logging.h"
 
 #ifdef _WIN32
+#include <winsock.h>
 void initSockets() {
     WSADATA wsa;
     if (WSAStartup(MAKEWORD(2,2), &wsa) != 0) ERROR_("WSAStartup failed.\n");

@@ -9,13 +9,14 @@
 #define CURSOR_WIDTH 4
 #define CURSOR_BLINK_TIMER 0.5
 
-static void TextField_drawCursor(const Element* element, GuiVertex** aVertices, int** aIndices, MeshInstanceData** additional, ssize_t ownerId) {
-    if (element->state != UI_STATE_SELECTED) return;
-    const TextFieldData* data = element->elementData.ptr;
+static void TextField_drawCursor(const Element* self, GuiVertex** aVertices, int** aIndices, MeshInstanceData** additional, ssize_t ownerId) {
+    if (self->state != UI_STATE_SELECTED) return;
+    assert(self->type == ELEMENT_TYPE_TEXTFIELD);
+    const TextFieldData* data = self->elementData.ptr;
     if (!data->cursor.isVisible) return;
 
-    const Vec2f pos = {data->cursor.pos.abs, element->dims.pos.y};
-    const Vec2f dims = {CURSOR_WIDTH, element->dims.worldHeight};
+    const Vec2f pos = {data->cursor.pos.abs, self->dims.pos.y};
+    const Vec2f dims = {CURSOR_WIDTH, self->dims.worldHeight};
 
     Mesh_customQuad(
         pos,
@@ -29,6 +30,7 @@ static void TextField_drawCursor(const Element* element, GuiVertex** aVertices, 
 }
 
 static void TextField_updateBlinkTimer(Element* self, double deltaTime) {
+    assert(self->type == ELEMENT_TYPE_TEXTFIELD);
     TextFieldData* data = self->elementData.ptr;
     data->cursor.blinkTimer += deltaTime;
 
@@ -38,7 +40,7 @@ static void TextField_updateBlinkTimer(Element* self, double deltaTime) {
     }
 }
 
-void TextField_moveCursorTo(const Element* self, int index) {
+static void TextField_moveCursorTo(const Element* self, int index) {
     const Character* aCharQuads = self->textElement.aCharQuads;
     TextFieldData* data = self->elementData.ptr;
     TextFieldCursor* cursor = &data->cursor;
@@ -61,6 +63,7 @@ void TextField_moveCursorTo(const Element* self, int index) {
 }
 
 void TextField_popChar(Element* self) {
+    assert(self->type == ELEMENT_TYPE_TEXTFIELD);
     TextFieldData* data = self->elementData.ptr;
     if (data->cursor.pos.index == 0) return;
 
@@ -76,6 +79,7 @@ void TextField_moveCursorBy(const Element* self, int amount) {
 }
 
 void TextField_insertCharAtCursor(Element* self, char c) {
+    assert(self->type == ELEMENT_TYPE_TEXTFIELD);
     TextFieldData* tfd = self->elementData.ptr;
 
     str_appendCharAt(&tfd->text, c, tfd->cursor.pos.index);
@@ -101,7 +105,7 @@ static void TextField_setClosestCursorPos(const Element* self, float pos) {
 }
 
 static bool TextField_onClick(Element *self) {
-    if(self->type != t_textField) return false;
+    if(self->type != ELEMENT_TYPE_TEXTFIELD) return false;
 
     const TextFieldData* data = self->elementData.ptr;
     if (Strings.isEmpty(&data->text)) return false;
@@ -132,14 +136,14 @@ ElementHandle TextField_new(const ElementSettings elementSettings, bool (*onEnte
             .whileSelected = TextField_updateBlinkTimer
         }
     );
-    Element_get(textField)->type = t_textField;
+    Element_get(textField)->type = ELEMENT_TYPE_TEXTFIELD;
     addChildElements(Element_get(element), textField);
 
     return element;
 }
 
 bool TextField_runTask(Element *element) {
-    if(element->type != t_textField) return false;
+    if(element->type != ELEMENT_TYPE_TEXTFIELD) return false;
     TextFieldData* data = element->elementData.ptr;
     if (data->text.length == 0) return false;
 

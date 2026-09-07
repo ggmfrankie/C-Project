@@ -58,7 +58,13 @@ static void Utils_test() {
     //int x = 'FOO!';
 }
 
+typedef struct {
+    char* m;
+} Stringus;
 
+inline void _print() {
+
+}
 
 inline void etata() {
     int* array = nullptr;

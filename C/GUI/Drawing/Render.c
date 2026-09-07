@@ -21,7 +21,7 @@ static struct {
 
 #define MAX_GUI_INSTANCES 81920
 
-void initBuffers() {
+static void initBuffers() {
     glGenVertexArrays(1, &graphicsData.VAO);
     glBindVertexArray(graphicsData.VAO);
 
@@ -58,7 +58,6 @@ void initBuffers() {
 
     glBindVertexArray(0);
 
-
     glGenBuffers(1, &graphicsData.elementSSBO);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, graphicsData.elementSSBO);
     glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(ElementInstanceData) * MAX_GUI_INSTANCES, nullptr, GL_DYNAMIC_DRAW);
@@ -78,9 +77,12 @@ void Render_init(GuiState *guiState) {
     initBuffers();
     Shader_createUniform(&guiState->guiShader, "screenWidth");
     Shader_createUniform(&guiState->guiShader, "screenHeight");
+
+    Shader_createUniform(&guiState->guiShader, "meshDataOffset");
+    Shader_createUniform(&guiState->guiShader, "elementDataOffset");
 }
 
-static void uploadVertices(const GuiVertex *aVertices, const int *aIndices) {
+static void uploadVertices(const GuiVertex *aVertices, const int *aIndices, int vertexOffset, int indexOffset) {
 #if GUI_DEBUG && GUI_DEBUG_TRACK_VERTICES
     only_every_do(100,
         printf("Number of vertices: %llu\n", arrLen(aVertices))
@@ -89,49 +91,80 @@ static void uploadVertices(const GuiVertex *aVertices, const int *aIndices) {
 
     glBindVertexArray(graphicsData.VAO);
     glBindBuffer(GL_ARRAY_BUFFER, graphicsData.VBO);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GuiVertex) * arrLen(aVertices), aVertices);
+    glBufferSubData(GL_ARRAY_BUFFER,
+        vertexOffset * sizeof(GuiVertex),
+        sizeof(GuiVertex) * arrLen(aVertices),
+        aVertices
+    );
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, graphicsData.EBO);
-    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, sizeof(int) * arrLen(aIndices), aIndices);
+    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER,
+        indexOffset * sizeof(int),
+        sizeof(int) * arrLen(aIndices),
+        aIndices
+    );
 }
 
-static void uploadElementData(const ElementInstanceData* aElementData) {
-    assert(aElementData != nullptr);
+static void uploadElementData(const ElementInstanceData* aElementData, int offset) {
+    if (arrIsEmpty(aElementData)) return;
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, graphicsData.elementSSBO);
 
     glBufferSubData(GL_SHADER_STORAGE_BUFFER,
-        0,
+        offset * sizeof(ElementInstanceData),
         arrLen(aElementData) * sizeof(ElementInstanceData),
         aElementData
     );
 }
 
-static void uploadMeshData(const MeshInstanceData* aMeshData) {
-    assert(aMeshData != nullptr);
+static void uploadMeshData(const MeshInstanceData* aMeshData, int offset) {
+    if (arrIsEmpty(aMeshData)) return;
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, graphicsData.meshSSBO);
 
     glBufferSubData(GL_SHADER_STORAGE_BUFFER,
-        0,
+        offset * sizeof(MeshInstanceData),
         arrLen(aMeshData) * sizeof(MeshInstanceData),
         aMeshData
     );
 }
 
 static void beginScissor(Vec2f pos, Vec2f dims) {
-    glScissor(pos.x, pos.y, dims.x, dims.y);
+    int viewport[4];
+    glGetIntegerv(GL_VIEWPORT, viewport);
+    const GLfloat glY = (viewport[3] - (pos.y + dims.y));
+    glScissor((GLint)pos.x, (GLint)glY, (GLsizei)dims.x, (GLsizei)dims.y);
 }
 
-static void drawBatches(const BatchAccumulator *accumulator) {
+static void uploadBatches(const Shader* shader, const BatchAccumulator *accumulator) {
     glEnable(GL_SCISSOR_TEST);
 
-    for_eachArr(batch, accumulator->aDone, {
+    int vertexOffset = 0;
+    int indexOffset = 0;
+
+    int elementDataOffset = 0;
+    int meshDataOffset = 0;
+
+    for_eachRevArr(const batch, accumulator->aDone, {
         beginScissor(batch->clip.pos, batch->clip.dims);
 
-        uploadVertices(batch->aVertices, batch->aIndices);
-        uploadElementData(batch->aElementData);
-        uploadMeshData(batch->aMeshData);
+        uploadVertices(batch->aVertices, batch->aIndices, vertexOffset, indexOffset);
+        uploadElementData(batch->aElementData, elementDataOffset);
+        uploadMeshData(batch->aMeshData, meshDataOffset);
 
-        glDrawElements(GL_TRIANGLES, arrLen(batch->aIndices), GL_UNSIGNED_INT, nullptr);
+        Shader_setUniform(shader, "elementDataOffset", elementDataOffset);
+        Shader_setUniform(shader, "meshDataOffset", meshDataOffset);
+
+        glDrawElementsBaseVertex(
+            GL_TRIANGLES,
+            arrLen(batch->aIndices),
+            GL_UNSIGNED_INT,
+            (void*) (indexOffset * sizeof(typeof(indexOffset))),
+            vertexOffset
+        );
+
+        vertexOffset += arrLen(batch->aVertices);
+        indexOffset += arrLen(batch->aIndices);
+        elementDataOffset += arrLen(batch->aElementData);
+        meshDataOffset += arrLen(batch->aMeshData);
     });
 
     glDisable(GL_SCISSOR_TEST);
@@ -154,14 +187,14 @@ static ssize_t addElementData(const Element* element, ElementInstanceData** accu
 }
 
 static void pushBatch(BatchAccumulator* accumulator, const Element* clipElement) {
-
-    arrPush(accumulator->aUnfinished, (Batch){
+    const Batch newBatch = {
         .clip.pos = (Vec2f){
             clipElement->visuals.clip.pos.x + clipElement->dims.worldPos.x,
             clipElement->visuals.clip.pos.y + clipElement->dims.worldPos.y
         },
         .clip.dims = clipElement->visuals.clip.dims,
-    });
+    };
+    arrPush(accumulator->aUnfinished, newBatch);
 }
 
 static void popBatch(BatchAccumulator* accumulator) {
@@ -247,14 +280,14 @@ void Render_drawGui(const GuiState *guiState) {
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, guiState->font.fontAtlas.ID);
 
-    setUniform(&guiState->guiShader, "screenWidth", (float) guiState->screenWidth);
-    setUniform(&guiState->guiShader, "screenHeight", (float) guiState->screenHeight);
+    Shader_setUniform(&guiState->guiShader, "screenWidth", (float) guiState->screenWidth);
+    Shader_setUniform(&guiState->guiShader, "screenHeight", (float) guiState->screenHeight);
 
     pushBatch(&accumulator, Element_get(guiState->guiRoot));
     accumulateMeshes(guiState->guiRoot, &accumulator);
     popBatch(&accumulator);
 
-    drawBatches(&accumulator);
+    uploadBatches(&guiState->guiShader, &accumulator);
 
     glBindVertexArray(0);
     glDisable(GL_MULTISAMPLE);

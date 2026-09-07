@@ -5,6 +5,7 @@
 #include "GuiDefines.h"
 #include "GuiTypes.h"
 #include "IO/Tasks.h"
+#include "ElementTypes.h"
 
 #include "Utils/Math/Vector.h"
 #include "GUI/Drawing/Text.h"
@@ -26,12 +27,6 @@ typedef enum LayoutDirection: byte {
     LAYOUT_DOWN = 0,
     LAYOUT_RIGHT
 } LayoutDirection;
-
-typedef enum ElementType: byte {
-    t_defaultElement,
-    t_slider,
-    t_textField
-} ElementType;
 
 typedef enum UIState: byte {
     UI_STATE_NORMAL,
