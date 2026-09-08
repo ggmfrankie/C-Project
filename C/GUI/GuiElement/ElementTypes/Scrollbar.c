@@ -5,14 +5,14 @@
 
 #include "Makros/Makros.h"
 
-static void Scrollbar_handleDragging(Element *self, Vec2f pos) {
+static void Scrollbar_handleDragging(Element* self, Vec2f pos) {
     assert(self->type == ELEMENT_TYPE_SCROLLBAR_SLIDER);
     const float newY = max(0, min(Element_get(self->parentElement)->dims.worldHeight - self->dims.worldHeight, pos.y));
     ScrollbarData* data = self->elementData.ptr;
 
     data->progress = newY / (Element_get(self->parentElement)->dims.worldHeight - self->dims.worldHeight);
 
-    if (data->onMove) data->onMove(data->progress, newY, Element_get(data->moveElement));
+    if (data->onMove) data->onMove(data, Element_get(data->moveElement));
 
     self->dims.pos.y = newY;
 }
@@ -23,16 +23,17 @@ ElementHandle Scrollbar_new(ScrollbarSettings settings) {
         .minWidth = settings.railWidth,
         .minHeight = settings.sliderHeight,
         .posMode = POS_RELATIVE,
-        .color = {0,0,0},
+        .color = settings.sliderColor,
         .transparency = 0.5,
         .cornerRadius = settings.railWidth*0.5,
+        .canBeHovered = true
     });
 
     const ElementHandle railHandle = Element_new((ElementSettings) {
         .pos = settings.pos,
         .minWidth = settings.railWidth,
         .wantGrowVertical = true,
-        .color = {0.3,.3,.3},
+        .color = settings.railColor,
         .cornerRadius = settings.railWidth*0.5
     },
         sliderHandle
@@ -42,6 +43,7 @@ ElementHandle Scrollbar_new(ScrollbarSettings settings) {
     data->onMove = settings.onMove;
     data->moveElement = settings.moveElement;
     data->slider = sliderHandle;
+    data->rail = railHandle;
 
     Element* slider = Element_get(sliderHandle);
     slider->type = ELEMENT_TYPE_SCROLLBAR_SLIDER;

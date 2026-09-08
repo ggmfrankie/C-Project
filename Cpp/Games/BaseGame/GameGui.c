@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "GuiColors.h"
 #include "GuiInterface.h"
 #include "GUI/GuiElement/CallbackHelper.h"
 #include "GuiTasks.hpp"
@@ -28,7 +29,7 @@ static void generateDebugGui(Element* guiRoot) {
             Element_new((ElementSettings){
                 .minHeight = 20,
                 .maxHeight = true,
-                .canNotBeSelected = true,
+                .notSelectable = true,
                 .invisible = true,
                 .color = {},
                 .posMode = POS_RELATIVE
@@ -36,7 +37,7 @@ static void generateDebugGui(Element* guiRoot) {
                 Element_new((ElementSettings){
                     .minWidth = 20,
                     .text = "fps",
-                    .canNotBeSelected = true,
+                    .notSelectable = true,
                     .invisible = true,
                     .name = "fps display"
                 })
@@ -68,7 +69,7 @@ static void generateMainMenuGui(Element* guiRoot) {
         },
             Element_new((ElementSettings){
                 .invisible = true,
-                .canNotBeSelected = true,
+                .notSelectable = true,
                 .text = "Home Screen",
             }),
             TextField_new((ElementSettings){
@@ -132,7 +133,7 @@ static void generateMainMenuGui(Element* guiRoot) {
             })
         )
     );
-    gui_setActive("Home Screen", false);
+    //gui_setActive("Home Screen", false);
 }
 
 static void updatePosDisplay(float normPos, float absPos) {
@@ -145,18 +146,18 @@ static ElementHandle TestElement() {
     return Element_new((ElementSettings){
         .minWidth = 50,
         .minHeight = 10,
-        .color = {.4},
+        .color = GUI_COLOR_DARKGRAY3,
         .text = "ja dies ist text",
-        .padding = {10,10,10,10}
+        .textColor = GUI_COLOR_LIGHTGRAY3,
+        .padding = {10,10,10,10},
+        .cornerRadius = 5,
     });
 }
 
 static void generateTestGui(Element* guiRoot) {
     addChildElements(guiRoot,
         Element_new((ElementSettings){
-            .minWidth = 400,
-            .minHeight = 200,
-            .color = {.3,.4,.4},
+            .color = GUI_COLOR_DARKGRAY2,
             .pos = {400, 400},
             .posMode = POS_RELATIVE,
             .draggable = true,
@@ -167,10 +168,18 @@ static void generateTestGui(Element* guiRoot) {
             ScrollArea_new((ScrollAreaSettings){
                 .pos = {},
                 .height = 180,
-                .width = 300,
-                .color = {.6,.4,.4},
-                .childGap = 10
+                .backgroundColor = GUI_COLOR_DARKGRAY2,
+                .sliderColor = GUI_COLOR_BLACK,
+                .railColor = GUI_COLOR_DARKGRAY1,
+                .childGap = 5,
+                .padding = {5}
             },
+                TestElement(),
+                TestElement(),
+                TestElement(),
+                TestElement(),
+                TestElement(),
+                TestElement(),
                 TestElement(),
                 TestElement(),
                 TestElement(),

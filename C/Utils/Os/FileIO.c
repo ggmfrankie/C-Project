@@ -31,7 +31,7 @@ Str readFile(const char* fileName) {
 
     return buffer;
 }
-void writeFile(const char* fileName, CStr content) {
+void writeFile(const char* fileName, Str content) {
     defer(defer_closeFile) FILE *file = fopen(fileName, "wb");
 
     if (!file) {

@@ -11,7 +11,6 @@ extern "C" {
 #define STR_DEBUG 1
 
 typedef char* Str;
-typedef const char* CStr;
 
 struct _StringHeader_ {
     #if STR_DEBUG
@@ -31,21 +30,21 @@ Str strNew_c(size_t capacity);
 Str strFrom_int(int val);
 
 //@brief gives back the lenght as stored inside the Str
-size_t strLen(CStr s);
+size_t strLen(Str s);
 //@brief gives back the capacity as stored inside the Str
-size_t strCap(CStr s);
+size_t strCap(Str s);
 //@brief takes two Str and concatinates then into a new Str
-char* strConcat(CStr a, CStr b);
+char* strConcat(Str a, Str b);
 //@brief takes a Str and splits it into an Array of Str with the given delimiter
-Str* strSplit(CStr s, char del);
+Str* strSplit(Str s, char del);
 //@brief tries to return the char at the given index
-char strAt(CStr a, size_t idx);
+char strAt(Str s, size_t idx);
 //@brief returns true if the underlying Str is empty
-bool strIsEmpty(CStr s);
+bool strIsEmpty(Str s);
 //@brief returns true if the underlying Str is full
-bool strIsFull(CStr s);
+bool strIsFull(Str s);
 //@brief returns if de src Str contains p in the beginning
-bool strStartsWith(CStr src, CStr p);
+bool strStartsWith(Str src, Str p);
 
 //@brief appends the char to the end of the Str. May reallocate the Str
 void strAppend(Str s, char c);

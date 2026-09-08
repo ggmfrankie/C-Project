@@ -198,10 +198,13 @@ static ssize_t addElementData(const Element* element, Batch* batch) {
 static void pushBatch(BatchAccumulator* accumulator, const Element* clipElement) {
     const Batch newBatch = {
         .clip.pos = (Vec2f){
-            clipElement->visuals.clip.pos.x + clipElement->dims.worldPos.x,
-            clipElement->visuals.clip.pos.y + clipElement->dims.worldPos.y
+            clipElement->dims.worldPos.x + clipElement->padding.left,
+            clipElement->dims.worldPos.y + clipElement->padding.up
         },
-        .clip.dims = clipElement->visuals.clip.dims,
+        .clip.dims = (Vec2f){
+            clipElement->dims.worldWidth  - clipElement->padding.right,
+            clipElement->dims.worldHeight - clipElement->padding.down
+        },
     };
     arrPush(accumulator->aUnfinished, newBatch);
 }
@@ -238,17 +241,17 @@ static void accumulateMeshes(const ElementHandle elementHandle, BatchAccumulator
     for_eachArr(const flowElementHandle, self->aFlowElements, {
         const Element* flowElement = Element_get(*flowElementHandle);
 
-        if (flowElement->visuals.clip.hasClip) pushBatch(accumulator, flowElement);
+        if (flowElement->flags.useClipping) pushBatch(accumulator, flowElement);
         accumulateMeshes(*flowElementHandle, accumulator);
-        if (flowElement->visuals.clip.hasClip) popBatch(accumulator);
+        if (flowElement->flags.useClipping) popBatch(accumulator);
     });
 
     for_eachArr(const staticElementHandle, self->aStaticElements, {
         const Element* staticElement = Element_get(*staticElementHandle);
 
-        if (staticElement->visuals.clip.hasClip) pushBatch(accumulator, staticElement);
+        if (staticElement->flags.useClipping) pushBatch(accumulator, staticElement);
         accumulateMeshes(*staticElementHandle, accumulator);
-        if (staticElement->visuals.clip.hasClip) popBatch(accumulator);
+        if (staticElement->flags.useClipping) popBatch(accumulator);
     });
 }
 
@@ -274,7 +277,6 @@ void Render_drawGui(const GuiState *guiState) {
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 
 #if GUI_DEBUG && GUI_DEBUG_RENDER
     glDisable(GL_CULL_FACE);
@@ -304,11 +306,8 @@ void Render_drawGui(const GuiState *guiState) {
     Shader_unbindProgram();
 }
 
-[[deprecated]]
 GLFWwindow* Render_initWindow(const int width, const int height, const char* name) {
-    if (!glfwInit()) {
-        return nullptr;
-    }
+    if (!glfwInit()) ERROR_("Failed to initialize glfw");
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -319,7 +318,7 @@ GLFWwindow* Render_initWindow(const int width, const int height, const char* nam
     GLFWwindow* window = glfwCreateWindow(width, height, name, nullptr, nullptr);
     if (!window) {
         glfwTerminate();
-        return nullptr;
+        ERROR_("Creating the Window failed");
     }
 
     glfwMakeContextCurrent(window);
@@ -327,13 +326,9 @@ GLFWwindow* Render_initWindow(const int width, const int height, const char* nam
     if (!gladLoadGL(glfwGetProcAddress)) {
         glfwDestroyWindow(window);
         glfwTerminate();
-        return nullptr;
+        ERROR_("Initializing Glad failed");
     }
     glViewport(0, 0, width, height);
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     return window;
-}
-
-static void Renderer_destroy(const GuiState *renderer) {
-    glfwDestroyWindow(renderer->window);
 }

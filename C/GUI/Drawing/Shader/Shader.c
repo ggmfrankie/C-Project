@@ -13,7 +13,7 @@ static int createVertexShader(const char *fileName, int programId);
 
 static int createFragmentShader(const char *fileName, int programId);
 
-Shader newShader(const char* vertexShaderFile, const char* fragmentShaderFile) {
+Shader Shader_new(const char* vertexShaderFile, const char* fragmentShaderFile) {
     const int programId = glCreateProgram();
     int success;
     char infoLog[512];
@@ -34,8 +34,8 @@ Shader newShader(const char* vertexShaderFile, const char* fragmentShaderFile) {
     }
 
     glLinkProgram(programId);
-
     glGetProgramiv(programId, GL_LINK_STATUS, &success);
+
     if (!success) {
         glGetProgramInfoLog(programId, 512, nullptr, infoLog);
         ERROR_("Shader Program Link Error:\n%s\n", infoLog);
@@ -57,7 +57,7 @@ void Shader_createUniform(Shader *shader, const char* name) {
 }
 
 int createVertexShader(const char *fileName, const int programId) {
-    defer(defer_strDelete) CStr shaderSource = readShaderFile(fileName);
+    defer(defer_strDelete) Str shaderSource = readShaderFile(fileName);
     const GLchar* source = shaderSource;
 
     const int shaderId = createShader(&source, GL_VERTEX_SHADER, programId);
@@ -66,7 +66,7 @@ int createVertexShader(const char *fileName, const int programId) {
 }
 
 int createFragmentShader(const char *fileName, const int programId) {
-    defer(defer_strDelete) CStr shaderSource = readShaderFile(fileName);
+    defer(defer_strDelete) Str shaderSource = readShaderFile(fileName);
     const GLchar* source = shaderSource;
 
     const int shaderId = createShader(&source, GL_FRAGMENT_SHADER, programId);
@@ -74,12 +74,12 @@ int createFragmentShader(const char *fileName, const int programId) {
     return shaderId;
 }
 
-CStr readShaderFile(const char *fileName) {
+Str readShaderFile(const char *fileName) {
     const char* defaultShaderPath = "../C/GUI/Drawing/Shader/GpuShader/";
     char fullPath[64];
     cstrbConcat(fullPath, sizeof(fullPath), defaultShaderPath, fileName);
 
-    CStr shaderSource = readFile(fullPath);
+    Str shaderSource = readFile(fullPath);
     return shaderSource;
 }
 

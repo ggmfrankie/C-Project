@@ -69,7 +69,9 @@ typedef struct Element {
         bool wantGrowHorizontal: 1;
         bool wantGrowVertical: 1;
 
-        bool noLayoutContribution: 1;
+        bool noLayoutContributionHorizontal: 1;
+        bool noLayoutContributionVertical: 1;
+        bool useClipping: 1;
     } flags;
 
     struct {
@@ -97,21 +99,11 @@ typedef struct Element {
 
         float transparency;
         float brightness;
-
-        struct {
-            Vec2f pos;
-            Vec2f dims;
-            bool hasClip;
-        } clip;
-
     } visuals;
 
     Cache layoutCache;
 
     ElementHandle handle;
-
-    PositionMode positionMode;
-    LayoutDirection layoutDirection;
 
     void (*generateMesh)(const Element* element, GuiVertex** aVertices, int** aIndices, ssize_t id);
 
@@ -140,6 +132,8 @@ typedef struct Element {
         bool needsFree;
     } elementData;
 
+    PositionMode positionMode;
+    LayoutDirection layoutDirection;
 } Element;
 
 
@@ -148,11 +142,6 @@ typedef struct ElementSettings {
     Vec2f pos;
     PositionMode posMode;
     LayoutDirection layoutDirection;
-
-    struct {
-        Vec2f pos;
-        Vec2f dims;
-    } clipArea;
 
     float cornerRadius;
     float minWidth;
@@ -163,6 +152,7 @@ typedef struct ElementSettings {
 
     char* texture;
     Vec3f color;
+    Vec3f textColor;
     float transparency;
 
     char* text;
@@ -181,11 +171,13 @@ typedef struct ElementSettings {
     bool canBeHovered;
     bool autoFit;
     bool invisible;
-    bool canNotBeSelected;
+    bool notSelectable;
     bool draggable;
     bool wantGrowHorizontal;
     bool wantGrowVertical;
-    bool noLayoutContribution;
+    bool noLayoutContributionHorizontal;
+    bool noLayoutContributionVertical;
+    bool useClipping;
 
     void* elementData;
 

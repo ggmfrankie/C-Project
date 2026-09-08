@@ -25,8 +25,6 @@ static void updateGuiRoot(const GuiState *renderer, Element* root) {
 
     root->dims.maxWidth  = renderer->screenWidth;
     root->dims.maxHeight = renderer->screenHeight;
-
-    root->visuals.clip.dims = (Vec2f){renderer->screenWidth, renderer->screenHeight};
 }
 
 void Layout_updateLayout(const GuiState *state) {
@@ -144,9 +142,8 @@ static Vec2f getDimsFromStaticChildren(const Element* self) {
         const Vec2f pos = child->dims.pos;
         //Children first
         const Cache* childCache = cacheLayout(child);
-        if (child->flags.noLayoutContribution) continue;
-        extend.x = max(extend.x, pos.x + childCache->minWidth);
-        extend.y = max(extend.y, pos.y + childCache->minHeight);
+        if (!child->flags.noLayoutContributionHorizontal) extend.x = max(extend.x, pos.x + childCache->minWidth);
+        if (!child->flags.noLayoutContributionVertical)   extend.y = max(extend.y, pos.y + childCache->minHeight);
     });
     return extend;
 }
@@ -208,11 +205,15 @@ static void placeElementAt(Element* self, Vec2f pos, Vec2f dims) {
 }
 
 static void placeFlowElements(const Element* self) {
-    const Vec2f start = {self->dims.worldPos.x + self->padding.left, self->dims.worldPos.y + self->padding.up};
+    const Vec2f start = {
+        self->dims.worldPos.x + self->padding.left,
+        self->dims.worldPos.y + self->padding.up
+    };
+
     Vec2f cursor = start;
     Vec2f extend = start;
 
-    for_eachArr(linesPtr, self->layoutCache.aLines, {
+    for_eachArr(const linesPtr, self->layoutCache.aLines, {
         Line currLine = *linesPtr;
         if (currLine.start == currLine.end) continue;
 
@@ -274,7 +275,7 @@ static void placeFlowElements(const Element* self) {
 }
 
 static void placeStaticElements(const Element* self) {
-    for_eachArr(elementPtr, self->aStaticElements, {
+    for_eachArr(const elementPtr, self->aStaticElements, {
         Element* curr = Element_get(*elementPtr);
         placeElementAt(curr,
             (Vec2f){
@@ -294,8 +295,8 @@ static void placeChildElements(const Element* self) {
     placeFlowElements(self);
     placeStaticElements(self);
 
-    for_eachArr(flowElement, self->aFlowElements, { placeChildElements(Element_get(*flowElement)); });
-    for_eachArr(staticElement, self->aStaticElements,{ placeChildElements(Element_get(*staticElement)); });
+    for_eachArr(const flowElement, self->aFlowElements, { placeChildElements(Element_get(*flowElement)); });
+    for_eachArr(const staticElement, self->aStaticElements,{ placeChildElements(Element_get(*staticElement)); });
 #if GUI_DEBUG
     const bool correctElement = (self->name) ? (strcmp(GUI_DEBUG_OBSERVE_ELEMENT_PLACE_CHILDREN, self->name) == 0) : false;
     const bool print = correctElement && only_every(200);
@@ -310,5 +311,3 @@ static void placeChildElements(const Element* self) {
     );
 #endif
 }
-
-

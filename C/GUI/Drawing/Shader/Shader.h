@@ -21,7 +21,7 @@ typedef struct OtherShaders {
     Shader shaders[16];
 } OtherShaders;
 
-Shader newShader(const char* vertexShaderFile, const char* fragmentShaderFile);
+Shader Shader_new(const char* vertexShaderFile, const char* fragmentShaderFile);
 void Shader_bindProgram(const Shader *shader);
 void Shader_createUniform(Shader *shader, const char* name);
 void Shader_unbindProgram();
@@ -37,5 +37,5 @@ Vec2f: setUniform_Vec2,\
 Vec3f: setUniform_Vec3\
 )(shader, name, value)
 
-CStr readShaderFile(const char *fileName);
+Str readShaderFile(const char *fileName);
 int createShader(const GLchar** shaderSource, int shaderType, int programId);

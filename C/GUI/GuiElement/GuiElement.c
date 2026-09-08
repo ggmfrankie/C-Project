@@ -183,7 +183,7 @@ ElementHandle createElement(const ElementSettings es) {
     const ElementHandle handle = Element_allocateNewV2(es.pos, es.minWidth, es.minHeight);
     Element* lastElement = Element_get(handle);
 
-    if (!es.canNotBeSelected) {
+    if (!es.notSelectable) {
         lastElement->callbacks.isMouseOver = Element_isQuadBB;
         if (es.onHover) lastElement->callbacks.onHover = es.onHover;
         if (es.onClick) {
@@ -214,13 +214,10 @@ ElementHandle createElement(const ElementSettings es) {
     lastElement->flags.canBeHovered = es.canBeHovered;
     lastElement->callbacks.drawCustom = es.drawCustom;
 
-    lastElement->flags.noLayoutContribution = es.noLayoutContribution;
+    lastElement->flags.noLayoutContributionHorizontal = es.noLayoutContributionHorizontal;
+    lastElement->flags.noLayoutContributionVertical = es.noLayoutContributionVertical;
 
-    if (es.clipArea.dims.x != 0.0 && es.clipArea.dims.y != 0.0) {
-        lastElement->visuals.clip.pos = es.clipArea.pos;
-        lastElement->visuals.clip.dims = es.clipArea.dims;
-        lastElement->visuals.clip.hasClip = true;
-    }
+    lastElement->flags.useClipping = es.useClipping;
 
     if (!es.invisible) {
         lastElement->generateMesh = Mesh_generateRoundedCorner;
@@ -249,7 +246,7 @@ ElementHandle createElement(const ElementSettings es) {
         t->hasText = true;
         t->aCharQuads = nullptr;
         t->text = newReservedString(128),
-        t->textColor = (Vec4f){.0f, .0f, .0f, 1.0f};
+        t->textColor = (Vec4f){es.textColor.x, es.textColor.y, es.textColor.z, 1.0f};
         t->forceResize = true,
         t->pos = (Vec2f){};
         t->width = 0;

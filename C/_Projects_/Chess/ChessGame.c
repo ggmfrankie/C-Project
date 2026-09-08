@@ -727,7 +727,7 @@ static ElementHandle createChessSquares(const int row, const int col, ElementSet
     const ElementSettings pieceDisplaySettings = {
         .minWidth = es.minWidth,
         .minHeight = es.minHeight,
-        .canNotBeSelected = true,
+        .notSelectable = true,
         .color = {1,1,1},
         .texture = pieceTextures[0]
     };
@@ -799,7 +799,7 @@ static void createChessBoard(Element* root) {
                     .wantGrowHorizontal = true,
                     .maxWidth = 400,
                     .layoutDirection = LAYOUT_RIGHT,
-                    .canNotBeSelected = true,
+                    .notSelectable = true,
                     .cornerRadius = 10,
                     .name = "panel"
                 },
@@ -861,7 +861,7 @@ static void createStartScreen(Element* root) {
                 Element_new((ElementSettings){
                     .color = {.2, .3, .3},
                     .text = "Chess Game",
-                    .canNotBeSelected = true
+                    .notSelectable = true
                 }),
                 Element_new((ElementSettings){
                     .layoutDirection = LAYOUT_RIGHT,

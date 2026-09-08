@@ -13,19 +13,20 @@ typedef struct {
     ElementHandle scrollbar;
 } ScrollAreaData;
 
-static void ScrollArea_updateScrollbar(Element* scrollArea) {
+static void ScrollArea_updateScrollbar(const Element* scrollArea) {
     assert(scrollArea->type == ELEMENT_TYPE_SCROLL_AREA);
 
     const ScrollAreaData* data = scrollArea->elementData.ptr;
-    Element* panel = Element_get(data->contentArea);
-    Element* scrollbar = Element_get(data->scrollbar);
+    const Element* panel = Element_get(data->contentArea);
+    const Element* scrollbar = Element_get(data->scrollbar);
 
-    float sliderHeight = scrollArea->dims.worldHeight * (scrollArea->dims.worldHeight / panel->dims.worldHeight);
+    const float sliderHeight = scrollArea->dims.worldHeight * (scrollArea->dims.worldHeight / panel->dims.worldHeight);
     Scrollbar_setSliderHeight(scrollbar, sliderHeight);
 }
 
-static void ScrollArea_scrollbarCallback(float norm, float abs, Element* movedElement) {
-    movedElement->dims.pos.y = -abs;
+static void ScrollArea_scrollbarCallback(const ScrollbarData* scrollbarData, Element* movedElement) {
+    const float remainder = movedElement->dims.worldHeight - Element_get(scrollbarData->rail)->dims.worldHeight;
+    movedElement->dims.pos.y = -(remainder * scrollbarData->progress);
 }
 
 ElementHandle _ScrollArea_new(ScrollAreaSettings settings, ...) {
@@ -33,15 +34,16 @@ ElementHandle _ScrollArea_new(ScrollAreaSettings settings, ...) {
         .pos = {},
         .wantGrowHorizontal = true,
         .invisible = true,
-        .noLayoutContribution = true,
+        .noLayoutContributionVertical = true,
         .posMode = POS_RELATIVE,
         .childGap = settings.childGap,
         .padding = settings.padding,
+        .notSelectable = settings.notSelectable
     });
 
     const ElementHandle panel = Element_new((ElementSettings){
         .invisible = true,
-        .canNotBeSelected = true
+        .notSelectable = true
     },
         contentArea
     );
@@ -52,17 +54,20 @@ ElementHandle _ScrollArea_new(ScrollAreaSettings settings, ...) {
         .sliderHeight = 20,
         .onMove = ScrollArea_scrollbarCallback,
         .moveElement = contentArea,
+        .sliderColor = settings.sliderColor,
+        .railColor = settings.railColor
     });
 
     const ElementHandle frame = Element_new((ElementSettings){
         .pos = settings.pos,
         .minWidth = settings.width,
         .minHeight = settings.height,
-        .clipArea = {.pos = {0,0}, .dims = {settings.width, settings.height}},
-        .color = settings.color,
+        .useClipping = true,
+        .color = settings.backgroundColor,
         .posMode = POS_RELATIVE,
         .layoutDirection = LAYOUT_RIGHT,
         .cornerRadius = 5,
+        .notSelectable = settings.notSelectable
     },
         scrollbar,
         panel

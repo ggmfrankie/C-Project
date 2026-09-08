@@ -326,7 +326,7 @@ static ElementHandle createChessSquares(const int row, const int col, ElementSet
     const ElementSettings pieceDisplaySettings = {
         .minWidth = es.minWidth,
         .minHeight = es.minHeight,
-        .canNotBeSelected = true,
+        .notSelectable = true,
         .color = {},
         .transparency = 0.0f,
     };

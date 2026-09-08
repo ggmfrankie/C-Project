@@ -11,5 +11,5 @@ String readFilev1(const String *fileName);
 void writeFilev1(const String *fileName, const String *content);
 
 Str readFile(const char* fileName);
-void writeFile(const char* fileName, CStr content);
+void writeFile(const char* fileName, Str content);
 

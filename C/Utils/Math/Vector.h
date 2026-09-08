@@ -2,31 +2,34 @@
 // Created by Stefan on 10.10.2025.
 //
 #pragma once
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "GuiDefines.h"
-    typedef struct vec4f {
-        float x,y,z,w;
+    typedef struct Vec4f {
+        float x, y, z, w;
     } Vec4f;
 
-    typedef struct vec3f {
+    typedef struct Vec3f {
         float x, y, z;
     } Vec3f;
 
-    typedef struct vec2f {
+    typedef struct Vec2f {
         float x, y;
     } Vec2f;
 
-    typedef struct vec2i {
+    typedef struct Vec2i {
         int x, y;
     } Vec2i;
 
-    typedef struct vec4i {
+    typedef struct Vec4i {
         int x, y, z, w;
     } Vec4i;
 
-
-int Vec2i_Cross(Vec2i v1, Vec2i v2);
+int   Vec2i_Cross(Vec2i v1, Vec2i v2);
 Vec2i Vec2i_Sub(Vec2i v1, Vec2i v2);
-bool Vec2i_Equals(Vec2i a, Vec2i b);
+bool  Vec2i_Equals(Vec2i a, Vec2i b);
 
 Vec2f Vec2f_Cross(const Vec2f* v1, const Vec2f* v2);
 Vec2i Vec2i_Add(Vec2i v1, Vec2i v2);
@@ -35,7 +38,7 @@ Vec2i Vec2i_Mul(Vec2i v1, int factor);
 
 Vec3f Vec3f_Add(Vec3f v1, Vec3f v2);
 Vec3f Vec3f_Mul(Vec3f v1, float factor);
-bool Vec3f_Equals(Vec3f a, Vec3f b);
+bool  Vec3f_Equals(Vec3f a, Vec3f b);
 
 Vec4f Vec4f_Add(Vec4f v1, Vec4f v2);
 Vec4f Vec4f_Mul(Vec4f v1, float factor);
@@ -60,3 +63,6 @@ Vec3f: Vec3f_Add,\
 Vec4f: Vec4f_Add\
 )(vec1, vec2)
 
+#ifdef __cplusplus
+}
+#endif

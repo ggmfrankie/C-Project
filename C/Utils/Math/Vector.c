@@ -12,7 +12,7 @@ Vec2f Vec2f_Cross(const Vec2f* v1, const Vec2f* v2) {
     };
 }
 
-Vec3f Vec3f_Cross(const Vec3f* v1, const Vec3f* v2) {
+static Vec3f Vec3f_Cross(const Vec3f* v1, const Vec3f* v2) {
     return (Vec3f){
         .x = (v1->y)
     };

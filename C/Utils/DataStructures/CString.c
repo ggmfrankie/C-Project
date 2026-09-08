@@ -20,7 +20,7 @@ static struct _StringHeader_* _strAllocate(size_t capacity){
     #endif
 } 
 
-static struct _StringHeader_* _strGetHeader(CStr s) {
+static struct _StringHeader_* _strGetHeader(const Str s) {
     return &((struct _StringHeader_*)(s))[-1];
 }
 
@@ -44,7 +44,7 @@ Str strNew(const char *s) {
     struct _StringHeader_* header = malloc(sizeof(struct _StringHeader_) + len + 1);
     assert(header != nullptr);
 
-    Str data = (void*) (header+1);
+    const Str data = (void*) (header+1);
     memcpy(data, s, len+1);
 
     header->capacity = header->size = len;
@@ -78,28 +78,30 @@ Str strNew_c(size_t capacity) {
 }
 
 Str strFrom_int(int val) {
+    TODO_("fromInt is not implemented");
     int i = 0;
 
     const int sign = val;
 
     if (val < 0) val = -val;
+    return nullptr;
 }
 
-size_t strLen(CStr s) {
+size_t strLen(Str s) {
     if (!_strIsStr(s)) ERROR_("Provided char* is not a Str");
     if (s == nullptr) return 0;
     const struct _StringHeader_* header = _strGetHeader(s);
     return header->size;
 }
 
-size_t strCap(CStr s) {
+size_t strCap(Str s) {
     if (!_strIsStr(s)) ERROR_("Provided char* is not a Str");
     if (s == nullptr) return 0;
     const struct _StringHeader_* header = _strGetHeader(s);
     return header->capacity;
 }
 
-Str strConcat(CStr a, CStr b) {
+Str strConcat(Str a, Str b) {
     if (!_strIsStr(a) || _strIsStr(b)) ERROR_("Provided char* is not a Str");
     assert(a != nullptr && b != nullptr);
     const size_t lenA = strLen(a);
@@ -117,27 +119,27 @@ Str strConcat(CStr a, CStr b) {
     return data;
 }
 
-Str* strSplit(CStr s, char del) {
+Str* strSplit(Str s, char del) {
     TODO_("Not Implemented");
     return nullptr;
 }
 
-char strAt(CStr s, size_t idx) {
+char strAt(Str s, size_t idx) {
     if (!_strIsStr(s)) ERROR_("Provided char* is not a Str");
     const size_t len = strLen(s);
     assert(len > idx);
     return s[idx];
 }
 
-bool strIsEmpty(CStr s) {
+bool strIsEmpty(Str s) {
     return strLen(s) == 0;
 }
 
-bool strIsFull(CStr s) {
+bool strIsFull(Str s) {
     return strCap(s) == strLen(s);
 }
 
-bool strStartsWith(CStr src, CStr p) {
+bool strStartsWith(Str src, Str p) {
     const size_t lenP = strLen(p);
     if (strLen(src) < lenP) return false;
     for (int i = 0; i < lenP; ++i) {
@@ -156,7 +158,6 @@ void strFit(Str s) {
 
     if (cap == size) return;
     _strResizeTo(s, size);
-
 }
 
 void strClear(Str s) {
@@ -206,14 +207,14 @@ void cstrbConcat(char *buff, size_t size, const char *a, const char *b) {
 #define content(a, b) assert(strcmp(a, b) == 0)
 #define length(s, size) assert(strLen(s) == size)
 void _strTest() {
-    defer(defer_strDelete) const char* a = strNew("hassan");
+    defer(defer_strDelete) Str a = strNew("hassan");
     content(a, "hassan");
     length(a, 6);
 
-    defer(defer_strDelete) const char* b = strNew_n("belsa kaka", 5);
+    defer(defer_strDelete) Str b = strNew_n("belsa kaka", 5);
     content(b, "belsa");
 
-    defer(defer_strDelete) const char* ab = strConcat(a, b);
+    defer(defer_strDelete) Str ab = strConcat(a, b);
     content(ab, "hassanbelsa");
 }
 #undef content

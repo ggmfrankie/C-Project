@@ -75,9 +75,9 @@ static void* workerThreadInit(void*) {
     return nullptr;
 }
 
-static GuiState GuiState_new(GLFWwindow* window, const int width, const int height, const char *fontFile) {
+static GuiState GuiState_new(GLFWwindow* window, const int width, const int height, const char* fontFile) {
     return (GuiState){
-        .guiShader = newShader("GuiRender.vert", "GuiRender.frag"),
+        .guiShader = Shader_new("GuiRender.vert", "GuiRender.frag"),
         .window = window,
         .screenWidth = width,
         .screenHeight = height,
@@ -85,7 +85,8 @@ static GuiState GuiState_new(GLFWwindow* window, const int width, const int heig
         .guiRoot = Element_new((ElementSettings){
             .invisible = true,
             .name = "GUI_ROOT",
-            .canNotBeSelected = true
+            .notSelectable = true,
+            .useClipping = true
         }),
         .texAtlas = TextureAtlas_new(2048 , 2048)
     };
@@ -96,7 +97,7 @@ void gui_init(GLFWwindow* window, const int width, const int height, void (*gene
 
     Element_init();
 
-    gGuiState = GuiState_new(window, width, height, "Inktype-MAp2J.ttf");
+    gGuiState = GuiState_new(window, width, height, "ComicRelief-Regular.ttf");
 
     Render_init(&gGuiState);
 
@@ -146,11 +147,7 @@ void _gui_addTextures(char* first, ...) {
 void gui_setTexture(Element* e, const char* name) {
     assert(e != nullptr);
     Thread_Locked(
-        if (name) {
-            e->visuals.texture = name;
-        } else {
-            e->visuals.texture = "White.png";
-        }
+        e->visuals.texture = name ?: "White.png";
     )
 }
 
@@ -179,7 +176,7 @@ void gui_setText(const char* name, const char* text) {
 void gui_setColor(const char* name, const float r, const float g, const float b) {
     assert(name != nullptr);
     Thread_Locked(
-        Element_setColor_ptr(Element_getElement_ptr(name), (Vec3f){r, g, b});
+        Element_setColor_ptr(Element_getElement_ptr(name), (Vec3f){.x = r, .y = g, .z = b});
     )
 }
 
@@ -195,7 +192,7 @@ void gui_resetColor(const char* name) {
 void gui_setColor_ptr(Element* ptr, float r, float g, float b) {
     assert(ptr != nullptr);
     Thread_Locked(
-        Element_setColor_ptr(ptr, (Vec3f){r, g, b});
+        Element_setColor_ptr(ptr, (Vec3f){.x = r, .y = g, .z = b});
     )
 }
 
@@ -226,21 +223,21 @@ bool gui_getActive(const char* name) {
     return status;
 }
 
-[[deprecated]]
-void startEngine(void (*generateGUI)(Element* guiRoot)) {
+void Engine_loop(void (*generateGUI)(Element* guiRoot)) {
     constexpr int width  = 512;
     constexpr int height = 512;
     gui_init(Render_initWindow(width, height, "Chess"), width, height, generateGUI);
 
-    StandaloneTexture* graphTexture = Texture_new(WIDTH, HEIGHT);
-    gGuiState.computeShader = ComputeShader_new(nullptr, 1024);
-    gGuiState.computeShader.texture = graphTexture;
-    gGuiState.computeShader.thickness = 2;
-
-    gGuiState.computeShader.startX = 0.0f;
-    gGuiState.computeShader.endX = 5.0f;
+    // StandaloneTexture* graphTexture = Texture_new(WIDTH, HEIGHT);
+    // gGuiState.computeShader = ComputeShader_new(nullptr, 1024);
+    // gGuiState.computeShader.texture = graphTexture;
+    // gGuiState.computeShader.thickness = 2;
+    //
+    // gGuiState.computeShader.startX = 0.0f;
+    // gGuiState.computeShader.endX = 5.0f;
 
     //initSockets();
+    glfwSwapInterval(1);
 
     glfwSetFramebufferSizeCallback(gGuiState.window, gui_resizeCallback);
     glfwSetCursorPosCallback(gGuiState.window, gui_cursorPositionCallback);
@@ -248,17 +245,35 @@ void startEngine(void (*generateGUI)(Element* guiRoot)) {
     glfwSetCharCallback(gGuiState.window, gui_charCallback);
     glfwSetKeyCallback(gGuiState.window, gui_keyCallback);
 
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    double lastTime = 0.0;
+    double frameTimeSum = 0.0;
+    int frames = 0;
+
     while (!glfwWindowShouldClose(gGuiState.window)) {
+        const double currTime = glfwGetTime();
+        const double deltaTime = currTime - lastTime;
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glfwPollEvents();
 
         gui_update();
-
         gui_render();
 
-        nanosleep(&(struct timespec){.tv_sec = 0, .tv_nsec = 1000000000L}, nullptr);
+        glfwSwapBuffers(gGuiState.window);
+
+        frameTimeSum += deltaTime;
+        frames++;
+
+        if (frameTimeSum > 0.5) {
+            char fps[64];
+            snprintf(fps, sizeof(fps), "%.2lf", frames/frameTimeSum);
+            gui_setText("fps display", fps);
+
+            frameTimeSum = 0.0;
+            frames = 0;
+        }
+
+        lastTime = currTime;
     }
     glfwTerminate();
 }

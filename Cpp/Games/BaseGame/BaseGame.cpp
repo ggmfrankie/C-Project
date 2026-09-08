@@ -156,18 +156,18 @@ namespace Game {
             mCamera->rotateBy(camRot.x * MOUSE_SENSITIVITY, 0 , camRot.y * MOUSE_SENSITIVITY);
         }
 
-        static double fpsSum = 0.0;
+        static double frameTimeSum = 0.0;
         static int frames = 0;
 
-        fpsSum += deltaTime;
+        frameTimeSum += deltaTime;
         frames++;
 
-        if (fpsSum > 0.5) {
+        if (frameTimeSum > 0.5) {
             char fps[64];
-            sprintf(fps, "%.2lf", frames/fpsSum);
+            sprintf(fps, "%.2lf", frames/frameTimeSum);
             gui_setText("fps display", fps);
 
-            fpsSum = 0.0;
+            frameTimeSum = 0.0;
             frames = 0;
         }
 

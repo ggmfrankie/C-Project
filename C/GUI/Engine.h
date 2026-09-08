@@ -27,10 +27,9 @@ typedef struct GuiState {
 
 extern bool guiInitialized;
 
-void startEngine(void (*generateGUI)(Element* guiRoot));
+void Engine_loop(void (*generateGUI)(Element* guiRoot));
 Vec2f getMousePos();
 Vec2f getWindowSize();
 Font* getFont();
-double graphingFunction(double x);
 
 

@@ -28,7 +28,7 @@ static void measureFont(Font *font);
 
 Font Text_loadFontAtlas(const char* file) {
     const char* defaultPath = "../Resources/Fonts/";
-    defer(defer_strDelete) CStr completePath = cstrConcat(defaultPath, file);
+    defer(defer_strDelete) Str completePath = cstrConcat(defaultPath, file);
 
     defer(defer_free) byte* ttf_buffer = malloc(1 << 20);
     // ReSharper disable once CppDFAMemoryLeak
@@ -110,7 +110,7 @@ void Text_accumulateTextQuads(const Element *element, Batch* meshData, ssize_t i
 
     const int ID = arrLen(meshData->aMeshData);
 
-    for_eachArr(c, aCharQuads, {
+    for_eachArr(const c, aCharQuads, {
         constexpr int TEXT_BINDING = 1;
 
         const float x = c->pos.x + element->padding.left;
@@ -153,7 +153,7 @@ Vec2f Text_measureElementText(const TextElement* textElement) {
     float maxX = -FLT_MAX;
     float maxY = -FLT_MAX;
 
-    for_eachArr(c, textElement->aCharQuads, {
+    for_eachArr(const c, textElement->aCharQuads, {
         const float x0 = c->pos.x;
         const float y0 = c->pos.y;
         const float x1 = c->pos.x + c->width;
@@ -220,8 +220,6 @@ void Text_reloadTextQuads(const Font* font, Element *element) {
         .x = startPos.x,
         .y = startPos.y
     };
-
-    glBindTexture(GL_TEXTURE_2D, font->fontAtlas.ID);
 
     float prevX = 0.0f;
 
