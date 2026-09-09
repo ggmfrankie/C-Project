@@ -6,6 +6,8 @@
 
 #include "GuiDefines.h"
 #include <stdint.h>
+#include <stdio.h>
+
 #include "GuiTypes.h"
 #include "../RenderTypes.h"
 #include "Math/Vector.h"

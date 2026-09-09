@@ -199,7 +199,7 @@ namespace Game {
     MakeRequestableFunction_class(BaseGame::getMoves, "Allows to view the moves the selected piece has",
     nlohmann::json BaseGame::getMoves(int row, int col))
     {
-        const u_int64 fen = Chess_getMoves(row, col);
+        const u_int64_t fen = Chess_getMoves(row, col);
 
         std::ostringstream buf;
 
