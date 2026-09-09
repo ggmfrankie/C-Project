@@ -279,12 +279,12 @@ static void placeStaticElements(const Element* self) {
         Element* curr = Element_get(*elementPtr);
         placeElementAt(curr,
             (Vec2f){
-            self->dims.worldPos.x + curr->dims.pos.x + self->padding.up,
-            self->dims.worldPos.y + curr->dims.pos.y + self->padding.left
+                self->dims.worldPos.x + curr->dims.pos.x + self->padding.left,
+                self->dims.worldPos.y + curr->dims.pos.y + self->padding.up
             },
             (Vec2f){
-            curr->layoutCache.minWidth,
-            curr->layoutCache.minHeight
+                curr->layoutCache.minWidth,
+                curr->layoutCache.minHeight
             }
         );
     });

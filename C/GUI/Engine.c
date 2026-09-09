@@ -53,7 +53,7 @@ static GuiState gGuiState;
 static UserCallbacks g_Callbacks;
 
 static void Engine_processInput(GuiState *renderer, double deltaTime);
-static bool Engine_processInputRec(ElementHandle elementHandle, GuiState *renderer);
+static bool Engine_processInputRec(ElementHandle elementHandle, GuiState *renderer, Vec2f clipPos, Vec2f clipDims);
 static bool Engine_handleDragElement(const GuiState *renderer);
 static void Engine_updateElements(ElementHandle handle, double deltaTime);
 static void gui_processDebug();
@@ -282,9 +282,18 @@ static Element* focusedElement = nullptr;
 static Element* mouseCapturedElement = nullptr;
 static bool dragging = false;
 
+#include <windows.h>
+
 static bool Engine_handleDragElement(const GuiState *renderer) {
     if (!mouseCapturedElement) return false;
     if (!mouseCapturedElement->callbacks.requestMove) return false;
+
+    POINT cursorPos;
+    GetCursorPos(&cursorPos);
+
+    const Vec2i mousePos = {cursorPos.x, cursorPos.y};
+
+    printf("Windows cursor pos = %i, %i, glfw cursor pos = %i, %i\n", mousePos.x, mousePos.y, (int)renderer->mousePos.x, (int)renderer->mousePos.y);
 
     Element* element = mouseCapturedElement;
     static Vec2f offset;
@@ -299,14 +308,14 @@ static bool Engine_handleDragElement(const GuiState *renderer) {
     const Vec2f parentWorldPos = parent ? parent->dims.worldPos : (Vec2f){0, 0};
 
     if (!dragging) {
-        offset.x = renderer->mousePos.x - element->dims.worldPos.x;
-        offset.y = renderer->mousePos.y - element->dims.worldPos.y;
+        offset.x = mousePos.x - element->dims.worldPos.x;
+        offset.y = mousePos.y - element->dims.worldPos.y;
         dragging = true;
     }
 
     const Vec2f newPos = {
-        .x = (renderer->mousePos.x - parentWorldPos.x) - offset.x,
-        .y = (renderer->mousePos.y - parentWorldPos.y) - offset.y
+        .x = (mousePos.x - parentWorldPos.x) - offset.x,
+        .y = (mousePos.y - parentWorldPos.y) - offset.y
     };
     element->callbacks.requestMove(element, newPos);
 
@@ -354,13 +363,16 @@ static bool Engine_processInputRoot(GuiState *renderer) {
     root->dims.width = renderer->screenWidth;
     root->dims.height = renderer->screenHeight;
 
+    const Vec2f clipPos = {0, 0};
+    const Vec2f clipDims = {root->dims.worldWidth, root->dims.worldHeight};
+
     for_eachRevArr(const child, root->aFlowElements,
         //return if input was consumed by child element
-        if (Engine_processInputRec(*child, renderer)) return true;
+        if (Engine_processInputRec(*child, renderer, clipPos, clipDims)) return true;
     );
     for_eachRevArr(const child, root->aStaticElements,
         //return if input was consumed by child element
-        if (Engine_processInputRec(*child, renderer)) return true;
+        if (Engine_processInputRec(*child, renderer, clipPos, clipDims)) return true;
     );
     return false;
 }
@@ -376,20 +388,34 @@ static void Engine_processInput(GuiState *renderer, double deltaTime) {
     }
 }
 
-static bool Engine_processInputRec(ElementHandle elementHandle, GuiState *renderer) {
+static bool Engine_rectContains(Vec2f pos, Vec2f dims, Vec2f point) {
+    if (point.x <= pos.x+dims.x && point.x >= pos.x &&
+        point.y <= pos.y+dims.y && point.y >= pos.y) {
+        return true;
+        }
+    return false;
+}
+
+static bool Engine_processInputRec(ElementHandle elementHandle, GuiState *renderer, Vec2f clipPos, Vec2f clipDims) {
     Element* element = Element_get(elementHandle);
-    if (element == nullptr || !element->flags.isActive) return false;
+    if (element == nullptr || !element->flags.isActive || dragging) return false;
+
+    if (element->flags.useClipping) {
+        clipPos = element->dims.worldPos;
+        clipDims = (Vec2f){element->dims.worldWidth, element->dims.worldHeight};
+    }
 
     for_eachRevArr(const child, element->aFlowElements,
         //return if input was consumed by child element
-        if (Engine_processInputRec(*child, renderer)) return true;
+        if (Engine_processInputRec(*child, renderer, clipPos, clipDims)) return true;
     );
     for_eachRevArr(const child, element->aStaticElements,
         //return if input was consumed by child element
-        if (Engine_processInputRec(*child, renderer)) return true;
+        if (Engine_processInputRec(*child, renderer, clipPos, clipDims)) return true;
     );
 
-    if (dragging) return false;
+    if (!Engine_rectContains(clipPos, clipDims, renderer->mousePos)) return false;
+
     if (element->callbacks.isMouseOver && element->callbacks.isMouseOver(element, renderer->mousePos)) {
         if (element->flags.canBeHovered) {
             element->state = UI_STATE_HOVER;
