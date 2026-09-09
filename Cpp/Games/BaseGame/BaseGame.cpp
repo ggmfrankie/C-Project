@@ -9,7 +9,6 @@
 #include "GuiInterface.h"
 #include "Engine/CommandRegistry.hpp"
 #include "../Scene/3D/Scene3D.hpp"
-#include "Makros/Makros.h"
 #include "Render/Screen.hpp"
 #include "Render/Objects/3D/Physics/PhysicsFactory.hpp"
 #include "Render/Transformation/Camera.hpp"
@@ -199,7 +198,7 @@ namespace Game {
     MakeRequestableFunction_class(BaseGame::getMoves, "Allows to view the moves the selected piece has",
     nlohmann::json BaseGame::getMoves(int row, int col))
     {
-        const u_int64_t fen = Chess_getMoves(row, col);
+        const uint64_t fen = Chess_getMoves(row, col);
 
         std::ostringstream buf;
 
