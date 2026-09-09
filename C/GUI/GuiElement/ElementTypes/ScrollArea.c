@@ -32,7 +32,7 @@ static void ScrollArea_scrollbarCallback(const ScrollbarData* scrollbarData, Ele
 ElementHandle _ScrollArea_new(ScrollAreaSettings settings, ...) {
     const ElementHandle contentArea = Element_new((ElementSettings){
         .pos = {},
-        .wantGrowHorizontal = true,
+        .grow = true,
         .invisible = true,
         .noLayoutContributionVertical = true,
         .posMode = POS_RELATIVE,

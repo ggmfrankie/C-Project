@@ -49,9 +49,10 @@ typedef struct TextElement {
     float scale;
 
     Character* aCharQuads;
+    Font* font;
 } TextElement;
 
 Font  Text_loadFontAtlas(const char* file);
-void  Text_reloadTextQuads(const Font* font, Element *element);
+void  Text_reloadTextQuads(Element *element);
 void  Text_accumulateTextQuads(const Element *element, Batch* meshData, ssize_t id);
 Vec2f Text_measureElementText(const TextElement* textElement);

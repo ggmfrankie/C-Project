@@ -53,7 +53,7 @@ static GuiState gGuiState;
 static UserCallbacks g_Callbacks;
 
 static void Engine_processInput(GuiState *renderer, double deltaTime);
-static bool Engine_processInputRec(ElementHandle elementHandle, GuiState *renderer, Vec2f clipPos, Vec2f clipDims);
+static bool Engine_processInputRec(ElementHandle elementHandle, GuiState *renderer);
 static bool Engine_handleDragElement(const GuiState *renderer);
 static void Engine_updateElements(ElementHandle handle, double deltaTime);
 static void gui_processDebug();
@@ -237,7 +237,7 @@ void Engine_loop(void (*generateGUI)(Element* guiRoot)) {
     // gGuiState.computeShader.endX = 5.0f;
 
     //initSockets();
-    glfwSwapInterval(1);
+    glfwSwapInterval(0);
 
     glfwSetFramebufferSizeCallback(gGuiState.window, gui_resizeCallback);
     glfwSetCursorPosCallback(gGuiState.window, gui_cursorPositionCallback);
@@ -267,7 +267,7 @@ void Engine_loop(void (*generateGUI)(Element* guiRoot)) {
         if (frameTimeSum > 0.5) {
             char fps[64];
             snprintf(fps, sizeof(fps), "%.2lf", frames/frameTimeSum);
-            gui_setText("fps display", fps);
+            //gui_setText("fps display", fps);
 
             frameTimeSum = 0.0;
             frames = 0;
@@ -346,8 +346,8 @@ static void Engine_updateElements(ElementHandle handle, double deltaTime) {
     if (self->callbacks.onUpdate) self->callbacks.onUpdate(self);
 
     self->state = UI_STATE_NORMAL;
-    for_eachRevArr(const child, self->aFlowElements,{Engine_updateElements(*child,deltaTime);});
-    for_eachRevArr(const child, self->aStaticElements,{Engine_updateElements(*child,deltaTime);});
+    for arrEachRev(child, self->aFlowElements) {Engine_updateElements(*child,deltaTime);}
+    for arrEachRev(child, self->aStaticElements) {Engine_updateElements(*child,deltaTime);}
 }
 
 static bool Engine_processInputRoot(GuiState *renderer) {
@@ -356,17 +356,14 @@ static bool Engine_processInputRoot(GuiState *renderer) {
     root->dims.width = renderer->screenWidth;
     root->dims.height = renderer->screenHeight;
 
-    const Vec2f clipPos = {0, 0};
-    const Vec2f clipDims = {root->dims.worldWidth, root->dims.worldHeight};
-
-    for_eachRevArr(const child, root->aFlowElements,
+    for arrEachRev(child, root->aFlowElements) {
         //return if input was consumed by child element
-        if (Engine_processInputRec(*child, renderer, clipPos, clipDims)) return true;
-    );
-    for_eachRevArr(const child, root->aStaticElements,
+        if (Engine_processInputRec(*child, renderer)) return true;
+    }
+    for arrEachRev(child, root->aStaticElements) {
         //return if input was consumed by child element
-        if (Engine_processInputRec(*child, renderer, clipPos, clipDims)) return true;
-    );
+        if (Engine_processInputRec(*child, renderer)) return true;
+    }
     return false;
 }
 
@@ -389,25 +386,24 @@ static bool Engine_rectContains(Vec2f pos, Vec2f dims, Vec2f point) {
     return false;
 }
 
-static bool Engine_processInputRec(ElementHandle elementHandle, GuiState *renderer, Vec2f clipPos, Vec2f clipDims) {
+static bool Engine_processInputRec(ElementHandle elementHandle, GuiState *renderer) {
     Element* element = Element_get(elementHandle);
     if (element == nullptr || !element->flags.isActive || dragging) return false;
 
     if (element->flags.useClipping) {
-        clipPos = element->dims.worldPos;
-        clipDims = (Vec2f){element->dims.worldWidth, element->dims.worldHeight};
+        const Vec2f clipPos = element->dims.worldPos;
+        const Vec2f clipDims = {element->dims.worldWidth, element->dims.worldHeight};
+        if (!Engine_rectContains(clipPos, clipDims, renderer->mousePos)) return false;
     }
 
-    for_eachRevArr(const child, element->aFlowElements,
+    for arrEachRev(child, element->aFlowElements) {
         //return if input was consumed by child element
-        if (Engine_processInputRec(*child, renderer, clipPos, clipDims)) return true;
-    );
-    for_eachRevArr(const child, element->aStaticElements,
+        if (Engine_processInputRec(*child, renderer)) return true;
+    }
+    for arrEachRev(child, element->aStaticElements) {
         //return if input was consumed by child element
-        if (Engine_processInputRec(*child, renderer, clipPos, clipDims)) return true;
-    );
-
-    if (!Engine_rectContains(clipPos, clipDims, renderer->mousePos)) return false;
+        if (Engine_processInputRec(*child, renderer)) return true;
+    }
 
     if (element->callbacks.isMouseOver && element->callbacks.isMouseOver(element, renderer->mousePos)) {
         if (element->flags.canBeHovered) {
@@ -444,23 +440,25 @@ void gui_keyCallback(GLFWwindow* window, int key, int scancode, int action, int 
     }
 
     if (focusedElement->type == ELEMENT_TYPE_TEXTFIELD) {
-        if (action == GLFW_PRESS || action == GLFW_REPEAT)
-        {
-            if (key == GLFW_KEY_BACKSPACE) {
-                TextField_popChar(focusedElement);
-            }
-            else if (key == GLFW_KEY_LEFT) {
-                TextField_moveCursorBy(focusedElement, -1);
-            }
-            else if (key == GLFW_KEY_RIGHT) {
-                TextField_moveCursorBy(focusedElement, +1);
-            }
-            else if (key == GLFW_KEY_ENTER) {
-                const TextFieldData* tfd = focusedElement->elementData.ptr;
-                if (tfd->onEnterCallback) {
-                    tfd->onEnterCallback(focusedElement);
-                }
-                focusedElement = nullptr;
+        if (action == GLFW_PRESS || action == GLFW_REPEAT) {
+            switch (key) {
+                case GLFW_KEY_BACKSPACE:
+                    TextField_popChar(focusedElement);
+                    break;
+                case GLFW_KEY_LEFT:
+                    TextField_moveCursorBy(focusedElement, -1);
+                    break;
+                case GLFW_KEY_RIGHT:
+                    TextField_moveCursorBy(focusedElement, +1);
+                    break;
+                case GLFW_KEY_ENTER:
+                    const TextFieldData* tfd = focusedElement->elementData.ptr;
+                    if (tfd->onEnterCallback) {
+                        tfd->onEnterCallback(focusedElement);
+                    }
+                    focusedElement = nullptr;
+                    break;
+                default: break;
             }
         }
     }
@@ -493,7 +491,7 @@ Vec2f getWindowSize() {
     return windowSize;
 }
 
-Font *getFont() {
+Font *Engine_getDefaultFont() {
     Font* font;
     Thread_Locked(
         font = &gGuiState.font;
@@ -501,7 +499,7 @@ Font *getFont() {
     return font;
 }
 
-double graphingFunction(const double x) {
+static double graphingFunction(const double x) {
     //const Spannung value = berechneSpannungsteiler(10, 40, berechneErsatzwiderstand(30, 10 * x));
     //printf("%6.4f %6.4f\n", x*10, value);
 

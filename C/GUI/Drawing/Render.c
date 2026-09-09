@@ -136,7 +136,7 @@ static void beginScissor(Vec2f pos, Vec2f dims) {
 
 static void drawBatches(const Shader* shader, const BatchAccumulator *accumulator) {
     glEnable(GL_SCISSOR_TEST);
-    for_eachRevArr(const batch, accumulator->aDone, {
+    for arrEachRev(batch, accumulator->aDone) {
         beginScissor(batch->clip.pos, batch->clip.dims);
 
         Shader_setUniform(shader, "elementDataOffset", batch->offsets.elementData);
@@ -149,7 +149,7 @@ static void drawBatches(const Shader* shader, const BatchAccumulator *accumulato
             (void*) (batch->offsets.index * sizeof(int)),
             batch->offsets.vertex
         );
-    });
+    }
     glDisable(GL_SCISSOR_TEST);
 }
 
@@ -160,7 +160,7 @@ static void uploadBatches(BatchAccumulator *accumulator) {
     int elementDataOffset = 0;
     int meshDataOffset = 0;
 
-    for_eachArr(const batch, accumulator->aDone, {
+    for arrEach(batch, accumulator->aDone) {
         beginScissor(batch->clip.pos, batch->clip.dims);
 
         uploadVertices(batch->aVertices, batch->aIndices, vertexOffset, indexOffset);
@@ -176,7 +176,7 @@ static void uploadBatches(BatchAccumulator *accumulator) {
         indexOffset += arrLen(batch->aIndices);
         elementDataOffset += arrLen(batch->aElementData);
         meshDataOffset += arrLen(batch->aMeshData);
-    });
+    }
 }
 
 static ssize_t addElementData(const Element* element, Batch* batch) {
@@ -238,40 +238,40 @@ static void accumulateMeshes(const ElementHandle elementHandle, BatchAccumulator
         self->callbacks.drawCustom(self, &curr->aVertices, &curr->aIndices, &curr->aMeshData, id);
     }
 
-    for_eachArr(const flowElementHandle, self->aFlowElements, {
+    for arrEach(flowElementHandle, self->aFlowElements) {
         const Element* flowElement = Element_get(*flowElementHandle);
 
         if (flowElement->flags.useClipping) pushBatch(accumulator, flowElement);
         accumulateMeshes(*flowElementHandle, accumulator);
         if (flowElement->flags.useClipping) popBatch(accumulator);
-    });
+    }
 
-    for_eachArr(const staticElementHandle, self->aStaticElements, {
+    for arrEach(staticElementHandle, self->aStaticElements) {
         const Element* staticElement = Element_get(*staticElementHandle);
 
         if (staticElement->flags.useClipping) pushBatch(accumulator, staticElement);
         accumulateMeshes(*staticElementHandle, accumulator);
         if (staticElement->flags.useClipping) popBatch(accumulator);
-    });
+    }
 }
 
 void Render_drawGui(const GuiState *guiState) {
     static BatchAccumulator accumulator = {};
 
-    for_eachArr(const batch, accumulator.aDone, {
+    for arrEach(batch, accumulator.aDone) {
         arrClear(batch->aVertices);
         arrClear(batch->aIndices);
         arrClear(batch->aMeshData);
         arrClear(batch->aElementData);
-    });
+    }
     arrClear(accumulator.aDone);
 
-    for_eachArr(const batch, accumulator.aUnfinished, {
+    for arrEach(batch, accumulator.aUnfinished) {
         arrClear(batch->aVertices);
         arrClear(batch->aIndices);
         arrClear(batch->aMeshData);
         arrClear(batch->aElementData);
-    });
+    }
     arrClear(accumulator.aUnfinished);
 
     glDisable(GL_DEPTH_TEST);

@@ -30,6 +30,6 @@ extern bool guiInitialized;
 void Engine_loop(void (*generateGUI)(Element* guiRoot));
 Vec2f getMousePos();
 Vec2f getWindowSize();
-Font* getFont();
+Font* Engine_getDefaultFont();
 
 

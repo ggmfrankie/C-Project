@@ -104,20 +104,21 @@ Element* Element_get(ElementHandle handle) {
 
 void Element_delete(ElementHandle handle) {
     Element* element = SparseSet_get(&gElements, handle.ID, Element);
-    for_eachArr(childHandle, element->aFlowElements, {
-        Element_delete(*childHandle);
-    });
 
-    for_eachArr(childHandle, element->aStaticElements, {
+    for arrEach(childHandle, element->aFlowElements) {
         Element_delete(*childHandle);
-    });
+    }
+
+    for arrEach(childHandle, element->aStaticElements) {
+        Element_delete(*childHandle);
+    }
 
     if (element->elementData.ptr && element->elementData.needsFree) free(element->elementData.ptr);
     str_delete(&element->textElement.text);
 
-    arrDelete(element->aFlowElements);
-    arrDelete(element->aStaticElements);
-    arrDelete(element->layoutCache.aLines);
+    arrFree(element->aFlowElements);
+    arrFree(element->aStaticElements);
+    arrFree(element->layoutCache.aLines);
 }
 
 void Element_setOnClickCallback(Element* element, bool (*onClick)(Element* element)) {
@@ -139,7 +140,7 @@ void Element_setText_ptr(Element* element, const char* text) {
     assert(element != nullptr);
     Strings.copyInto(&element->textElement.text, text);
     element->textElement.hasText = true;
-    Text_reloadTextQuads(getFont(), element);
+    Text_reloadTextQuads(element);
 }
 
 void Element_setText_int(Element* element, const int i) {
@@ -205,8 +206,7 @@ ElementHandle createElement(const ElementSettings es) {
     lastElement->layoutDirection = es.layoutDirection;
     lastElement->callbacks.whileSelected = es.whileSelected;
     lastElement->callbacks.onUpdate = es.onUpdate;
-    lastElement->flags.wantGrowHorizontal = es.wantGrowHorizontal;
-    lastElement->flags.wantGrowVertical = es.wantGrowVertical;
+    lastElement->flags.grow = es.grow;
     lastElement->visuals.transparency = es.transparency;
     lastElement->visuals.brightness = 1.0f;
     lastElement->dims.cornerRadius = es.cornerRadius;
@@ -250,9 +250,10 @@ ElementHandle createElement(const ElementSettings es) {
         t->forceResize = true,
         t->pos = (Vec2f){};
         t->width = 0;
+        t->font = Engine_getDefaultFont();
         t->scale = es.textScale ? es.textScale : 1.0f;
         Element_setText_ptr(lastElement, es.text);
-        Text_reloadTextQuads(getFont(), lastElement);
+        Text_reloadTextQuads(lastElement);
     }
     return handle;
 }

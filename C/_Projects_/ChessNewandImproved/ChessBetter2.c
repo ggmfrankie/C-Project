@@ -284,7 +284,7 @@ void chess_loadChessPosition(char* fen) {
 
     defer(defer_arrDelete) String* aRanks = str_split(&aFenPieces[0], "/");
 
-    for_eachArr(rank, aRanks, {
+    for arrEachIdx(rank, i, aRanks) {
         int col = 0;
         for (int j = 0; j < rank->length; j++) {
             const char c = rank->m[j];
@@ -312,12 +312,8 @@ void chess_loadChessPosition(char* fen) {
                     break;
             }
         }
-    });
+    }
     chess_board.turn = aFenPieces[1].m[0] == 'b' ? Black : White;
-}
-
-void chess_loadTextures() {
-
 }
 
 static ElementHandle createChessSquares(const int row, const int col, ElementSettings es) {

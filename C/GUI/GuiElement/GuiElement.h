@@ -38,6 +38,11 @@ typedef enum UIState: byte {
 typedef struct {
     int start;
     int end;
+
+    struct {
+        Vec2f start;
+        Vec2f end;
+    } rect;
 } Line;
 
 typedef struct {
@@ -66,8 +71,7 @@ typedef struct Element {
         bool relativeWidth: 1;
         bool relativeHeight: 1;
 
-        bool wantGrowHorizontal: 1;
-        bool wantGrowVertical: 1;
+        bool grow: 1;
 
         bool noLayoutContributionHorizontal: 1;
         bool noLayoutContributionVertical: 1;
@@ -173,8 +177,7 @@ typedef struct ElementSettings {
     bool invisible;
     bool notSelectable;
     bool draggable;
-    bool wantGrowHorizontal;
-    bool wantGrowVertical;
+    bool grow;
     bool noLayoutContributionHorizontal;
     bool noLayoutContributionVertical;
     bool useClipping;

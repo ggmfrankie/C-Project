@@ -43,7 +43,7 @@ namespace Game {
 
         Scene3D mScene;
 
-        bool guiMode = false;
+        bool guiMode = true;
 
         float CAMERA_POS_STEP = 0.03f;
         static constexpr float MOUSE_SENSITIVITY = 0.05f;

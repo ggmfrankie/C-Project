@@ -8,9 +8,10 @@
 
 #include "C/GUI/Engine.h"
 #include "Games/BaseGame/GameGui.h"
+#include "_Projects_/ExampleGUI/ExampleGUI.h"
 #if 1
 int main(){
-    Engine_loop(generateGUI);
+    Engine_loop(ExampleGui_generate);
 
     return 0;
 }

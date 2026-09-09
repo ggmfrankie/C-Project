@@ -96,9 +96,9 @@ static void Test_arrayList() {
     TEST(0+1+2+3+4+5+6+7+8 == sum, "forward sum mismatch, expected %d got %d", 0+1+2+3+4+5+6+7+8, sum);
 
     sum = 0;
-    for_eachRevArr(num, array, {
+    for arrEachRev(num, array) {
         sum += *num;
-    });
+    }
     TEST(0+1+2+3+4+5+6+7+8 == sum, "reverse sum mismatch, expected %d got %d", 0+1+2+3+4+5+6+7+8, sum);
 
     typedef struct {
@@ -128,8 +128,8 @@ static void Test_arrayList() {
     int* res = arrTryGet(array, 100);
     TEST(res == nullptr, "arrTryGet out-of-range expected nullptr");
 
-    arrDelete(array);
-    arrDelete(pairs);
+    arrFree(array);
+    arrFree(pairs);
     TEST(array == nullptr, "arrDelete should null the pointer");
     TEST(pairs == nullptr, "arrDelete should null the pointer for struct array");
 }
@@ -147,9 +147,9 @@ static void Test_arrayListPerformance() {
     const TimeNs pushEnd = now_ns();
 
     const TimeNs iterateStart = now_ns();
-    for_eachArr(num, array, {
+    for arrEach(num, array) {
         sink += *num;
-    });
+    }
     const TimeNs iterateEnd = now_ns();
 
     printf(
@@ -159,12 +159,12 @@ static void Test_arrayListPerformance() {
         sink
     );
 
-    arrDelete(array);
+    arrFree(array);
 }
 
 static void Test_hashMap() {
     int* map = nullptr;
-    TEST(mapEmpty(map) == true, "new map should be empty");
+    TEST(mapIsEmpty(map) == true, "new map should be empty");
 
     mapInsert(map, "one", 1);
     TEST(*mapGet(map, "one") == 1, "map['one'] expected 1, got %d", *mapGet(map, "one"));
@@ -197,7 +197,7 @@ static void Test_hashMap() {
     TEST(*mapGet(map, "one") == 1, "map['one'] changed after growth, got %d", *mapGet(map, "one"));
     TEST(*mapGet(map, "two") == 2, "map['two'] changed after growth, got %d", *mapGet(map, "two"));
 
-    mapDelete(map);
+    mapFree(map);
 }
 
 static void Test_sparseSet_removeKeepOrder() {

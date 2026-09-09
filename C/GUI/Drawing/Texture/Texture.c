@@ -37,15 +37,21 @@ static StandaloneTexture* newTexture(const int width, const int height, const GL
     return &gTextures.m[gTextures.size++];
 }
 
+static void Texture_loadDefaults(TextureAtlas *atlas) {
+    arrPush(atlas->aNames, "White.png");
+}
+
 void Texture_loadAtlas(TextureAtlas *atlas) {
     stbrp_rect rects[MAX_ATLAS_TEXTURES];
     byte* pixels[MAX_ATLAS_TEXTURES];
     const char* names[MAX_ATLAS_TEXTURES];
     int index = 0;
 
+    Texture_loadDefaults(atlas);
+
     //TODO: Fix Padding
     constexpr int padding = 0;
-    for_eachArr(namePtr, atlas->aNames, {
+    for arrEach(namePtr, atlas->aNames) {
         int width, height, channels;
         const char* name = *namePtr;
         printf("Name: %s\n", name);
@@ -62,7 +68,7 @@ void Texture_loadAtlas(TextureAtlas *atlas) {
         names[index] = name;
 
         index++;
-    });
+    }
 
     const int width = atlas->width;
     const int height = atlas->height;
@@ -96,7 +102,7 @@ void Texture_loadAtlas(TextureAtlas *atlas) {
             memcpy(dst, s, w * PIXEL_SIZE);
         }
 
-        mapInsert(gmTextureMap, names[i], (Texture){
+        mapInsert(gmTextureMap, names[i], ((Texture){
             .uv0 = {
                 ((float)rects[i].x + padding)/(float)atlas->width,
                 ((float)rects[i].y + padding)/(float)atlas->height
@@ -105,7 +111,7 @@ void Texture_loadAtlas(TextureAtlas *atlas) {
                 (float)(rects[i].x - padding + w)/(float)atlas->width,
                 (float)(rects[i].y - padding + h)/(float)atlas->height
             }
-        });
+        }));
     }
     atlas->ID = uploadTextureToGPU(atlas->width, atlas->height, PIXEL_SIZE, data);
 

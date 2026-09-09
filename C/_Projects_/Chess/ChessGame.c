@@ -770,7 +770,7 @@ static void createChessBoard(Element* root) {
                     .layoutDirection = LAYOUT_RIGHT,
                     .childGap = 10,
                     .invisible = true,
-                    .wantGrowHorizontal = true
+                    .grow = true
                 },
                     Element_new((ElementSettings){
                         .color = COLOR_GRAY,
@@ -796,7 +796,7 @@ static void createChessBoard(Element* root) {
                     .color = {.25, .35, .355},
                     .padding = {5,5,5,5},
                     .childGap = 10,
-                    .wantGrowHorizontal = true,
+                    .grow = true,
                     .maxWidth = 400,
                     .layoutDirection = LAYOUT_RIGHT,
                     .notSelectable = true,
@@ -865,7 +865,7 @@ static void createStartScreen(Element* root) {
                 }),
                 Element_new((ElementSettings){
                     .layoutDirection = LAYOUT_RIGHT,
-                    .wantGrowHorizontal = true,
+                    .grow = true,
                     .invisible = true,
                     .childGap = 10
                 },

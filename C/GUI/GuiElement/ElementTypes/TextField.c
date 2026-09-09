@@ -92,14 +92,14 @@ static void TextField_setClosestCursorPos(const Element* self, float pos) {
     float prev = 0.0;
     int index = arrLen(aCharQuads);
 
-    for_eachArr(character, aCharQuads, {
+    for arrEachIdx(character, i, aCharQuads) {
         const float next = self->padding.left + character->pos.x + character->width * 0.5;
         if (prev <= pos && pos < next) {
             index = i;
             break;
         }
         prev = next;
-    });
+    }
 
     TextField_moveCursorTo(self, index);
 }

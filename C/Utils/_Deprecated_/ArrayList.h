@@ -82,3 +82,24 @@ inline List_##name name##_newList(int capacity) {\
         .capacity = capacity,\
     }; \
 }
+
+#define for_eachArr(item, array, ...)\
+    do {\
+        if ((array) == nullptr) break;\
+       \
+        size_t len = arrLen(array);\
+        for (size_t i = 0; i < len; ++i) {\
+            typeof(array) item = &(array)[i];\
+            __VA_ARGS__\
+        }\
+    } while (0)
+
+#define for_eachRevArr(item, array, ...)\
+    do { \
+        if ((array) == nullptr) break; \
+        size_t len = arrLen(array); \
+        for (size_t i = len; i --> 0;) { \
+            typeof(array) item = &(array)[i]; \
+            __VA_ARGS__ \
+        } \
+    } while (0)

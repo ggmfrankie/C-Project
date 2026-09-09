@@ -27,7 +27,7 @@ typedef void (*GUI_onKeyPressAction)(int key, int scancode, int action, int mods
     void gui_render();
 
     void _gui_addTextures(char* first, ...);
-    #define gui_addTextures(first, ...) _gui_addTextures(first, ##__VA_ARGS__, "White.png", "Black.png", nullptr)
+    #define gui_addTextures(...) _gui_addTextures(__VA_ARGS__, nullptr)
     void gui_setTexture(Element* e, const char* name);
 
     void gui_charCallback(GLFWwindow*, unsigned int codepoint);

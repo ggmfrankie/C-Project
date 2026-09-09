@@ -26,11 +26,11 @@ typedef struct {
 #define mapLen(map) ((map) ? (_hashMapGetHead(map)->size) : 0)
 #define mapCap(map) ((map) ? (_hashMapGetHead(map)->capacity) : 0)
 
-#define mapEmpty(map) (arrLen(map) == 0)
+#define mapIsEmpty(map) (arrLen(map) == 0)
 
 uint32_t _hashMapHash(const char* key);
 
-#define mapInsert(map, key, value...)\
+#define mapInsert(map, key, value)\
     do {\
         if ((map) == nullptr) {\
             _HashMap_Header_* _header = calloc(_HashMapContentSize(map) * _HashMapInitCapacity + sizeof(_HashMap_Header_), 1);\
@@ -88,5 +88,5 @@ uint32_t _hashMapHash(const char* key);
 void* _hashMapGet(byte* map, const char* key, size_t stride);
 #define mapGet(map, key) (typeof(*map)*) _hashMapGet((byte*)(map), (key), _HashMapContentSize(map))
 
-void _hashMapDelete(void* map);
-#define mapDelete(map) _hashMapDelete(map)
+void _hashMapFree(void* map);
+#define mapFree(map) _hashMapFree(map)

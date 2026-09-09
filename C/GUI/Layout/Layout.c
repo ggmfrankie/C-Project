@@ -59,9 +59,18 @@ static Vec2f getManualDims(const Element* self) {
     };
 }
 
-static Line* createNewLine(Line* lines, const int i) {
-    arrGetLast(lines)->end = i;
-    arrPush(lines, ((Line){.start = i, .end = i}));
+static void endOldLine(Line* lines, Vec2f end) {
+    Line* line = arrGetLast(lines);
+    line->rect.end = end;
+}
+
+static Line* pushNewLine(Line* lines, const int i, Vec2f start) {
+    arrPush(lines, ((Line){
+        .start = i,
+        .rect = {
+            .start = start
+        }
+    }));
     return arrGetLast(lines);
 }
 
@@ -69,9 +78,9 @@ static Vec2f getDimsFromFlowChildren(const Element* self) {
     Vec2f cursor = {0, 0};
     Vec2f extend = {0, 0};
     Line* lines = self->layoutCache.aLines;
-    Line* currLine = &lines[0];
+    Line* currLine = pushNewLine(lines, 0, cursor);
 
-    for_eachArr(childPtr, self->aFlowElements, {
+    for arrEachIdx(childPtr, i, self->aFlowElements) {
         Element* child = Element_get(*childPtr);
         //First calculate sizes of children
         const Cache* childCache = cacheLayout(child);
@@ -84,10 +93,12 @@ static Vec2f getDimsFromFlowChildren(const Element* self) {
                 const float predictedTotalHeight = cursor.y + childCache->minHeight + extraGap + totalPadding;
 
                 if (predictedTotalHeight > self->dims.maxHeight) {
+                    endOldLine(lines, cursor);
+
                     cursor.y = 0;
                     cursor.x = extend.x + childGap;
 
-                    currLine = createNewLine(lines, i);
+                    currLine = pushNewLine(lines, i, cursor);
                 }
                 //Increment cursor by childHeight + childGap
                 cursor.y += childCache->minHeight + childGap;
@@ -103,10 +114,12 @@ static Vec2f getDimsFromFlowChildren(const Element* self) {
                 const float predictedTotalWidth = cursor.x + childCache->minWidth + extraGap + totalPadding;
 
                 if (predictedTotalWidth > self->dims.maxWidth) {
+                    endOldLine(lines, cursor);
+
                     cursor.x = 0;
                     cursor.y = extend.y + childGap;
 
-                    currLine = createNewLine(lines, i);
+                    currLine = pushNewLine(lines, i, cursor);
                 }
                 //Increment cursor by childWidth + childGap
                 cursor.x += childCache->minWidth + childGap;
@@ -118,7 +131,9 @@ static Vec2f getDimsFromFlowChildren(const Element* self) {
                 break;
         }
         currLine->end++;
-    });
+    }
+
+    endOldLine(lines, extend);
 
     //remove extra child gap
     if (!arrIsEmpty(self->aFlowElements)) {
@@ -137,14 +152,14 @@ static Vec2f getDimsFromFlowChildren(const Element* self) {
 
 static Vec2f getDimsFromStaticChildren(const Element* self) {
     Vec2f extend = {0, 0};
-    for_eachArr(const childPtr, self->aStaticElements, {
+    for arrEach(childPtr, self->aStaticElements) {
         Element* child = Element_get(*childPtr);
         const Vec2f pos = child->dims.pos;
         //Children first
         const Cache* childCache = cacheLayout(child);
         if (!child->flags.noLayoutContributionHorizontal) extend.x = max(extend.x, pos.x + childCache->minWidth);
         if (!child->flags.noLayoutContributionVertical)   extend.y = max(extend.y, pos.y + childCache->minHeight);
-    });
+    };
     return extend;
 }
 
@@ -213,7 +228,7 @@ static void placeFlowElements(const Element* self) {
     Vec2f cursor = start;
     Vec2f extend = start;
 
-    for_eachArr(const linesPtr, self->layoutCache.aLines, {
+    for arrEachIdx(linesPtr, i, self->layoutCache.aLines) {
         Line currLine = *linesPtr;
         if (currLine.start == currLine.end) continue;
 
@@ -233,19 +248,25 @@ static void placeFlowElements(const Element* self) {
 
             switch (self->layoutDirection) {
                 case LAYOUT_RIGHT:
-                    //TODO: fix -> make any line growable
+                    if (curr->flags.grow) {
+                        if (i == _end-1) {
+                            const float freeSpace = (self->dims.worldHeight - totalPadding.y);
+                            dims.y = freeSpace;
+                        } else {
+                            dims.y = currLine.rect.end.y - currLine.rect.start.y;
+                        }
+                    }
                     //Flex space
                     dims.x += flexFactor * (self->dims.worldWidth  - flexData.totalMinSize.x - totalChildGap - totalPadding.x);
-                    //Want to grow
-                    if (i == len-1 && curr->flags.wantGrowVertical) {
-                        const float freeSpace = (self->dims.worldHeight - totalPadding.y);
-                        dims.y = freeSpace;
-                    }
                     break;
                 case LAYOUT_DOWN:
-                    if (i == len-1 && curr->flags.wantGrowHorizontal) {
-                        const float freeSpace = (self->dims.worldWidth - totalPadding.x);
-                        dims.x = freeSpace;
+                    if (curr->flags.grow) {
+                        if (i == _end-1) {
+                            const float freeSpace = (self->dims.worldWidth - totalPadding.x);
+                            dims.x = freeSpace;
+                        } else {
+                            dims.x = currLine.rect.end.x - currLine.rect.start.x;
+                        }
                     }
                     dims.y += flexFactor * (self->dims.worldHeight - flexData.totalMinSize.y - totalChildGap - totalPadding.y);
                     break;
@@ -261,6 +282,7 @@ static void placeFlowElements(const Element* self) {
                 case LAYOUT_DOWN:  cursor.y += self->childGap + dims.y; break;
             }
         }
+
         switch (self->layoutDirection) {
             case LAYOUT_RIGHT:
                 cursor.x = start.x;
@@ -271,11 +293,11 @@ static void placeFlowElements(const Element* self) {
                 cursor.y = start.y;
                 break;
         }
-    });
+    }
 }
 
 static void placeStaticElements(const Element* self) {
-    for_eachArr(const elementPtr, self->aStaticElements, {
+    for arrEach(elementPtr, self->aStaticElements) {
         Element* curr = Element_get(*elementPtr);
         placeElementAt(curr,
             (Vec2f){
@@ -287,7 +309,7 @@ static void placeStaticElements(const Element* self) {
                 curr->layoutCache.minHeight
             }
         );
-    });
+    }
 }
 
 static void placeChildElements(const Element* self) {
@@ -295,8 +317,8 @@ static void placeChildElements(const Element* self) {
     placeFlowElements(self);
     placeStaticElements(self);
 
-    for_eachArr(const flowElement, self->aFlowElements, { placeChildElements(Element_get(*flowElement)); });
-    for_eachArr(const staticElement, self->aStaticElements,{ placeChildElements(Element_get(*staticElement)); });
+    for arrEach(flowElement, self->aFlowElements) { placeChildElements(Element_get(*flowElement));}
+    for arrEach(staticElement, self->aStaticElements) { placeChildElements(Element_get(*staticElement));}
 #if GUI_DEBUG
     const bool correctElement = (self->name) ? (strcmp(GUI_DEBUG_OBSERVE_ELEMENT_PLACE_CHILDREN, self->name) == 0) : false;
     const bool print = correctElement && only_every(200);

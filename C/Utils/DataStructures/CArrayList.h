@@ -67,35 +67,18 @@ void _arrGrowIfNeeded(void **array, size_t typeSize);
         _arrayGetHead(array)->size = 0;\
     } while (0)
 
-#define arrDelete(array) \
+#define arrFree(array) \
     do {\
         if((array) == nullptr) break;\
         free(_arrayGetHead(array));\
         (array) = nullptr;\
     } while (0)
 
-#define arrEach(item, array) (typeof(*(array))* item = &(array)[0]; item < ((array) + arrLen((array))); ++item)
-
-#define for_eachArr(item, array, ...)\
-    do {\
-        if ((array) == nullptr) break;\
-       \
-        size_t len = arrLen(array);\
-        for (size_t i = 0; i < len; ++i) {\
-            typeof(array) item = &(array)[i];\
-            __VA_ARGS__\
-        }\
-    } while (0)
-
-#define for_eachRevArr(item, array, ...)\
-    do { \
-        if ((array) == nullptr) break; \
-        size_t len = arrLen(array); \
-        for (size_t i = len; i --> 0;) { \
-            typeof(array) item = &(array)[i]; \
-            __VA_ARGS__ \
-        } \
-    } while (0)
+//@brief usage for arrEach(itemName, array) {...}
+#define arrEach(item, array) (typeof(*(array))* item = (array), *_end = (array) + arrLen(array); (item) != _end; ++(item))
+//@brief usage for arrEach(itemName, indexName, array) {...}
+#define arrEachIdx(item, index, array) (size_t (index) = 0, _end = arrLen(array); (index) < _end; ++(index)) for (typeof(*(array))* (item) = &(array)[index]; (item); (item) = nullptr)
+#define arrEachRev(item, array) (typeof(*(array))* item = (array) + arrLen(array), *_end = (array); (item)-- != _end;)
 
 #define arrContains(array, item) ({\
     bool CONCAT(_local, __LINE__) = false;\

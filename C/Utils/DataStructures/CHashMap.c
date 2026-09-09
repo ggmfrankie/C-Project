@@ -42,7 +42,7 @@ void* _hashMapGet(byte* map, const char* key, size_t stride) {
     return nullptr;
 }
 
-void _hashMapDelete(void *map) {
+void _hashMapFree(void *map) {
     if (map == nullptr) return;
     free(_hashMapGetHead(map));
 }

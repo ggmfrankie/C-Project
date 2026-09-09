@@ -51,7 +51,7 @@ void SparseSet_delete(SparseSet* set){
     free(set->data.m);
     free(set->indices.toData);
     free(set->indices.fromData);
-    arrDelete(set->aFreeList);
+    arrFree(set->aFreeList);
     memset(set, 0, sizeof(SparseSet));
 }
 

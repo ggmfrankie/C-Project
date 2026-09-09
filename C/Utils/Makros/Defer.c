@@ -21,5 +21,5 @@ void defer_strDelete(Str* s) {
 }
 
 void defer_arrDelete(void *a) {
-    arrDelete(a);
+    arrFree(a);
 }

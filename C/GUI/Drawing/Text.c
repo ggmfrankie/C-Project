@@ -110,7 +110,7 @@ void Text_accumulateTextQuads(const Element *element, Batch* meshData, ssize_t i
 
     const int ID = arrLen(meshData->aMeshData);
 
-    for_eachArr(const c, aCharQuads, {
+    for arrEach(c, aCharQuads) {
         constexpr int TEXT_BINDING = 1;
 
         const float x = c->pos.x + element->padding.left;
@@ -139,7 +139,8 @@ void Text_accumulateTextQuads(const Element *element, Batch* meshData, ssize_t i
 
         arrPush(meshData->aIndices, v0); arrPush(meshData->aIndices, v1); arrPush(meshData->aIndices, v2);
         arrPush(meshData->aIndices, v0); arrPush(meshData->aIndices, v2); arrPush(meshData->aIndices, v3);
-    });
+    }
+
     uploadTextInstanceData(element, &meshData->aMeshData, id);
 }
 
@@ -153,7 +154,7 @@ Vec2f Text_measureElementText(const TextElement* textElement) {
     float maxX = -FLT_MAX;
     float maxY = -FLT_MAX;
 
-    for_eachArr(const c, textElement->aCharQuads, {
+    for arrEach(c, textElement->aCharQuads) {
         const float x0 = c->pos.x;
         const float y0 = c->pos.y;
         const float x1 = c->pos.x + c->width;
@@ -163,7 +164,7 @@ Vec2f Text_measureElementText(const TextElement* textElement) {
         minY = min(minY, y0);
         maxX = max(maxX, x1);
         maxY = max(maxY, y1);
-    });
+    }
 
     const float width  = maxX - minX;
     const float height = maxY - minY;
@@ -200,7 +201,7 @@ static Vec2f measureText(const Font *font, const String *text) {
     };
 }
 
-void Text_reloadTextQuads(const Font* font, Element *element) {
+void Text_reloadTextQuads(Element *element) {
     TextElement *textElement = &element->textElement;
     arrClear(textElement->aCharQuads);
 
@@ -222,6 +223,8 @@ void Text_reloadTextQuads(const Font* font, Element *element) {
     };
 
     float prevX = 0.0f;
+
+    const Font* font = textElement->font;
 
     for (int i = 0; i < textElement->text.length; i++) {
         const char c = textElement->text.m[i];
