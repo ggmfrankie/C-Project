@@ -282,18 +282,11 @@ static Element* focusedElement = nullptr;
 static Element* mouseCapturedElement = nullptr;
 static bool dragging = false;
 
-#include <windows.h>
-
 static bool Engine_handleDragElement(const GuiState *renderer) {
     if (!mouseCapturedElement) return false;
     if (!mouseCapturedElement->callbacks.requestMove) return false;
 
-    POINT cursorPos;
-    GetCursorPos(&cursorPos);
-
-    const Vec2i mousePos = {cursorPos.x, cursorPos.y};
-
-    printf("Windows cursor pos = %i, %i, glfw cursor pos = %i, %i\n", mousePos.x, mousePos.y, (int)renderer->mousePos.x, (int)renderer->mousePos.y);
+    const Vec2f mousePos = renderer->mousePos;
 
     Element* element = mouseCapturedElement;
     static Vec2f offset;
