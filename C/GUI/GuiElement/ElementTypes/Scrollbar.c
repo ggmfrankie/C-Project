@@ -32,7 +32,7 @@ ElementHandle Scrollbar_new(ScrollbarSettings settings) {
     const ElementHandle railHandle = Element_new((ElementSettings) {
         .pos = settings.pos,
         .minWidth = settings.railWidth,
-        .wantGrowVertical = true,
+        .grow = true,
         .color = settings.railColor,
         .cornerRadius = settings.railWidth*0.5
     },

@@ -779,7 +779,7 @@ static void createChessBoard(Element* root) {
                         .onUpdate = displayCurrentTime,
                         .cornerRadius = 6,
                         .flexGrow = 1.0,
-                        .wantGrowVertical = true
+                        .grow = true
                     }),
                     TextField_new((ElementSettings){
                         .color = COLOR_GRAY,
@@ -787,7 +787,7 @@ static void createChessBoard(Element* root) {
                         .text = "",
                         .cornerRadius = 6,
                         .flexGrow = 1.0,
-                        .wantGrowVertical = true
+                        .grow = true
                     },
                         nullptr
                     )

@@ -3,6 +3,8 @@
 //
 #include "Layout.h"
 
+#include <float.h>
+
 #include "glad/gl.h"
 
 #include <string.h>
@@ -15,7 +17,7 @@
 #include "Makros/Makros.h"
 #include "Utils/Misc/UtilityFun.h"
 
-static Cache* cacheLayout(Element* self);
+static Cache* cacheLayout(Element* self, float maxAvailableWidth, float maxAvailableHeight);
 
 static void placeChildElements(const Element* self);
 
@@ -32,7 +34,7 @@ void Layout_updateLayout(const GuiState *state) {
 
     updateGuiRoot(state, root);
 
-    cacheLayout(root);
+    cacheLayout(root, root->dims.worldWidth, root->dims.worldHeight);
 
     placeChildElements(root);
 }
@@ -46,6 +48,7 @@ static void clearCache(Element* self) {
 }
 
 static Vec2f calculateTextSize(const Element* self) {
+    //TODO fix incorrect height for letters like 'g'
     if (self->textElement.hasText) {
         return Text_measureElementText(&self->textElement);
     }
@@ -60,31 +63,32 @@ static Vec2f getManualDims(const Element* self) {
 }
 
 static void endOldLine(Line* lines, Vec2f end) {
-    Line* line = arrGetLast(lines);
+    Line* line = arrPeek(lines);
     line->rect.end = end;
 }
 
-static Line* pushNewLine(Line* lines, const int i, Vec2f start) {
-    arrPush(lines, ((Line){
+static void pushNewLine(Line** lines, const int i, Vec2f start) {
+    arrPush(*lines, ((Line){
         .start = i,
         .rect = {
             .start = start
         }
     }));
-    return arrGetLast(lines);
 }
 
-static Vec2f getDimsFromFlowChildren(const Element* self) {
+static Vec2f getDimsFromFlowChildren(Element* self, float maxAvailableWidth, float maxAvailableHeight) {
     Vec2f cursor = {0, 0};
     Vec2f extend = {0, 0};
-    Line* lines = self->layoutCache.aLines;
-    Line* currLine = pushNewLine(lines, 0, cursor);
+    pushNewLine(&self->layoutCache.aLines, 0, cursor);
+
+    maxAvailableWidth  = min(maxAvailableWidth,  self->dims.maxWidth);
+    maxAvailableHeight = min(maxAvailableHeight, self->dims.maxHeight);
 
     for arrEachIdx(childPtr, i, self->aFlowElements) {
         Element* child = Element_get(*childPtr);
         //First calculate sizes of children
-        const Cache* childCache = cacheLayout(child);
-        const float childGap = self->childGap;
+        const Cache* childCache = cacheLayout(child, maxAvailableWidth, maxAvailableHeight);
+        const float childGap    = self->childGap;
 
         switch (self->layoutDirection) {
             case LAYOUT_DOWN: {
@@ -92,13 +96,13 @@ static Vec2f getDimsFromFlowChildren(const Element* self) {
                 const float totalPadding = self->padding.up + self->padding.down;
                 const float predictedTotalHeight = cursor.y + childCache->minHeight + extraGap + totalPadding;
 
-                if (predictedTotalHeight > self->dims.maxHeight) {
-                    endOldLine(lines, cursor);
+                if (predictedTotalHeight > maxAvailableHeight) {
+                    endOldLine(self->layoutCache.aLines, cursor);
 
                     cursor.y = 0;
                     cursor.x = extend.x + childGap;
 
-                    currLine = pushNewLine(lines, i, cursor);
+                    pushNewLine(&self->layoutCache.aLines, i, cursor);
                 }
                 //Increment cursor by childHeight + childGap
                 cursor.y += childCache->minHeight + childGap;
@@ -113,13 +117,13 @@ static Vec2f getDimsFromFlowChildren(const Element* self) {
                 const float totalPadding = self->padding.left + self->padding.right;
                 const float predictedTotalWidth = cursor.x + childCache->minWidth + extraGap + totalPadding;
 
-                if (predictedTotalWidth > self->dims.maxWidth) {
-                    endOldLine(lines, cursor);
+                if (predictedTotalWidth > maxAvailableWidth) {
+                    endOldLine(self->layoutCache.aLines, cursor);
 
                     cursor.x = 0;
                     cursor.y = extend.y + childGap;
 
-                    currLine = pushNewLine(lines, i, cursor);
+                    pushNewLine(&self->layoutCache.aLines, i, cursor);
                 }
                 //Increment cursor by childWidth + childGap
                 cursor.x += childCache->minWidth + childGap;
@@ -130,10 +134,10 @@ static Vec2f getDimsFromFlowChildren(const Element* self) {
             }
                 break;
         }
-        currLine->end++;
+        arrPeek(self->layoutCache.aLines)->end++;
     }
 
-    endOldLine(lines, extend);
+    endOldLine(self->layoutCache.aLines, extend);
 
     //remove extra child gap
     if (!arrIsEmpty(self->aFlowElements)) {
@@ -156,15 +160,15 @@ static Vec2f getDimsFromStaticChildren(const Element* self) {
         Element* child = Element_get(*childPtr);
         const Vec2f pos = child->dims.pos;
         //Children first
-        const Cache* childCache = cacheLayout(child);
+        const Cache* childCache = cacheLayout(child, self->dims.maxWidth, self->dims.maxHeight);
         if (!child->flags.noLayoutContributionHorizontal) extend.x = max(extend.x, pos.x + childCache->minWidth);
         if (!child->flags.noLayoutContributionVertical)   extend.y = max(extend.y, pos.y + childCache->minHeight);
-    };
+    }
     return extend;
 }
 
-static Vec2f getDimsFromChildren(const Element* self) {
-    const Vec2f flowDims   = getDimsFromFlowChildren(self);
+static Vec2f getDimsFromChildren(Element* self, float maxAvailableWidth, float maxAvailableHeight) {
+    const Vec2f flowDims   = getDimsFromFlowChildren(self, maxAvailableWidth, maxAvailableHeight);
     const Vec2f staticDims = getDimsFromStaticChildren(self);
 
     return (Vec2f){
@@ -173,16 +177,15 @@ static Vec2f getDimsFromChildren(const Element* self) {
     };
 }
 
-static Cache* cacheLayout(Element* self) {
+static Cache* cacheLayout(Element* self, float maxAvailableWidth, float maxAvailableHeight) {
     if (!self->flags.isActive) return &self->layoutCache;
 
     clearCache(self);
-
     const Vec2f textDims   = calculateTextSize(self);
     const Vec2f manualDims = getManualDims(self);
 
     //Recursion
-    const Vec2f childDims  = getDimsFromChildren(self);
+    const Vec2f childDims  = getDimsFromChildren(self, maxAvailableWidth, maxAvailableHeight);
 
     self->layoutCache.minWidth  =
         self->padding.left +

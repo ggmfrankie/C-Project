@@ -24,7 +24,7 @@ static struct _StringHeader_* _strGetHeader(const Str s) {
     return &((struct _StringHeader_*)(s))[-1];
 }
 
-static bool _strIsStr(const char* c){
+static bool _strIsStr(char* c){
     return _strGetHeader(c)->_IDENTIFIER_ == IDENTIFIER; 
 }
 

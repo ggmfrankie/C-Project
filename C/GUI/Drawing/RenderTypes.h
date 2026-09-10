@@ -50,4 +50,5 @@ typedef struct {
 typedef struct {
     Batch* aUnfinished;
     Batch* aDone;
+    Batch* aUsed;
 } BatchAccumulator;

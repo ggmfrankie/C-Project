@@ -52,7 +52,7 @@ static void TextField_moveCursorTo(const Element* self, int index) {
         cursor->pos = (TextFieldCursorPos){0, offset};
     }
     else if (index >= len) {
-        const Character* last = arrGetLast(aCharQuads);
+        const Character* last = arrPeek(aCharQuads);
         cursor->pos = (TextFieldCursorPos){len ,offset + last->pos.x + last->advance};
     }
     else {

@@ -196,17 +196,20 @@ static ssize_t addElementData(const Element* element, Batch* batch) {
 }
 
 static void pushBatch(BatchAccumulator* accumulator, const Element* clipElement) {
-    const Batch newBatch = {
-        .clip.pos = (Vec2f){
-            clipElement->dims.worldPos.x + clipElement->padding.left,
-            clipElement->dims.worldPos.y + clipElement->padding.up
-        },
-        .clip.dims = (Vec2f){
-            clipElement->dims.worldWidth  - clipElement->padding.right,
-            clipElement->dims.worldHeight - clipElement->padding.down
-        },
+    Batch batch = {};
+    if (!arrIsEmpty(accumulator->aUsed)) {
+        batch = arrPop(accumulator->aUsed);   // reuse old inner array pointers
+    }
+    batch.clip.pos = (Vec2f){
+        clipElement->dims.worldPos.x + clipElement->padding.left,
+        clipElement->dims.worldPos.y + clipElement->padding.up
     };
-    arrPush(accumulator->aUnfinished, newBatch);
+    batch.clip.dims = (Vec2f){
+        clipElement->dims.worldWidth  - clipElement->padding.right,
+        clipElement->dims.worldHeight - clipElement->padding.down
+    };
+
+    arrPush(accumulator->aUnfinished, batch);
 }
 
 static void popBatch(BatchAccumulator* accumulator) {
@@ -217,7 +220,7 @@ static void accumulateMeshes(const ElementHandle elementHandle, BatchAccumulator
     Element* self = Element_get(elementHandle);
     if (self == nullptr || !self->flags.isActive) return;
 
-    Batch* curr = arrGetLast(accumulator->aUnfinished);
+    Batch* curr = arrPeek(accumulator->aUnfinished);
 
     const ssize_t id = addElementData(self, curr);
 
@@ -255,24 +258,21 @@ static void accumulateMeshes(const ElementHandle elementHandle, BatchAccumulator
     }
 }
 
+static void resetBatches(BatchAccumulator* accumulator) {
+    arrCopy(accumulator->aUsed, accumulator->aDone);
+    arrClear(accumulator->aDone);
+    arrClear(accumulator->aUnfinished);
+
+    for arrEach(batch, accumulator->aUsed) {
+        arrClear(batch->aVertices);
+        arrClear(batch->aIndices);
+        arrClear(batch->aMeshData);
+        arrClear(batch->aElementData);
+    }
+}
+
 void Render_drawGui(const GuiState *guiState) {
     static BatchAccumulator accumulator = {};
-
-    for arrEach(batch, accumulator.aDone) {
-        arrClear(batch->aVertices);
-        arrClear(batch->aIndices);
-        arrClear(batch->aMeshData);
-        arrClear(batch->aElementData);
-    }
-    arrClear(accumulator.aDone);
-
-    for arrEach(batch, accumulator.aUnfinished) {
-        arrClear(batch->aVertices);
-        arrClear(batch->aIndices);
-        arrClear(batch->aMeshData);
-        arrClear(batch->aElementData);
-    }
-    arrClear(accumulator.aUnfinished);
 
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
@@ -294,12 +294,14 @@ void Render_drawGui(const GuiState *guiState) {
     Shader_setUniform(&guiState->guiShader, "screenWidth", (float) guiState->screenWidth);
     Shader_setUniform(&guiState->guiShader, "screenHeight", (float) guiState->screenHeight);
 
+    //Warning: If gui requires less batches the old ones are not deleted
     pushBatch(&accumulator, Element_get(guiState->guiRoot));
     accumulateMeshes(guiState->guiRoot, &accumulator);
     popBatch(&accumulator);
 
     uploadBatches(&accumulator);
     drawBatches(&guiState->guiShader, &accumulator);
+    resetBatches(&accumulator);
 
     glBindVertexArray(0);
     glDisable(GL_MULTISAMPLE);

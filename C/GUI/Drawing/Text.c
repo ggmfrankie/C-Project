@@ -103,12 +103,12 @@ static void uploadTextInstanceData(const Element *owner, MeshInstanceData** aAdd
 }
 
 //@brief only adds the parent world pos and adds it to the vertexBuffer
-void Text_accumulateTextQuads(const Element *element, Batch* meshData, ssize_t id) {
+void Text_accumulateTextQuads(const Element *element, Batch* batch, ssize_t id) {
     const Character* aCharQuads = element->textElement.aCharQuads;
 
     if (aCharQuads == nullptr || arrIsEmpty(aCharQuads)) return;
 
-    const int ID = arrLen(meshData->aMeshData);
+    const int ID = arrLen(batch->aMeshData);
 
     for arrEach(c, aCharQuads) {
         constexpr int TEXT_BINDING = 1;
@@ -126,22 +126,22 @@ void Text_accumulateTextQuads(const Element *element, Batch* meshData, ssize_t i
         const Vec2f uv2 = end;
         const Vec2f uv3 = { start.x, end.y };
 
-        const int v0 = arrLen(meshData->aVertices);
+        const int v0 = arrLen(batch->aVertices);
 
-        arrPush(meshData->aVertices, ((GuiVertex){{x,   y},   uv0, TEXT_BINDING, ID}));
-        arrPush(meshData->aVertices, ((GuiVertex){{x+w, y},   uv1, TEXT_BINDING, ID}));
-        arrPush(meshData->aVertices, ((GuiVertex){{x+w, y+h}, uv2, TEXT_BINDING, ID}));
-        arrPush(meshData->aVertices, ((GuiVertex){{x,   y+h}, uv3, TEXT_BINDING, ID}));
+        arrPush(batch->aVertices, ((GuiVertex){{x,   y},   uv0, TEXT_BINDING, ID}));
+        arrPush(batch->aVertices, ((GuiVertex){{x+w, y},   uv1, TEXT_BINDING, ID}));
+        arrPush(batch->aVertices, ((GuiVertex){{x+w, y+h}, uv2, TEXT_BINDING, ID}));
+        arrPush(batch->aVertices, ((GuiVertex){{x,   y+h}, uv3, TEXT_BINDING, ID}));
 
         const int v1 = v0 + 1;
         const int v2 = v0 + 2;
         const int v3 = v0 + 3;
 
-        arrPush(meshData->aIndices, v0); arrPush(meshData->aIndices, v1); arrPush(meshData->aIndices, v2);
-        arrPush(meshData->aIndices, v0); arrPush(meshData->aIndices, v2); arrPush(meshData->aIndices, v3);
+        arrPush(batch->aIndices, v0); arrPush(batch->aIndices, v1); arrPush(batch->aIndices, v2);
+        arrPush(batch->aIndices, v0); arrPush(batch->aIndices, v2); arrPush(batch->aIndices, v3);
     }
 
-    uploadTextInstanceData(element, &meshData->aMeshData, id);
+    uploadTextInstanceData(element, &batch->aMeshData, id);
 }
 
 Vec2f Text_measureElementText(const TextElement* textElement) {
@@ -230,7 +230,7 @@ void Text_reloadTextQuads(Element *element) {
         const char c = textElement->text.m[i];
         if (c < 32 || c > 126) continue;
         arrPush(textElement->aCharQuads, (Character){});
-        Character* character = arrGetLast(textElement->aCharQuads);
+        Character* character = arrPeek(textElement->aCharQuads);
         stbtt_aligned_quad q;
         stbtt_GetPackedQuad(
             font->glyphs,

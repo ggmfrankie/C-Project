@@ -50,7 +50,7 @@ static void Test_sparseSet_edgeCases() {
     TEST(set.indices.fromData[1] == 2, "fromData[1] expected 2 after middle remove, got %zd", set.indices.fromData[1]);
 
     TEST(arrLen(set.aFreeList) == 1, "free-list length expected 1 after one remove, got %zu", arrLen(set.aFreeList));
-    TEST(*arrGetLast(set.aFreeList) == 1, "free-list last expected removed id 1, got %zu", *arrGetLast(set.aFreeList));
+    TEST(*arrPeek(set.aFreeList) == 1, "free-list last expected removed id 1, got %zu", *arrPeek(set.aFreeList));
 
     // Reinsert should reuse a free id.
     size_t reused = SparseSet_add(&set, 250);
@@ -76,13 +76,13 @@ static void Test_arrayList() {
 
     arrPush(array, 0);
     TEST(array[0] == 0, "array[0] expected 0, got %d", array[0]);
-    TEST(*arrGetLast(array) == 0, "arrGetLast expected 0, got %d", *arrGetLast(array));
+    TEST(*arrPeek(array) == 0, "arrGetLast expected 0, got %d", *arrPeek(array));
 
     for (int i = 1; i < 10; ++i){
         arrPush(array, i);
     }
     TEST(arrLen(array) == 10, "arrLen expected 10 after pushes, got %zu", arrLen(array));
-    TEST(*arrGetLast(array) == 9, "arrGetLast expected 9 after pushes, got %d", *arrGetLast(array));
+    TEST(*arrPeek(array) == 9, "arrGetLast expected 9 after pushes, got %d", *arrPeek(array));
     TEST(_arrayGetHead(array)->capacity >= 10, "capacity expected growth to >= 10, got %zu", _arrayGetHead(array)->capacity);
 
     int a = arrPop(array);
@@ -123,7 +123,7 @@ static void Test_arrayList() {
     arrClear(array);
     TEST(_arrayGetHead(array)->capacity >= 9, "capacity expected >= 9 after clear, got %zu", _arrayGetHead(array)->capacity);
     TEST(_arrayGetHead(array)->size == 0, "size expected 0 after clear, got %zu", _arrayGetHead(array)->size);
-    TEST(arrGetLast(array) == nullptr, "arrTryGetLast on empty array should return nullptr");
+    TEST(arrPeek(array) == nullptr, "arrTryGetLast on empty array should return nullptr");
 
     int* res = arrTryGet(array, 100);
     TEST(res == nullptr, "arrTryGet out-of-range expected nullptr");
