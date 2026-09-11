@@ -43,7 +43,7 @@ static void Utils_test() {
 
     int a = ({int x = 9; int y = 10; x + y;});
 
-    float $c= *arrTryGet(arr, 8);
+    float $c= *arrGet(arr, 8);
 
     switch(a){
         case 0 ... 3:

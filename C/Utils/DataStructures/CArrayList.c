@@ -26,6 +26,7 @@ void _arrResize(void **array, size_t typeSize, size_t newCapacity) {
     if (!newHeader) ERROR_("Failed to realloc ArrayList");
 
     newHeader->capacity = newCapacity;
+    newHeader->size = min(newHeader->size, newHeader->capacity);
     *array = (void *) (newHeader + 1);
 }
 

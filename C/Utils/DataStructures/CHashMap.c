@@ -21,40 +21,39 @@ void _mapNew(void** map, size_t typeSize, size_t capacity) {
 void _mapResize(void** map, size_t typeSize, size_t newCapacity) {
     _Map_Header_* header = _mapGetHead(*map);
 
-    _Map_Header_* newHeader = calloc(1, typeSize * newCapacity + sizeof(_Map_Header_));
+    _Map_Header_* newHeader = calloc(1, sizeof(_Map_Header_) + typeSize * newCapacity);
     const auto newContent = (byte*)(newHeader+1);
 
     if (!newContent) ERROR_("HashMap resize failed");
 
     int i = 0;
-    for (byte* _curr = (byte*) map; i < header->capacity; _curr += typeSize, ++i) {
-        const char* _key_ = _mapKey(_curr);
+    for (auto oldSlot = (byte*) *map; i < header->capacity; oldSlot += typeSize, ++i) {
+        const char* _key_ = _mapKey(oldSlot);
         if (_key_ == nullptr) continue;
 
-        byte* newPlace = newContent + _mapHash(_key_) % newCapacity * typeSize;
+        byte* newSlot = newContent + _mapHash(_key_) % newCapacity * typeSize;
 
         const byte* _end = newContent + typeSize * newCapacity;
-        while (_mapKey(newPlace) != nullptr) {
-            newPlace += typeSize;
-            if (newPlace >= _end) {
-                newPlace = newContent;
+        while (_mapKey(newSlot) != nullptr) {
+            newSlot += typeSize;
+            if (newSlot >= _end) {
+                newSlot = newContent;
             }
         }
-        _mapKey(newPlace) = _mapKey(_curr);
-        _mapValue(map, newPlace) = _mapValue(map, _curr);
+        memcpy(newSlot, oldSlot, typeSize);
     }
     newHeader->size = header->size;
     newHeader->capacity = newCapacity;
     free(header);
-    (map) = (void*) (newHeader+1);
+    *map = (void*) (newHeader+1);
 }
 
 uint32_t _mapHash(const char* key) {
     assert(key != nullptr);
     uint32_t h = _MapSeed;
     h ^= 2166136261UL;
-    for(int i = 0; key[i] != '\0'; ++i) {
-        h ^= key[i];
+    for(int i = 0; (unsigned char)key[i] != '\0'; ++i) {
+        h ^= (unsigned char)key[i];
         h *= 16777619;
     }
     return h;
@@ -65,8 +64,9 @@ void* _mapGet(void* map, size_t typeSize, const char* key) {
 
     const _Map_Header_* header = _mapGetHead(map);
     const size_t capacity = header->capacity;
+    const size_t index = _mapHash(key) % capacity;
 
-    byte* slot = (byte*)map + (_mapHash(key) % capacity) * typeSize;
+    byte* slot = (byte*)map + index * typeSize;
     const byte* end = (byte*)map + typeSize * capacity;
 
     while (_mapKey(slot) != nullptr) {
@@ -95,15 +95,17 @@ void* _mapGetEmptySlotImpl(void* map, size_t typeSize, const char* key) {
 
     const _Map_Header_* header = _mapGetHead(map);
     const size_t capacity = header->capacity;
+    const size_t index = _mapHash(key) % capacity;
 
-    byte* slot = (byte*)map + (_mapHash(key) % capacity) * typeSize;
+    byte* slot = (byte*)map + index * typeSize;
 
     const byte* end = (byte*)map + typeSize * capacity;
 
     while (_mapKey(slot) != nullptr) {
-        TODO_("Duplicate Keys");
+        if (strcmp(_mapKey(slot), key) == 0) return nullptr;
         slot += typeSize;
         if (slot >= end) slot = map;
     }
-    return slot;
+    _mapKey(slot) = key;
+    return slot + sizeof(char*);
 }

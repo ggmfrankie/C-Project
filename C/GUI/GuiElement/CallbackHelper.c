@@ -45,7 +45,7 @@ void displayCurrentTime(Element *element) {
            t.wHour,
            t.wMinute,
            t.wSecond);
-    Element_setText_ptr(element, time);
+    Element_setText(element, time);
 #endif
 }
 

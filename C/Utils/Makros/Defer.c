@@ -17,7 +17,7 @@ void defer_free(void* p) {
 }
 
 void defer_strDelete(Str* s) {
-    strDelete((Str)*s);
+    strDelete(s);
 }
 
 void defer_arrDelete(void *a) {

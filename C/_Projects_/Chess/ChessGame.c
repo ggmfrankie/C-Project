@@ -417,7 +417,7 @@ static void showWinnerScreen(const bool winner) {
     Element_setActive_ptr(endScreen, true);
     Element* colorDisplay = Element_getElement_ptr("color display");
     Element_setColor_ptr(colorDisplay, winner ? COLOR_WHITE : COLOR_GRAY);
-    Element_setText_ptr(colorDisplay, winner ? "White won" : "Black won");
+    Element_setText(colorDisplay, winner ? "White won" : "Black won");
 }
 
 static bool onSquareClicked(Vec2i pos) {

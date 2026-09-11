@@ -8,6 +8,7 @@
 #include "GUI/GuiElement/GuiElement.h"
 #include "GUI/GuiElement/ElementTypes/ScrollArea.h"
 #include "GUI/GuiElement/ElementTypes/TextField.h"
+#include <stdlib.h>
 
 static ElementHandle TestElement() {
     return Element_new((ElementSettings){
@@ -31,7 +32,7 @@ static ElementHandle TestScrollArea() {
             },
                 ScrollArea_new((ScrollAreaSettings){
                     .pos = {},
-                    .height = 180,
+                    .height = rand()%300,
                     .backgroundColor = GUI_COLOR_DARKGRAY2,
                     .sliderColor = GUI_COLOR_BLACK,
                     .railColor = GUI_COLOR_DARKGRAY1,

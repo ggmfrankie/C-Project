@@ -40,20 +40,14 @@ void _arrGrowIfNeededImpl(void **array, size_t typeSize);
         (array)[_arrGetHead(array)->size++] = (item);\
     } while (0)
 
-#define arrTryGet(array, index)\
-    ({\
-        typeof(array) out = nullptr;\
-        if ((array) != nullptr && _arrGetHead(array)->size > (index)) out = &(array)[index];\
-        (typeof(array))out;\
-    })
+#define arrGet(array, index) ((array) != nullptr && _arrGetHead(array)->size > (index)) ? &(array)[index] : nullptr;
 
-#define arrPeek(array) ((arrIsEmpty(array) ? nullptr) : &(array)[arrLen(array)-1])
+#define arrPeek(array) (arrIsEmpty(array) ? nullptr : &(array)[arrLen(array)-1])
 
 #define arrPop(array)\
 ({\
-    if (array == nullptr || arrIsEmpty(array)) ERROR_("Array does not contain any Items");\
-    _arrGetHead(array)->size--;\
-    (array)[arrLen(array)];\
+    if (arrIsEmpty(array)) ERROR_("Array does not contain any Items");\
+    (array)[--_arrGetHead(array)->size];\
 })
 
 #define arrErase(array, index, destructor) do {\

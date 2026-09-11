@@ -10,6 +10,14 @@ extern "C" {
 typedef long long TimeNs;
 TimeNs now_ns();
 
+#define measureTime(name, ...) do {\
+    unsigned long long start = now_ns();\
+    {\
+        __VA_ARGS__    \
+    }\
+    printf("Elapsed time for %s: %llu\n", name, now_ns() - start);\
+} while (0)
+
 #ifdef __cplusplus
 }
 #endif

@@ -14,6 +14,7 @@
 #include "Utils/Math/Vector.h"
 #include "Texture/Texture.h"
 #include "../../Utils/_Deprecated_/CString_v1.h"
+#include "DataStructures/CString.h"
 
 typedef struct Font {
     StandaloneTexture fontAtlas;
@@ -43,7 +44,7 @@ typedef struct TextElement {
     float width;
     bool hasText;
     bool forceResize;
-    String text;
+    Str sText;
 
     Vec4f textColor;
     float scale;

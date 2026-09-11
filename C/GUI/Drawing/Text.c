@@ -205,7 +205,7 @@ void Text_reloadTextQuads(Element *element) {
     TextElement *textElement = &element->textElement;
     arrClear(textElement->aCharQuads);
 
-    if (textElement->text.length == 0) {
+    if (strLen(textElement->sText) == 0) {
         textElement->width = 10;
         return;
     }
@@ -226,11 +226,11 @@ void Text_reloadTextQuads(Element *element) {
 
     const Font* font = textElement->font;
 
-    for (int i = 0; i < textElement->text.length; i++) {
-        const char c = textElement->text.m[i];
+    for strEach(c, textElement->sText) {
         if (c < 32 || c > 126) continue;
         arrPush(textElement->aCharQuads, (Character){});
         Character* character = arrPeek(textElement->aCharQuads);
+
         stbtt_aligned_quad q;
         stbtt_GetPackedQuad(
             font->glyphs,

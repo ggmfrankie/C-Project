@@ -2,7 +2,7 @@
 // Created by Stefan on 28.10.2025.
 //
 
-#include "../GuiElement/GuiElement.h"
+#include "GuiElement.h"
 
 #include <float.h>
 #include <pthread.h>
@@ -114,7 +114,7 @@ void Element_delete(ElementHandle handle) {
     }
 
     if (element->elementData.ptr && element->elementData.needsFree) free(element->elementData.ptr);
-    str_delete(&element->textElement.text);
+    strDelete(&element->textElement.sText);
 
     arrFree(element->aFlowElements);
     arrFree(element->aStaticElements);
@@ -136,18 +136,24 @@ void Element_setBoundingBox(Element* element, bool (*isMouseOver)(const Element 
     element->callbacks.isMouseOver = isMouseOver;
 }
 
-void Element_setText_ptr(Element* element, const char* text) {
+void Element_setText(Element* element, const char* text) {
     assert(element != nullptr);
-    Strings.copyInto(&element->textElement.text, text);
+
+    strClear(&element->textElement.sText);
+    strAppend_sprintf(&element->textElement.sText, text);
+
     element->textElement.hasText = true;
     Text_reloadTextQuads(element);
 }
 
-void Element_setText_int(Element* element, const int i) {
+void Element_setText_fmt(Element* element, const char* fmt, ...) {
     assert(element != nullptr);
-    char tempText[512];
-    Strings.fromInt(tempText, 512, i);
-    Element_setText_ptr(element, tempText);
+    va_list args;
+    va_start(args, fmt);
+    strClear(&element->textElement.sText);
+    strAppend_sprintf_va(&element->textElement.sText, fmt, args);
+    va_end(args);
+    element->textElement.hasText = true;
 }
 
 void Element_setActive_ptr(Element* element, const bool b) {
@@ -245,14 +251,14 @@ ElementHandle createElement(const ElementSettings es) {
         TextElement* t = &lastElement->textElement;
         t->hasText = true;
         t->aCharQuads = nullptr;
-        t->text = newReservedString(128),
+        t->sText = strNew(32),
         t->textColor = (Vec4f){es.textColor.x, es.textColor.y, es.textColor.z, 1.0f};
         t->forceResize = true,
         t->pos = (Vec2f){};
         t->width = 0;
         t->font = Engine_getDefaultFont();
         t->scale = es.textScale ? es.textScale : 1.0f;
-        Element_setText_ptr(lastElement, es.text);
+        Element_setText(lastElement, es.text);
         Text_reloadTextQuads(lastElement);
     }
     return handle;

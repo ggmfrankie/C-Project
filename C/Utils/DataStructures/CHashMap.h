@@ -4,6 +4,7 @@
 
 #pragma once
 #include "Utils/Typedef.h"
+#include "Utils/Makros/Helper.h"
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -30,15 +31,14 @@ void* _mapGetEmptySlotImpl(void* map, size_t typeSize, const char* key);
 
 #define _mapGetHead(map) (&((_Map_Header_*)(map))[-1])
 #define _mapKey(_place) (*(const char**)(_place))
-#define _mapValue(map, _place) ((typeof(map))((byte*)(_place) + sizeof(char*)))
 #define _mapGrowIfNeeded(map) _mapGrowIfNeededImpl((void**)&(map), _mapContentSize(map))
-#define _mapGetEmptySlot(map, key) _mapGetEmptySlotImpl((void**)&(map), _mapContentSize(map), (key))
+#define _mapGetEmptySlot(map, key) _mapGetEmptySlotImpl((void*)(map), _mapContentSize(map), (key))
 
 #define mapNew(map, size) _mapNew((void**)&(map), _mapContentSize(map), (size))
 #define mapLen(map) ((map) ? (_mapGetHead(map)->size) : 0)
 #define mapCap(map) ((map) ? (_mapGetHead(map)->capacity) : 0)
 #define mapGet(map, key) (typeof(map)) _mapGet((void*)(map), _mapContentSize(map), (key))
-#define mapFree(map) _mapFree(&(map))
+#define mapFree(map) _mapFree((void**)&(map))
 
 #define mapIsEmpty(map) (arrLen(map) == 0)
 
@@ -46,6 +46,9 @@ void* _mapGetEmptySlotImpl(void* map, size_t typeSize, const char* key);
     do {\
         if ((map) == nullptr) mapNew(map, _MapInitCapacity);\
         _mapGrowIfNeeded(map);\
-        *(typeof(map))_mapGetEmptySlot(map, key) = value;\
-        _mapGetHead(map)->size++;\
+        typeof(map) CONCAT(_local, __LINE__) = _mapGetEmptySlot(map, key);\
+        if (CONCAT(_local, __LINE__)) {\
+            *CONCAT(_local, __LINE__) = value;\
+            _mapGetHead(map)->size++;\
+        }\
     } while (0)

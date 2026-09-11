@@ -68,8 +68,8 @@ void TextField_popChar(Element* self) {
     if (data->cursor.pos.index == 0) return;
 
     const int index = data->cursor.pos.index-1;
-    str_popCharAt(&data->text, index);
-    Element_setText_ptr(self, data->text.m);
+    strPopAt(&data->sText, index);
+    Element_setText(self, data->sText);
 
     TextField_moveCursorTo(self, index);
 }
@@ -82,8 +82,8 @@ void TextField_insertCharAtCursor(Element* self, char c) {
     assert(self->type == ELEMENT_TYPE_TEXTFIELD);
     TextFieldData* tfd = self->elementData.ptr;
 
-    str_appendCharAt(&tfd->text, c, tfd->cursor.pos.index);
-    Element_setText_ptr(self, tfd->text.m);
+    strAppendAt(&tfd->sText, c, tfd->cursor.pos.index);
+    Element_setText(self, tfd->sText);
     TextField_moveCursorBy(self, +1);
 }
 
@@ -108,7 +108,7 @@ static bool TextField_onClick(Element *self) {
     if(self->type != ELEMENT_TYPE_TEXTFIELD) return false;
 
     const TextFieldData* data = self->elementData.ptr;
-    if (Strings.isEmpty(&data->text)) return false;
+    if (strIsEmpty(data->sText)) return false;
 
     const Vec2f mousePos = getMousePos();
 
@@ -145,14 +145,15 @@ ElementHandle TextField_new(const ElementSettings elementSettings, bool (*onEnte
 bool TextField_runTask(Element *element) {
     if(element->type != ELEMENT_TYPE_TEXTFIELD) return false;
     TextFieldData* data = element->elementData.ptr;
-    if (data->text.length == 0) return false;
+    if (strIsEmpty(data->sText)) return false;
 
-    char* newBuffer = malloc(data->text.length + 1);
-    memcpy(newBuffer, data->text.m, data->text.length);
-    newBuffer[data->text.length] = '\0';
+    size_t len = strLen(data->sText);
+    char* newBuffer = malloc(len + 1);
+    memcpy(newBuffer, data->sText, len);
+    newBuffer[len] = '\0';
 
-    str_clear(&data->text);
-    Element_setText_ptr(element,"");
+    strClear(&data->sText);
+    Element_setText(element,"");
     TextField_moveCursorTo(element, 0);
 
     if (element->task.func && !element->task.isBlocked) {

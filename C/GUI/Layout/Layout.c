@@ -70,6 +70,7 @@ static void endOldLine(Line* lines, Vec2f end) {
 static void pushNewLine(Line** lines, const int i, Vec2f start) {
     arrPush(*lines, ((Line){
         .start = i,
+        .end = i,
         .rect = {
             .start = start
         }

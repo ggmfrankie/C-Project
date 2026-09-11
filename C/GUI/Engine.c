@@ -19,6 +19,7 @@
 #include "GuiInterface.h"
 #include "Drawing/Render.h"
 #include "GuiElement/ElementTypes/TextField.h"
+#include "Os/Time.h"
 
 #define WIDTH 4096
 #define HEIGHT 600
@@ -169,7 +170,7 @@ void gui_setText(const char* name, const char* text) {
     assert(name != nullptr);
     assert(text != nullptr);
     Thread_Locked(
-        Element_setText_ptr(Element_getElement_ptr(name), text);
+        Element_setText(Element_getElement_ptr(name), text);
     )
 }
 
@@ -237,13 +238,15 @@ void Engine_loop(void (*generateGUI)(Element* guiRoot)) {
     // gGuiState.computeShader.endX = 5.0f;
 
     //initSockets();
-    glfwSwapInterval(0);
+    glfwSwapInterval(1);
 
     glfwSetFramebufferSizeCallback(gGuiState.window, gui_resizeCallback);
     glfwSetCursorPosCallback(gGuiState.window, gui_cursorPositionCallback);
 
     glfwSetCharCallback(gGuiState.window, gui_charCallback);
     glfwSetKeyCallback(gGuiState.window, gui_keyCallback);
+
+    glfwSetWindowRefreshCallback(gGuiState.window, gui_refreshCallback);
 
     double lastTime = 0.0;
     double frameTimeSum = 0.0;
@@ -468,6 +471,36 @@ void gui_resizeCallback(GLFWwindow *window, const int width, const int height) {
     glViewport(0, 0, width, height);
     gGuiState.screenWidth = width;
     gGuiState.screenHeight = height;
+}
+
+void gui_refreshCallback(GLFWwindow* window) {
+#if 0
+    measureTime("clear",
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    );
+
+    measureTime("update",
+        gui_update();
+    );
+
+    measureTime("render",
+        gui_render();
+    );
+
+    measureTime("buffer swap",
+        glfwSwapBuffers(gGuiState.window);
+    );
+#else
+
+
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        gui_update();
+        gui_render();
+        glfwSwapBuffers(gGuiState.window);
+
+
+#endif
+
 }
 
 void gui_cursorPositionCallback(GLFWwindow* window, const double xPos, const double yPos) {

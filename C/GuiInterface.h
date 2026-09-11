@@ -34,6 +34,7 @@ typedef void (*GUI_onKeyPressAction)(int key, int scancode, int action, int mods
     void gui_keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
     void gui_cursorPositionCallback(GLFWwindow* window, double xPos, double yPos);
     void gui_resizeCallback(GLFWwindow *window, int width, int height);
+    void gui_refreshCallback(GLFWwindow* window);
 
     void gui_setActive(const char* name, bool b);
     void gui_toggleVisible(const char* name);

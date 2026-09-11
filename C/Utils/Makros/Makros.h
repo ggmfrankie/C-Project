@@ -28,11 +28,3 @@
     count = 0;\
     }\
 } while (0);
-
-#define measure_time_of(name, ...) do {\
-    unsigned long long start = now_ns();\
-    {\
-        __VA_ARGS__    \
-    }\
-    printf("Elapsed time for %s: %llu\n", name, now_ns() - start);\
-} while (0)

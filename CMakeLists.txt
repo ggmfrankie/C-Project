@@ -113,6 +113,8 @@ add_library(GUI STATIC
         C/Utils/DataStructures/CStringView.h
         C/_Projects_/ExampleGUI/ExampleGUI.c
         C/_Projects_/ExampleGUI/ExampleGUI.h
+        C/GUI/GuiElement/ElementTypes/TextArea.c
+        C/GUI/GuiElement/ElementTypes/TextArea.h
 )
 
 set_target_properties(GUI PROPERTIES LINKER_LANGUAGE C)

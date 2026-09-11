@@ -23,7 +23,7 @@ Str readFile(const char* fileName) {
     const long size = ftell(file);
     rewind(file);
 
-    const Str buffer = strNew_c(size+1);
+    const Str buffer = strNew(size+1);
 
     fread(buffer, 1, size, file);
 

@@ -15,7 +15,7 @@ typedef struct {
 } TextFieldCursor;
 
 typedef struct {
-    String text;
+    char* sText;
     TextFieldCursor cursor;
 
     bool (*onEnterCallback)(Element* element);

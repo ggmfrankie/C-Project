@@ -202,8 +202,8 @@ void Element_setOnHoverCallback(Element* element, bool (*onHover)(Element* eleme
 void Element_setBoundingBox(Element* element, bool (*isMouseOver)(const Element *element, Vec2f mousePos));
 
 Element *Element_getElement_ptr(const char *name);
-void Element_setText_ptr(Element* element, const char* text);
-void Element_setText_int(Element* element, int i);
+void Element_setText(Element* element, const char* text);
+void Element_setText_fmt(Element* element, const char* fmt, ...);
 void Element_setActive_ptr(Element* element, bool b);
 void Element_toggleVisible_ptr(Element* element);
 void Element_setColor_ptr(Element* element, Vec3f color);

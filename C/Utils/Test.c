@@ -6,6 +6,7 @@
 #include "Os/Time.h"
 #include <assert.h>
 #include <stdio.h>
+#include <string.h>
 
 #define TEST(condition, msg...) if(!(condition)) ERROR_(msg)
 
@@ -13,6 +14,110 @@
 // Enable to manually verify aborting behavior (double-remove / get-removed-id).
 // Disabled by default because ERROR_ aborts the whole test run.
 #define RUN_ABORTING_SPARSESET_TESTS 0
+
+static void Test_cString() {
+    Str empty = strNew(8);
+    TEST(empty != nullptr, "strNew should allocate memory");
+    TEST(strLen(empty) == 0, "new string length expected 0, got %zu", strLen(empty));
+    TEST(strCap(empty) == 8, "new string capacity expected 8, got %zu", strCap(empty));
+    TEST(strIsEmpty(empty), "new string should be empty");
+    TEST(!strIsFull(empty), "new string with spare capacity should not be full");
+    TEST(strcmp(empty, "") == 0, "new string content expected empty, got '%s'", empty);
+    strDelete(&empty);
+    TEST(empty == nullptr, "strDelete should null the pointer");
+
+    Str copy = strNew_copy("hello");
+    TEST(copy != nullptr, "strNew_copy should allocate memory");
+    TEST(strcmp(copy, "hello") == 0, "strNew_copy content mismatch, got '%s'", copy);
+    TEST(strLen(copy) == 5, "strNew_copy length expected 5, got %zu", strLen(copy));
+    TEST(strCap(copy) == 5, "strNew_copy capacity expected 5, got %zu", strCap(copy));
+    TEST(!strIsEmpty(copy), "copied string should not be empty");
+    TEST(strIsFull(copy), "copied string should be full when cap == len");
+    TEST(strAt(copy, 0) == 'h', "strAt(copy, 0) expected 'h', got '%c'", strAt(copy, 0));
+    TEST(strAt(copy, 4) == 'o', "strAt(copy, 4) expected 'o', got '%c'", strAt(copy, 4));
+    strDelete(&copy);
+
+    Str copyn = strNew_copyn("truncate", 4);
+    TEST(copyn != nullptr, "strNew_copyn should allocate memory");
+    TEST(strcmp(copyn, "trun") == 0, "strNew_copyn content mismatch, got '%s'", copyn);
+    TEST(strLen(copyn) == 4, "strNew_copyn length expected 4, got %zu", strLen(copyn));
+    TEST(strCap(copyn) == 4, "strNew_copyn capacity expected 4, got %zu", strCap(copyn));
+    strDelete(&copyn);
+
+    Str formatted = strNew_sprintf("%s %d %.1f", "value", 42, 3.5f);
+    TEST(formatted != nullptr, "strNew_sprintf should allocate memory");
+    TEST(strcmp(formatted, "value 42 3.5") == 0, "strNew_sprintf content mismatch, got '%s'", formatted);
+    TEST(strLen(formatted) == strlen("value 42 3.5"), "strNew_sprintf length mismatch, got %zu", strLen(formatted));
+    TEST(strCap(formatted) == strlen("value 42 3.5"), "strNew_sprintf capacity mismatch, got %zu", strCap(formatted));
+    strDelete(&formatted);
+
+    Str prefixSource = strNew_copy("prefix-value");
+    Str prefix = strNew_copy("prefix");
+    Str wrongPrefix = strNew_copy("value");
+    Str tooLongPrefix = strNew_copy("prefix-value-extra");
+    TEST(strStartsWith(prefixSource, prefix), "strStartsWith should detect valid prefix");
+    TEST(!strStartsWith(prefixSource, wrongPrefix), "strStartsWith should reject invalid prefix");
+    TEST(!strStartsWith(prefixSource, tooLongPrefix), "strStartsWith should reject longer prefix");
+    strDelete(&prefixSource);
+    strDelete(&prefix);
+    strDelete(&wrongPrefix);
+    strDelete(&tooLongPrefix);
+
+    Str concatLeft = strNew_copy("left");
+    Str concatRight = strNew_copy("-right");
+    Str combined = strConcat(concatLeft, concatRight);
+    TEST(combined != nullptr, "strConcat should allocate memory");
+    TEST(strcmp(combined, "left-right") == 0, "strConcat content mismatch, got '%s'", combined);
+    TEST(strLen(combined) == 10, "strConcat length expected 10, got %zu", strLen(combined));
+    TEST(strCap(combined) == 10, "strConcat capacity expected 10, got %zu", strCap(combined));
+    strDelete(&concatLeft);
+    strDelete(&concatRight);
+    strDelete(&combined);
+
+    Str appendFormatted = strNew(32);
+    strAppend_sprintf(&appendFormatted, "%s", "prefix");
+    strAppend_sprintf(&appendFormatted, "-%d", 7);
+    TEST(strcmp(appendFormatted, "prefix-7") == 0, "strAppend_sprintf content mismatch, got '%s'", appendFormatted);
+    TEST(strLen(appendFormatted) == 8, "strAppend_sprintf length expected 8, got %zu", strLen(appendFormatted));
+    TEST(strCap(appendFormatted) >= 8, "strAppend_sprintf should retain enough capacity, got %zu", strCap(appendFormatted));
+    strDelete(&appendFormatted);
+
+    Str appendGrow = strNew(4);
+    strAppend_sprintf(&appendGrow, "%s", "abcdef");
+    TEST(strcmp(appendGrow, "abcdef") == 0, "strAppend_sprintf should grow capacity, got '%s'", appendGrow);
+    TEST(strLen(appendGrow) == 6, "grown append length expected 6, got %zu", strLen(appendGrow));
+    TEST(strCap(appendGrow) >= 6, "grown append capacity expected >= 6, got %zu", strCap(appendGrow));
+    strDelete(&appendGrow);
+
+    Str fit = strNew(16);
+    strAppend_sprintf(&fit, "%s", "data");
+    TEST(strCap(fit) == 16, "pre-fit capacity expected 16, got %zu", strCap(fit));
+    strFit(&fit);
+    TEST(strcmp(fit, "data") == 0, "strFit should preserve content, got '%s'", fit);
+    TEST(strLen(fit) == 4, "strFit length expected 4, got %zu", strLen(fit));
+    TEST(strCap(fit) == 4, "strFit capacity expected 4, got %zu", strCap(fit));
+    strDelete(&fit);
+
+    Str cleared = strNew_copy("erase me");
+    strClear(&cleared);
+    TEST(strcmp(cleared, "") == 0, "strClear should empty the string, got '%s'", cleared);
+    TEST(strLen(cleared) == 0, "strClear length expected 0, got %zu", strLen(cleared));
+    TEST(strCap(cleared) == 8, "strClear should keep capacity, got %zu", strCap(cleared));
+    TEST(strIsEmpty(cleared), "strClear should leave the string empty");
+    strDelete(&cleared);
+
+    Str cConcat = cstrConcat("foo", "bar");
+    TEST(cConcat != nullptr, "cstrConcat should allocate memory");
+    TEST(strcmp(cConcat, "foobar") == 0, "cstrConcat content mismatch, got '%s'", cConcat);
+    TEST(strLen(cConcat) == 6, "cstrConcat length expected 6, got %zu", strLen(cConcat));
+    strDelete(&cConcat);
+
+    char buffer[16];
+    cstrbConcat(buffer, sizeof(buffer), "foo", "bar");
+    TEST(strcmp(buffer, "foobar") == 0, "cstrbConcat content mismatch, got '%s'", buffer);
+
+    INFO_("CString methods not exercised here because they are not implemented or abort: strAppend, strCopy, strSplit");
+}
 
 static void Test_sparseSet_edgeCases() {
     SparseSet set = SparseSet_new(int, 2);
@@ -71,7 +176,7 @@ static void Test_arrayList() {
     int* array = nullptr;
 
     arrNew(array, 2);
-    TEST(_arrayGetHead(array)->capacity == 2, "arrNew capacity expected 2, got %zu", _arrayGetHead(array)->capacity);
+    TEST(_arrGetHead(array)->capacity == 2, "arrNew capacity expected 2, got %zu", _arrGetHead(array)->capacity);
     TEST(arrLen(array) == 0, "arrNew size expected 0, got %zu", arrLen(array));
 
     arrPush(array, 0);
@@ -83,7 +188,7 @@ static void Test_arrayList() {
     }
     TEST(arrLen(array) == 10, "arrLen expected 10 after pushes, got %zu", arrLen(array));
     TEST(*arrPeek(array) == 9, "arrGetLast expected 9 after pushes, got %d", *arrPeek(array));
-    TEST(_arrayGetHead(array)->capacity >= 10, "capacity expected growth to >= 10, got %zu", _arrayGetHead(array)->capacity);
+    TEST(_arrGetHead(array)->capacity >= 10, "capacity expected growth to >= 10, got %zu", _arrGetHead(array)->capacity);
 
     int a = arrPop(array);
     TEST(a == 9, "arrPop expected 9, got %d", a);
@@ -108,7 +213,7 @@ static void Test_arrayList() {
 
     Pair* pairs = nullptr;
     arrNew(pairs, 1);
-    TEST(_arrayGetHead(pairs)->capacity == 1, "pair array capacity expected 1, got %zu", _arrayGetHead(pairs)->capacity);
+    TEST(_arrGetHead(pairs)->capacity == 1, "pair array capacity expected 1, got %zu", _arrGetHead(pairs)->capacity);
 
     arrPush(pairs, ((Pair){.x = 1, .y = 2}));
     arrPush(pairs, ((Pair){.x = 3, .y = 4}));
@@ -121,11 +226,11 @@ static void Test_arrayList() {
     TEST(arrLen(pairs) == 1, "pair array length expected 1 after pop, got %zu", arrLen(pairs));
 
     arrClear(array);
-    TEST(_arrayGetHead(array)->capacity >= 9, "capacity expected >= 9 after clear, got %zu", _arrayGetHead(array)->capacity);
-    TEST(_arrayGetHead(array)->size == 0, "size expected 0 after clear, got %zu", _arrayGetHead(array)->size);
+    TEST(_arrGetHead(array)->capacity >= 9, "capacity expected >= 9 after clear, got %zu", _arrGetHead(array)->capacity);
+    TEST(_arrGetHead(array)->size == 0, "size expected 0 after clear, got %zu", _arrGetHead(array)->size);
     TEST(arrPeek(array) == nullptr, "arrTryGetLast on empty array should return nullptr");
 
-    int* res = arrTryGet(array, 100);
+    int* res = arrGet(array, 100);
     TEST(res == nullptr, "arrTryGet out-of-range expected nullptr");
 
     arrFree(array);
@@ -339,11 +444,13 @@ static void Test_sparseSet(){
 static void Test_dataStructures() {
     Test_arrayList();
     Test_arrayListPerformance();
-    INFO_("Array passed");
+    INFO_("CArrayList passed");
     Test_hashMap();
-    INFO_("Hashmap passed");
+    INFO_("CHashMap passed");
     Test_sparseSet();
-    INFO_("SparseSet passed");
+    INFO_("CSparseSet passed");
+    Test_cString();
+    INFO_("CString passed");
 }
 
 void Test_run() {

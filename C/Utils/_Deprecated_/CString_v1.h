@@ -63,5 +63,3 @@ char str_popChar(String* string);
 char str_popCharAt(String* string, int index);
 void str_setAll(const String* string, char key);
 char str_getCharAt(const String* string, int index);
-
-extern StringFunctions Strings;
