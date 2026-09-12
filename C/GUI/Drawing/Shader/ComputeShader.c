@@ -23,8 +23,8 @@ static GLuint generateGraphSSBO(const size_t size) {
     return graphSSBO;
 }
 
-static GLuint createGraphingShader(const String *fileName, const int programId) {
-    defer(defer_strDelete) Str shaderSource = readShaderFile(fileName->m);
+static GLuint createGraphingShader(const char *fileName, const int programId) {
+    defer(defer_strDelete) Str shaderSource = readShaderFile(fileName);
     const GLchar* source = shaderSource;
 
     const int shaderId = createShader(&source, GL_COMPUTE_SHADER, programId);
@@ -35,7 +35,7 @@ static GLuint createGraphingShader(const String *fileName, const int programId) 
     glGetShaderiv(shaderId, GL_COMPILE_STATUS, &success);
     if (!success) {
         glGetShaderInfoLog(shaderId, 512, nullptr, infoLog);
-        printf("Graphing Shader Compile Error:\n%s\n", infoLog);
+        ERROR_("Graphing Shader Compile Error:\n%s\n", infoLog);
     }
     
     return shaderId;
@@ -45,7 +45,7 @@ void ComputeShader_createUniform(ComputeShader *shader, const char* name) {
     const int uniformLocation = glGetUniformLocation(shader->programId, name);
 
     if(uniformLocation < 0){
-        printf("Error creating Uniform");
+        ERROR_("Error creating Uniform %s", name);
     }
     mapInsert(shader->map_uniforms, name, uniformLocation);
 }
@@ -53,9 +53,9 @@ void ComputeShader_createUniform(ComputeShader *shader, const char* name) {
 ComputeShader ComputeShader_new(StandaloneTexture *texture, const int size) {
     const int programId = glCreateProgram();
 
-    const String graphingShader = stringOf("GraphingShader.comp");
+    const char* graphingShader = "GraphingShader.comp";
 
-    const GLuint graphingId = createGraphingShader(&graphingShader, programId);
+    const GLuint graphingId = createGraphingShader(graphingShader, programId);
     glAttachShader(programId, graphingId);
     glLinkProgram(programId);
 
@@ -64,7 +64,7 @@ ComputeShader ComputeShader_new(StandaloneTexture *texture, const int size) {
     glGetProgramiv(programId, GL_LINK_STATUS, &success);
     if (!success) {
         glGetProgramInfoLog(programId, 512, nullptr, infoLog);
-        printf("Shader Program Link Error:\n%s\n", infoLog);
+        ERROR_("Shader Program Link Error:\n%s\n", infoLog);
     }
     glDeleteShader(graphingId);
 

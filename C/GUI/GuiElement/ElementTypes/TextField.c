@@ -96,10 +96,12 @@ static void TextField_setClosestCursorPos(const Element* self, float pos) {
         const float next = self->padding.left + character->pos.x + character->width * 0.5;
         if (prev <= pos && pos < next) {
             index = i;
-            break;
+            goto Skip;
         }
         prev = next;
     }
+
+    Skip:
 
     TextField_moveCursorTo(self, index);
 }
@@ -122,6 +124,7 @@ ElementHandle TextField_new(const ElementSettings elementSettings, bool (*onEnte
     const ElementHandle element = createElement(elementSettings);
     TextFieldData* textData = calloc(1, sizeof(TextFieldData));
     textData->onEnterCallback = onEnterCallback;
+    textData->sText = strNew(16);
     const ElementHandle textField = createElement(
         (ElementSettings){
             .minWidth = elementSettings.minWidth,

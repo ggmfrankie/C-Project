@@ -175,12 +175,11 @@ Vec2f Text_measureElementText(const TextElement* textElement) {
     };
 }
 
-static Vec2f measureText(const Font *font, const String *text) {
+static Vec2f measureText(const Font *font, const char *text) {
     float x = 0.0f;
     float y = 0.0f;
 
-    for (int i = 0; i < text->length; i++) {
-        const char c = text->m[i];
+    for cstrEach(c, text) {
         if (c < 32 || c > 126) continue;
 
         stbtt_aligned_quad q;
@@ -259,7 +258,7 @@ void Text_reloadTextQuads(Element *element) {
 }
 
 void measureFont(Font *font) {
-    const String allChars = stringOf("' !#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~'");
-    const Vec2f fontSize = measureText(font, &allChars);
+    const char* allChars = "' !#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~'";
+    const Vec2f fontSize = measureText(font, allChars);
     font->maxCharHeight = fontSize.y;
 }

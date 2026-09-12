@@ -139,9 +139,9 @@ Str strConcat(Str a, Str b) {
     return data;
 }
 
-Str* cstrSplit(const char* s, char del) {
+
+Str* _strSplit(const char* s, size_t len, char del) {
     assert(s != nullptr);
-    const size_t len = strlen(s);
     Str* aOut = nullptr;
 
     const char* start = s;
@@ -159,6 +159,14 @@ Str* cstrSplit(const char* s, char del) {
     if (curr != start) arrPush(aOut, strNew_copyn(start, curr - start));
 
     return aOut;
+}
+
+Str* strSplit(Str s, char del) {
+    return _strSplit(s, strLen(s), del);
+}
+
+Str* cstrSplit(const char* s, char del) {
+    return _strSplit(s, strlen(s), del);
 }
 
 char strAt(Str s, size_t idx) {
@@ -195,7 +203,13 @@ bool strStartsWith(Str src, Str p) {
 void strAppend(Str* s, char c){
     assert(c != '\0');
     strAssert(*s);
-    TODO_("KB");
+    const size_t len = strLen(*s);
+
+    const size_t cap = strCap(*s);
+    if (len == cap) strResize(s, cap*2);
+
+    (*s)[len] = c;
+    (*s)[++strGetHead(*s)->size] = '\0';
 }
 
 void strAppendAt(Str* s, char c, size_t idx) {
@@ -209,8 +223,9 @@ void strAppendAt(Str* s, char c, size_t idx) {
     char* slot = *s + idx;
 
     memmove(slot+1, slot, len - idx);
-    *s[idx] = c;
-    *s[++strGetHead(*s)->size] = '\0';
+    *slot = c;
+
+    (*s)[++strGetHead(*s)->size] = '\0';
 }
 
 void strAppend_sprintf_va(Str* s, const char* fmt, va_list args) {
@@ -249,7 +264,7 @@ char strPopAt(Str* s, size_t idx) {
     const char out = *slot;
 
     memmove(slot, slot+1, len - idx);
-    *s[--strGetHead(*s)->size] = '\0';
+    (*s)[--strGetHead(*s)->size] = '\0';
 
     return out;
 }
@@ -318,7 +333,7 @@ void cstrbConcat(char *buff, size_t size, const char *a, const char *b) {
 
 #define content(a, b) assert(strcmp(a, b) == 0)
 #define length(s, size) assert(strLen(s) == size)
-void _strTest() {
+static void _strTest() {
     defer(defer_strDelete) Str a = strNew_copy("hassan");
     content(a, "hassan");
     length(a, 6);

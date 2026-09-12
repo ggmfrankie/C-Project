@@ -238,7 +238,7 @@ void Engine_loop(void (*generateGUI)(Element* guiRoot)) {
     // gGuiState.computeShader.endX = 5.0f;
 
     //initSockets();
-    glfwSwapInterval(1);
+    glfwSwapInterval(0);
 
     glfwSetFramebufferSizeCallback(gGuiState.window, gui_resizeCallback);
     glfwSetCursorPosCallback(gGuiState.window, gui_cursorPositionCallback);

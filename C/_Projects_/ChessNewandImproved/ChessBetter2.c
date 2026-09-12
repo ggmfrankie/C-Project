@@ -21,7 +21,7 @@
 #define COLOR_HOVER (Vec3f){0.8, 0.8, 1}
 #define CHESS_PORT 52345
 
-void chess_loadChessPosition(char* fen);
+void chess_loadChessPosition(const char* fen);
 
 
 typedef enum {
@@ -278,16 +278,15 @@ void chess_getMoves (ChessPiece piece, int row, int col) {
 
 }
 
-void chess_loadChessPosition(char* fen) {
-    const String fenString = stringOf(fen);
-    defer(defer_arrDelete) String* aFenPieces = str_split(&fenString, " ");
+void chess_loadChessPosition(const char* fen) {
+    const Str fenString = strNew_copy(fen);
+    defer(defer_arrDelete) Str* aFenPieces = strSplit(fenString, ' ');
 
-    defer(defer_arrDelete) String* aRanks = str_split(&aFenPieces[0], "/");
+    defer(defer_arrDelete) Str* aRanks = strSplit(aFenPieces[0], '/');
 
     for arrEachIdx(rank, i, aRanks) {
         int col = 0;
-        for (int j = 0; j < rank->length; j++) {
-            const char c = rank->m[j];
+        for strEach(c, *rank) {
             switch (c) {
                 case 'p': chess_board.squares[i][col++].piece = blackPawn; break;
                 case 'n': chess_board.squares[i][col++].piece = blackKing; break;
@@ -313,7 +312,7 @@ void chess_loadChessPosition(char* fen) {
             }
         }
     }
-    chess_board.turn = aFenPieces[1].m[0] == 'b' ? Black : White;
+    chess_board.turn = aFenPieces[1][0] == 'b' ? Black : White;
 }
 
 static ElementHandle createChessSquares(const int row, const int col, ElementSettings es) {

@@ -9,7 +9,8 @@
 #include "_Projects_/ExampleGUI/ExampleGUI.h"
 #if 1
 int main(){
-    Test_run();
+    //Test_run();
+
     //Engine_loop(ExampleGui_generate);
     Engine_loop(generateGUI);
 
@@ -17,4 +18,3 @@ int main(){
     return 0;
 }
 #endif
-

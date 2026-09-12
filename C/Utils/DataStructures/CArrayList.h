@@ -73,7 +73,9 @@ void _arrGrowIfNeededImpl(void **array, size_t typeSize);
 
 //@brief usage for arrEach(itemName, array) {...}
 #define arrEach(item, array) (typeof(*(array))* item = (array), *_end = (array) + arrLen(array); (item) != _end; ++(item))
-//@brief usage for arrEach(itemName, indexName, array) {...}
+
+//@brief usage for arrEachIdx(itemName, indexName, array) {...}
+//Warning: break; does not work;
 #define arrEachIdx(item, index, array) (size_t (index) = 0, _end = arrLen(array); (index) < _end; ++(index)) \
               for (typeof(*(array))* (item) = &(array)[index]; (item); (item) = nullptr)
 #define arrEachRev(item, array) (typeof(*(array))* item = (array) + arrLen(array), *_end = (array); (item)-- != _end;)

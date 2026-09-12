@@ -7,6 +7,7 @@
 extern "C" {
 #endif
 #include <stddef.h>
+#include "Utils/Makros/Helper.h"
 
 #define STR_DEBUG 1
 
@@ -36,7 +37,7 @@ size_t strCap(Str s);
 //@brief takes two Str and concatenates then into a new Str
 char* strConcat(Str a, Str b);
 //@brief takes a Str and splits it into an Array of Str with the given delimiter
-Str* cstrSplit(const char* s, char del);
+Str* strSplit(Str s, char del);
 //@brief tries to return the char at the given index
 char strAt(Str s, size_t idx);
 
@@ -64,12 +65,12 @@ void strClear(Str* s);
 //@brief deletes the underlying memory and sets the Str to nullptr
 void strDelete(Str* s);
 
-#define strEach(c, str) (size_t i = 0, _len = strLen(str); i < _len; i++) for (char (c) = str[i]; (c) != '\0'; (c) = '\0')
+#define strEach(c, str) (size_t CONCAT(_i, __LINE__) = 0, CONCAT(_len, __LINE__) = strLen(str); CONCAT(_i, __LINE__) < CONCAT(_len, __LINE__); CONCAT(_i, __LINE__)++) for (char (c) = str[CONCAT(_i, __LINE__)]; (c) != '\0'; (c) = '\0')
+#define cstrEach(c, str) (size_t CONCAT(_i, __LINE__) = 0, CONCAT(_len, __LINE__) = strlen(str); CONCAT(_i, __LINE__) < CONCAT(_len, __LINE__); CONCAT(_i, __LINE__)++) for (char (c) = str[CONCAT(_i, __LINE__)]; (c) != '\0'; (c) = '\0')
 
+Str* cstrSplit(const char* s, char del);
 Str cstrConcat(const char* a, const char* b);
 void cstrbConcat(char* buff, size_t size, const char* a, const char* b);
-
-void _strTest();
 
 #ifdef __cplusplus
 }
