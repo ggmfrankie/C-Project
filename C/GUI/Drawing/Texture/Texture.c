@@ -9,8 +9,8 @@
 #include <stb/stb_image.h>
 #include <stb/stb_rect_pack.h>
 
-#include "DataStructures/CArrayList.h"
-#include "DataStructures/CString.h"
+#include "Utils/DataStructures/CArrayList.h"
+#include "Utils/DataStructures/CString.h"
 #include "glad/gl.h"
 #include "Utils/DataStructures/CHashMap.h"
 #include "Utils/Logging/Logging.h"
@@ -18,7 +18,7 @@
 
 static constexpr int MAX_ATLAS_TEXTURES = 512;
 static constexpr int PIXEL_SIZE = 4;
-static const char* DEFAULT_PATH = "../Resources/Textures/";
+static const char* DEFAULT_PATH = GUI_PROJECT_SOURCE_DIR"/../Resources/Textures/";
 
 typedef struct {
     StandaloneTexture m[256];
@@ -51,12 +51,12 @@ void Texture_loadAtlas(TextureAtlas *atlas) {
 
     //TODO: Fix Padding
     constexpr int padding = 0;
+
     for arrEach(namePtr, atlas->aNames) {
         int width, height, channels;
         const char* name = *namePtr;
-        printf("Name: %s\n", name);
 
-        char fullPath[64];
+        char fullPath[128];
         cstrbConcat(fullPath, sizeof(fullPath), DEFAULT_PATH, name);
 
         pixels[index] = stbi_load(fullPath, &width, &height, &channels, 4);

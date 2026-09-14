@@ -60,7 +60,6 @@ typedef struct ElementHandle {
 typedef struct Element {
     char* name;
     ElementType type;
-    UIState state;
 
     struct {
         bool isActive: 1;
@@ -76,6 +75,9 @@ typedef struct Element {
         bool noLayoutContributionHorizontal: 1;
         bool noLayoutContributionVertical: 1;
         bool useClipping: 1;
+
+        bool isHovered: 1;
+        bool isSelected: 1;
     } flags;
 
     struct {
@@ -203,7 +205,8 @@ void Element_setBoundingBox(Element* element, bool (*isMouseOver)(const Element 
 
 Element *Element_getElement_ptr(const char *name);
 void Element_setText(Element* element, const char* text);
-void Element_setText_fmt(Element* element, const char* fmt, ...);
+void Element_setTextF(Element* element, const char* fmt, ...);
+void Element_setText_va(Element* element, const char* fmt, va_list args);
 void Element_setActive_ptr(Element* element, bool b);
 void Element_toggleVisible_ptr(Element* element);
 void Element_setColor_ptr(Element* element, Vec3f color);

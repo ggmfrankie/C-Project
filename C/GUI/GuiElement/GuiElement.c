@@ -25,7 +25,6 @@ static ElementHandle Element_allocateNewV2(const Vec2f pos, const int width, con
     const ElementHandle handle = {
         .ID = SparseSet_add(&gElements, (Element){
                     .name = nullptr,
-                    .state = UI_STATE_NORMAL,
                     .dims = {
                         .width = width,
                         .height = height,
@@ -146,12 +145,20 @@ void Element_setText(Element* element, const char* text) {
     Text_reloadTextQuads(element);
 }
 
-void Element_setText_fmt(Element* element, const char* fmt, ...) {
+void Element_setText_va(Element* element, const char* fmt, va_list args) {
+    assert(element != nullptr);
+    strClear(&element->textElement.sText);
+    strAppend_sprintf_va(&element->textElement.sText, fmt, args);
+    va_end(args);
+    element->textElement.hasText = true;
+    Text_reloadTextQuads(element);
+}
+
+void Element_setTextF(Element* element, const char* fmt, ...) {
     assert(element != nullptr);
     va_list args;
     va_start(args, fmt);
-    strClear(&element->textElement.sText);
-    strAppend_sprintf_va(&element->textElement.sText, fmt, args);
+    Element_setText_va(element, fmt, args);
     va_end(args);
     element->textElement.hasText = true;
 }

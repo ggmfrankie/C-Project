@@ -3,12 +3,12 @@
 //
 
 #pragma once
+#include "Gui/GuiElement/IO/Tasks.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 #include "GuiDefines.h"
-#include <GLFW/glfw3.h>
 #include "GuiTypes.h"
 
 typedef struct {
@@ -38,7 +38,10 @@ typedef void (*GUI_onKeyPressAction)(int key, int scancode, int action, int mods
 
     void gui_setActive(const char* name, bool b);
     void gui_toggleVisible(const char* name);
+
     void gui_setText(const char* name, const char* text);
+    void gui_setTextF(const char* name, const char* fmt, ...);
+
     void gui_setColor(const char* name, float r, float g, float b);
     void gui_setColor_ptr(Element* ptr, float r, float g, float b);
     void gui_resetColor(const char* name);
@@ -46,6 +49,8 @@ typedef void (*GUI_onKeyPressAction)(int key, int scancode, int action, int mods
     void gui_onKeyPressCallback(GUI_onKeyPressAction action);
 
     bool gui_getActive(const char* name);
+
+    void Engine_loop(void (*generateGUI)(Element* guiRoot));
 #ifdef __cplusplus
 }
 #endif

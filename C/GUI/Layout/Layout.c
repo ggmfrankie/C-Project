@@ -10,11 +10,11 @@
 #include <string.h>
 
 #include "../Drawing/RenderTypes.h"
-#include "Math/Vector.h"
+#include "Utils/Math/Vector.h"
 #include "GUI/GuiElement/GuiElement.h"
-#include "DataStructures/CArrayList.h"
+#include "Utils/DataStructures/CArrayList.h"
 #include "GUI/Engine.h"
-#include "Makros/Makros.h"
+#include "Utils/Makros/Makros.h"
 #include "Utils/Misc/UtilityFun.h"
 
 static Cache* cacheLayout(Element* self, float maxAvailableWidth, float maxAvailableHeight);

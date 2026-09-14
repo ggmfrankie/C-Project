@@ -10,11 +10,10 @@
 #include "GuiTypes.h"
 #include "RenderTypes.h"
 
-#include "../../../Dependencies/include/stb/stb_truetype.h"
+#include "../Dependencies/include/stb/stb_truetype.h"
 #include "Utils/Math/Vector.h"
 #include "Texture/Texture.h"
-#include "../../Utils/_Deprecated_/CString_v1.h"
-#include "DataStructures/CString.h"
+#include "Utils/DataStructures/CString.h"
 
 typedef struct Font {
     StandaloneTexture fontAtlas;

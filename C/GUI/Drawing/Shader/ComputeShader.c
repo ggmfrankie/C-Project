@@ -7,11 +7,10 @@
 #include <math.h>
 
 #include "Shader.h"
-#include "../Utils/_Deprecated_/CString_v1.h"
-#include "../Utils/Math/Vector.h"
-#include "../Utils/DataStructures/CArrayList.h"
-#include "../Utils/DataStructures/CHashMap.h"
-#include "../Utils/Makros/Defer.h"
+#include "Utils/Math/Vector.h"
+#include "Utils/DataStructures/CArrayList.h"
+#include "Utils/DataStructures/CHashMap.h"
+#include "Utils/Makros/Defer.h"
 #include "GUI/Drawing/Texture/Texture.h"
 
 static GLuint generateGraphSSBO(const size_t size) {

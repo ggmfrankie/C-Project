@@ -7,13 +7,12 @@
 #include "Utils/Math/Vector.h"
 #include "GuiTypes.h"
 #include "Drawing/Shader/ComputeShader.h"
+#include "Drawing/Shader/Shader.h"
 #include "GuiElement/GuiElement.h"
 
 typedef struct GuiState {
-    int screenWidth;
-    int screenHeight;
     GLFWwindow *window;
-    Vec2f mousePos;
+
 
     Shader guiShader;
 
@@ -23,11 +22,15 @@ typedef struct GuiState {
     TextureAtlas texAtlas;
 
     ElementHandle guiRoot;
+
+    Vec2f mousePos;
+    int screenWidth;
+    int screenHeight;
+
+    bool layoutDirty;
+    bool meshesDirty;
 } GuiState;
 
-extern bool guiInitialized;
-
-void Engine_loop(void (*generateGUI)(Element* guiRoot));
 Vec2f getMousePos();
 Vec2f getWindowSize();
 Font* Engine_getDefaultFont();

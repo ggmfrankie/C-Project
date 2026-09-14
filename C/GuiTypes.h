@@ -12,3 +12,10 @@ typedef struct GUI_Update GUI_Update;
 typedef struct GuiVertex GuiVertex;
 typedef struct GuiState GuiState;
 typedef struct GLFWwindow GLFWwindow;
+
+typedef unsigned int GLuint;
+
+typedef void(*GLFWkeyfun)(GLFWwindow* window, int key, int scancode, int action, int mods);
+typedef void(*GLFWcharfun)(GLFWwindow* window, unsigned int codepoint);
+typedef void(*GLFWcursorposfun)(GLFWwindow* window, double xpos, double ypos);
+typedef void(*GLFWframebuffersizefun)(GLFWwindow* window, int width, int height);

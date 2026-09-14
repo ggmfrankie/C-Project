@@ -3,9 +3,7 @@
 //
 #pragma once
 #include "GuiDefines.h"
-#include "Shader.h"
 #include "GuiTypes.h"
-#include "../../Dependencies/include/glad/gl.h"
 
 typedef struct ComputeShader {
     GLuint SSBO;

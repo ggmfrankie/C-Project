@@ -4,7 +4,7 @@
 
 #pragma once
 
-#define GUI_COLOR_WHITE       (Vec3f){0.900f, 0.900f, 0.900f}
+#define GUI_COLOR_WHITE       (Vec3f){1.000f, 1.000f, 1.000f}
 #define GUI_COLOR_LIGHTGRAY1  (Vec3f){0.670f, 0.670f, 0.670f}
 #define GUI_COLOR_LIGHTGRAY2  (Vec3f){0.780f, 0.780f, 0.780f}
 #define GUI_COLOR_LIGHTGRAY3  (Vec3f){0.810f, 0.810f, 0.810f}

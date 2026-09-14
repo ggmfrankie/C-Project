@@ -19,7 +19,7 @@
 #include "GuiInterface.h"
 #include "Drawing/Render.h"
 #include "GuiElement/ElementTypes/TextField.h"
-#include "Os/Time.h"
+#include "Utils/Os/Time.h"
 
 #define WIDTH 4096
 #define HEIGHT 600
@@ -49,7 +49,7 @@ typedef struct {
     GUI_onKeyPressAction onKeyPress;
 } UserCallbacks;
 
-bool guiInitialized = false;
+static bool guiInitialized = false;
 static GuiState gGuiState;
 static UserCallbacks g_Callbacks;
 
@@ -89,7 +89,9 @@ static GuiState GuiState_new(GLFWwindow* window, const int width, const int heig
             .notSelectable = true,
             .useClipping = true
         }),
-        .texAtlas = TextureAtlas_new(2048 , 2048)
+        .texAtlas = TextureAtlas_new(2048 , 2048),
+        .meshesDirty = true,
+        .layoutDirty = true
     };
 }
 
@@ -174,6 +176,18 @@ void gui_setText(const char* name, const char* text) {
     )
 }
 
+void gui_setTextF(const char* name, const char* fmt, ...) {
+    assert(name != nullptr);
+    assert(fmt != nullptr);
+
+    va_list args;
+    va_start(args, fmt);
+    Thread_Locked(
+        Element_setText_va(Element_getElement_ptr(name), fmt, args);
+    )
+    va_end(args);
+}
+
 void gui_setColor(const char* name, const float r, const float g, const float b) {
     assert(name != nullptr);
     Thread_Locked(
@@ -238,8 +252,8 @@ void Engine_loop(void (*generateGUI)(Element* guiRoot)) {
     // gGuiState.computeShader.endX = 5.0f;
 
     //initSockets();
-    glfwSwapInterval(0);
 
+    glfwSwapInterval(1);
     glfwSetFramebufferSizeCallback(gGuiState.window, gui_resizeCallback);
     glfwSetCursorPosCallback(gGuiState.window, gui_cursorPositionCallback);
 
@@ -348,7 +362,8 @@ static void Engine_updateElements(ElementHandle handle, double deltaTime) {
 
     if (self->callbacks.onUpdate) self->callbacks.onUpdate(self);
 
-    self->state = UI_STATE_NORMAL;
+    self->flags.isHovered = false;
+    self->flags.isSelected = false;
     for arrEachRev(child, self->aFlowElements) {Engine_updateElements(*child,deltaTime);}
     for arrEachRev(child, self->aStaticElements) {Engine_updateElements(*child,deltaTime);}
 }
@@ -377,7 +392,7 @@ static void Engine_processInput(GuiState *renderer, double deltaTime) {
 
     else if (focusedElement) {
         if (focusedElement->callbacks.whileSelected) focusedElement->callbacks.whileSelected(focusedElement, deltaTime);
-        focusedElement->state = UI_STATE_SELECTED;
+        focusedElement->flags.isSelected = true;
     }
 }
 
@@ -410,7 +425,7 @@ static bool Engine_processInputRec(ElementHandle elementHandle, GuiState *render
 
     if (element->callbacks.isMouseOver && element->callbacks.isMouseOver(element, renderer->mousePos)) {
         if (element->flags.canBeHovered) {
-            element->state = UI_STATE_HOVER;
+            element->flags.isHovered = true;
             if (element->callbacks.onHover && element->callbacks.onHover(element)) return true;
         }
         if (click(renderer->window, GLFW_MOUSE_BUTTON_LEFT)) {
@@ -474,6 +489,7 @@ void gui_resizeCallback(GLFWwindow *window, const int width, const int height) {
 }
 
 void gui_refreshCallback(GLFWwindow* window) {
+    gGuiState.meshesDirty = true;
 #if 0
     measureTime("clear",
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -506,6 +522,8 @@ void gui_refreshCallback(GLFWwindow* window) {
 void gui_cursorPositionCallback(GLFWwindow* window, const double xPos, const double yPos) {
     gGuiState.mousePos.x = xPos;
     gGuiState.mousePos.y = yPos;
+
+    gGuiState.meshesDirty = true;
 }
 
 Vec2f getMousePos() {

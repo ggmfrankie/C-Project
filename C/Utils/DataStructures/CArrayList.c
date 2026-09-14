@@ -6,8 +6,8 @@
 
 #include <string.h>
 
-#include "Typedef.h"
-#include "Makros/Makros.h"
+#include "Utils/Typedef.h"
+#include "Utils/Makros/Makros.h"
 
 void _arrNew(void** array, size_t typeSize, size_t capacity) {
     if(*array != nullptr) return;
@@ -31,6 +31,7 @@ void _arrResize(void **array, size_t typeSize, size_t newCapacity) {
 }
 
 void _arrCopy(void** to, void** from, size_t typeSize) {
+    if (*from == nullptr) return;
     if (*to == nullptr) _arrNew(to, typeSize, ArrayInitCapacity);
 
     _Array_Header_* toHeader = _arrGetHead(*to);

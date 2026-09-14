@@ -12,22 +12,19 @@
 
 #include "Render.h"
 #include "RenderTypes.h"
-#include "Utils/_Deprecated_/CString_v1.h"
 #include "GUI/GuiElement/GuiElement.h"
-#include "DataStructures/CArrayList.h"
-#include "DataStructures/CString.h"
+#include "Utils/DataStructures/CArrayList.h"
+#include "Utils/DataStructures/CString.h"
 #include "glad/gl.h"
-#include "Makros/Defer.h"
-#include "Makros/Makros.h"
+#include "Utils/Makros/Defer.h"
+#include "Utils/Makros/Makros.h"
 
 
 #define FONT_ATLAS_SIZE 2048
-#define FONT_SIZE 32.0f
-
-static void measureFont(Font *font);
+#define FONT_SIZE 24.0f
 
 Font Text_loadFontAtlas(const char* file) {
-    const char* defaultPath = "../Resources/Fonts/";
+    const char* defaultPath = GUI_PROJECT_SOURCE_DIR"/../Resources/Fonts/";
     defer(defer_strDelete) Str completePath = cstrConcat(defaultPath, file);
 
     defer(defer_free) byte* ttf_buffer = malloc(1 << 20);
@@ -55,6 +52,15 @@ Font Text_loadFontAtlas(const char* file) {
     stbtt_PackFontRange(&pc, ttf_buffer, 0, FONT_SIZE,
                         32, 96, font.glyphs);
     stbtt_PackEnd(&pc);
+
+    stbtt_fontinfo info;
+    stbtt_InitFont(&info, ttf_buffer, stbtt_GetFontOffsetForIndex(ttf_buffer, 0));
+
+    int ascent, descent, lineGap;
+    stbtt_GetFontVMetrics(&info, &ascent, &descent, &lineGap);
+
+    const float scale = stbtt_ScaleForPixelHeight(&info, FONT_SIZE);
+    font.maxCharHeight = 0.5 * ((ascent - descent) * scale);
 
     GLuint tex;
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -87,8 +93,6 @@ Font Text_loadFontAtlas(const char* file) {
         .height = FONT_ATLAS_SIZE,
         .ID = tex
     };
-
-    measureFont(&font);
     return font;
 }
 
@@ -171,13 +175,19 @@ Vec2f Text_measureElementText(const TextElement* textElement) {
 
     return (Vec2f){
         width,
-        height
+        textElement->font->maxCharHeight * textElement->scale
     };
 }
 
 static Vec2f measureText(const Font *font, const char *text) {
     float x = 0.0f;
     float y = 0.0f;
+
+    float minX =  FLT_MAX;
+    float minY =  FLT_MAX;
+    float maxX = -FLT_MAX;
+    float maxY = -FLT_MAX;
+    bool hasGlyph = false;
 
     for cstrEach(c, text) {
         if (c < 32 || c > 126) continue;
@@ -192,11 +202,18 @@ static Vec2f measureText(const Font *font, const char *text) {
             &y,
             &q,0
         );
+        minX = min(minX, q.x0);
+        minY = min(minY, q.y0);
+        maxX = max(maxX, q.x1);
+        maxY = max(maxY, q.y1);
+        hasGlyph = true;
     }
 
+    if (!hasGlyph) return (Vec2f){0, 0};
+
     return (Vec2f){
-         x,
-        font->maxCharHeight
+        maxX - minX,
+        maxY - minY
     };
 }
 
@@ -255,10 +272,4 @@ void Text_reloadTextQuads(Element *element) {
         prevX = cursor.x;
     }
     textElement->width = cursor.x * textScale;
-}
-
-void measureFont(Font *font) {
-    const char* allChars = "' !#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~'";
-    const Vec2f fontSize = measureText(font, allChars);
-    font->maxCharHeight = fontSize.y;
 }

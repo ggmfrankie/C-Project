@@ -15,6 +15,7 @@ target_compile_definitions(Jolt PUBLIC JPH_ENABLE_ASSERTS)
 target_compile_options(Jolt PRIVATE -fno-lto -Wno-array-bounds)
 
 add_subdirectory(OtherProjects/Cpp/McpServer)
+add_subdirectory(C)
 
 include_directories(
         "${CMAKE_SOURCE_DIR}"
@@ -25,99 +26,6 @@ include_directories(
         "${CMAKE_SOURCE_DIR}/Cpp/Utils"
         "${CMAKE_SOURCE_DIR}/Dependencies/JoltPhysics"
 )
-
-add_library(GUI STATIC
-        Main.c
-        C/Utils/_Deprecated_/CString_v1.c
-        C/Utils/_Deprecated_/CString_v1.h
-        Dependencies/GL/gl.c
-        C/Utils/Math/Vector.c
-        C/Utils/Math/Vector.h
-        C/Utils/_Deprecated_/HashMap.h
-        C/Utils/Os/FileIO.c
-        C/Utils/Os/FileIO.h
-        C/Utils/_Deprecated_/StringBuilder.c
-        C/Utils/_Deprecated_/StringBuilder.h
-        C/Utils/Makros/Makros.h
-        C/Utils/Os/Time.c
-        C/Utils/Os/Time.h
-        C/Utils/_NYI_/MemoryArena.c
-        C/_Projects_/Chess/ChessGame.c
-        C/_Projects_/Chess/ChessGame.h
-        C/Utils/Os/Network.c
-        C/Utils/Os/Network.h
-        C/Utils/Misc/UtilityFun.c
-        C/Utils/Misc/UtilityFun.h
-        C/_Projects_/Test/TestGUI.c
-        C/_Projects_/ChessNewandImproved/ChessBetter2.c
-        C/_Projects_/ChessNewandImproved/ChessBetter2.c
-        C/_Projects_/Tokenizer/Calculator.c
-        C/_Projects_/Tokenizer/Calculator.h
-        C/Utils/DataStructures/CArrayList.h
-        C/_Projects_/TFE/TFE.c
-        C/_Projects_/TFE/TFE.h
-        C/GuiTypes.h
-        C/GuiDefines.h
-        C/Utils/DataStructures/CHashMap.h
-        C/Utils/_Deprecated_/Test.h
-        C/Utils/DataStructures/CHashMap.c
-        C/Utils/Typedef.h
-        C/Utils/Makros/Defer.c
-        C/Utils/DataStructures/CString.c
-        C/Utils/DataStructures/CString.h
-        C/Utils/Logging/Logging.h
-        OtherProjects/C/Informatik/DrunkenBishop.c
-        OtherProjects/C/Informatik/GameBoard.c
-        C/Utils/Makros/NamedParameters.h
-        C/Utils/Test.c
-        C/Utils/DataStructures/CSparseSet.c
-        C/Utils/DataStructures/CSparseSet.h
-        C/Utils/Makros/Defer.h
-        C/Utils/Test.h
-        C/Utils/Makros/Helper.h
-        C/Utils/DataStructures/CArrayList.c
-        C/GUI/Drawing/Mesh/Mesh.c
-        C/GUI/Drawing/Mesh/Mesh.h
-        C/GUI/Drawing/Shader/ComputeShader.c
-        C/GUI/Drawing/Shader/ComputeShader.h
-        C/GUI/Drawing/Shader/Shader.c
-        C/GUI/Drawing/Shader/Shader.h
-        C/GUI/Drawing/Texture/Texture.c
-        C/GUI/Drawing/Texture/Texture.h
-        C/GUI/Drawing/Render.c
-        C/GUI/Drawing/Render.h
-        C/GUI/Drawing/RenderTypes.h
-        C/GUI/Drawing/Text.c
-        C/GUI/Drawing/Text.h
-        C/GUI/GuiElement/ElementTypes/Scrollbar.c
-        C/GUI/GuiElement/ElementTypes/Scrollbar.h
-        C/GUI/GuiElement/ElementTypes/TextField.c
-        C/GUI/GuiElement/ElementTypes/TextField.h
-        C/GUI/GuiElement/IO/Tasks.c
-        C/GUI/GuiElement/IO/Tasks.h
-        C/GUI/GuiElement/IO/Update.c
-        C/GUI/GuiElement/IO/Update.h
-        C/GUI/GuiElement/CallbackHelper.c
-        C/GUI/GuiElement/CallbackHelper.h
-        C/GUI/GuiElement/GuiElement.c
-        C/GUI/GuiElement/GuiElement.h
-        C/GUI/Layout/Layout.c
-        C/GUI/Layout/Layout.h
-        C/GUI/Engine.c
-        C/GUI/Engine.h
-        C/GUI/GuiElement/ElementTypes/ScrollArea.c
-        C/GUI/GuiElement/ElementTypes/ScrollArea.h
-        C/GUI/GuiElement/ElementTypes.h
-        C/GuiColors.h
-        C/Utils/DataStructures/CStringView.c
-        C/Utils/DataStructures/CStringView.h
-        C/_Projects_/ExampleGUI/ExampleGUI.c
-        C/_Projects_/ExampleGUI/ExampleGUI.h
-        C/GUI/GuiElement/ElementTypes/TextArea.c
-        C/GUI/GuiElement/ElementTypes/TextArea.h
-)
-
-set_target_properties(GUI PROPERTIES LINKER_LANGUAGE C)
 
 add_executable(C-Project
         Dependencies/include/stb/stb_image.h

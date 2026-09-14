@@ -2,10 +2,10 @@
 #include "Render.h"
 #include "../GuiElement/GuiElement.h"
 #include "RenderTypes.h"
-#include "DataStructures/CArrayList.h"
+#include "Utils/DataStructures/CArrayList.h"
 #include "GLFW/glfw3.h"
 #include "GUI/Engine.h"
-#include "Makros/Makros.h"
+#include "Utils/Makros/Makros.h"
 #include "Shader/Shader.h"
 //
 // Created by ertls on 04.03.2026.
@@ -161,8 +161,6 @@ static void uploadBatches(BatchAccumulator *accumulator) {
     int meshDataOffset = 0;
 
     for arrEach(batch, accumulator->aDone) {
-        beginScissor(batch->clip.pos, batch->clip.dims);
-
         uploadVertices(batch->aVertices, batch->aIndices, vertexOffset, indexOffset);
         uploadElementData(batch->aElementData, elementDataOffset);
         uploadMeshData(batch->aMeshData, meshDataOffset);
@@ -182,7 +180,7 @@ static void uploadBatches(BatchAccumulator *accumulator) {
 static ssize_t addElementData(const Element* element, Batch* batch) {
     ElementInstanceData out = {};
     const ssize_t id = arrLen(batch->aElementData);
-    const float brightness = (element->state >= UI_STATE_HOVER && element->flags.canBeHovered) ? element->visuals.brightness - 0.2 : element->visuals.brightness;
+    const float brightness = (element->flags.isHovered && element->flags.canBeHovered) ? element->visuals.brightness - 0.2 : element->visuals.brightness;
     out.worldPos = element->dims.worldPos;
     out.color = (Vec4f){
         .x = element->visuals.color.x * brightness,
@@ -198,7 +196,7 @@ static ssize_t addElementData(const Element* element, Batch* batch) {
 static void pushBatch(BatchAccumulator* accumulator, const Element* clipElement) {
     Batch batch = {};
     if (!arrIsEmpty(accumulator->aUsed)) {
-        batch = arrPop(accumulator->aUsed);   // reuse old inner array pointers
+        batch = arrPop(accumulator->aUsed);
     }
     batch.clip.pos = (Vec2f){
         clipElement->dims.worldPos.x + clipElement->padding.left,
@@ -271,7 +269,7 @@ static void resetBatches(BatchAccumulator* accumulator) {
     }
 }
 
-void Render_drawGui(const GuiState *guiState) {
+void Render_drawGui(GuiState* guiState) {
     static BatchAccumulator accumulator = {};
 
     glDisable(GL_DEPTH_TEST);
@@ -295,13 +293,16 @@ void Render_drawGui(const GuiState *guiState) {
     Shader_setUniform(&guiState->guiShader, "screenHeight", (float) guiState->screenHeight);
 
     //Warning: If gui requires less batches the old ones are not deleted
-    pushBatch(&accumulator, Element_get(guiState->guiRoot));
-    accumulateMeshes(guiState->guiRoot, &accumulator);
-    popBatch(&accumulator);
+    if (guiState->meshesDirty || true) {
+        resetBatches(&accumulator);
 
+        pushBatch(&accumulator, Element_get(guiState->guiRoot));
+        accumulateMeshes(guiState->guiRoot, &accumulator);
+        popBatch(&accumulator);
+        guiState->meshesDirty = false;
+    }
     uploadBatches(&accumulator);
     drawBatches(&guiState->guiShader, &accumulator);
-    resetBatches(&accumulator);
 
     glBindVertexArray(0);
     glDisable(GL_MULTISAMPLE);
@@ -317,19 +318,16 @@ GLFWwindow* Render_initWindow(const int width, const int height, const char* nam
 
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 
+    glfwWindowHint(GLFW_SAMPLES, 4);
+
     GLFWwindow* window = glfwCreateWindow(width, height, name, nullptr, nullptr);
-    if (!window) {
-        glfwTerminate();
-        ERROR_("Creating the Window failed");
-    }
+
+    if (!window) ERROR_("Creating the Window failed");
 
     glfwMakeContextCurrent(window);
 
-    if (!gladLoadGL(glfwGetProcAddress)) {
-        glfwDestroyWindow(window);
-        glfwTerminate();
-        ERROR_("Initializing Glad failed");
-    }
+    if (!gladLoadGL(glfwGetProcAddress)) ERROR_("Initializing Glad failed");
+
     glViewport(0, 0, width, height);
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     return window;

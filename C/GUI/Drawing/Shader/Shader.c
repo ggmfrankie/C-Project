@@ -71,12 +71,15 @@ int createFragmentShader(const char *fileName, const int programId) {
 
     const int shaderId = createShader(&source, GL_FRAGMENT_SHADER, programId);
 
+    if (!shaderId) ERROR_("Failed to compile shader '%s'", fileName);
+
     return shaderId;
 }
 
 Str readShaderFile(const char *fileName) {
-    const char* defaultShaderPath = "../C/GUI/Drawing/Shader/GpuShader/";
-    char fullPath[64];
+    const char* defaultShaderPath = GUI_PROJECT_SOURCE_DIR"/../C/GUI/Drawing/Shader/GpuShader/";
+
+    char fullPath[128];
     cstrbConcat(fullPath, sizeof(fullPath), defaultShaderPath, fileName);
 
     Str shaderSource = readFile(fullPath);

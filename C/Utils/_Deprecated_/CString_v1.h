@@ -1,5 +1,4 @@
 #pragma once
-#include "GuiDefines.h"
 #include <stddef.h>
 
 typedef struct List_String List_String;

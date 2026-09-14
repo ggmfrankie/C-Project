@@ -10,7 +10,7 @@
 #define CURSOR_BLINK_TIMER 0.5
 
 static void TextField_drawCursor(const Element* self, GuiVertex** aVertices, int** aIndices, MeshInstanceData** additional, ssize_t ownerId) {
-    if (self->state != UI_STATE_SELECTED) return;
+    if (!self->flags.isSelected) return;
     assert(self->type == ELEMENT_TYPE_TEXTFIELD);
     const TextFieldData* data = self->elementData.ptr;
     if (!data->cursor.isVisible) return;

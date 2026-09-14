@@ -19,9 +19,5 @@ typedef struct {
     bool isBlocked;
 } Task;
 
-extern Task taskQueue[];
-extern int taskHead;
-extern int taskTail;
-
 void pushTask(GuiTask gt, void* data);
 Task popTask();

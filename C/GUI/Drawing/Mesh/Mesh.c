@@ -9,7 +9,9 @@
 #include "GUI/GuiElement/GuiElement.h"
 #include "../Texture/Texture.h"
 #include "Utils/Math/Vector.h"
-#include "DataStructures/CArrayList.h"
+#include "Utils/DataStructures/CArrayList.h"
+
+static constexpr int numTriangles = 8;
 
 struct ArcInfo {
     int start;
@@ -75,7 +77,6 @@ void Mesh_generateRoundedCorner(const Element* element, GuiVertex** aVertices, i
     const Texture texture = Texture_get(element->visuals.texture);
 
     constexpr float r90 = (float)M_PI * 0.5f;
-    constexpr int numTriangles = 4;
 
     const int start = arrLen(*aVertices);
 

@@ -6,9 +6,9 @@
 
 pthread_mutex_t taskMutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t taskCond  = PTHREAD_COND_INITIALIZER;
-Task taskQueue[TASK_QUEUE_MAX];
-int taskHead = 0;
-int taskTail = 0;
+static Task taskQueue[TASK_QUEUE_MAX];
+static int taskHead = 0;
+static int taskTail = 0;
 
 void pushTask(const GuiTask gt, void* data) {
     pthread_mutex_lock(&taskMutex);
