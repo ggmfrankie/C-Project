@@ -14,7 +14,7 @@
 #include "glad/gl.h"
 #include "Utils/DataStructures/CHashMap.h"
 #include "Utils/Logging/Logging.h"
-#include "Utils/Makros/Defer.h"
+#include "Utils/Macros/Defer.h"
 
 static constexpr int MAX_ATLAS_TEXTURES = 512;
 static constexpr int PIXEL_SIZE = 4;

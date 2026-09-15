@@ -22,5 +22,5 @@ typedef struct {
 } ScrollbarSettings;
 
 ElementHandle Scrollbar_new(ScrollbarSettings settings);
-void Scrollbar_updatePos(const Element* rail);
+void Scrollbar_updateSlider(Element* rail);
 void Scrollbar_setSliderHeight(const Element* rail, float newHeight);

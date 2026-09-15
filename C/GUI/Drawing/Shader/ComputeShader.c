@@ -10,7 +10,7 @@
 #include "Utils/Math/Vector.h"
 #include "Utils/DataStructures/CArrayList.h"
 #include "Utils/DataStructures/CHashMap.h"
-#include "Utils/Makros/Defer.h"
+#include "Utils/Macros/Defer.h"
 #include "GUI/Drawing/Texture/Texture.h"
 
 static GLuint generateGraphSSBO(const size_t size) {

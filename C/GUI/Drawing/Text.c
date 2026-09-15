@@ -16,8 +16,8 @@
 #include "Utils/DataStructures/CArrayList.h"
 #include "Utils/DataStructures/CString.h"
 #include "glad/gl.h"
-#include "Utils/Makros/Defer.h"
-#include "Utils/Makros/Makros.h"
+#include "Utils/Macros/Defer.h"
+#include "Utils/Macros/Utils.h"
 
 
 #define FONT_ATLAS_SIZE 2048
@@ -118,7 +118,7 @@ void Text_accumulateTextQuads(const Element *element, Batch* batch, ssize_t id) 
         constexpr int TEXT_BINDING = 1;
 
         const float x = c->pos.x + element->padding.left;
-        const float y = c->pos.y + element->dims.worldHeight - element->padding.down;
+        const float y = c->pos.y + element->textElement.font->maxCharHeight * element->textElement.scale + element->padding.up;
         const float w = c->width;
         const float h = c->height;
 
@@ -175,8 +175,12 @@ Vec2f Text_measureElementText(const TextElement* textElement) {
 
     return (Vec2f){
         width,
-        textElement->font->maxCharHeight * textElement->scale
+        max(height, textElement->font->maxCharHeight * textElement->scale)
     };
+}
+
+float Text_getMaxCharacterHeight(const TextElement* textElement) {
+    return textElement->font->maxCharHeight * textElement->scale;
 }
 
 static Vec2f measureText(const Font *font, const char *text) {
@@ -239,6 +243,9 @@ void Text_reloadTextQuads(Element *element) {
     };
 
     float prevX = 0.0f;
+    float maxY = 0.0f;
+
+    const float maxWidth = element->dims.maxWidth - (element->padding.left + element->padding.right);
 
     const Font* font = textElement->font;
 
@@ -246,6 +253,8 @@ void Text_reloadTextQuads(Element *element) {
         if (c < 32 || c > 126) continue;
         arrPush(textElement->aCharQuads, (Character){});
         Character* character = arrPeek(textElement->aCharQuads);
+
+        Retry:
 
         stbtt_aligned_quad q;
         stbtt_GetPackedQuad(
@@ -259,6 +268,12 @@ void Text_reloadTextQuads(Element *element) {
             0
         );
 
+        if (cursor.x > maxWidth) {
+            cursor.x = 0;
+            cursor.y = maxY + element->childGap + element->textElement.font->maxCharHeight * element->textElement.scale;
+            goto Retry;
+        }
+
         const float glyphWidth  = (q.x1 - q.x0) * textScale;
         const float glyphHeight = (q.y1 - q.y0) * textScale;
 
@@ -270,6 +285,7 @@ void Text_reloadTextQuads(Element *element) {
         character->value = c;
         character->advance = cursor.x - prevX;
         prevX = cursor.x;
+        maxY = max(maxY, cursor.y + glyphHeight);
     }
     textElement->width = cursor.x * textScale;
 }

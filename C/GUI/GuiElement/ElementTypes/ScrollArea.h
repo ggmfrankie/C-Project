@@ -17,6 +17,8 @@ typedef struct {
     Padding padding;
 
     bool notSelectable;
+    bool grow;
+    float flexGrow;
 } ScrollAreaSettings;
 
 ElementHandle _ScrollArea_new(ScrollAreaSettings settings, ...);

@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include "../../GUI/GuiElement/CallbackHelper.h"
 #include "../../Utils/DataStructures/CArrayList.h"
-#include "Utils/Makros/Defer.h"
+#include "Utils/Macros/Defer.h"
 
 #define COOL_COLOR (Vec3f){.2, .3, .3}
 #define COLOR_WHITE (Vec3f){1, 1, 1}
@@ -327,24 +327,24 @@ static ElementHandle createChessSquares(const int row, const int col, ElementSet
     };
 
     const ElementHandle square = createElement(es);
-    const ElementHandle piece = createElement(pieceDisplaySettings);
+    const ElementHandle piece  = createElement(pieceDisplaySettings);
 
     return addChildElements(Element_get(square), piece);
 }
 
 void chess_createChessBoard(Element* element) {
     ElementHandle board = addChildrenAsGridWithGenerator(
-                 (ElementSettings){
-                     .color = {0.5f, 0.0f, 0.3f},
-                     .minWidth = 400,
-                     .minHeight = 400,
-                 },
-                 (ElementSettings){
-                     .color = COLOR_WHITE,
-                     .onClick = runTaskFun,
-                 }, 8, 8,
-                 createChessSquares
-                );
+        (ElementSettings){
+            .color = {0.5f, 0.0f, 0.3f},
+            .minWidth = 400,
+            .minHeight = 400,
+        },
+        (ElementSettings){
+            .color = COLOR_WHITE,
+            .onClick = runTaskFun,
+        }, 8, 8,
+        createChessSquares
+    );
 
 
 }

@@ -13,14 +13,14 @@ typedef struct {
     ElementHandle scrollbar;
 } ScrollAreaData;
 
-static void ScrollArea_updateScrollbar(const Element* scrollArea) {
+static void ScrollArea_updateScrollbar(Element* scrollArea) {
     assert(scrollArea->type == ELEMENT_TYPE_SCROLL_AREA);
 
     const ScrollAreaData* data = scrollArea->elementData.ptr;
     const Element* panel = Element_get(data->contentArea);
     const Element* scrollbar = Element_get(data->scrollbar);
 
-    const float sliderHeight = scrollArea->dims.worldHeight * (scrollArea->dims.worldHeight / panel->dims.worldHeight);
+    const float sliderHeight = scrollbar->dims.worldHeight * (scrollArea->dims.worldHeight / panel->dims.worldHeight);
     Scrollbar_setSliderHeight(scrollbar, sliderHeight);
 }
 
@@ -59,15 +59,15 @@ ElementHandle _ScrollArea_new(ScrollAreaSettings settings, ...) {
     });
 
     const ElementHandle frame = Element_new((ElementSettings){
-        .pos = settings.pos,
         .minWidth = settings.width,
         .minHeight = settings.height,
         .useClipping = true,
         .color = settings.backgroundColor,
-        .posMode = POS_RELATIVE,
         .layoutDirection = LAYOUT_RIGHT,
         .cornerRadius = 5,
-        .notSelectable = settings.notSelectable
+        .notSelectable = settings.notSelectable,
+        .flexGrow = settings.flexGrow,
+        .grow = settings.grow,
     },
         scrollbar,
         panel
@@ -75,6 +75,7 @@ ElementHandle _ScrollArea_new(ScrollAreaSettings settings, ...) {
 
     Element* scrollArea = Element_get(frame);
     scrollArea->type = ELEMENT_TYPE_SCROLL_AREA;
+    scrollArea->callbacks.onLayoutUpdate = ScrollArea_updateScrollbar;
 
     ScrollAreaData* data = calloc(1, sizeof(ScrollAreaData));
     data->contentArea = contentArea;

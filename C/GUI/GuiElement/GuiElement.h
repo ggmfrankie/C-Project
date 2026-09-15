@@ -117,9 +117,9 @@ typedef struct Element {
         bool (*isMouseOver)(const Element* element, Vec2f mousePos);
         bool (*onClick)(Element* element);
         bool (*onHover)(Element* element);
+        void (*onLayoutUpdate)(Element* self);
         void (*whileSelected)(Element* element, double deltaTime);
         void (*onUpdate)(Element* element);
-        void (*reset)(Element* element);
         void (*requestMove)(Element* element, Vec2f pos);
         void (*drawCustom)(const Element* element, GuiVertex** aVertices, int** aIndices, MeshInstanceData** additional, ssize_t ownerId);
     } callbacks;
@@ -164,12 +164,11 @@ typedef struct ElementSettings {
     char* text;
     float textScale;
 
-    bool (*onClick)(Element* element);
-    bool (*onHover)(Element* element);
-    void (*whileSelected)(Element* element, double deltaTime);
+    bool (*onClick)(Element* self);
+    bool (*onHover)(Element* self);
+    void (*whileSelected)(Element* self, double deltaTime);
     void (*onUpdate)(Element* element);
-    void (*reset)(Element* element);
-    void (*drawCustom)(const Element* element, GuiVertex** aVertices, int** aIndices, MeshInstanceData** additional, ssize_t ownerId);
+    void (*drawCustom)(const Element* self, GuiVertex** aVertices, int** aIndices, MeshInstanceData** additional, ssize_t ownerId);
 
     Task task;
     Padding padding;

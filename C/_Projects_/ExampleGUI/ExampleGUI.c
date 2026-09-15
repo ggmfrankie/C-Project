@@ -10,34 +10,50 @@
 #include "GUI/GuiElement/ElementTypes/TextField.h"
 #include <stdlib.h>
 
+#include "GUI/GuiElement/ElementTypes/Scrollbar.h"
+
 static ElementHandle TestElement() {
     return Element_new((ElementSettings){
-        .minWidth = 50,
-        .minHeight = 10,
+        .minWidth = rand()%30 + 10,
+        .minHeight = rand()%50 + 10,
         .color = GUI_COLOR_DARKGRAY3,
         .text = "ja dies ist text",
         .textColor = GUI_COLOR_LIGHTGRAY3,
         .padding = {10,10,10,10},
         .cornerRadius = 5,
+        .grow = rand()%2
+    });
+}
+
+static ElementHandle TestElement2() {
+    return Element_new((ElementSettings){
+        .minWidth = rand()%200 + 1,
+        .minHeight = 10,
+        .color = GUI_COLOR_DARKGRAY3,
+        .text = "Dieser Text dürfte zu lang sein für das element",
+        .textColor = GUI_COLOR_LIGHTGRAY3,
+        .padding = {10,10,10,10},
+        .cornerRadius = 5,
+        .grow = true
     });
 }
 
 static ElementHandle TestScrollArea() {
     return Element_new((ElementSettings){
                 .color = GUI_COLOR_DARKGRAY2,
-                .draggable = true,
-                .layoutDirection = LAYOUT_RIGHT,
                 .padding = {10,10,10, 10},
-                .cornerRadius = 10
+                .cornerRadius = 10,
+                .flexGrow = 1.0
             },
                 ScrollArea_new((ScrollAreaSettings){
                     .pos = {},
-                    .height = rand()%300,
+                    .height = rand()%300 + 100,
                     .backgroundColor = GUI_COLOR_DARKGRAY2,
                     .sliderColor = GUI_COLOR_BLACK,
                     .railColor = GUI_COLOR_DARKGRAY1,
                     .childGap = 5,
-                    .padding = {5}
+                    .padding = {5},
+                    .flexGrow = 1
                 },
                     TestElement(),
                     TestElement(),
@@ -62,6 +78,25 @@ static ElementHandle TestScrollArea() {
             );
 }
 
+static ElementHandle teste() {
+    return Element_new((ElementSettings){
+        .minWidth = 100,
+        .minHeight = 100,
+        .color = GUI_COLOR_DARKGRAY2,
+        .cornerRadius = 10,
+        .flexGrow = 1.0,
+        .layoutDirection = LAYOUT_RIGHT
+    },
+        Scrollbar_new((ScrollbarSettings){
+            .pos = {},
+            .railWidth = 10,
+            .sliderHeight = 20,
+            .sliderColor = GUI_COLOR_LIGHTGRAY2,
+            .railColor = GUI_COLOR_DARKGRAY3
+        })
+    );
+}
+
 void ExampleGui_generate(Element* root) {
     addChildElements(root,
         Element_new((ElementSettings){
@@ -70,10 +105,22 @@ void ExampleGui_generate(Element* root) {
             .flexGrow = 1.0,
             .minWidth = 100,
             .minHeight = 100,
+            .padding = {10,10,10,10},
+            .childGap = 10
         },
             TestScrollArea(),
-            TestScrollArea(),
-            TestScrollArea()
+            TestElement(),
+            TestElement(),
+            TestElement(),
+            TestElement(),
+            teste(),
+            TestElement(),
+            TestElement(),
+            TestElement(),
+            TestElement(),
+            TestElement(),
+            TestElement(),
+            TestElement2()
         )
     );
 }

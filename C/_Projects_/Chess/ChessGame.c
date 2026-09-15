@@ -7,7 +7,7 @@
 #include <stdlib.h>
 
 #include "GUI/GuiElement/CallbackHelper.h"
-#include "Utils/Makros/Makros.h"
+#include "Utils/Macros/Utils.h"
 #include "Utils/Misc/UtilityFun.h"
 #include "GuiInterface.h"
 #include "GUI/GuiElement/GuiElement.h"
@@ -733,7 +733,7 @@ static ElementHandle createChessSquares(const int row, const int col, ElementSet
     };
 
     const ElementHandle square = createElement(es);
-    const ElementHandle piece = createElement(pieceDisplaySettings);
+    const ElementHandle piece  = createElement(pieceDisplaySettings);
 
     pieceSlots[col][row] = piece;
     return addChildElements(Element_get(square), piece);

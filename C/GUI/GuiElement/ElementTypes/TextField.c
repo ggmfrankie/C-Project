@@ -121,15 +121,15 @@ static bool TextField_onClick(Element *self) {
 }
 
 ElementHandle TextField_new(const ElementSettings elementSettings, bool (*onEnterCallback)(Element *element)) {
-    const ElementHandle element = createElement(elementSettings);
-    TextFieldData* textData = calloc(1, sizeof(TextFieldData));
-    textData->onEnterCallback = onEnterCallback;
-    textData->sText = strNew(16);
+    const ElementHandle element   = createElement(elementSettings);
+    TextFieldData* textData       = calloc(1, sizeof(TextFieldData));
+    textData->onEnterCallback     = onEnterCallback;
+    textData->sText               = strNew(16);
     const ElementHandle textField = createElement(
         (ElementSettings){
             .minWidth = elementSettings.minWidth,
             .minHeight = elementSettings.minHeight,
-            .padding = {5,5,5,5},
+            .padding = {10,10,10,10},
             .elementData = textData,
             .color = v_mul(elementSettings.color, 0.8f),
             .onClick = TextField_onClick,
@@ -150,7 +150,7 @@ bool TextField_runTask(Element *element) {
     TextFieldData* data = element->elementData.ptr;
     if (strIsEmpty(data->sText)) return false;
 
-    size_t len = strLen(data->sText);
+    const size_t len = strLen(data->sText);
     char* newBuffer = malloc(len + 1);
     memcpy(newBuffer, data->sText, len);
     newBuffer[len] = '\0';

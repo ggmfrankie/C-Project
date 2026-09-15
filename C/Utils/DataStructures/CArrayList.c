@@ -7,7 +7,7 @@
 #include <string.h>
 
 #include "Utils/Typedef.h"
-#include "Utils/Makros/Makros.h"
+#include "Utils/Macros/Utils.h"
 
 void _arrNew(void** array, size_t typeSize, size_t capacity) {
     if(*array != nullptr) return;

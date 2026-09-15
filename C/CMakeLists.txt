@@ -17,7 +17,7 @@ add_library(GUI STATIC
         Utils/Os/FileIO.h
         Utils/_Deprecated_/StringBuilder.c
         Utils/_Deprecated_/StringBuilder.h
-        Utils/Makros/Makros.h
+        Utils/Macros/Utils.h
         Utils/Os/Time.c
         Utils/Os/Time.h
         Utils/_NYI_/MemoryArena.c
@@ -41,17 +41,17 @@ add_library(GUI STATIC
         Utils/_Deprecated_/Test.h
         Utils/DataStructures/CHashMap.c
         Utils/Typedef.h
-        Utils/Makros/Defer.c
+        Utils/Macros/Defer.c
         Utils/DataStructures/CString.c
         Utils/DataStructures/CString.h
         Utils/Logging/Logging.h
-        Utils/Makros/NamedParameters.h
+        Utils/Macros/NamedParameters.h
         Utils/Test.c
         Utils/DataStructures/CSparseSet.c
         Utils/DataStructures/CSparseSet.h
-        Utils/Makros/Defer.h
+        Utils/Macros/Defer.h
         Utils/Test.h
-        Utils/Makros/Helper.h
+        Utils/Macros/Macros.h
         Utils/DataStructures/CArrayList.c
         GUI/Drawing/Mesh/Mesh.c
         GUI/Drawing/Mesh/Mesh.h

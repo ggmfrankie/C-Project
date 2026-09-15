@@ -40,7 +40,6 @@ static ElementHandle Element_allocateNewV2(const Vec2f pos, const int width, con
                         .onHover = nullptr,
                         .isMouseOver = nullptr,
                         .onUpdate = nullptr,
-                        .reset = nullptr,
                         .whileSelected = nullptr,
                         .requestMove = nullptr
                       },
@@ -193,7 +192,7 @@ static bool Element_isQuadBB(const Element *element, Vec2f mousePos) {
     return false;
 }
 
-ElementHandle createElement(const ElementSettings es) {
+ElementHandle createElement(ElementSettings es) {
     const ElementHandle handle = Element_allocateNewV2(es.pos, es.minWidth, es.minHeight);
     Element* lastElement = Element_get(handle);
 
@@ -288,11 +287,11 @@ ElementHandle addChildrenAsGrid(const ElementSettings parentData, const ElementS
     return addChildrenAsGridWithGenerator(parentData, es, numX, numY, defaultGenerator);
 }
 
-ElementHandle addChildrenAsGridWithGenerator(const ElementSettings parentData, ElementSettings es, const int numX, const int numY, ElementHandle (*generateElement)(int, int, ElementSettings)) {
+ElementHandle addChildrenAsGridWithGenerator(ElementSettings parentData, ElementSettings es, const int numX, const int numY, ElementHandle (*generateElement)(int, int, ElementSettings)) {
     ElementHandle parentHandle = createElement(parentData);
-    Element* parent = Element_get(parentHandle);
-    const int childWidth = parent->dims.width/numX;
-    const int childHeight = parent->dims.height/numY;
+    Element* parent            = Element_get(parentHandle);
+    const int childWidth       = parent->dims.width/numX;
+    const int childHeight      = parent->dims.height/numY;
 
     es.posMode = POS_RELATIVE;
     es.minWidth = childWidth;

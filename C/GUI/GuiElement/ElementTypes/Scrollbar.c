@@ -3,13 +3,14 @@
 #include <assert.h>
 #include <stdlib.h>
 
-#include "Utils/Makros/Makros.h"
+#include "Utils/Macros/Utils.h"
 
 static void Scrollbar_handleDragging(Element* self, Vec2f pos) {
     assert(self->type == ELEMENT_TYPE_SCROLLBAR_SLIDER);
-    const float newY = max(0, min(Element_get(self->parentElement)->dims.worldHeight - self->dims.worldHeight, pos.y));
-    ScrollbarData* data = self->elementData.ptr;
+    const float maxTravel = Element_get(self->parentElement)->dims.worldHeight - self->dims.worldHeight;
+    const float newY = clamp(pos.y, 0, maxTravel);
 
+    ScrollbarData* data = self->elementData.ptr;
     data->progress = newY / (Element_get(self->parentElement)->dims.worldHeight - self->dims.worldHeight);
 
     if (data->onMove) data->onMove(data, Element_get(data->moveElement));
@@ -26,7 +27,9 @@ ElementHandle Scrollbar_new(ScrollbarSettings settings) {
         .color = settings.sliderColor,
         .transparency = 0.5,
         .cornerRadius = settings.railWidth*0.5,
-        .canBeHovered = true
+        .canBeHovered = true,
+        .noLayoutContributionHorizontal = true,
+        .noLayoutContributionVertical = true,
     });
 
     const ElementHandle railHandle = Element_new((ElementSettings) {
@@ -56,16 +59,18 @@ ElementHandle Scrollbar_new(ScrollbarSettings settings) {
     rail->type = ELEMENT_TYPE_SCROLLBAR_RAIL;
     rail->elementData.ptr = data;
     rail->elementData.needsFree = true;
+    rail->callbacks.onLayoutUpdate = Scrollbar_updateSlider;
 
     return railHandle;
 }
 
-void Scrollbar_updatePos(const Element* rail) {
+void Scrollbar_updateSlider(Element* rail) {
     assert(rail->type == ELEMENT_TYPE_SCROLLBAR_RAIL);
     const ScrollbarData* data = rail->elementData.ptr;
     Element* slider = Element_get(data->slider);
 
     slider->dims.pos.y = (rail->dims.worldHeight - slider->dims.worldHeight) * data->progress;
+    if (data->onMove) data->onMove(data, Element_get(data->moveElement));
 }
 
 void Scrollbar_setSliderHeight(const Element* rail, float newHeight) {
@@ -73,7 +78,7 @@ void Scrollbar_setSliderHeight(const Element* rail, float newHeight) {
     const ScrollbarData* data = rail->elementData.ptr;
     Element* slider = Element_get(data->slider);
 
-    slider->dims.height = max(rail->dims.worldHeight, min(newHeight, 0));
+    slider->dims.height = min(rail->dims.worldHeight, max(newHeight, 0));
 
     slider->dims.pos.y = (rail->dims.worldHeight - slider->dims.worldHeight) * data->progress;
 }

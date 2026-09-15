@@ -1,11 +1,14 @@
 #include "glad/gl.h"
 #include "Render.h"
+
+#include <math.h>
+
 #include "../GuiElement/GuiElement.h"
 #include "RenderTypes.h"
 #include "Utils/DataStructures/CArrayList.h"
 #include "GLFW/glfw3.h"
 #include "GUI/Engine.h"
-#include "Utils/Makros/Makros.h"
+#include "Utils/Macros/Utils.h"
 #include "Shader/Shader.h"
 //
 // Created by ertls on 04.03.2026.
@@ -131,7 +134,12 @@ static void beginScissor(Vec2f pos, Vec2f dims) {
     int viewport[4];
     glGetIntegerv(GL_VIEWPORT, viewport);
     const GLfloat glY = (viewport[3] - (pos.y + dims.y));
-    glScissor((GLint)pos.x, (GLint)glY, (GLsizei)dims.x, (GLsizei)dims.y);
+    glScissor(
+        nearbyintf(pos.x),
+        nearbyintf(glY),
+        nearbyintf(dims.x),
+        nearbyintf(dims.y)
+    );
 }
 
 static void drawBatches(const Shader* shader, const BatchAccumulator *accumulator) {

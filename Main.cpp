@@ -16,7 +16,7 @@ int main() {
     Test_run();
     try {
         JPH::RegisterDefaultAllocator();
-        Game::BaseGame game{};
+        Game::BaseGame game {};
         GameEngine& gameEngine = GameEngine::New(game);
         gameEngine.init();
         gameEngine.loop();

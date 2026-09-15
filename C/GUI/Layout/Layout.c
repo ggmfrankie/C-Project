@@ -14,7 +14,7 @@
 #include "GUI/GuiElement/GuiElement.h"
 #include "Utils/DataStructures/CArrayList.h"
 #include "GUI/Engine.h"
-#include "Utils/Makros/Makros.h"
+#include "Utils/Macros/Utils.h"
 #include "Utils/Misc/UtilityFun.h"
 
 static Cache* cacheLayout(Element* self, float maxAvailableWidth, float maxAvailableHeight);
@@ -93,12 +93,11 @@ static Vec2f getDimsFromFlowChildren(Element* self, float maxAvailableWidth, flo
 
         switch (self->layoutDirection) {
             case LAYOUT_DOWN: {
-                const float extraGap = (cursor.y == 0) ? 0 : childGap;
                 const float totalPadding = self->padding.up + self->padding.down;
-                const float predictedTotalHeight = cursor.y + childCache->minHeight + extraGap + totalPadding;
+                const float predictedTotalHeight = cursor.y + childCache->minHeight + totalPadding;
 
                 if (predictedTotalHeight > maxAvailableHeight) {
-                    endOldLine(self->layoutCache.aLines, cursor);
+                    endOldLine(self->layoutCache.aLines, (Vec2f){extend.x, cursor.y});
 
                     cursor.y = 0;
                     cursor.x = extend.x + childGap;
@@ -114,12 +113,11 @@ static Vec2f getDimsFromFlowChildren(Element* self, float maxAvailableWidth, flo
             }
                 break;
             case LAYOUT_RIGHT: {
-                const float extraGap = (cursor.x == 0) ? 0 : childGap;
                 const float totalPadding = self->padding.left + self->padding.right;
-                const float predictedTotalWidth = cursor.x + childCache->minWidth + extraGap + totalPadding;
+                const float predictedTotalWidth = cursor.x + childCache->minWidth + totalPadding;
 
                 if (predictedTotalWidth > maxAvailableWidth) {
-                    endOldLine(self->layoutCache.aLines, cursor);
+                    endOldLine(self->layoutCache.aLines, (Vec2f){cursor.x, extend.y});
 
                     cursor.x = 0;
                     cursor.y = extend.y + childGap;
@@ -155,13 +153,19 @@ static Vec2f getDimsFromFlowChildren(Element* self, float maxAvailableWidth, flo
     return extend;
 }
 
-static Vec2f getDimsFromStaticChildren(const Element* self) {
+static Vec2f getDimsFromStaticChildren(const Element* self, float maxAvailableWidth, float maxAvailableHeight) {
     Vec2f extend = {0, 0};
     for arrEach(childPtr, self->aStaticElements) {
         Element* child = Element_get(*childPtr);
         const Vec2f pos = child->dims.pos;
+
+        maxAvailableWidth = (!child->flags.noLayoutContributionHorizontal) ?
+            min(maxAvailableWidth, self->dims.maxWidth) : self->dims.maxWidth;
+        maxAvailableHeight = (!child->flags.noLayoutContributionVertical) ?
+            min(maxAvailableHeight, self->dims.maxHeight) : self->dims.maxHeight;
+
         //Children first
-        const Cache* childCache = cacheLayout(child, self->dims.maxWidth, self->dims.maxHeight);
+        const Cache* childCache = cacheLayout(child, maxAvailableWidth, maxAvailableHeight);
         if (!child->flags.noLayoutContributionHorizontal) extend.x = max(extend.x, pos.x + childCache->minWidth);
         if (!child->flags.noLayoutContributionVertical)   extend.y = max(extend.y, pos.y + childCache->minHeight);
     }
@@ -170,7 +174,7 @@ static Vec2f getDimsFromStaticChildren(const Element* self) {
 
 static Vec2f getDimsFromChildren(Element* self, float maxAvailableWidth, float maxAvailableHeight) {
     const Vec2f flowDims   = getDimsFromFlowChildren(self, maxAvailableWidth, maxAvailableHeight);
-    const Vec2f staticDims = getDimsFromStaticChildren(self);
+    const Vec2f staticDims = getDimsFromStaticChildren(self, maxAvailableWidth, maxAvailableHeight);
 
     return (Vec2f){
         max(flowDims.x, staticDims.x),
@@ -197,6 +201,8 @@ static Cache* cacheLayout(Element* self, float maxAvailableWidth, float maxAvail
         self->padding.up +
         max(textDims.y, max(manualDims.y, childDims.y)) +
         self->padding.down;
+
+    if (self->callbacks.onLayoutUpdate) self->callbacks.onLayoutUpdate(self);
 
     return &self->layoutCache;
 }
@@ -246,7 +252,7 @@ static void placeFlowElements(const Element* self) {
                 curr->layoutCache.minHeight
             };
 
-            const float totalChildGap = ((currLine.end - currLine.start)-1) * self->childGap;
+            const float totalChildGap = (currLine.end - currLine.start - 1) * self->childGap;
             const Vec2f totalPadding = {self->padding.left + self->padding.right, self->padding.up + self->padding.down};
             const float flexFactor  = flexData.totalFlex ? (curr->dims.flexGrow/flexData.totalFlex) : 0.0f;
 
@@ -254,10 +260,10 @@ static void placeFlowElements(const Element* self) {
                 case LAYOUT_RIGHT:
                     if (curr->flags.grow) {
                         if (i == _end-1) {
-                            const float freeSpace = (self->dims.worldHeight - totalPadding.y);
-                            dims.y = freeSpace;
+                            const float freeSpace = (self->dims.worldHeight - totalPadding.y - currLine.rect.start.y);
+                            dims.y = clamp(freeSpace, 0, curr->dims.maxHeight);
                         } else {
-                            dims.y = currLine.rect.end.y - currLine.rect.start.y;
+                            dims.y = clamp(currLine.rect.end.y - currLine.rect.start.y, 0, curr->dims.maxHeight);
                         }
                     }
                     //Flex space
@@ -266,10 +272,10 @@ static void placeFlowElements(const Element* self) {
                 case LAYOUT_DOWN:
                     if (curr->flags.grow) {
                         if (i == _end-1) {
-                            const float freeSpace = (self->dims.worldWidth - totalPadding.x);
-                            dims.x = freeSpace;
+                            const float freeSpace = (self->dims.worldWidth - totalPadding.x - currLine.rect.start.x);
+                            dims.x = clamp(freeSpace, 0, curr->dims.maxWidth);
                         } else {
-                            dims.x = currLine.rect.end.x - currLine.rect.start.x;
+                            dims.x = clamp(currLine.rect.end.x - currLine.rect.start.x, 0, curr->dims.maxWidth);
                         }
                     }
                     dims.y += flexFactor * (self->dims.worldHeight - flexData.totalMinSize.y - totalChildGap - totalPadding.y);
@@ -323,6 +329,7 @@ static void placeChildElements(const Element* self) {
 
     for arrEach(flowElement, self->aFlowElements) { placeChildElements(Element_get(*flowElement));}
     for arrEach(staticElement, self->aStaticElements) { placeChildElements(Element_get(*staticElement));}
+
 #if GUI_DEBUG
     const bool correctElement = (self->name) ? (strcmp(GUI_DEBUG_OBSERVE_ELEMENT_PLACE_CHILDREN, self->name) == 0) : false;
     const bool print = correctElement && only_every(200);
