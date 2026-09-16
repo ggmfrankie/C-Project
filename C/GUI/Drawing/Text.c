@@ -50,7 +50,7 @@ Font Text_loadFontAtlas(const char* file) {
     stbtt_PackSetOversampling(&pc, 3, 3);
 
     stbtt_PackFontRange(&pc, ttf_buffer, 0, FONT_SIZE,
-                        32, 96, font.glyphs);
+                        32, 223, font.glyphs);
     stbtt_PackEnd(&pc);
 
     stbtt_fontinfo info;
@@ -60,7 +60,7 @@ Font Text_loadFontAtlas(const char* file) {
     stbtt_GetFontVMetrics(&info, &ascent, &descent, &lineGap);
 
     const float scale = stbtt_ScaleForPixelHeight(&info, FONT_SIZE);
-    font.maxCharHeight = 0.5 * ((ascent - descent) * scale);
+    font.maxCharHeight = ascent * scale;
 
     GLuint tex;
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -96,7 +96,7 @@ Font Text_loadFontAtlas(const char* file) {
     return font;
 }
 
-static void uploadTextInstanceData(const Element *owner, MeshInstanceData** aAdditionalData, ssize_t id) {
+static void uploadTextInstanceData(const Element *owner, MeshInstanceData* aAdditionalData[], ssize_t id) {
     arrPush(*aAdditionalData,
         ((MeshInstanceData){
             .color = owner->textElement.textColor,
@@ -161,7 +161,7 @@ Vec2f Text_measureElementText(const TextElement* textElement) {
     for arrEach(c, textElement->aCharQuads) {
         const float x0 = c->pos.x;
         const float y0 = c->pos.y;
-        const float x1 = c->pos.x + c->width;
+        const float x1 = c->pos.x + c->advance;
         const float y1 = c->pos.y + c->height;
 
         minX = min(minX, x0);
@@ -250,7 +250,7 @@ void Text_reloadTextQuads(Element *element) {
     const Font* font = textElement->font;
 
     for strEach(c, textElement->sText) {
-        if (c < 32 || c > 126) continue;
+        if (c < 32) continue;
         arrPush(textElement->aCharQuads, (Character){});
         Character* character = arrPeek(textElement->aCharQuads);
 

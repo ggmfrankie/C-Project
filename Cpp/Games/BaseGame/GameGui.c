@@ -74,7 +74,6 @@ static void generateMainMenuGui(Element* guiRoot) {
             }),
             TextField_new((ElementSettings){
                 .padding = {10,10,10,10},
-                .minHeight = 20,
                 .minWidth = 100,
                 .color = {0.88f, 0.88f, 0.91f},
                 .cornerRadius = 10,

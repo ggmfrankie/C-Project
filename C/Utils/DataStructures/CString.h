@@ -53,7 +53,7 @@ void strAppend(Str* s, char c);
 void strAppendAt(Str* s, char c, size_t idx);
 
 void strAppend_sprintf(Str* s, const char* fmt, ...);
-void strAppend_sprintf_va(Str* s, const char* fmt, va_list args);
+void strAppend_sprintfVa(Str* s, const char* fmt, va_list args);
 
 char strPopAt(Str* s, size_t idx);
 
@@ -65,7 +65,9 @@ void strClear(Str* s);
 //@brief deletes the underlying memory and sets the Str to nullptr
 void strDelete(Str* s);
 
-#define strEach(c, str) (size_t CONCAT(_i, __LINE__) = 0, CONCAT(_len, __LINE__) = strLen(str); CONCAT(_i, __LINE__) < CONCAT(_len, __LINE__); CONCAT(_i, __LINE__)++) for (char (c) = str[CONCAT(_i, __LINE__)]; (c) != '\0'; (c) = '\0')
+#define strEach_impl(_i, _len, c, str) (size_t _i = 0, _len = strLen(str); _i < _len; _i++) for (char (c) = str[_i]; (c) != '\0'; (c) = '\0')
+#define strEach(c, str) strEach_impl(CONCAT(_i, __COUNTER__), CONCAT(_len, __COUNTER__), c, str)
+
 #define cstrEach(c, str) (size_t CONCAT(_i, __LINE__) = 0, CONCAT(_len, __LINE__) = strlen(str); CONCAT(_i, __LINE__) < CONCAT(_len, __LINE__); CONCAT(_i, __LINE__)++) for (char (c) = str[CONCAT(_i, __LINE__)]; (c) != '\0'; (c) = '\0')
 
 Str* cstrSplit(const char* s, char del);

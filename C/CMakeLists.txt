@@ -45,7 +45,7 @@ add_library(GUI STATIC
         Utils/DataStructures/CString.c
         Utils/DataStructures/CString.h
         Utils/Logging/Logging.h
-        Utils/Macros/NamedParameters.h
+        Utils/_Deprecated_/NamedParameters.h
         Utils/Test.c
         Utils/DataStructures/CSparseSet.c
         Utils/DataStructures/CSparseSet.h

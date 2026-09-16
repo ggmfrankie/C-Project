@@ -10,6 +10,7 @@
 
 #include "GuiInterface.h"
 #include "SessionInfo.h"
+#include "Camera/CameraCalculations.hpp"
 #include "CameraGUI/CameraGUI.h"
 
 int main() {
@@ -18,6 +19,10 @@ int main() {
         std::cerr << "Failed to start WinSock\n";
         return EXIT_FAILURE;
     }
+
+    auto [width, height] = CalculateObjectPixelSize(0.1, 0.1, 1.0);
+
+    std::cout << "Width: " << width << ", Height: " << height;
 
     Engine_loop(Camera_generateGUI);
     return EXIT_SUCCESS;

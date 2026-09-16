@@ -6,9 +6,6 @@
 #include "../DataStructures/CArrayList.h"
 #include "../DataStructures/CHashMap.h"
 
-static void foo(char c[static 1]){
-    puts(c);
-}
 
 static void Utils_test() {
 #undef _HashMapInitCapacity_
@@ -33,13 +30,7 @@ static void Utils_test() {
         printf("%f\n", arr[i]);
     }
 
-    for_eachArr(num, arr,
-        printf("%f\n", *num);
-    );
 
-    for_eachRevArr(num, arr,
-        printf("%f\n", *num);
-    );
 
     int a = ({int x = 9; int y = 10; x + y;});
 
@@ -62,8 +53,12 @@ typedef struct {
     char* m;
 } Stringus;
 
-inline void _print() {
+#include <stdio.h>
 
+double m[] = {7709179928849219.0, 771};
+
+int test() {
+    m[1]--?m[0]*=2,test():printf((char*)m);
 }
 
 inline void etata() {

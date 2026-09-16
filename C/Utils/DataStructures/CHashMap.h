@@ -46,7 +46,7 @@ void* _mapGetEmptySlotImpl(void* map, size_t typeSize, const char* key);
     do {\
         if ((map) == nullptr) mapNew(map, _MapInitCapacity);\
         _mapGrowIfNeeded(map);\
-        typeof(map) CONCAT(_local, __LINE__) = _mapGetEmptySlot(map, key);\
+        typeof(map) CONCAT(_local, __LINE__) = (typeof(map))_mapGetEmptySlot(map, key);\
         if (CONCAT(_local, __LINE__)) {\
             *CONCAT(_local, __LINE__) = value;\
             _mapGetHead(map)->size++;\

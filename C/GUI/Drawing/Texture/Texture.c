@@ -29,7 +29,7 @@ typedef struct {
 static GLuint uploadTextureToGPU(int width, int height, int channels, const unsigned char* pixels);
 
 static Texture* gmTextureMap;
-static TextureList gTextures = {.capacity = 256, .size = 0};
+static TextureList gTextures = {.capacity = sizeof(gTextures.m), .size = 0};
 
 static StandaloneTexture* newTexture(const int width, const int height, const GLuint textureId) {
     assert(gTextures.size < gTextures.capacity);
@@ -50,7 +50,7 @@ void Texture_loadAtlas(TextureAtlas *atlas) {
     Texture_loadDefaults(atlas);
 
     //TODO: Fix Padding
-    constexpr int padding = 0;
+    static constexpr int padding = 0;
 
     for arrEach(namePtr, atlas->aNames) {
         int width, height, channels;
@@ -156,8 +156,10 @@ StandaloneTexture *Texture_new(const int width, const int height) {
 }
 
 StandaloneTexture *Texture_newFromPng(const char *fileName) {
-    char fullPath[64];
-    cstrbConcat(fullPath, 64, DEFAULT_PATH, fileName);
+    size_t len = strlen(DEFAULT_PATH) + strlen(fileName) + 1;
+
+    char fullPath[len];
+    cstrbConcat(fullPath, sizeof(fullPath), DEFAULT_PATH, fileName);
 
     int width, height, channels;
 

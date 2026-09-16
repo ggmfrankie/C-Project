@@ -9,6 +9,7 @@
 #include <string.h>
 
 #include "Macros/Defer.h"
+#include "OtherProjects/C/Extern/CVector.h"
 
 #define TEST(condition, msg...) if(!(condition)) ERROR_(msg)
 
@@ -231,34 +232,6 @@ static void Test_arrayList() {
     TEST(pairs == nullptr, "arrDelete should null the pointer for struct array");
 }
 
-static void Test_arrayListPerformance() {
-    enum { itemCount = 200000 };
-
-    int* array = nullptr;
-    volatile long long sink = 0;
-
-    const TimeNs pushStart = now_ns();
-    for (int i = 0; i < itemCount; ++i) {
-        arrPush(array, i);
-    }
-    const TimeNs pushEnd = now_ns();
-
-    const TimeNs iterateStart = now_ns();
-    for arrEach(num, array) {
-        sink += *num;
-    }
-    const TimeNs iterateEnd = now_ns();
-
-    printf(
-        "Array benchmark: push=%lld ns, iterate=%lld ns, checksum=%lld\n",
-        (long long)(pushEnd - pushStart),
-        (long long)(iterateEnd - iterateStart),
-        sink
-    );
-
-    arrFree(array);
-}
-
 static void Test_hashMap() {
     int* map = nullptr;
     TEST(mapIsEmpty(map) == true, "new map should be empty");
@@ -435,7 +408,6 @@ static void Test_sparseSet(){
 
 static void Test_dataStructures() {
     Test_arrayList();
-    Test_arrayListPerformance();
     INFO_("CArrayList passed");
     Test_hashMap();
     INFO_("CHashMap passed");
@@ -443,11 +415,99 @@ static void Test_dataStructures() {
     INFO_("CSparseSet passed");
     Test_cString();
     INFO_("CString passed");
+}
 
-    Str a = strNew(12);
+static void Test_arrayListPerformance() {
+    enum { itemCount = 200000 };
+    enum { warmupRuns = 3 };
+    enum { measuredRuns = 100 };
 
+    double pushTotalMs = 0.0;
+    double iterateTotalMs = 0.0;
+    long long checksumTotal = 0;
+
+    for (int run = 0; run < warmupRuns + measuredRuns; ++run) {
+        int* array = nullptr;
+        long long sink = 0;
+
+        const TimeNs pushStart = now_ns();
+        for (int i = 0; i < itemCount; ++i) {
+            arrPush(array, i);
+        }
+        const TimeNs pushEnd = now_ns();
+
+        const TimeNs iterateStart = now_ns();
+        for arrEach(num, array) {
+            sink += *num;
+        }
+        const TimeNs iterateEnd = now_ns();
+
+        if (run >= warmupRuns) {
+            pushTotalMs += (double)(pushEnd - pushStart) / 1000000.0;
+            iterateTotalMs += (double)(iterateEnd - iterateStart) / 1000000.0;
+            checksumTotal += sink;
+        }
+
+        arrFree(array);
+    }
+
+    printf(
+        "Array benchmark: push=%.3f ms, iterate=%.3f ms, checksum=%lld\n",
+        pushTotalMs / measuredRuns,
+        iterateTotalMs / measuredRuns,
+        checksumTotal / measuredRuns
+    );
+}
+
+static void Test_vectorPerformance() {
+    enum { itemCount = 200000 };
+    enum { warmupRuns = 3 };
+    enum { measuredRuns = 100 };
+
+    double pushTotalMs = 0.0;
+    double iterateTotalMs = 0.0;
+    long long checksumTotal = 0;
+
+    for (int run = 0; run < warmupRuns + measuredRuns; ++run) {
+        cvector(int) vector = nullptr;
+        long long sink = 0;
+
+        const TimeNs pushStart = now_ns();
+        for (int i = 0; i < itemCount; ++i) {
+            cvector_push_back(vector, i);
+        }
+        const TimeNs pushEnd = now_ns();
+
+        const TimeNs iterateStart = now_ns();
+        cvector_iterator(int) it;
+        for (it = cvector_begin(vector); it != cvector_end(vector); ++it) {
+            sink += *it;
+        }
+        const TimeNs iterateEnd = now_ns();
+
+        if (run >= warmupRuns) {
+            pushTotalMs += (double)(pushEnd - pushStart) / 1000000.0;
+            iterateTotalMs += (double)(iterateEnd - iterateStart) / 1000000.0;
+            checksumTotal += sink;
+        }
+
+        cvector_free(vector);
+    }
+
+    printf(
+        "Vector benchmark: push=%.3f ms, iterate=%.3f ms, checksum=%lld\n",
+        pushTotalMs / measuredRuns,
+        iterateTotalMs / measuredRuns,
+        checksumTotal / measuredRuns
+    );
+}
+
+static void Test_testPerformance() {
+    Test_vectorPerformance();
+    Test_arrayListPerformance();
 }
 
 void Test_run() {
     Test_dataStructures();
+    Test_testPerformance();
 }

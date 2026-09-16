@@ -123,6 +123,7 @@ add_executable(C-Project
         Cpp/Utils/Async/Coroutine.cpp
         Cpp/Utils/Async/Coroutine.hpp
         Cpp/Utils/Math/Math.hpp
+        OtherProjects/C/Extern/CVector.h
 )
 
 target_compile_definitions(C-Project PUBLIC JPH_ENABLE_ASSERTS)

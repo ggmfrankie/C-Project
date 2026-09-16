@@ -28,3 +28,32 @@
     _ARGS_STRUCT args _args = {__VA_ARGS__}; \
     func(_PASS_STRUCT args); \
     })
+
+// Source - https://stackoverflow.com/a/2124433
+// Posted by qrdl
+// Retrieved 2026-09-16, License - CC BY-SA 2.5
+
+#define NUMARGS(...)  (sizeof((int[]){0, ##__VA_ARGS__})/(sizeof(int)-1))
+
+
+// Source - https://stackoverflow.com/a/11763277
+// Posted by netcoder, modified by community. See post 'Timeline' for change history
+// Retrieved 2026-09-16, License - CC BY-SA 4.0
+
+#define FOO1(a) -a
+#define FOO2(a, b) a+b
+#define FOO3(a, b, c) a/b+~c
+#define FOO4(a, b, c, d) a*b*c*d
+#define FOO5(a, b, c, d ,e) 0
+
+#define EXPAND(x)                           x
+#define GET_MACRO(_1, _2, _3, _4, _5, name, ...)    name
+#define FOO(...)    EXPAND( GET_MACRO(__VA_ARGS__, FOO5, FOO4, FOO3, FOO2, FOO1)(__VA_ARGS__) )
+
+static void dsfafasdfasdfasf() {
+    int sum = FOO(2, 2);
+    sum += FOO(6,5,4,3);
+    sum += FOO(1);
+
+    int num = NUMARGS("hellow",2,2);
+}

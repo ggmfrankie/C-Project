@@ -98,7 +98,7 @@ Str strNew_sprintf(const char* fmt, ...) {
 
     if (len < 0) ERROR_("Could not parse formatstring");
 
-    Str out = strNew(len);
+    const Str out = strNew(len);
     vsnprintf(out, len+1, fmt, argsCopy);
     va_end(argsCopy);
 
@@ -140,7 +140,7 @@ Str strConcat(Str a, Str b) {
 }
 
 
-Str* _strSplit(const char* s, size_t len, char del) {
+static Str* _strSplit(const char* s, size_t len, char del) {
     assert(s != nullptr);
     Str* aOut = nullptr;
 
@@ -228,7 +228,7 @@ void strAppendAt(Str* s, char c, size_t idx) {
     (*s)[++strGetHead(*s)->size] = '\0';
 }
 
-void strAppend_sprintf_va(Str* s, const char* fmt, va_list args) {
+void strAppend_sprintfVa(Str* s, const char* fmt, va_list args) {
     assert(fmt != nullptr);
     strAssert(*s);
 
@@ -272,7 +272,7 @@ char strPopAt(Str* s, size_t idx) {
 void strAppend_sprintf(Str* s, const char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
-    strAppend_sprintf_va(s, fmt, args);
+    strAppend_sprintfVa(s, fmt, args);
     va_end(args);
 }
 

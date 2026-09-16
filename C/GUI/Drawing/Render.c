@@ -142,7 +142,7 @@ static void beginScissor(Vec2f pos, Vec2f dims) {
     );
 }
 
-static void drawBatches(const Shader* shader, const BatchAccumulator *accumulator) {
+static void drawBatches(const Shader* shader, const BatchAccumulator* accumulator) {
     glEnable(GL_SCISSOR_TEST);
     for arrEachRev(batch, accumulator->aDone) {
         beginScissor(batch->clip.pos, batch->clip.dims);
@@ -161,7 +161,7 @@ static void drawBatches(const Shader* shader, const BatchAccumulator *accumulato
     glDisable(GL_SCISSOR_TEST);
 }
 
-static void uploadBatches(BatchAccumulator *accumulator) {
+static void uploadBatches(BatchAccumulator* accumulator) {
     int vertexOffset = 0;
     int indexOffset = 0;
 
@@ -222,7 +222,7 @@ static void popBatch(BatchAccumulator* accumulator) {
     arrPush(accumulator->aDone, arrPop(accumulator->aUnfinished));
 }
 
-static void accumulateMeshes(const ElementHandle elementHandle, BatchAccumulator *accumulator) {
+static void accumulateMeshes(const ElementHandle elementHandle, BatchAccumulator* accumulator) {
     Element* self = Element_get(elementHandle);
     if (self == nullptr || !self->flags.isActive) return;
 

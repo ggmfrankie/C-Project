@@ -17,8 +17,9 @@
 
 typedef struct Font {
     StandaloneTexture fontAtlas;
-    stbtt_packedchar glyphs[96];
+    stbtt_packedchar glyphs[223];
     float fontSize;
+
     int maxCharHeight;
 
     uint32_t textVAO;

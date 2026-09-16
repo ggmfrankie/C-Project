@@ -6,7 +6,7 @@
 #include "GUI/Engine.h"
 #include "../../Drawing/Mesh/Mesh.h"
 #include "Utils/DataStructures/CArrayList.h"
-#define CURSOR_WIDTH 4
+#define CURSOR_WIDTH 2
 #define CURSOR_BLINK_TIMER 0.5
 
 static void TextField_drawCursor(const Element* self, GuiVertex** aVertices, int** aIndices, MeshInstanceData** additional, ssize_t ownerId) {
@@ -14,9 +14,8 @@ static void TextField_drawCursor(const Element* self, GuiVertex** aVertices, int
     assert(self->type == ELEMENT_TYPE_TEXTFIELD);
     const TextFieldData* data = self->elementData.ptr;
     if (!data->cursor.isVisible) return;
-
-    const Vec2f pos = {data->cursor.pos.abs, self->dims.pos.y};
-    const Vec2f dims = {CURSOR_WIDTH, self->dims.worldHeight};
+    const Vec2f pos = {data->cursor.pos.abs, self->dims.pos.y + self->padding.up};
+    const Vec2f dims = {CURSOR_WIDTH, Text_getMaxCharacterHeight(&self->textElement) * 1.1};
 
     Mesh_customQuad(
         pos,
@@ -125,13 +124,13 @@ ElementHandle TextField_new(const ElementSettings elementSettings, bool (*onEnte
     TextFieldData* textData       = calloc(1, sizeof(TextFieldData));
     textData->onEnterCallback     = onEnterCallback;
     textData->sText               = strNew(16);
-    const ElementHandle textField = createElement(
+    const ElementHandle textFieldHandle = createElement(
         (ElementSettings){
             .minWidth = elementSettings.minWidth,
             .minHeight = elementSettings.minHeight,
-            .padding = {10,10,10,10},
             .elementData = textData,
             .color = v_mul(elementSettings.color, 0.8f),
+            .padding = {5,5,5,5},
             .onClick = TextField_onClick,
             .text = "",
             .task = elementSettings.task,
@@ -139,8 +138,11 @@ ElementHandle TextField_new(const ElementSettings elementSettings, bool (*onEnte
             .whileSelected = TextField_updateBlinkTimer
         }
     );
-    Element_get(textField)->type = ELEMENT_TYPE_TEXTFIELD;
-    addChildElements(Element_get(element), textField);
+    Element* textField = Element_get(textFieldHandle);
+    textField->type = ELEMENT_TYPE_TEXTFIELD;
+    textField->dims.height = Text_getMaxCharacterHeight(&textField->textElement);
+
+    addChildElements(Element_get(element), textFieldHandle);
 
     return element;
 }

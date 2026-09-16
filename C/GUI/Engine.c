@@ -100,7 +100,7 @@ void gui_init(GLFWwindow* window, const int width, const int height, void (*gene
 
     Element_init();
 
-    gGuiState = GuiState_new(window, width, height, "ComicRelief-Regular.ttf");
+    gGuiState = GuiState_new(window, width, height, "JetBrainsMono-VariableFont_wght.ttf");
 
     Render_init(&gGuiState);
 
@@ -239,8 +239,8 @@ bool gui_getActive(const char* name) {
 }
 
 void Engine_loop(void (*generateGUI)(Element* guiRoot)) {
-    constexpr int width  = 512;
-    constexpr int height = 512;
+    enum { width  = 512 };
+    enum { height = 512 };
     gui_init(Render_initWindow(width, height, "Chess"), width, height, generateGUI);
 
     // StandaloneTexture* graphTexture = Texture_new(WIDTH, HEIGHT);

@@ -94,7 +94,8 @@ namespace Game {
             Engine::Arg<bool>
         >(
             "debug",
-            [](bool b) {
+            [this](bool b) {
+                glfwMakeContextCurrent(mScreen->getWindowHandle());
                 if (b) {
                     glDisable(GL_CULL_FACE);
                     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);

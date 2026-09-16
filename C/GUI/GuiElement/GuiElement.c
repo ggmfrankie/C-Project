@@ -147,7 +147,7 @@ void Element_setText(Element* element, const char* text) {
 void Element_setText_va(Element* element, const char* fmt, va_list args) {
     assert(element != nullptr);
     strClear(&element->textElement.sText);
-    strAppend_sprintf_va(&element->textElement.sText, fmt, args);
+    strAppend_sprintfVa(&element->textElement.sText, fmt, args);
     va_end(args);
     element->textElement.hasText = true;
     Text_reloadTextQuads(element);
