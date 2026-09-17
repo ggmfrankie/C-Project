@@ -20,8 +20,8 @@ inline PixelSize CalculateObjectPixelSize(
     const double objectWidth,
     const double objectHeight,
     const double distance,
-    const double horizontalFovRadians = degToRad(48),
-    const double verticalFovRadians = degToRad(37),
+    const double horizontalFovRadians = degToRad(37),
+    const double verticalFovRadians = degToRad(48),
     const double imageWidthPixels = 80.0,
     const double imageHeightPixels = 60.0)
 {

@@ -24,17 +24,28 @@
 #define FONT_SIZE 24.0f
 
 Font Text_loadFontAtlas(const char* file) {
+    Log_info("Loading font '%s'", file);
     const char* defaultPath = GUI_PROJECT_SOURCE_DIR"/../Resources/Fonts/";
-    defer(defer_strDelete) Str completePath = cstrConcat(defaultPath, file);
+    Log_debug("Default path: %s", defaultPath);
+
+    char fullPath[strlen(defaultPath) + strlen(file) + 1];
+    cstrbConcat(fullPath, sizeof(fullPath), defaultPath, file);
+
+    Log_debug("Full path: %s", fullPath);
 
     defer(defer_free) byte* ttf_buffer = malloc(1 << 20);
+
+    Log_debug("Allocating buffer [%i]", FONT_ATLAS_SIZE * FONT_ATLAS_SIZE);
     // ReSharper disable once CppDFAMemoryLeak
     defer(defer_free) byte* temp_bitmap = malloc(FONT_ATLAS_SIZE * FONT_ATLAS_SIZE);
 
-    defer(defer_closeFile) FILE* f = fopen(completePath, "rb");
+    Log_debug("Opening file");
+    defer(defer_closeFile) FILE* f = fopen(fullPath, "rb");
 
     assert(f != nullptr);
     const size_t bytesRead = fread(ttf_buffer, 1, 1<<20, f);
+    Log_debug("Read %llu bytes", bytesRead);
+
     if (bytesRead == 0) {
         WARNING_("Failed to read font file\n");
         // ReSharper disable once CppDFAMemoryLeak
@@ -45,14 +56,17 @@ Font Text_loadFontAtlas(const char* file) {
 
     font.fontSize = FONT_SIZE;
 
+    Log_debug("Start packing font atlas");
     stbtt_pack_context pc;
     stbtt_PackBegin(&pc, temp_bitmap, FONT_ATLAS_SIZE, FONT_ATLAS_SIZE, 0, 1, nullptr);
     stbtt_PackSetOversampling(&pc, 3, 3);
 
+    Log_debug("Loading %i chars", 223 - 32);
     stbtt_PackFontRange(&pc, ttf_buffer, 0, FONT_SIZE,
                         32, 223, font.glyphs);
     stbtt_PackEnd(&pc);
 
+    Log_debug("Loading font info");
     stbtt_fontinfo info;
     stbtt_InitFont(&info, ttf_buffer, stbtt_GetFontOffsetForIndex(ttf_buffer, 0));
 
@@ -60,9 +74,11 @@ Font Text_loadFontAtlas(const char* file) {
     stbtt_GetFontVMetrics(&info, &ascent, &descent, &lineGap);
 
     const float scale = stbtt_ScaleForPixelHeight(&info, FONT_SIZE);
-    font.maxCharHeight = ascent * scale;
+    font.maxCharHeight = roundf(ascent * scale);
+    Log_debug("Max char height: %i", font.maxCharHeight);
 
     GLuint tex;
+    Log_debug("Creating OpenGL texture");
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glGenTextures(1, &tex);
     assert(tex != 0);

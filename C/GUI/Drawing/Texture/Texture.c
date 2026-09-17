@@ -39,24 +39,31 @@ static StandaloneTexture* newTexture(const int width, const int height, const GL
 
 static void Texture_loadDefaults(TextureAtlas *atlas) {
     arrPush(atlas->aNames, "White.png");
+    Log_debug("- %s", *arrPeek(atlas->aNames));
 }
 
 void Texture_loadAtlas(TextureAtlas *atlas) {
+    Log_info("Loading texture atlas");
     stbrp_rect rects[MAX_ATLAS_TEXTURES];
     byte* pixels[MAX_ATLAS_TEXTURES];
     const char* names[MAX_ATLAS_TEXTURES];
     int index = 0;
 
+    Log_debug("Loading default textures");
     Texture_loadDefaults(atlas);
 
     //TODO: Fix Padding
     static constexpr int padding = 0;
 
+    Log_debug("Default path: %s", DEFAULT_PATH);
+
     for arrEach(namePtr, atlas->aNames) {
         int width, height, channels;
         const char* name = *namePtr;
 
-        char fullPath[128];
+        Log_debug("Name: %s", name);
+
+        char fullPath[strlen(DEFAULT_PATH) + strlen(name) + 1];
         cstrbConcat(fullPath, sizeof(fullPath), DEFAULT_PATH, name);
 
         pixels[index] = stbi_load(fullPath, &width, &height, &channels, 4);
@@ -73,6 +80,9 @@ void Texture_loadAtlas(TextureAtlas *atlas) {
     const int width = atlas->width;
     const int height = atlas->height;
 
+    Log_debug("Packing atlas");
+
+    Log_debug("Allocating buffer [%i]", atlas->width * atlas->height * PIXEL_SIZE);
     defer(defer_free) byte* data = calloc(atlas->width * atlas->height, PIXEL_SIZE);
 
     stbrp_context ctx;
@@ -81,6 +91,7 @@ void Texture_loadAtlas(TextureAtlas *atlas) {
     stbrp_init_target(&ctx, width, height, nodes, width);
     stbrp_pack_rects(&ctx, rects, index);
 
+    Log_debug("Placing textures");
     for (int i = 0; i < index; i++) {
         if (!rects[i].was_packed) {
             WARNING_("Atlas pack failed for rect %d (%s)\n", i, names[i]);
@@ -130,6 +141,7 @@ void f_addTextures(TextureAtlas *atlas, const char *first, va_list args) {
 }
 
 StandaloneTexture *Texture_new(const int width, const int height) {
+    Log_debug("Creating new OpenGL texture");
     GLuint ID;
     glGenTextures(1, &ID);
     glBindTexture(GL_TEXTURE_2D, ID);
@@ -186,6 +198,7 @@ Texture Texture_get(const char* name) {
 }
 
 static GLuint uploadTextureToGPU(const int width, const int height, const int channels, const byte* pixels) {
+    Log_debug("Uploading texture to GPU");
     GLuint texture;
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);

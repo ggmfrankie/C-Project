@@ -8,6 +8,7 @@
 #include "../../Utils/Os/Time.h"
 #include "../../Utils/Misc/UtilityFun.h"
 #ifdef _WIN32
+#define NOMINMAX
 #include <windows.h>
 #endif
 #include "CallbackHelper.h"
@@ -27,9 +28,9 @@ bool runTaskFun(Element *element) {
 void displayCurrentTime(Element *element) {
 #ifdef _WIN32
     static u_int64 lastTime = 0;
-    if (lastTime == 0) lastTime = now_ns();
+    if (lastTime == 0) lastTime = Time_nowNs();
 
-    const u_int64 currentTime = now_ns();
+    const u_int64 currentTime = Time_nowNs();
     const u_int64 timeNs = currentTime - lastTime;
 
     if ((double)timeNs * 1e-9 < 1.0) return;
@@ -53,9 +54,9 @@ void updateColorRainbow(Element *element) {
     static double hue = 0.0f;
     static unsigned long long lastTime = 0;
 
-    if (lastTime == 0) lastTime = now_ns();
+    if (lastTime == 0) lastTime = Time_nowNs();
 
-    const unsigned long long currentTime = now_ns();
+    const unsigned long long currentTime = Time_nowNs();
     const unsigned long long timeNs = currentTime - lastTime;
 
     hue += 120.0 * (double)timeNs * 1e-9;

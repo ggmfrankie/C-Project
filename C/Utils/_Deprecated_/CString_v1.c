@@ -8,7 +8,7 @@
 #include "../DataStructures/CArrayList.h"
 #include "StringBuilder.h"
 
-StringFunctions Strings = {
+static StringFunctions Strings = {
     .charAt = str_getCharAt,
     .combine = str_combine,
     .delete_ = str_delete,
@@ -31,7 +31,7 @@ StringFunctions Strings = {
     .appendCharAt = str_appendCharAt
 };
 
-void str_grow(String * string, const size_t newCapacity) {
+static void str_grow(String * string, const size_t newCapacity) {
     const size_t safeCapacity = newCapacity > 0 ? newCapacity : 1;
     char* newContent;
 

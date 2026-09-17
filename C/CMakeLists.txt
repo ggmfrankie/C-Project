@@ -92,6 +92,9 @@ add_library(GUI STATIC
         _Projects_/ExampleGUI/ExampleGUI.h
         GUI/GuiElement/ElementTypes/TextArea.c
         GUI/GuiElement/ElementTypes/TextArea.h
+        Utils/Logging/Logging.c
+        Utils/Json/CJson.c
+        Utils/Json/CJson.h
 )
 
 set_target_properties(GUI PROPERTIES LINKER_LANGUAGE C)

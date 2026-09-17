@@ -20,11 +20,11 @@ int main() {
         return EXIT_FAILURE;
     }
 
-    auto [width, height] = CalculateObjectPixelSize(0.1, 0.1, 1.0);
+    auto [width, height] = CalculateObjectPixelSize(0.13, 0.16, 1);
 
     std::cout << "Width: " << width << ", Height: " << height;
 
-    Engine_loop(Camera_generateGUI);
+    //Engine_loop(Camera_generateGUI);
     return EXIT_SUCCESS;
 
     WSACleanup();

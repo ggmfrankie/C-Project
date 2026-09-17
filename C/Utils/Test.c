@@ -430,17 +430,17 @@ static void Test_arrayListPerformance() {
         int* array = nullptr;
         long long sink = 0;
 
-        const TimeNs pushStart = now_ns();
+        const TimeNs pushStart = Time_nowNs();
         for (int i = 0; i < itemCount; ++i) {
             arrPush(array, i);
         }
-        const TimeNs pushEnd = now_ns();
+        const TimeNs pushEnd = Time_nowNs();
 
-        const TimeNs iterateStart = now_ns();
+        const TimeNs iterateStart = Time_nowNs();
         for arrEach(num, array) {
             sink += *num;
         }
-        const TimeNs iterateEnd = now_ns();
+        const TimeNs iterateEnd = Time_nowNs();
 
         if (run >= warmupRuns) {
             pushTotalMs += (double)(pushEnd - pushStart) / 1000000.0;
@@ -472,18 +472,18 @@ static void Test_vectorPerformance() {
         cvector(int) vector = nullptr;
         long long sink = 0;
 
-        const TimeNs pushStart = now_ns();
+        const TimeNs pushStart = Time_nowNs();
         for (int i = 0; i < itemCount; ++i) {
             cvector_push_back(vector, i);
         }
-        const TimeNs pushEnd = now_ns();
+        const TimeNs pushEnd = Time_nowNs();
 
-        const TimeNs iterateStart = now_ns();
+        const TimeNs iterateStart = Time_nowNs();
         cvector_iterator(int) it;
         for (it = cvector_begin(vector); it != cvector_end(vector); ++it) {
             sink += *it;
         }
-        const TimeNs iterateEnd = now_ns();
+        const TimeNs iterateEnd = Time_nowNs();
 
         if (run >= warmupRuns) {
             pushTotalMs += (double)(pushEnd - pushStart) / 1000000.0;

@@ -31,7 +31,7 @@ void runTest() {
 }
 
 void drawWithBishop(unsigned long long input) {
-    const time_t startingTime = now_ns();
+    const time_t startingTime = Time_nowNs();
     constexpr int steps = sizeof input * 4;
     GameBoard board = createBoard();
     initBoard(&board);
@@ -42,7 +42,7 @@ void drawWithBishop(unsigned long long input) {
         moveBishop(&board, dir);
     }
 
-    const time_t elapsedTime = now_ns()-startingTime;
+    const time_t elapsedTime = Time_nowNs()-startingTime;
     printf("Time to calculate was: %lli\n", elapsedTime);
     printBoard(&board);
 #ifdef HEAP_BOARD

@@ -25,8 +25,11 @@ static struct {
 #define MAX_GUI_INSTANCES 81920
 
 static void initBuffers() {
+    Log_info("Creating OpenGL buffers");
     glGenVertexArrays(1, &graphicsData.VAO);
     glBindVertexArray(graphicsData.VAO);
+
+    Log_debug("VAO id: %u", graphicsData.VAO);
 
     glGenBuffers(1, &graphicsData.VBO);
     glBindBuffer(GL_ARRAY_BUFFER, graphicsData.VBO);
@@ -34,6 +37,7 @@ static void initBuffers() {
                  MAX_GUI_VERTICES * sizeof(GuiVertex),
                  nullptr,
                  GL_DYNAMIC_DRAW);
+    Log_debug("VBO id: %u", graphicsData.VBO);
 
     glGenBuffers(1, &graphicsData.EBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, graphicsData.EBO);
@@ -41,7 +45,9 @@ static void initBuffers() {
                  MAX_GUI_INDICES * sizeof(uint32_t),
                  nullptr,
                  GL_DYNAMIC_DRAW);
+    Log_debug("EBO id: %u", graphicsData.EBO);
 
+    Log_debug("Configuring vertex attributes");
     // pos (location = 0)
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE,
@@ -61,15 +67,21 @@ static void initBuffers() {
 
     glBindVertexArray(0);
 
+    Log_debug("Creating SSBOs");
+
     glGenBuffers(1, &graphicsData.elementSSBO);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, graphicsData.elementSSBO);
     glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(ElementInstanceData) * MAX_GUI_INSTANCES, nullptr, GL_DYNAMIC_DRAW);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, graphicsData.elementSSBO);
 
+    Log_debug("Element SSBO id: %u", graphicsData.elementSSBO);
+
     glGenBuffers(1, &graphicsData.meshSSBO);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, graphicsData.meshSSBO);
     glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(MeshInstanceData) * MAX_GUI_INSTANCES, nullptr, GL_DYNAMIC_DRAW);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, graphicsData.meshSSBO);
+
+    Log_debug("Mesh SSBO id: %u", graphicsData.meshSSBO);
 }
 
 void Render_init(GuiState *guiState) {
@@ -78,6 +90,7 @@ void Render_init(GuiState *guiState) {
     //ComputeShader_update(&renderer->computeShader, graphingFunction);
 
     initBuffers();
+    Log_info("Creating shader uniforms");
     Shader_createUniform(&guiState->guiShader, "screenWidth");
     Shader_createUniform(&guiState->guiShader, "screenHeight");
 
@@ -318,6 +331,7 @@ void Render_drawGui(GuiState* guiState) {
 }
 
 GLFWwindow* Render_initWindow(const int width, const int height, const char* name) {
+    Log_info("Initializing GLFW");
     if (!glfwInit()) ERROR_("Failed to initialize glfw");
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -328,14 +342,17 @@ GLFWwindow* Render_initWindow(const int width, const int height, const char* nam
 
     glfwWindowHint(GLFW_SAMPLES, 4);
 
+    Log_info("Creating the window [%i x %i]", width, height);
     GLFWwindow* window = glfwCreateWindow(width, height, name, nullptr, nullptr);
 
     if (!window) ERROR_("Creating the Window failed");
 
     glfwMakeContextCurrent(window);
 
+    Log_info("Loading Glad");
     if (!gladLoadGL(glfwGetProcAddress)) ERROR_("Initializing Glad failed");
 
+    Log_debug("Viewport [%i, %i]", width, height);
     glViewport(0, 0, width, height);
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     return window;

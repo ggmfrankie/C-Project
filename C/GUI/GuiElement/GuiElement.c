@@ -18,6 +18,8 @@ static SparseSet gElements;
 static ElementHandle* gmElements;
 
 void Element_init() {
+    Log_info("Initializing element storage");
+    Log_debug("SparseSet capacity: 512");
     gElements = SparseSet_new(Element, 512);
 }
 

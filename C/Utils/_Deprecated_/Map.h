@@ -26,13 +26,13 @@ static inline void name##_Map_put(Map_##name *map, const Key key, const Value va
     if (map->size == map->capacity){\
         MapEntry_##name *temp = realloc(map->content, sizeof(MapEntry_##name) * map->capacity*2);\
         if(temp) map->content = temp;\
+        map->capacity *= 2;\
     }\
     map->content[map->size] = (MapEntry_##name){\
         .key = key,\
         .value = value\
     };\
     map->size++;\
-    map->capacity *= 2;\
 }\
 \
 static inline Value name##_Map_get(const Map_##name *map, const Key key) {\

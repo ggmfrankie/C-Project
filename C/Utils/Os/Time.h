@@ -8,7 +8,8 @@ extern "C" {
 #endif
 
 typedef long long TimeNs;
-TimeNs now_ns();
+TimeNs Time_nowNs();
+const char* Time_getCurrentTimestamp();
 
 #define measureTime(name, ...) do {\
     unsigned long long start = now_ns();\

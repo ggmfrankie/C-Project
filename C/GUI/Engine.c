@@ -77,6 +77,7 @@ static void* workerThreadInit(void*) {
 }
 
 static GuiState GuiState_new(GLFWwindow* window, const int width, const int height, const char* fontFile) {
+    Log_info("Initializing GUI state");
     return (GuiState){
         .guiShader = Shader_new("GuiRender.vert", "GuiRender.frag"),
         .window = window,
@@ -96,6 +97,8 @@ static GuiState GuiState_new(GLFWwindow* window, const int width, const int heig
 }
 
 void gui_init(GLFWwindow* window, const int width, const int height, void (*generateGUI)(Element* guiRoot)) {
+    const double startTime = glfwGetTime();
+    Log_info("Initializing GUI");
     g_mainThread = pthread_self();
 
     Element_init();
@@ -104,14 +107,16 @@ void gui_init(GLFWwindow* window, const int width, const int height, void (*gene
 
     Render_init(&gGuiState);
 
+    Log_info("Generating GUI");
     generateGUI(Element_get(gGuiState.guiRoot));
 
     Texture_loadAtlas(&gGuiState.texAtlas);
 
     guiInitialized = true;
     pthread_cond_broadcast(&guiInitCond);
-
+    Log_info("Creating worker thread");
     pthread_create(&workerThreadID, nullptr, workerThreadInit, nullptr);
+    Log_info("GUI initialization finished after %.2llf ms", (glfwGetTime() - startTime)*1000);
 }
 
 void gui_update() {

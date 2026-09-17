@@ -7,6 +7,8 @@
 #include <stdint.h>
 #include <time.h>
 
+#include "Utils/DataStructures/CString.h"
+
 #ifdef _WIN32
 #define NOMINMAX
 #include <windows.h>
@@ -14,7 +16,7 @@
 #include <bits/types/clockid_t.h>
 #endif
 
-TimeNs now_ns() {
+TimeNs Time_nowNs() {
 #ifdef _WIN32
     static LARGE_INTEGER freq;
     static int initialized = 0;
@@ -35,18 +37,14 @@ TimeNs now_ns() {
 #endif
 }
 
-uint64_t now_ns_wallclock() {
-#ifdef _WIN32
-    FILETIME ft;
-    GetSystemTimePreciseAsFileTime(&ft);
+const char* Time_getCurrentTimestamp() {
+    static char buffer[80];
 
-    ULARGE_INTEGER u;
-    u.LowPart  = ft.dwLowDateTime;
-    u.HighPart = ft.dwHighDateTime;
+    time_t rawTime;
+    time(&rawTime);
+    const struct tm* timeInfo = localtime(&rawTime);
 
-    // FILETIME is 100 ns intervals since Jan 1, 1601 (UTC)
-    return u.QuadPart * 100;
-#else
+    strftime(buffer, sizeof(buffer), "%c", timeInfo);
 
-#endif
+    return buffer;
 }
