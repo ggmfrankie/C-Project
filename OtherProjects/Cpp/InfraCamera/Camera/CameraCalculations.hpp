@@ -33,3 +33,20 @@ inline PixelSize CalculateObjectPixelSize(
         (objectHeight / sceneHeightAtDistance) * imageHeightPixels
     };
 }
+
+inline PixelSize CalculateDistanceForObjectToBeOnePixel(
+    const double objectWidth,
+    const double objectHeight,
+    const double horizontalFovRadians = degToRad(37),
+    const double verticalFovRadians = degToRad(48),
+    const double imageWidthPixels = 80.0,
+    const double imageHeightPixels = 60.0)
+{
+    const double horizontalFocalPixels = (imageWidthPixels * 0.5) / std::tan(horizontalFovRadians / 2.0);
+    const double verticalFocalPixels = (imageHeightPixels * 0.5) / std::tan(verticalFovRadians / 2.0);
+
+    return {
+        objectWidth * horizontalFocalPixels,
+        objectHeight * verticalFocalPixels
+    };
+}

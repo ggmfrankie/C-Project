@@ -21,16 +21,33 @@ struct _StringHeader_ {
     size_t capacity;
 };
 
-//@brief creates an empty Str with supplied capacity
+/**
+ * @brief Creates a new empty Str with the given capacity
+ * @param capacity - the Str capacity
+ */
 Str strNew(size_t capacity);
+
+/**
+ * @brief Creates a new Str from a char*
+ * @param s - the char* being copied from
+ */
 Str strNew_copy(const char* s);
+/**
+ * @brief Creates a new Str from a char* with at most length 'count'
+ *        resulting Str is always null terminated
+ * @param s - the char* being copied from
+ * @param count - the maximal length of the resulting Str
+ */
 //@brief create a new Str from char* until specified length
 Str strNew_copyn(const char* s, size_t count);
 
 //@brief creates a new Str from the provided format string
 Str strNew_sprintf(const char* fmt, ...);
 
-//@brief gives back the length as stored inside the Str
+/**
+ * @brief Gives back the length of the Str
+ * @param s - the Str
+ */
 size_t strLen(Str s);
 //@brief gives back the capacity as stored inside the Str
 size_t strCap(Str s);
@@ -55,15 +72,19 @@ void strAppendAt(Str* s, char c, size_t idx);
 void strAppend_sprintf(Str* s, const char* fmt, ...);
 void strAppend_sprintfVa(Str* s, const char* fmt, va_list args);
 
+char strPop(Str* s);
+
 char strPopAt(Str* s, size_t idx);
 
 void strCopy(Str* dest, const char* source);
 //@brief makes the capacity match the size of the Str. May reallocate the Str
 void strFit(Str* s);
 //@brief sets the content to '\0' and size to 0. Keeps capacity
-void strClear(Str* s);
+void strClear(Str s);
 //@brief deletes the underlying memory and sets the Str to nullptr
-void strDelete(Str* s);
+void strFree(Str* s);
+
+const char* strEnd(Str s);
 
 #define strEach_impl(_i, _len, c, str) (size_t _i = 0, _len = strLen(str); _i < _len; _i++) for (char (c) = str[_i]; (c) != '\0'; (c) = '\0')
 #define strEach(c, str) strEach_impl(CONCAT(_i, __COUNTER__), CONCAT(_len, __COUNTER__), c, str)

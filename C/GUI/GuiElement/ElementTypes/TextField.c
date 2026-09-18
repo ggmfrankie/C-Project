@@ -157,7 +157,7 @@ bool TextField_runTask(Element *element) {
     memcpy(newBuffer, data->sText, len);
     newBuffer[len] = '\0';
 
-    strClear(&data->sText);
+    strClear(data->sText);
     Element_setText(element,"");
     TextField_moveCursorTo(element, 0);
 

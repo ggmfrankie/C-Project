@@ -26,7 +26,7 @@ static void Test_cString() {
     TEST(strIsEmpty(empty), "new string should be empty");
     TEST(!strIsFull(empty), "new string with spare capacity should not be full");
     TEST(strcmp(empty, "") == 0, "new string content expected empty, got '%s'", empty);
-    strDelete(&empty);
+    strFree(&empty);
     TEST(empty == nullptr, "strDelete should null the pointer");
 
     defer(defer_strDelete) Str copy = strNew_copy("hello");
@@ -89,7 +89,7 @@ static void Test_cString() {
     TEST(strCap(fit) == 4, "strFit capacity expected 4, got %zu", strCap(fit));
 
     defer(defer_strDelete) Str cleared = strNew_copy("erase me");
-    strClear(&cleared);
+    strClear(cleared);
     TEST(strcmp(cleared, "") == 0, "strClear should empty the string, got '%s'", cleared);
     TEST(strLen(cleared) == 0, "strClear length expected 0, got %zu", strLen(cleared));
     TEST(strCap(cleared) == 8, "strClear should keep capacity, got %zu", strCap(cleared));

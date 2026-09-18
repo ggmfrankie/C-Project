@@ -252,6 +252,14 @@ void strAppend_sprintfVa(Str* s, const char* fmt, va_list args) {
     strGetHead(*s)->size = required;
 }
 
+char strPop(Str* s) {
+    strAssert(*s);
+    struct _StringHeader_* head = strGetHead(*s);
+    const char out = (*s)[--head->size];
+    (*s)[head->size] = '\0';
+    return out;
+}
+
 char strPopAt(Str* s, size_t idx) {
     strAssert(*s);
     const size_t len = strLen(*s);
@@ -285,16 +293,20 @@ void strFit(Str* s) {
     strResize(s, size);
 }
 
-void strClear(Str* s) {
-    strAssert(*s);
-    (*s)[0] = '\0';
-    strGetHead(*s)->size = 0;
+void strClear(Str s) {
+    strAssert(s);
+    s[0] = '\0';
+    strGetHead(s)->size = 0;
 }
 
-void strDelete(Str* s) {
+void strFree(Str* s) {
     strAssert(*s);
     free(strGetHead(*s));
     *s = nullptr;
+}
+
+const char* strEnd(Str s) {
+    return &s[strLen(s)];
 }
 
 Str cstrConcat(const char* a, const char* b) {

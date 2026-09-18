@@ -114,7 +114,7 @@ void Element_delete(ElementHandle handle) {
     }
 
     if (element->elementData.ptr && element->elementData.needsFree) free(element->elementData.ptr);
-    strDelete(&element->textElement.sText);
+    strFree(&element->textElement.sText);
 
     arrFree(element->aFlowElements);
     arrFree(element->aStaticElements);
@@ -139,7 +139,7 @@ void Element_setBoundingBox(Element* element, bool (*isMouseOver)(const Element 
 void Element_setText(Element* element, const char* text) {
     assert(element != nullptr);
 
-    strClear(&element->textElement.sText);
+    strClear(element->textElement.sText);
     strAppend_sprintf(&element->textElement.sText, text);
 
     element->textElement.hasText = true;
@@ -148,7 +148,7 @@ void Element_setText(Element* element, const char* text) {
 
 void Element_setText_va(Element* element, const char* fmt, va_list args) {
     assert(element != nullptr);
-    strClear(&element->textElement.sText);
+    strClear(element->textElement.sText);
     strAppend_sprintfVa(&element->textElement.sText, fmt, args);
     va_end(args);
     element->textElement.hasText = true;

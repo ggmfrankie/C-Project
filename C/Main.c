@@ -7,6 +7,7 @@
 #include "Utils/Test.h"
 #include "Utils/Json/CJson.h"
 #include "Utils/Logging/Logging.h"
+#include "Utils/_NYI_/String.h"
 #include "_Projects_/ExampleGUI/ExampleGUI.h"
 #if 1
 int main(){
@@ -16,7 +17,7 @@ int main(){
     //Engine_loop(generateGUI);
 
     CJson_test();
-
+    String_test();
 
     return 0;
 }

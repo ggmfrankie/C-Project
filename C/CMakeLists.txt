@@ -95,6 +95,8 @@ add_library(GUI STATIC
         Utils/Logging/Logging.c
         Utils/Json/CJson.c
         Utils/Json/CJson.h
+        Utils/_NYI_/String.c
+        Utils/_NYI_/String.h
 )
 
 set_target_properties(GUI PROPERTIES LINKER_LANGUAGE C)

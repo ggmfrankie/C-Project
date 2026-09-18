@@ -22,8 +22,10 @@ int main() {
 
     auto [width, height] = CalculateObjectPixelSize(0.13, 0.16, 1);
 
-    std::cout << "Width: " << width << ", Height: " << height;
+    //std::cout << "Width: " << width << ", Height: " << height;
 
+    auto [distance, _] = CalculateDistanceForObjectToBeOnePixel(0.13, 0.16);
+    std::cout << "Distance: " << distance;
     //Engine_loop(Camera_generateGUI);
     return EXIT_SUCCESS;
 
