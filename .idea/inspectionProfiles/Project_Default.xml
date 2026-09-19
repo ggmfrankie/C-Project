@@ -3,6 +3,7 @@
     <option name="myName" value="Project Default" />
     <inspection_tool class="ClangTidy" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="CppDFAMemoryLeak" enabled="true" level="HINT" enabled_by_default="true" editorAttributes="HINT" />
+    <inspection_tool class="CppDFAUnreachableCode" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="CppParameterMayBeConst" enabled="false" level="HINT" enabled_by_default="false" />
     <inspection_tool class="CppRedundantControlFlowJump" enabled="false" level="HINT" enabled_by_default="false" />
     <inspection_tool class="CppRedundantElseKeywordInsideCompoundStatement" enabled="false" level="HINT" enabled_by_default="false" />

@@ -3,7 +3,7 @@
 //
 
 #pragma once
-#include "../../../Cpp/Utils/ggmdef.hpp"
+#include "../../../GameEngine/Utils/ggmdef.hpp"
 #include <array>
 
 namespace Games {

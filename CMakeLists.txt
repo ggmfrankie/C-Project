@@ -15,15 +15,13 @@ target_compile_definitions(Jolt PUBLIC JPH_ENABLE_ASSERTS)
 target_compile_options(Jolt PRIVATE -fno-lto -Wno-array-bounds)
 
 add_subdirectory(OtherProjects/Cpp/McpServer)
-add_subdirectory(C)
+add_subdirectory(GUIEngine)
 
 include_directories(
         "${CMAKE_SOURCE_DIR}"
         "${CMAKE_SOURCE_DIR}/Dependencies/include"
-        "${CMAKE_SOURCE_DIR}/C"
-        "${CMAKE_SOURCE_DIR}/C/Utils"
-        "${CMAKE_SOURCE_DIR}/Cpp"
-        "${CMAKE_SOURCE_DIR}/Cpp/Utils"
+        "${CMAKE_SOURCE_DIR}/GameEngine"
+        "${CMAKE_SOURCE_DIR}/GameEngine/Utils"
         "${CMAKE_SOURCE_DIR}/Dependencies/JoltPhysics"
 )
 
@@ -32,97 +30,96 @@ add_executable(C-Project
         Dependencies/include/stb/stb_truetype.h
         Dependencies/include/stb/stb_truetype.h
         Dependencies/include/stb/stb_rect_pack.h
-        Cpp/GameEngine.cpp
+        GameEngine/GameEngine.cpp
         Main.cpp
-        Cpp/Render/Screen.cpp
-        Cpp/Render/Screen.hpp
-        Cpp/Utils/Math/Vector.hpp
-        Cpp/Render/Shader/Shader.cpp
-        Cpp/Render/Shader/Shader.hpp
-        Cpp/Utils/Os/FileIO.cpp
-        Cpp/Utils/Os/FileIO.hpp
-        Cpp/Utils/Math/Matrix.hpp
-        Cpp/Render/Transformation/Camera.cpp
-        Cpp/Render/Transformation/Camera.hpp
-        Cpp/Utils/StringUtils.cpp
-        Cpp/Utils/StringUtils.hpp
-        Cpp/Utils/Math/Quaternion.hpp
-        Cpp/Utils/DataStorage/InlineVector.hpp
-        Cpp/Utils/ggmdef.hpp
-        Cpp/Games/IGame.hpp
-        Cpp/Engine/IO/Input.cpp
-        Cpp/Engine/IO/Input.hpp
-        Cpp/Games/BaseGame/BaseGame.cpp
-        Cpp/Games/BaseGame/BaseGame.hpp
-        Cpp/Games/BaseGame/GameGui.h
-        C/GuiInterface.h
-        C/GuiInterface.h
-        Cpp/Engine/Task.cpp
-        Cpp/Engine/Task.hpp
-        Cpp/Games/BaseGame/GuiTasks.hpp
-        Cpp/Games/BaseGame/GuiTasks.cpp
-        Cpp/Engine/CommandRegistry.cpp
-        Cpp/Engine/CommandRegistry.hpp
-        Cpp/Render/Shader/Lighting/PointLight.cpp
-        Cpp/Render/Shader/Lighting/PointLight.hpp
-        Cpp/Render/Shader/DeferredShader.cpp
-        Cpp/Render/Shader/DeferredShader.hpp
-        Cpp/Games/Controller/Player.cpp
-        Cpp/Games/Controller/Player.hpp
-        Cpp/Utils/DataStorage/SparseSet.hpp
-        Cpp/Engine/Debug/Logger.cpp
-        Cpp/Engine/Debug/Logger.hpp
-        Cpp/Utils/Os/Time.cpp
-        Cpp/Utils/Os/Time.hpp
-        Cpp/Engine/Core/PhysixBox2D/PointMass.hpp
-        Cpp/Engine/Core/PhysixBox2D/PhysicsSystem.cpp
-        Cpp/Engine/Core/PhysixBox2D/PhysicsSystem.hpp
-        Cpp/Engine/Core/PhysixBox2D/SoftBody2D.cpp
-        Cpp/Engine/Core/PhysixBox2D/SoftBody2D.hpp
-        Cpp/Engine/Core/PhysixBox2D/Constrains/Spring.cpp
-        Cpp/Engine/Core/PhysixBox2D/Constrains/Spring.hpp
-        Cpp/Test/Test.cpp
-        Cpp/Test/Test.hpp
-        Cpp/Games/Scene/3D/Scene3D.cpp
-        Cpp/Games/Scene/3D/Scene3D.hpp
-        Cpp/Games/Scene/IScene.hpp
-        Cpp/Games/Scene/2D/Scene2D.cpp
-        Cpp/Games/Scene/2D/Scene2D.hpp
-        Cpp/Games/Game2D/Game2D.cpp
-        Cpp/Games/Game2D/Game2D.hpp
-        Cpp/Engine/Core/PhysixBox2D/Collision.hpp
-        Cpp/Test/Java.cpp
-        Cpp/Test/Java.hpp
-        Cpp/Utils/DataStorage/Stream.hpp
-        Cpp/Games/BaseGame/GameGui.c
-        Cpp/Utils/DataStorage/LazyStream.hpp
-        Cpp/Games/Scene/2D/LayerStack.cpp
-        Cpp/Games/Scene/2D/LayerStack.hpp
-        Cpp/Games/Scene/2D/ILayer.hpp
-        Cpp/Games/Game2D/DebugLayer.cpp
-        Cpp/Games/Game2D/DebugLayer.hpp
+        GameEngine/Render/Screen.cpp
+        GameEngine/Render/Screen.hpp
+        GameEngine/Utils/Math/Vector.hpp
+        GameEngine/Render/Shader/Shader.cpp
+        GameEngine/Render/Shader/Shader.hpp
+        GameEngine/Utils/Os/FileIO.cpp
+        GameEngine/Utils/Os/FileIO.hpp
+        GameEngine/Utils/Math/Matrix.hpp
+        GameEngine/Render/Transformation/Camera.cpp
+        GameEngine/Render/Transformation/Camera.hpp
+        GameEngine/Utils/StringUtils.cpp
+        GameEngine/Utils/StringUtils.hpp
+        GameEngine/Utils/Math/Quaternion.hpp
+        GameEngine/Utils/DataStorage/InlineVector.hpp
+        GameEngine/Utils/ggmdef.hpp
+        GameEngine/Games/IGame.hpp
+        GameEngine/Engine/IO/Input.cpp
+        GameEngine/Engine/IO/Input.hpp
+        GameEngine/Games/BaseGame/BaseGame.cpp
+        GameEngine/Games/BaseGame/BaseGame.hpp
+        GameEngine/Games/BaseGame/GameGui.h
+        GUIEngine/GuiInterface.h
+        GameEngine/Engine/Task.cpp
+        GameEngine/Engine/Task.hpp
+        GameEngine/Games/BaseGame/GuiTasks.hpp
+        GameEngine/Games/BaseGame/GuiTasks.cpp
+        GameEngine/Engine/CommandRegistry.cpp
+        GameEngine/Engine/CommandRegistry.hpp
+        GameEngine/Render/Shader/Lighting/PointLight.cpp
+        GameEngine/Render/Shader/Lighting/PointLight.hpp
+        GameEngine/Render/Shader/DeferredShader.cpp
+        GameEngine/Render/Shader/DeferredShader.hpp
+        GameEngine/Games/Controller/Player.cpp
+        GameEngine/Games/Controller/Player.hpp
+        GameEngine/Utils/DataStorage/SparseSet.hpp
+        GameEngine/Engine/Debug/Logger.cpp
+        GameEngine/Engine/Debug/Logger.hpp
+        GameEngine/Utils/Os/Time.cpp
+        GameEngine/Utils/Os/Time.hpp
+        GameEngine/Engine/Core/PhysixBox2D/PointMass.hpp
+        GameEngine/Engine/Core/PhysixBox2D/PhysicsSystem.cpp
+        GameEngine/Engine/Core/PhysixBox2D/PhysicsSystem.hpp
+        GameEngine/Engine/Core/PhysixBox2D/SoftBody2D.cpp
+        GameEngine/Engine/Core/PhysixBox2D/SoftBody2D.hpp
+        GameEngine/Engine/Core/PhysixBox2D/Constrains/Spring.cpp
+        GameEngine/Engine/Core/PhysixBox2D/Constrains/Spring.hpp
+        GameEngine/Test/Test.cpp
+        GameEngine/Test/Test.hpp
+        GameEngine/Games/Scene/3D/Scene3D.cpp
+        GameEngine/Games/Scene/3D/Scene3D.hpp
+        GameEngine/Games/Scene/IScene.hpp
+        GameEngine/Games/Scene/2D/Scene2D.cpp
+        GameEngine/Games/Scene/2D/Scene2D.hpp
+        GameEngine/Games/Game2D/Game2D.cpp
+        GameEngine/Games/Game2D/Game2D.hpp
+        GameEngine/Engine/Core/PhysixBox2D/Collision.hpp
+        GameEngine/Test/Java.cpp
+        GameEngine/Test/Java.hpp
+        GameEngine/Utils/DataStorage/Stream.hpp
+        GameEngine/Games/BaseGame/GameGui.c
+        GameEngine/Utils/DataStorage/LazyStream.hpp
+        GameEngine/Games/Scene/2D/LayerStack.cpp
+        GameEngine/Games/Scene/2D/LayerStack.hpp
+        GameEngine/Games/Scene/2D/ILayer.hpp
+        GameEngine/Games/Game2D/DebugLayer.cpp
+        GameEngine/Games/Game2D/DebugLayer.hpp
         EngineDefines.hpp
-        Cpp/Games/Game2D/Game2DGui.c
-        Cpp/Games/Game2D/Game2DGui.h
-        Cpp/Render/Objects/2D/Physics/PhysicsFactory.cpp
-        Cpp/Render/Objects/2D/Physics/PhysicsObjectRef.cpp
-        Cpp/Render/Objects/2D/Render/DynamicMesh.cpp
-        Cpp/Render/Objects/2D/Render/Renderer.cpp
-        Cpp/Render/Objects/2D/Render/RenderObject.cpp
-        Cpp/Render/Objects/2D/GameObject.cpp
-        Cpp/Render/Objects/3D/Loader/OBJLoader.cpp
-        Cpp/Render/Objects/3D/Physics/PhysicsFactory.cpp
-        Cpp/Render/Objects/3D/Physics/PhysicsHandler3D.cpp
-        Cpp/Render/Objects/3D/Physics/PhysicsObjectRef.cpp
-        Cpp/Render/Objects/3D/Render/Material.cpp
-        Cpp/Render/Objects/3D/Render/Mesh.cpp
-        Cpp/Render/Objects/3D/Render/Renderer3D.cpp
-        Cpp/Render/Objects/3D/Render/RenderObject3D.cpp
-        Cpp/Render/Objects/3D/Render/Texture.cpp
-        Cpp/Render/Objects/3D/GameObject.cpp
-        Cpp/Utils/Async/Coroutine.cpp
-        Cpp/Utils/Async/Coroutine.hpp
-        Cpp/Utils/Math/Math.hpp
+        GameEngine/Games/Game2D/Game2DGui.c
+        GameEngine/Games/Game2D/Game2DGui.h
+        GameEngine/Render/Objects/2D/Physics/PhysicsFactory.cpp
+        GameEngine/Render/Objects/2D/Physics/PhysicsObjectRef.cpp
+        GameEngine/Render/Objects/2D/Render/DynamicMesh.cpp
+        GameEngine/Render/Objects/2D/Render/Renderer.cpp
+        GameEngine/Render/Objects/2D/Render/RenderObject.cpp
+        GameEngine/Render/Objects/2D/GameObject.cpp
+        GameEngine/Render/Objects/3D/Loader/OBJLoader.cpp
+        GameEngine/Render/Objects/3D/Physics/PhysicsFactory.cpp
+        GameEngine/Render/Objects/3D/Physics/PhysicsHandler3D.cpp
+        GameEngine/Render/Objects/3D/Physics/PhysicsObjectRef.cpp
+        GameEngine/Render/Objects/3D/Render/Material.cpp
+        GameEngine/Render/Objects/3D/Render/Mesh.cpp
+        GameEngine/Render/Objects/3D/Render/Renderer3D.cpp
+        GameEngine/Render/Objects/3D/Render/RenderObject3D.cpp
+        GameEngine/Render/Objects/3D/Render/Texture.cpp
+        GameEngine/Render/Objects/3D/GameObject.cpp
+        GameEngine/Utils/Async/Coroutine.cpp
+        GameEngine/Utils/Async/Coroutine.hpp
+        GameEngine/Utils/Math/Math.hpp
         OtherProjects/C/Extern/CVector.h
 )
 

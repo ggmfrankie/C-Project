@@ -4,10 +4,10 @@
 
 #include "GameBoard.h"
 
-#include "../../../C/Utils/Macros/Utils.h"
+#include "../../../GUIEngine/Utils/Macros/Utils.h"
 #include <stdio.h>
 
-#include "../../../C/Utils/DataStructures/CArrayList.h"
+#include "../../../GUIEngine/Utils/DataStructures/CArrayList.h"
 #pragma GCC diagnostic ignored "-Wsign-compare"
 
 bool moveBishopTo(GameBoard *board, int x, int y);

@@ -4,7 +4,7 @@ project(InfraCamera)
 set(CMAKE_CXX_STANDARD 23)
 
 add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Dependencies/EIPScanner")
-add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/../../../C" "${CMAKE_BINARY_DIR}/C")
+add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/../../../GUIEngine" "${CMAKE_BINARY_DIR}/C")
 
 add_executable(InfraCamera main.cpp
         Camera/Camera.hpp

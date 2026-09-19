@@ -5,7 +5,7 @@
 #include "Spannungsteiler_A3.h"
 #include <stdio.h>
 
-#include "../../../C/Utils/Macros/Utils.h"
+#include "../../../GUIEngine/Utils/Macros/Utils.h"
 #define Diode 2.5
 int Berechnung() {
     Spannung U = 5.0f;

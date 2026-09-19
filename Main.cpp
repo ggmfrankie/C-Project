@@ -2,16 +2,16 @@
 // Created by ertls on 16.02.2026.
 //
 #include "EngineDefines.hpp"
-#include "Test.h"
 #include "Dependencies/JoltPhysics/Jolt/Jolt.h"
 
-#include "Cpp/GameEngine.hpp"
-#include "Cpp/Games/BaseGame/BaseGame.hpp"
-#include "Cpp/Games/Game2D/Game2D.hpp"
-#include "Cpp/Test/Test.hpp"
-#include "C/Utils/DataStructures/CString.h"
+#include "GameEngine/GameEngine.hpp"
+#include "GameEngine/Games/BaseGame/BaseGame.hpp"
+#include "GameEngine/Games/Game2D/Game2D.hpp"
+#include "GameEngine/Test/Test.hpp"
+#include "GUIEngine/Utils/DataStructures/CStr.h"
+#include "Utils/Test.h"
 
-#if 0
+#if 1
 int main() {
     Test_run();
     try {
