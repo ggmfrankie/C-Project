@@ -125,6 +125,7 @@ if (UNIX)
     )
 endif (UNIX)
 
+if (WIN32)
 target_link_libraries(GUI PUBLIC
         gui_glfw
         opengl32     # OpenGL (needed by GLFW)
@@ -134,3 +135,12 @@ target_link_libraries(GUI PUBLIC
         ws2_32
         winpthread
 )
+endif (WIN32)
+
+if (UNIX)
+    find_package(OpenGL REQUIRED)
+    target_link_libraries(GUI PUBLIC
+            gui_glfw
+            OpenGL::OpenGL
+    )
+endif (UNIX)

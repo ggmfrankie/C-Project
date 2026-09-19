@@ -52,8 +52,7 @@ void Texture_loadAtlas(TextureAtlas *atlas) {
     Log_debug("Loading default textures");
     Texture_loadDefaults(atlas);
 
-    //TODO: Fix Padding
-    static constexpr int padding = 0;
+    static constexpr int padding = 4;
 
     Log_debug("Default path: %s", DEFAULT_PATH);
 
