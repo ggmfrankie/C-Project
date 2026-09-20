@@ -198,7 +198,8 @@ static CJson CJson_parseObject(int* i, const char* jsonString, int len, Str* bui
                     if (c == '.') foundDecimal = true;
                 } else if (isblank(c) || c == ',') {
                     foundDecimal = false;
-                    currMember->value = CJson_newNumber(strtod(*builder, nullptr));
+                    const double num = strtod(*builder, nullptr);
+                    currMember->value = CJson_newNumber(num);
                     goto PushNewMember;
                 } else goto Error;
             } break;
@@ -383,7 +384,7 @@ static void CJson_dumpValue(Str* buffer, const CJson* value) {
             strAppend_sprintf(buffer, "%s", String_getValue(value->stringValue));
             break;
         case CJSON_NUMBER:
-            strAppend_sprintf(buffer, "%llf", value->numberValue);
+            strAppend_sprintf(buffer, "%f", value->numberValue);
             break;
         case CJSON_STRING:
             strAppend_sprintf(buffer, "\"%s\"", String_getValue(value->stringValue));

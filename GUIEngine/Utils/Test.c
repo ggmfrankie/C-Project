@@ -433,12 +433,12 @@ void Test_json() {
     );
 
     defer(strFree) Str dump1 = CJson_dump(&json);
-    Log_debug("Json1: %s", dump1);
+    Log_trace("Json1: %s", dump1);
 
     const auto json2 = CJson_parse(dump1);
 
     defer(strFree) Str dump2 = CJson_dump(&json2);
-    Log_debug("Json2: %s", dump2);
+    Log_trace("Json2: %s", dump2);
 
     TEST(strcmp(dump1, dump2) == 0, "Json: \n%s\n After parse: \n%s\n dont match", dump1, dump2);
 }
