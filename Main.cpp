@@ -13,7 +13,8 @@
 
 #if 1
 int main() {
-    //Test_run();
+    Test_run();
+    return 0;
     try {
         JPH::RegisterDefaultAllocator();
         Game::BaseGame game {};

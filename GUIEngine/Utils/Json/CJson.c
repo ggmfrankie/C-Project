@@ -323,7 +323,7 @@ CJsonMember CJson_newMember(const char* key, CJson value) {
 }
 
 void CJson_appendNewMember(CJson* json, const char* key, CJson value) {
-    if (json->type != CJSON_OBJECT) ERROR_("Cannot add member to no object type");
+    if (json->type != CJSON_OBJECT) ERROR_("Cannot add member to a non object type");
     arrPush(json->aObjectMembers, CJson_member(key, value));
 }
 
