@@ -40,7 +40,7 @@ void _arrGrowIfNeededImpl(void **array, size_t typeSize);
         (array)[_arrGetHead(array)->size++] = (item);\
     } while (0)
 
-#define arrGet(array, index) ((array) != nullptr && _arrGetHead(array)->size > (index)) ? &(array)[index] : nullptr;
+#define arrGet(array, index) ((array) != nullptr && _arrGetHead(array)->size > (index)) ? &(array)[index] : nullptr
 
 #define arrPeek(array) (arrIsEmpty(array) ? nullptr : &(array)[arrLen(array)-1])
 
@@ -105,6 +105,18 @@ void _arrGrowIfNeededImpl(void **array, size_t typeSize);
               for (typeof(*(array))* (item) = &(array)[index]; (item); (item) = nullptr)
 
 #define arrEachRev(item, array) (typeof(*(array))* item = (array) + arrLen(array), *_end = (array); (item)-- != _end;)
+
+#define arrFindIf(item, array, ...)\
+({\
+typeof(array) CONCAT(_local, __LINE__) = nullptr;\
+for arrEach(item, array) {\
+    if (__VA_ARGS__) {\
+        CONCAT(_local, __LINE__) = item;\
+        break;\
+    }\
+}\
+CONCAT(_local, __LINE__);\
+})
 
 #define arrContains(array, item) ({\
     bool CONCAT(_local, __LINE__) = false;\

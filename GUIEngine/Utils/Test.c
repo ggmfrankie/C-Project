@@ -435,9 +435,10 @@ void Test_json() {
     defer(strFree) Str dump1 = CJson_dump(&json);
     Log_trace("Json1: %s", dump1);
 
-    const auto json2 = CJson_parse(dump1);
+    auto json2 = CJson_parse(dump1);
 
-    CJson* test = CJson_get(&json2, CJsonKey("test4"), CJsonKey("geld"), CJsonKey("array"), CJsonIdx(1));
+    CJson* test = CJson_get(&json2, CJsonKey("test4"), CJsonKey("geld"), CJsonKey("array"), CJsonIdx(2));
+    TEST(strcmp(String_getValue(&test->stringValue), "null") == 0, "CJson_getValue return %s, expected %s", String_getValue(&test->stringValue), "null");
 
     defer(strFree) Str dump2 = CJson_dump(&json2);
     Log_trace("Json2: %s", dump2);

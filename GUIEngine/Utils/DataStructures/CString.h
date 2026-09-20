@@ -25,7 +25,10 @@ typedef struct {
 String String_new(const char* cString);
 void String_clear(String* s);
 void String_free(String* s);
-char* String_getValue(String s);
+
+const char* String_getValue(const String* s);
 size_t String_getLen(String s);
+
+bool String_equals(String s1, String s2);
 
 void String_test();

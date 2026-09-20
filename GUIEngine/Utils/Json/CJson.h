@@ -39,20 +39,20 @@ typedef enum {
     CJSON_IDX
 } CJsonKeyType;
 
-#define CJsonKey(x) (_CJsonKey){ .type = CJSON_KEY, .key = (x)}
+#define CJsonKey(x) (_CJsonKey){ .type = CJSON_KEY, .key = String_new(x)}
 #define CJsonIdx(x) (_CJsonKey){ .type = CJSON_IDX, .index = (x)}
 
 typedef struct {
     CJsonKeyType type;
     union {
-        char* key;
+        String key;
         int index;
     };
 } _CJsonKey;
 
 CJson CJson_parse(const char* jsonString);
 
-CJson* _CJson_get(const CJson* json, _CJsonKey keys[], int keyLen);
+CJson* _CJson_get(CJson* json, _CJsonKey keys[], int keyLen);
 #define CJson_get(json, ...) _CJson_get(json, (_CJsonKey[]){__VA_ARGS__}, sizeof((_CJsonKey[]){__VA_ARGS__})/sizeof(_CJsonKey))
 
 CJson* _CJson_get2(const CJson* json, int len, ...);

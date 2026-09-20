@@ -35,19 +35,30 @@ void String_free(String* s) {
     else strFree(&s->heapString);
 }
 
-char* String_getValue(String s) {
-    return String_isInline(s) ? s.inlineString.m : s.heapString;
+const char* String_getValue(const String* s) {
+    return String_isInline(*s) ? s->inlineString.m : s->heapString;
 }
 
 size_t String_getLen(String s) {
     return String_isInline(s) ? s.inlineString.len : strLen(s.heapString);
 }
 
+bool String_equals(String s1, String s2) {
+    const size_t len1 = String_getLen(s1);
+    const size_t len2 = String_getLen(s2);
+    if (len1 != len2) return false;
+
+    const char* o = String_getValue(&s1);
+    const char* j = String_getValue(&s2);
+
+    volatile bool same = memcmp(o, j, len1) == 0;
+
+    return same;
+}
+
 void String_test() {
     const String a = String_new("Kaka");
-    const char* value = String_getValue(a);
-
-    String_getValue(a)[2] = 'b';
+    const char* value = String_getValue(&a);
 
     printf("%s", value);
 }

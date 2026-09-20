@@ -281,11 +281,33 @@ CJson CJson_parse(const char* jsonString) {
     const size_t len = strlen(jsonString);
     defer(strFree) Str builder = strNew(32);
     int i = 0;
-    return CJson_parseObject(&i, jsonString, len, &builder);
+    const char first = jsonString[0];
+
+    switch (first) {
+        case '{': return CJson_parseObject(&i, jsonString, len, &builder);
+        case '[': return CJson_parseArray(&i, jsonString, len, &builder);
+            default: ERROR_("Json did not start with '{' or '['");
+    }
 }
 
-CJson * _CJson_get(const CJson *json, _CJsonKey keys[], int keyLen) {
-
+CJson* _CJson_get(CJson *json, _CJsonKey keys[], int keyLen) {
+    CJson* curr = json;
+    for (int i = 0; i < keyLen; ++i) {
+        const _CJsonKey* key = &keys[i];
+        switch (curr->type) {
+            case CJSON_OBJECT: {
+                if (key->type != CJSON_KEY) ERROR_("Index not applicable for object");
+                curr = &arrFindIf(member, curr->aObjectMembers, ({ String_equals(member->key, key->key); }))->value;
+            } break;
+            case CJSON_ARRAY: {
+                if (key->type != CJSON_IDX) ERROR_("Key not applicable for array");
+                curr = arrGet(curr->aArrayMembers, key->index);
+            } break;
+            default:
+                ERROR_("Key not found");
+        }
+    }
+    return curr;
 }
 
 CJson CJson_newString(const char* value) {
@@ -376,7 +398,7 @@ void CJson_free(CJson* json) {
 static void CJson_dumpValue(Str* buffer, const CJson* value);
 
 static void CJson_dumpMember(Str* buffer, const CJsonMember* member) {
-    strAppend_sprintf(buffer, "\"%s\"", String_getValue(member->key));
+    strAppend_sprintf(buffer, "\"%s\"", String_getValue(&member->key));
     strAppend(buffer, ':');
     CJson_dumpValue(buffer, &member->value);
     strAppend(buffer, ',');
@@ -385,13 +407,13 @@ static void CJson_dumpMember(Str* buffer, const CJsonMember* member) {
 static void CJson_dumpValue(Str* buffer, const CJson* value) {
     switch (value->type) {
         case CJSON_NULL:
-            strAppend_sprintf(buffer, "%s", String_getValue(value->stringValue));
+            strAppend_sprintf(buffer, "%s", String_getValue(&value->stringValue));
             break;
         case CJSON_NUMBER:
             strAppend_sprintf(buffer, "%f", value->numberValue);
             break;
         case CJSON_STRING:
-            strAppend_sprintf(buffer, "\"%s\"", String_getValue(value->stringValue));
+            strAppend_sprintf(buffer, "\"%s\"", String_getValue(&value->stringValue));
             break;
         case CJSON_BOOLEAN:
             strAppend_sprintf(buffer, value->boolValue ? "true":"false");
