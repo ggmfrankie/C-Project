@@ -8,7 +8,7 @@
 #include "Utils/Macros/Defer.h"
 #include "../DataStructures/CString.h"
 
-typedef enum : byte {
+typedef enum {
     CJSON_NULL,
     CJSON_NUMBER,
     CJSON_STRING,
@@ -19,7 +19,6 @@ typedef enum : byte {
 
 typedef struct CJson {
     CJsonType type;
-    char _unused[7];
     union {
         bool boolValue;
         double numberValue;
@@ -35,7 +34,29 @@ typedef struct CJsonMember {
     CJson value;
 } CJsonMember;
 
+typedef enum {
+    CJSON_KEY,
+    CJSON_IDX
+} CJsonKeyType;
+
+#define CJsonKey(x) (_CJsonKey){ .type = CJSON_KEY, .key = (x)}
+#define CJsonIdx(x) (_CJsonKey){ .type = CJSON_IDX, .index = (x)}
+
+typedef struct {
+    CJsonKeyType type;
+    union {
+        char* key;
+        int index;
+    };
+} _CJsonKey;
+
 CJson CJson_parse(const char* jsonString);
+
+CJson* _CJson_get(const CJson* json, _CJsonKey keys[], int keyLen);
+#define CJson_get(json, ...) _CJson_get(json, (_CJsonKey[]){__VA_ARGS__}, sizeof((_CJsonKey[]){__VA_ARGS__})/sizeof(_CJsonKey))
+
+CJson* _CJson_get2(const CJson* json, int len, ...);
+#define CJson_get2(json, ...) _CJson_get2(json, NUM_ARGS(__VA_ARGS__), __VA_ARGS__)
 
 CJson CJson_newString(const char* value);
 CJson CJson_newNumber(double value);

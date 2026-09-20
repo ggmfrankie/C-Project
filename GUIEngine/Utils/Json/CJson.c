@@ -284,6 +284,10 @@ CJson CJson_parse(const char* jsonString) {
     return CJson_parseObject(&i, jsonString, len, &builder);
 }
 
+CJson * _CJson_get(const CJson *json, _CJsonKey keys[], int keyLen) {
+
+}
+
 CJson CJson_newString(const char* value) {
     return (CJson) {
         .type = CJSON_STRING,

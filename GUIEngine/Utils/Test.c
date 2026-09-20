@@ -437,6 +437,8 @@ void Test_json() {
 
     const auto json2 = CJson_parse(dump1);
 
+    CJson* test = CJson_get(&json2, CJsonKey("test4"), CJsonKey("geld"), CJsonKey("array"), CJsonIdx(1));
+
     defer(strFree) Str dump2 = CJson_dump(&json2);
     Log_trace("Json2: %s", dump2);
 
