@@ -5,7 +5,6 @@
 #include "BaseGame.hpp"
 
 #include "GameGui.h"
-#include "Render/Objects/3D/Loader/OBJLoader.hpp"
 #include "GuiInterface.h"
 #include "Engine/CommandRegistry.hpp"
 #include "../Scene/3D/Scene3D.hpp"

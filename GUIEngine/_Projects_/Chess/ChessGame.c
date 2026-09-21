@@ -8,7 +8,6 @@
 
 #include "GUI/GuiElement/CallbackHelper.h"
 #include "Utils/Macros/Utils.h"
-#include "Utils/Misc/UtilityFun.h"
 #include "GuiInterface.h"
 #include "GUI/GuiElement/GuiElement.h"
 #include "GUI/GuiElement/ElementTypes/TextField.h"
@@ -827,6 +826,7 @@ static void createChessBoard(Element* root) {
                         .padding = {10, 10, 10 ,10},
                         .canBeHovered = true,
                         .flexGrow = 1.0f,
+                        .cornerRadius = 15,
                         .onClick = runTaskFun,
                         .task = {flipBoard},
                     }),
@@ -835,6 +835,7 @@ static void createChessBoard(Element* root) {
                         .text = "Close",
                         .padding = {10, 10, 10 ,10},
                         .canBeHovered = true,
+                            .cornerRadius = 15,
                         .onClick = runTaskFun,
                         .flexGrow = 1.0f,
                         .task = {closeGame},

@@ -28,9 +28,9 @@ static struct _StringHeader_* strAllocate(size_t capacity){
 
 #define strGetHead(s) (&((struct _StringHeader_*)(s))[-1])
 
-#define strAssert(str) assert(str != nullptr); strAssertIsValid(str)
+#define strAssert(str) assert((str) != nullptr); strAssertIsValid(str)
 
-static void strAssertIsValid(char* c){
+static void strAssertIsValid(const char* c){
     if (strGetHead(c)->_IDENTIFIER_ != IDENTIFIER)
         ERROR_("Provided char* is not a Str");
 }
@@ -335,7 +335,7 @@ void cstrbConcat(char *buff, size_t size, const char *a, const char *b) {
     const size_t total = lenA + lenB;
 
     if(size < total + 1) {
-        ERROR_("Buffer of size: %llu is not sufficient for string length %llu\n", size, total);
+        ERROR_("Buffer of size: %lu is not sufficient for string length %lu\n", size, total);
         return;
     }
     memcpy(buff, a, lenA);
