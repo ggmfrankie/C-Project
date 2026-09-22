@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "DataStructures/CSStringView.h"
 #include "Json/CJson.h"
 #include "Macros/Defer.h"
 #include "OtherProjects/C/Extern/CVector.h"
@@ -346,6 +347,20 @@ static void Test_sparseSet_removeKeepOrder() {
     SparseSet_delete(&set);
 }
 
+static void Test_stringTypes() {
+    defer(String_free) String s = String_new("Gelb");
+    TEST(s.inlineString.len == 4, "String did not inline its data");
+    defer(String_free) String longer = String_new("Gelber Sack");
+    TEST(longer.inlineString.len == 0, "String did not use the heap");
+
+    SStrView gelber = StrView_newn(String_getValue(&longer), strlen("Gelber"));
+
+    TEST(strcmp(StrView_toTempBuf(gelber), "Gelber")==0, "SStrView does not contain the right data, got %s", StrView_toTempBuf(gelber));
+
+    defer(String_free) String result = StrView_toString(gelber);
+    TEST(strcmp(String_getValue(&result), "Gelber")==0, "String contents do not match SStrView contents, expected 'Gelber', got %s", String_getValue(&result));
+}
+
 static void Test_sparseSet(){
     SparseSet set = SparseSet_new(int, 16);
     size_t firstId = SparseSet_add(&set, 12);
@@ -455,6 +470,8 @@ static void Test_dataStructures() {
     INFO_("CSparseSet passed");
     Test_cString();
     INFO_("CString passed");
+    Test_stringTypes();
+    INFO_("String types passed");
     Test_json();
     INFO_("CJson passed");
 }

@@ -61,16 +61,9 @@ Str strNew(size_t capacity) {
 
 Str strNew_copy(const char *s) {
     assert(s != nullptr);
-
     const size_t len = strlen(s);
-    struct _StringHeader_* header = strAllocate(len);
-    assert(header != nullptr);
 
-    const Str data = (void*) (header+1);
-    memcpy(data, s, len);
-
-    header->capacity = header->size = len;
-    return data;
+    return strNew_copyn(s, len);
 }
 
 Str strNew_copyn(const char *s, size_t count) {

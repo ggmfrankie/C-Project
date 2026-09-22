@@ -86,8 +86,8 @@ add_library(GUI STATIC
         GUI/GuiElement/ElementTypes/ScrollArea.h
         GUI/GuiElement/ElementTypes.h
         GuiColors.h
-        Utils/DataStructures/CStringView.c
-        Utils/DataStructures/CStringView.h
+        Utils/DataStructures/CSStringView.c
+        Utils/DataStructures/CSStringView.h
         _Projects_/ExampleGUI/ExampleGUI.c
         _Projects_/ExampleGUI/ExampleGUI.h
         GUI/GuiElement/ElementTypes/TextArea.c

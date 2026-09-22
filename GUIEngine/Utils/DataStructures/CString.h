@@ -23,6 +23,7 @@ typedef struct {
 } String;
 
 String String_new(const char* cString);
+String String_newn(const char* cString, size_t len);
 void String_clear(String* s);
 void String_free(String* s);
 

@@ -12,11 +12,16 @@ static bool String_isInline(String s) {
 }
 
 String String_new(const char* cString) {
-    String out = {};
     const size_t len = strlen(cString);
+    return String_newn(cString, len);
+}
+
+String String_newn(const char *cString, size_t len) {
+    String out = {};
 
     if (len < 7) {
-        memcpy(out.inlineString.m, cString, len+1);
+        memcpy(out.inlineString.m, cString, len);
+        out.inlineString.m[len] = '\0';
         out.inlineString.len = len;
     }
     else out.heapString = strNew_copy(cString);
