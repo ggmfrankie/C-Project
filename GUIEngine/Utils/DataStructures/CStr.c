@@ -86,7 +86,7 @@ Str strNew_sprintf(const char* fmt, ...) {
     va_list argsCopy;
     va_copy(argsCopy, args);
 
-    const size_t len = vsnprintf(nullptr, 0, fmt, args);
+    const int len = vsnprintf(nullptr, 0, fmt, args);
     va_end(args);
 
     if (len < 0) ERROR_("Could not parse formatstring");
@@ -339,14 +339,14 @@ void cstrbConcat(char *buff, size_t size, const char *a, const char *b) {
 #define content(a, b) assert(strcmp(a, b) == 0)
 #define length(s, size) assert(strLen(s) == size)
 static void _strTest() {
-    defer(defer_strDelete) Str a = strNew_copy("hassan");
+    defer(strFree) Str a = strNew_copy("hassan");
     content(a, "hassan");
     length(a, 6);
 
-    defer(defer_strDelete) Str b = strNew_copyn("belsa kaka", 5);
+    defer(strFree) Str b = strNew_copyn("belsa kaka", 5);
     content(b, "belsa");
 
-    defer(defer_strDelete) Str ab = strConcat(a, b);
+    defer(strFree) Str ab = strConcat(a, b);
     content(ab, "hassanbelsa");
 
     for strEach(c, ab) {

@@ -16,10 +16,6 @@ void defer_free(void* p) {
     free(*(void**)p);
 }
 
-void defer_strDelete(Str* s) {
-    strFree(s);
-}
-
 void defer_arrDelete(void *a) {
     arrFree(a);
 }

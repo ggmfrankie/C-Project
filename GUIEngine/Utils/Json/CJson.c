@@ -398,7 +398,7 @@ void CJson_free(CJson* json) {
 static void CJson_dumpValue(Str* buffer, const CJson* value);
 
 static void CJson_dumpMember(Str* buffer, const CJsonMember* member) {
-    strAppend_sprintf(buffer, "\"%s\"", String_getValue(&member->key));
+    strAppend_sprintf(buffer, "\"%s\"", String_getCValue(&member->key));
     strAppend(buffer, ':');
     CJson_dumpValue(buffer, &member->value);
     strAppend(buffer, ',');
@@ -407,13 +407,13 @@ static void CJson_dumpMember(Str* buffer, const CJsonMember* member) {
 static void CJson_dumpValue(Str* buffer, const CJson* value) {
     switch (value->type) {
         case CJSON_NULL:
-            strAppend_sprintf(buffer, "%s", String_getValue(&value->stringValue));
+            strAppend_sprintf(buffer, "%s", String_getCValue(&value->stringValue));
             break;
         case CJSON_NUMBER:
             strAppend_sprintf(buffer, "%f", value->numberValue);
             break;
         case CJSON_STRING:
-            strAppend_sprintf(buffer, "\"%s\"", String_getValue(&value->stringValue));
+            strAppend_sprintf(buffer, "\"%s\"", String_getCValue(&value->stringValue));
             break;
         case CJSON_BOOLEAN:
             strAppend_sprintf(buffer, value->boolValue ? "true":"false");
@@ -442,6 +442,6 @@ Str CJson_dump(const CJson* json) {
 }
 
 void CJson_print(const CJson* json) {
-    defer(defer_strDelete) Str dump = CJson_dump(json);
+    defer(strFree) Str dump = CJson_dump(json);
     puts(dump);
 }

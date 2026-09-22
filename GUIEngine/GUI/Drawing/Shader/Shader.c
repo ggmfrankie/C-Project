@@ -64,7 +64,7 @@ void Shader_createUniform(Shader *shader, const char* name) {
 
 int createVertexShader(const char *fileName, const int programId) {
     Log_debug("Creating Vertex shader");
-    defer(defer_strDelete) Str shaderSource = readShaderFile(fileName);
+    defer(strFree) Str shaderSource = readShaderFile(fileName);
     const GLchar* source = shaderSource;
 
     const int shaderId = createShader(&source, GL_VERTEX_SHADER, programId);
@@ -76,7 +76,7 @@ int createVertexShader(const char *fileName, const int programId) {
 
 int createFragmentShader(const char *fileName, const int programId) {
     Log_debug("Creating Fragment shader");
-    defer(defer_strDelete) Str shaderSource = readShaderFile(fileName);
+    defer(strFree) Str shaderSource = readShaderFile(fileName);
     const GLchar* source = shaderSource;
 
     const int shaderId = createShader(&source, GL_FRAGMENT_SHADER, programId);

@@ -27,7 +27,7 @@ String String_newn(const char* cString, size_t len);
 void String_clear(String* s);
 void String_free(String* s);
 
-const char* String_getValue(const String* s);
+const char* String_getCValue(const String* s);
 size_t String_getLen(String s);
 
 bool String_equals(String s1, String s2);

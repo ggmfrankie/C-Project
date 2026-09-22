@@ -31,7 +31,7 @@ static void Test_cString() {
     strFree(&empty);
     TEST(empty == nullptr, "strDelete should null the pointer");
 
-    defer(defer_strDelete) Str copy = strNew_copy("hello");
+    defer(strFree) Str copy = strNew_copy("hello");
     TEST(copy != nullptr, "strNew_copy should allocate memory");
     TEST(strcmp(copy, "hello") == 0, "strNew_copy content mismatch, got '%s'", copy);
     TEST(strLen(copy) == 5, "strNew_copy length expected 5, got %zu", strLen(copy));
@@ -41,48 +41,48 @@ static void Test_cString() {
     TEST(strAt(copy, 0) == 'h', "strAt(copy, 0) expected 'h', got '%c'", strAt(copy, 0));
     TEST(strAt(copy, 4) == 'o', "strAt(copy, 4) expected 'o', got '%c'", strAt(copy, 4));
 
-    defer(defer_strDelete) Str copyn = strNew_copyn("truncate", 4);
+    defer(strFree) Str copyn = strNew_copyn("truncate", 4);
     TEST(copyn != nullptr, "strNew_copyn should allocate memory");
     TEST(strcmp(copyn, "trun") == 0, "strNew_copyn content mismatch, got '%s'", copyn);
     TEST(strLen(copyn) == 4, "strNew_copyn length expected 4, got %zu", strLen(copyn));
     TEST(strCap(copyn) == 4, "strNew_copyn capacity expected 4, got %zu", strCap(copyn));
 
-    defer(defer_strDelete) Str formatted = strNew_sprintf("%s %d %.1f", "value", 42, 3.5f);
+    defer(strFree) Str formatted = strNew_sprintf("%s %d %.1f", "value", 42, 3.5f);
     TEST(formatted != nullptr, "strNew_sprintf should allocate memory");
     TEST(strcmp(formatted, "value 42 3.5") == 0, "strNew_sprintf content mismatch, got '%s'", formatted);
     TEST(strLen(formatted) == strlen("value 42 3.5"), "strNew_sprintf length mismatch, got %zu", strLen(formatted));
     TEST(strCap(formatted) == strlen("value 42 3.5"), "strNew_sprintf capacity mismatch, got %zu", strCap(formatted));
 
-    defer(defer_strDelete) Str prefixSource = strNew_copy("prefix-value");
-    defer(defer_strDelete) Str prefix = strNew_copy("prefix");
-    defer(defer_strDelete) Str wrongPrefix = strNew_copy("value");
-    defer(defer_strDelete) Str tooLongPrefix = strNew_copy("prefix-value-extra");
+    defer(strFree) Str prefixSource = strNew_copy("prefix-value");
+    defer(strFree) Str prefix = strNew_copy("prefix");
+    defer(strFree) Str wrongPrefix = strNew_copy("value");
+    defer(strFree) Str tooLongPrefix = strNew_copy("prefix-value-extra");
     TEST(strStartsWith(prefixSource, prefix), "strStartsWith should detect valid prefix");
     TEST(!strStartsWith(prefixSource, wrongPrefix), "strStartsWith should reject invalid prefix");
     TEST(!strStartsWith(prefixSource, tooLongPrefix), "strStartsWith should reject longer prefix");
 
-    defer(defer_strDelete) Str concatLeft = strNew_copy("left");
-    defer(defer_strDelete) Str concatRight = strNew_copy("-right");
-    defer(defer_strDelete) Str combined = strConcat(concatLeft, concatRight);
+    defer(strFree) Str concatLeft = strNew_copy("left");
+    defer(strFree) Str concatRight = strNew_copy("-right");
+    defer(strFree) Str combined = strConcat(concatLeft, concatRight);
     TEST(combined != nullptr, "strConcat should allocate memory");
     TEST(strcmp(combined, "left-right") == 0, "strConcat content mismatch, got '%s'", combined);
     TEST(strLen(combined) == 10, "strConcat length expected 10, got %zu", strLen(combined));
     TEST(strCap(combined) == 10, "strConcat capacity expected 10, got %zu", strCap(combined));
 
-    defer(defer_strDelete) Str appendFormatted = strNew(32);
+    defer(strFree) Str appendFormatted = strNew(32);
     strAppend_sprintf(&appendFormatted, "%s", "prefix");
     strAppend_sprintf(&appendFormatted, "-%d", 7);
     TEST(strcmp(appendFormatted, "prefix-7") == 0, "strAppend_sprintf content mismatch, got '%s'", appendFormatted);
     TEST(strLen(appendFormatted) == 8, "strAppend_sprintf length expected 8, got %zu", strLen(appendFormatted));
     TEST(strCap(appendFormatted) >= 8, "strAppend_sprintf should retain enough capacity, got %zu", strCap(appendFormatted));
 
-    defer(defer_strDelete) Str appendGrow = strNew(4);
+    defer(strFree) Str appendGrow = strNew(4);
     strAppend_sprintf(&appendGrow, "%s", "abcdef");
     TEST(strcmp(appendGrow, "abcdef") == 0, "strAppend_sprintf should grow capacity, got '%s'", appendGrow);
     TEST(strLen(appendGrow) == 6, "grown append length expected 6, got %zu", strLen(appendGrow));
     TEST(strCap(appendGrow) >= 6, "grown append capacity expected >= 6, got %zu", strCap(appendGrow));
 
-    defer(defer_strDelete) Str fit = strNew(16);
+    defer(strFree) Str fit = strNew(16);
     strAppend_sprintf(&fit, "%s", "data");
     TEST(strCap(fit) == 16, "pre-fit capacity expected 16, got %zu", strCap(fit));
     strFit(&fit);
@@ -90,14 +90,14 @@ static void Test_cString() {
     TEST(strLen(fit) == 4, "strFit length expected 4, got %zu", strLen(fit));
     TEST(strCap(fit) == 4, "strFit capacity expected 4, got %zu", strCap(fit));
 
-    defer(defer_strDelete) Str cleared = strNew_copy("erase me");
+    defer(strFree) Str cleared = strNew_copy("erase me");
     strClear(cleared);
     TEST(strcmp(cleared, "") == 0, "strClear should empty the string, got '%s'", cleared);
     TEST(strLen(cleared) == 0, "strClear length expected 0, got %zu", strLen(cleared));
     TEST(strCap(cleared) == 8, "strClear should keep capacity, got %zu", strCap(cleared));
     TEST(strIsEmpty(cleared), "strClear should leave the string empty");
 
-    defer(defer_strDelete) Str cConcat = cstrConcat("foo", "bar");
+    defer(strFree) Str cConcat = cstrConcat("foo", "bar");
     TEST(cConcat != nullptr, "cstrConcat should allocate memory");
     TEST(strcmp(cConcat, "foobar") == 0, "cstrConcat content mismatch, got '%s'", cConcat);
     TEST(strLen(cConcat) == 6, "cstrConcat length expected 6, got %zu", strLen(cConcat));
@@ -106,7 +106,7 @@ static void Test_cString() {
     cstrbConcat(buffer, sizeof(buffer), "foo", "bar");
     TEST(strcmp(buffer, "foobar") == 0, "cstrbConcat content mismatch, got '%s'", buffer);
 
-    defer(defer_strDelete) Str cAppendAt = strNew_copy("Hllo");
+    defer(strFree) Str cAppendAt = strNew_copy("Hllo");
     strAppendAt(&cAppendAt, 'e', 1);
     TEST(strcmp(cAppendAt, "Hello") == 0, "cAppendAt did not work, got '%s'", cAppendAt);
 
@@ -353,12 +353,12 @@ static void Test_stringTypes() {
     defer(String_free) String longer = String_new("Gelber Sack");
     TEST(longer.inlineString.len == 0, "String did not use the heap");
 
-    SStrView gelber = StrView_newn(String_getValue(&longer), strlen("Gelber"));
+    SStrView gelber = StrView_newn(String_getCValue(&longer), strlen("Gelber"));
 
     TEST(strcmp(StrView_toTempBuf(gelber), "Gelber")==0, "SStrView does not contain the right data, got %s", StrView_toTempBuf(gelber));
 
     defer(String_free) String result = StrView_toString(gelber);
-    TEST(strcmp(String_getValue(&result), "Gelber")==0, "String contents do not match SStrView contents, expected 'Gelber', got %s", String_getValue(&result));
+    TEST(strcmp(String_getCValue(&result), "Gelber")==0, "String contents do not match SStrView contents, expected 'Gelber', got %s", String_getCValue(&result));
 }
 
 static void Test_sparseSet(){
@@ -453,7 +453,7 @@ void Test_json() {
     auto json2 = CJson_parse(dump1);
 
     CJson* test = CJson_get(&json2, CJsonKey("test4"), CJsonKey("geld"), CJsonKey("array"), CJsonIdx(2));
-    TEST(strcmp(String_getValue(&test->stringValue), "null") == 0, "CJson_getValue return %s, expected %s", String_getValue(&test->stringValue), "null");
+    TEST(strcmp(String_getCValue(&test->stringValue), "null") == 0, "CJson_getValue return %s, expected %s", String_getCValue(&test->stringValue), "null");
 
     defer(strFree) Str dump2 = CJson_dump(&json2);
     Log_trace("Json2: %s", dump2);

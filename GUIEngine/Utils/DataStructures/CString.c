@@ -40,7 +40,7 @@ void String_free(String* s) {
     else strFree(&s->heapString);
 }
 
-const char* String_getValue(const String* s) {
+const char* String_getCValue(const String* s) {
     return String_isInline(*s) ? s->inlineString.m : s->heapString;
 }
 
@@ -53,8 +53,8 @@ bool String_equals(String s1, String s2) {
     const size_t len2 = String_getLen(s2);
     if (len1 != len2) return false;
 
-    const char* o = String_getValue(&s1);
-    const char* j = String_getValue(&s2);
+    const char* o = String_getCValue(&s1);
+    const char* j = String_getCValue(&s2);
 
     volatile bool same = memcmp(o, j, len1) == 0;
 
@@ -63,7 +63,7 @@ bool String_equals(String s1, String s2) {
 
 void String_test() {
     const String a = String_new("Kaka");
-    const char* value = String_getValue(&a);
+    const char* value = String_getCValue(&a);
 
     printf("%s", value);
 }
