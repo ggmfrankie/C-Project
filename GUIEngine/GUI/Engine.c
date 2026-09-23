@@ -21,9 +21,6 @@
 #include "GuiElement/ElementTypes/TextField.h"
 #include "Utils/Os/Time.h"
 
-#define WIDTH 4096
-#define HEIGHT 600
-
 static pthread_mutex_t guiMutex = PTHREAD_MUTEX_INITIALIZER;
 static pthread_cond_t  guiInitCond = PTHREAD_COND_INITIALIZER;
 static pthread_t workerThreadID;
@@ -162,14 +159,14 @@ void gui_setTexture(Element* e, const char* name) {
 void gui_setActive(const char* name, const bool b) {
     assert(name != nullptr);
     Thread_Locked(
-        Element_setActive_ptr(Element_getElement_ptr(name), b);
+        Element_setActive(Element_getElement(name), b);
     )
 }
 
 void gui_toggleVisible(const char* name) {
     assert(name != nullptr);
     Thread_Locked(
-        Element_toggleVisible_ptr(Element_getElement_ptr(name));
+        Element_toggleVisible(Element_getElement(name));
     )
 }
 
@@ -177,7 +174,7 @@ void gui_setText(const char* name, const char* text) {
     assert(name != nullptr);
     assert(text != nullptr);
     Thread_Locked(
-        Element_setText(Element_getElement_ptr(name), text);
+        Element_setText(Element_getElement(name), text);
     )
 }
 
@@ -188,7 +185,7 @@ void gui_setTextF(const char* name, const char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
     Thread_Locked(
-        Element_setText_va(Element_getElement_ptr(name), fmt, args);
+        Element_setText_va(Element_get(Element_getElement(name)), fmt, args);
     )
     va_end(args);
 }
@@ -196,35 +193,27 @@ void gui_setTextF(const char* name, const char* fmt, ...) {
 void gui_setColor(const char* name, const float r, const float g, const float b) {
     assert(name != nullptr);
     Thread_Locked(
-        Element_setColor_ptr(Element_getElement_ptr(name), (Vec3f){.x = r, .y = g, .z = b});
+        Element_setColor(Element_getElement(name), (Vec3f){.x = r, .y = g, .z = b});
     )
 }
 
 void gui_resetColor(const char* name) {
     assert(name != nullptr);
     Thread_Locked(
-        Element* e = Element_getElement_ptr(name);
-        assert(e != nullptr);
-        Element_setColor_ptr(e, e->visuals.defaultColor);
-    )
-}
-
-void gui_setColor_ptr(Element* ptr, float r, float g, float b) {
-    assert(ptr != nullptr);
-    Thread_Locked(
-        Element_setColor_ptr(ptr, (Vec3f){.x = r, .y = g, .z = b});
+        ElementHandle e = Element_getElement(name);
+        Element_setColor(e, Element_get(e)->visuals.defaultColor);
     )
 }
 
 void gui_setCornerRadius(const char* name, const int radius) {
     assert(name != nullptr);
     Thread_Locked(
-        Element_getElement_ptr(name)->dims.cornerRadius = radius;
+        Element_get(Element_getElement(name))->dims.cornerRadius = radius;
     )
 }
 
 static void gui_processDebug() {
-    const Element* gameBoard = Element_getElement_ptr("game board");
+    const Element* gameBoard = Element_get(Element_getElement("game board"));
     const Element* parent = Element_get(gameBoard->parentElement);
     assert(strcmp(parent->name, "GUI_ROOT") == 0);
 }
@@ -238,9 +227,15 @@ void gui_onKeyPressCallback(GUI_onKeyPressAction action) {
 bool gui_getActive(const char* name) {
     bool status = false;
     Thread_Locked(
-        status = Element_getElement_ptr(name)->flags.isActive;
+        status = Element_get(Element_getElement(name))->flags.isActive;
     )
     return status;
+}
+
+void gui_delete(const char* name) {
+    Thread_Locked(
+        Element_delete(Element_getElement(name));
+    )
 }
 
 void Engine_loop(void (*generateGUI)(Element* guiRoot)) {

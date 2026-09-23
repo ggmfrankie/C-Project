@@ -11,9 +11,9 @@
 #include "_Projects_/ExampleGUI/ExampleGUI.h"
 #if 0
 int main(){
-    Test_run();
+    //Test_run();
 
-    //Engine_loop(ExampleGui_generate_1);
+    Engine_loop(ExampleGui_generate_1);
     //Engine_loop(generateGUI);
 
     //String_test();

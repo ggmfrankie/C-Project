@@ -102,23 +102,37 @@ Element* Element_get(ElementHandle handle) {
     return SparseSet_get(&gElements, handle.ID, Element);
 }
 
-void Element_delete(ElementHandle handle) {
-    Element* element = SparseSet_get(&gElements, handle.ID, Element);
+static void Element_deleteRec(ElementHandle selfHandle) {
+    // first let children delete themselves
 
-    for arrEach(childHandle, element->aFlowElements) {
-        Element_delete(*childHandle);
+    for arrEach(childHandle, Element_get(selfHandle)->aFlowElements) {
+        Element_deleteRec(*childHandle);
+    }
+    for arrEach(childHandle, Element_get(selfHandle)->aStaticElements) {
+        Element_deleteRec(*childHandle);
     }
 
-    for arrEach(childHandle, element->aStaticElements) {
-        Element_delete(*childHandle);
-    }
+    Element* element = Element_get(selfHandle);
 
     if (element->elementData.ptr && element->elementData.needsFree) free(element->elementData.ptr);
-    strFree(&element->textElement.sText);
+    if (element->task.userdata && element->task.needsFree) free(element->task.userdata);
+    if (element->textElement.sText) strFree(&element->textElement.sText);
 
     arrFree(element->aFlowElements);
     arrFree(element->aStaticElements);
     arrFree(element->layoutCache.aLines);
+
+    SparseSet_remove_keepOrder(&gElements, selfHandle.ID);
+}
+
+void Element_delete(ElementHandle selfHandle) {
+    // removes itself from the parent element
+    bool found = false;
+    Element* parent = Element_get(Element_get(selfHandle)->parentElement);
+    arrRemoveIf(flowElement, parent->aFlowElements, ({found = flowElement->ID == selfHandle.ID;}));
+    if (!found) arrRemoveIf(flowElement, parent->aFlowElements, ({flowElement->ID == selfHandle.ID;}));
+
+    Element_deleteRec(selfHandle);
 }
 
 void Element_setOnClickCallback(Element* element, bool (*onClick)(Element* element)) {
@@ -136,14 +150,18 @@ void Element_setBoundingBox(Element* element, bool (*isMouseOver)(const Element 
     element->callbacks.isMouseOver = isMouseOver;
 }
 
-void Element_setText(Element* element, const char* text) {
+void Element_setText_ptr(Element* self, const char* text) {
     assert(element != nullptr);
 
-    strClear(element->textElement.sText);
-    strAppend_sprintf(&element->textElement.sText, text);
+    strClear(self->textElement.sText);
+    strAppend_sprintf(&self->textElement.sText, text);
 
-    element->textElement.hasText = true;
-    Text_reloadTextQuads(element);
+    self->textElement.hasText = true;
+    Text_reloadTextQuads(self);
+}
+
+void Element_setText(ElementHandle selfHandle, const char* text) {
+    Element_setText_ptr(Element_get(selfHandle), text);
 }
 
 void Element_setText_va(Element* element, const char* fmt, va_list args) {
@@ -155,34 +173,33 @@ void Element_setText_va(Element* element, const char* fmt, va_list args) {
     Text_reloadTextQuads(element);
 }
 
-void Element_setTextF(Element* element, const char* fmt, ...) {
+void Element_setTextF(ElementHandle selfHandle, const char* fmt, ...) {
     assert(element != nullptr);
     va_list args;
     va_start(args, fmt);
-    Element_setText_va(element, fmt, args);
+    Element_setText_va(Element_get(selfHandle), fmt, args);
     va_end(args);
-    element->textElement.hasText = true;
 }
 
-void Element_setActive_ptr(Element* element, const bool b) {
+void Element_setActive(ElementHandle selfHandle, const bool b) {
     assert(element != nullptr);
-    element->flags.isActive = b;
+    Element_get(selfHandle)->flags.isActive = b;
 }
 
-void Element_toggleVisible_ptr(Element* element) {
+void Element_toggleVisible(ElementHandle selfHandle) {
     assert(element != nullptr);
-    element->flags.isActive = !element->flags.isActive;
+    Element* self = Element_get(selfHandle);
+    self->flags.isActive = !self->flags.isActive;
 }
 
-void Element_setColor_ptr(Element* element, const Vec3f color) {
+void Element_setColor(ElementHandle selfHandle, const Vec3f color) {
     assert(element != nullptr);
-    element->visuals.color = color;
+    Element_get(selfHandle)->visuals.color = color;
 }
 
-Element *Element_getElement_ptr(const char *name) {
+ElementHandle Element_getElement(const char *name) {
     assert(name != nullptr);
-    Element* out = Element_get(*mapGet(gmElements, name));
-    assert(out != nullptr);
+    const ElementHandle out = *mapGet(gmElements, name);
     return out;
 }
 
@@ -266,7 +283,7 @@ ElementHandle createElement(ElementSettings es) {
         t->width = 0;
         t->font = Engine_getDefaultFont();
         t->scale = es.textScale ? es.textScale : 1.0f;
-        Element_setText(lastElement, es.text);
+        Element_setText_ptr(lastElement, es.text);
         Text_reloadTextQuads(lastElement);
     }
     return handle;

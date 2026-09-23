@@ -10,6 +10,7 @@
 #include "GUI/GuiElement/ElementTypes/TextField.h"
 #include <stdlib.h>
 
+#include "GUI/GuiElement/CallbackHelper.h"
 #include "GUI/GuiElement/ElementTypes/Scrollbar.h"
 
 static ElementHandle TestElement() {
@@ -39,6 +40,10 @@ static ElementHandle TestElement2() {
     });
 }
 
+static void deleteElement(void*) {
+    Element_delete(Element_getElement("remove"));
+}
+
 static ElementHandle TestScrollArea() {
     return Element_new((ElementSettings){
                 .color = GUI_COLOR_DARKGRAY2,
@@ -54,7 +59,8 @@ static ElementHandle TestScrollArea() {
                     .railColor = GUI_COLOR_DARKGRAY1,
                     .childGap = 5,
                     .padding = {5},
-                    .flexGrow = 1
+                    .flexGrow = 1,
+                    .name = "remove",
                 },
                     TestElement(),
                     TestElement(),
@@ -74,7 +80,13 @@ static ElementHandle TestScrollArea() {
                         .minWidth = 100,
                         .color = {0.88f, 0.88f, 0.91f},
                         .cornerRadius = 10
-                    }, TextField_runTask)
+                    }, TextField_runTask),
+                    Element_new((ElementSettings){
+                        .color = GUI_COLOR_AZURE,
+                        .text = "Press Me!",
+                        .onClick = runTaskFun,
+                        .task = {deleteElement}
+                    })
                 )
             );
 }

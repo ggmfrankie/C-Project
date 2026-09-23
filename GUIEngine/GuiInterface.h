@@ -41,12 +41,13 @@ typedef void (*GUI_onKeyPressAction)(int key, int scancode, int action, int mods
     void gui_setTextF(const char* name, const char* fmt, ...);
 
     void gui_setColor(const char* name, float r, float g, float b);
-    void gui_setColor_ptr(Element* ptr, float r, float g, float b);
     void gui_resetColor(const char* name);
     void gui_setCornerRadius(const char* name, int radius);
     void gui_onKeyPressCallback(GUI_onKeyPressAction action);
 
     bool gui_getActive(const char* name);
+
+    void gui_delete(const char* name);
 
     void Engine_loop(void (*generateGUI)(Element* guiRoot));
 #ifdef __cplusplus

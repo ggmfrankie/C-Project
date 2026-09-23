@@ -75,11 +75,11 @@ ssize_t _SparseSet_add(SparseSet *set, const void *value) {
     return id;
 }
 
-void _SparseSet_remove(SparseSet *set, size_t id) {
+void SparseSet_remove(SparseSet *set, size_t id) {
     TODO_("Implement");
 }
 
-void _SparseSet_remove_keepOrder(SparseSet *set, size_t id) {
+void SparseSet_remove_keepOrder(SparseSet *set, size_t id) {
     if (id >= set->indices.capacity) ERROR_("Index %llu out of bounds for size %llu", id, set->indices.capacity);
     if (set->indices.toData[id] == -1) ERROR_("Id %llu already freed", id);
 

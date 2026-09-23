@@ -17,6 +17,7 @@ typedef struct {
     GuiTask func;
     void *userdata;
     bool isBlocked;
+    bool needsFree;
 } Task;
 
 void pushTask(GuiTask gt, void* data);

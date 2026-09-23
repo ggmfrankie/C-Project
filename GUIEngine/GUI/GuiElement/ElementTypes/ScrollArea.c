@@ -59,6 +59,7 @@ ElementHandle _ScrollArea_new(ScrollAreaSettings settings, ...) {
     });
 
     const ElementHandle frame = Element_new((ElementSettings){
+        .name = settings.name,
         .minWidth = settings.width,
         .minHeight = settings.height,
         .useClipping = true,

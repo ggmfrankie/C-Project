@@ -293,6 +293,7 @@ void strClear(Str s) {
 }
 
 void strFree(Str* s) {
+    if (*s == nullptr) return;
     strAssert(*s);
     free(strGetHead(*s));
     *s = nullptr;

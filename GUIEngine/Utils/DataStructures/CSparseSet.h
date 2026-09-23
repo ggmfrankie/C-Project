@@ -24,8 +24,8 @@ SparseSet _SparseSet_new(size_t valueSize, size_t capacity);
 void SparseSet_delete(SparseSet* set);
 
 ssize_t _SparseSet_add(SparseSet *set, const void *value);
-void _SparseSet_remove(SparseSet* set, size_t id);
-void _SparseSet_remove_keepOrder(SparseSet* set, size_t id);
+void SparseSet_remove(SparseSet* set, size_t id);
+void SparseSet_remove_keepOrder(SparseSet* set, size_t id);
 
 void* _SparseSet_get(const SparseSet* set, size_t id);
 
@@ -43,6 +43,3 @@ void* _SparseSet_get(const SparseSet* set, size_t id);
     _SparseSet_typeCheck(set, type);\
     (type*)_SparseSet_get(set, id);\
 })
-
-#define SparseSet_remove(set, id) _SparseSet_remove(set, id)
-#define SparseSet_remove_keepOrder(set, id) _SparseSet_remove_keepOrder(set, id)

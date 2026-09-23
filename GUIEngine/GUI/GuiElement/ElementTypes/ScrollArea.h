@@ -6,6 +6,7 @@
 #include "GUI/GuiElement/GuiElement.h"
 
 typedef struct {
+    const char* name;
     Vec2f pos;
     float width;
     float height;

@@ -405,17 +405,17 @@ static void joinGame(const char* ip) {
 #endif
 
 static void startChessGameTask(void*) {
-    Element* mainMenu = Element_getElement_ptr("start screen");
-    Element* chessBoard = Element_getElement_ptr("game board");
-    Element_setActive_ptr(mainMenu, false);
-    Element_setActive_ptr(chessBoard, true);
+    ElementHandle mainMenu = Element_getElement("start screen");
+    ElementHandle chessBoard = Element_getElement("game board");
+    Element_setActive(mainMenu, false);
+    Element_setActive(chessBoard, true);
 }
 
 static void showWinnerScreen(const bool winner) {
-    Element* endScreen = Element_getElement_ptr("end screen");
-    Element_setActive_ptr(endScreen, true);
-    Element* colorDisplay = Element_getElement_ptr("color display");
-    Element_setColor_ptr(colorDisplay, winner ? COLOR_WHITE : COLOR_GRAY);
+    ElementHandle endScreen = Element_getElement("end screen");
+    Element_setActive(endScreen, true);
+    ElementHandle colorDisplay = Element_getElement("color display");
+    Element_setColor(colorDisplay, winner ? COLOR_WHITE : COLOR_GRAY);
     Element_setText(colorDisplay, winner ? "White won" : "Black won");
 }
 
@@ -556,7 +556,7 @@ static void resetBoard(void*) {
     setUpPieces();
     unmarkAll(0,0,0,0);
 
-    Element_setActive_ptr(Element_getElement_ptr("end screen"), false);
+    Element_setActive(Element_getElement("end screen"), false);
 
     syncGui();
 }
@@ -674,7 +674,7 @@ static void syncGui() {
             const Vec3f d = Element_get(element->parentElement)->visuals.defaultColor;
             const Vec3f defaultColor = {d.x,d.y,d.z};
             const Vec3f color = board[i][ii].isMarked ? Vec3f_Add(COLOR_DARKYELLOW, Vec3f_Mul(defaultColor, 0.2f)) : defaultColor;
-            Element_setColor_ptr(Element_get(element->parentElement), color);
+            Element_setColor(element->parentElement, color);
         }
     }
 }

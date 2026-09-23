@@ -68,7 +68,7 @@ void TextField_popChar(Element* self) {
 
     const int index = data->cursor.pos.index-1;
     strPopAt(&data->sText, index);
-    Element_setText(self, data->sText);
+    Element_setText_ptr(self, data->sText);
 
     TextField_moveCursorTo(self, index);
 }
@@ -82,7 +82,7 @@ void TextField_insertCharAtCursor(Element* self, char c) {
     TextFieldData* tfd = self->elementData.ptr;
 
     strAppendAt(&tfd->sText, c, tfd->cursor.pos.index);
-    Element_setText(self, tfd->sText);
+    Element_setText_ptr(self, tfd->sText);
     TextField_moveCursorBy(self, +1);
 }
 
@@ -158,7 +158,7 @@ bool TextField_runTask(Element *element) {
     newBuffer[len] = '\0';
 
     strClear(data->sText);
-    Element_setText(element,"");
+    Element_setText_ptr(element,"");
     TextField_moveCursorTo(element, 0);
 
     if (element->task.func && !element->task.isBlocked) {

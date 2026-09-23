@@ -58,7 +58,7 @@ typedef struct ElementHandle {
 } ElementHandle;
 
 typedef struct Element {
-    char* name;
+    const char* name;
     ElementType type;
 
     struct {
@@ -144,7 +144,7 @@ typedef struct Element {
 
 
 typedef struct ElementSettings {
-    char* name;
+    const char* name;
     Vec2f pos;
     PositionMode posMode;
     LayoutDirection layoutDirection;
@@ -193,7 +193,7 @@ ElementHandle Element_addChildElements(Element *parent, ...);
 ElementHandle Element_addChildElements_vaList(ElementHandle parentHandle, va_list args);
 
 Element* Element_get(ElementHandle handle);
-void Element_delete(ElementHandle handle);
+void Element_delete(ElementHandle selfHandle);
 
 ElementHandle addChildrenAsGrid(ElementSettings parentData, ElementSettings es, int numX, int numY);
 ElementHandle addChildrenAsGridWithGenerator(ElementSettings parentData, ElementSettings es, int numX, int numY, ElementHandle (*generateElement)(int row, int col, ElementSettings));
@@ -202,13 +202,14 @@ void Element_setOnClickCallback(Element* element, bool (*onClick)(Element* eleme
 void Element_setOnHoverCallback(Element* element, bool (*onHover)(Element* element));
 void Element_setBoundingBox(Element* element, bool (*isMouseOver)(const Element *element, Vec2f mousePos));
 
-Element *Element_getElement_ptr(const char *name);
-void Element_setText(Element* element, const char* text);
-void Element_setTextF(Element* element, const char* fmt, ...);
+ElementHandle Element_getElement(const char *name);
+void Element_setText_ptr(Element* self, const char* text);
+void Element_setText(ElementHandle selfHandle, const char* text);
+void Element_setTextF(ElementHandle selfHandle, const char* fmt, ...);
 void Element_setText_va(Element* element, const char* fmt, va_list args);
-void Element_setActive_ptr(Element* element, bool b);
-void Element_toggleVisible_ptr(Element* element);
-void Element_setColor_ptr(Element* element, Vec3f color);
+void Element_setActive(ElementHandle selfHandle, bool b);
+void Element_toggleVisible(ElementHandle selfHandle);
+void Element_setColor(ElementHandle selfHandle, Vec3f color);
 
 void Element_printDebug(const Element* element);
 

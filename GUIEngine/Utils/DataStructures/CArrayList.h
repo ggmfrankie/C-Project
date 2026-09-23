@@ -50,10 +50,9 @@ void _arrGrowIfNeededImpl(void **array, size_t typeSize);
     (array)[--_arrGetHead(array)->size];\
 })
 
-#define arrErase(array, index, destructor) do {\
-    if (index >= _arrGetHead(array)->size) ERROR_("Index %llu out of Bounds for Array with size %llu", index, _arrGetHead(array)->size)\
-    if (destructor) destructor(&array[index]);\
-    _arrErase(array, sizeof(*array), index);\
+#define arrErase(array, index) do {\
+    if (index >= _arrGetHead(array)->size) ERROR_("Index %llu out of Bounds for Array with size %llu", (uint64_t)(index), _arrGetHead(array)->size);\
+    _arrErase((void**)&(array), sizeof(*array), index);\
 } while(0)
 
 /**
@@ -101,7 +100,7 @@ void _arrGrowIfNeededImpl(void **array, size_t typeSize);
  * @param array - the array being iterated over
  * @warning break does not work, use goto
  */
-#define arrEachIdx(item, index, array) (size_t (index) = 0, _end = arrLen(array); (index) < _end; ++(index)) \
+#define arrEachIdx(item, index, array) (size_t index = 0, _end = arrLen(array); (index) < _end; ++(index)) \
               for (typeof(*(array))* (item) = &(array)[index]; (item); (item) = nullptr)
 
 #define arrEachRev(item, array) (typeof(*(array))* item = (array) + arrLen(array), *_end = (array); (item)-- != _end;)
@@ -118,14 +117,12 @@ for arrEach(item, array) {\
 CONCAT(_local, __LINE__);\
 })
 
-#define arrContains(array, item) ({\
-    bool CONCAT(_local, __LINE__) = false;\
-    for_eachArr(value, array, {\
-        if (*value == item) {\
-            CONCAT(_local, __LINE__) = true;\
+#define arrRemoveIf(element, array, ...)\
+do {\
+    for arrEachIdx(element, CONCAT(_localIdx, __LINE__), array) {\
+        if (__VA_ARGS__) {\
+            arrErase(array, CONCAT(_localIdx, __LINE__));\
             break;\
         }\
-    });\
-    CONCAT(_local, __LINE__);\
-})
-
+    }\
+} while (0)
