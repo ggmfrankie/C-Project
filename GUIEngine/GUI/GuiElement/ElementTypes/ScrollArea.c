@@ -83,7 +83,7 @@ ElementHandle _ScrollArea_new(ScrollAreaSettings settings, ...) {
     data->scrollbar = scrollbar;
 
     scrollArea->elementData.ptr = data;
-    scrollArea->elementData.needsFree = true;
+    scrollArea->elementData.destructor = free;
 
     va_list args;
     va_start(args, settings);

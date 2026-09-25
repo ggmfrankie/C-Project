@@ -135,7 +135,7 @@ typedef struct Element {
 
     struct {
         void* ptr;
-        bool needsFree;
+        void (*destructor)(void* data);
     } elementData;
 
     PositionMode positionMode;
@@ -183,7 +183,10 @@ typedef struct ElementSettings {
     bool noLayoutContributionVertical;
     bool useClipping;
 
-    void* elementData;
+    struct {
+        void* ptr;
+        void (*destructor)(void* data);
+    } elementData;
 
 } ElementSettings;
 
@@ -219,4 +222,4 @@ ElementHandle createElement(ElementSettings es);
 ElementHandle _Element_new(ElementSettings es, ...);
 
 #define Element_new(...) _Element_new(__VA_ARGS__, (ElementHandle){-1})
-#define addChildElements(...) Element_addChildElements(__VA_ARGS__, (ElementHandle){-1})
+#define Element_addChildren(...) Element_addChildElements(__VA_ARGS__, (ElementHandle){-1})

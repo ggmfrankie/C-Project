@@ -299,6 +299,12 @@ static Element* focusedElement = nullptr;
 static Element* mouseCapturedElement = nullptr;
 static bool dragging = false;
 
+void Engine_invalidate() {
+    focusedElement = nullptr;
+    mouseCapturedElement = nullptr;
+    dragging = false;
+}
+
 static bool Engine_handleDragElement(const GuiState *renderer) {
     if (!mouseCapturedElement) return false;
     if (!mouseCapturedElement->callbacks.requestMove) return false;

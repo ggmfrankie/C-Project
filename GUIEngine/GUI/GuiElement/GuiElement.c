@@ -114,7 +114,7 @@ static void Element_deleteRec(ElementHandle selfHandle) {
 
     Element* element = Element_get(selfHandle);
 
-    if (element->elementData.ptr && element->elementData.needsFree) free(element->elementData.ptr);
+    if (element->elementData.ptr && element->elementData.destructor) element->elementData.destructor(element->elementData.ptr);
     if (element->task.userdata && element->task.needsFree) free(element->task.userdata);
     if (element->textElement.sText) strFree(&element->textElement.sText);
 
@@ -125,7 +125,10 @@ static void Element_deleteRec(ElementHandle selfHandle) {
     SparseSet_remove_keepOrder(&gElements, selfHandle.ID);
 }
 
+void Engine_invalidate();
+
 void Element_delete(ElementHandle selfHandle) {
+    Engine_invalidate();
     // removes itself from the parent element
     bool found = false;
     Element* parent = Element_get(Element_get(selfHandle)->parentElement);
@@ -233,7 +236,10 @@ ElementHandle createElement(ElementSettings es) {
     lastElement->name = es.name;
     lastElement->positionMode = es.posMode;
     lastElement->childGap = es.childGap;
-    lastElement->elementData.ptr = es.elementData;
+
+    lastElement->elementData.ptr = es.elementData.ptr;
+    lastElement->elementData.destructor = es.elementData.destructor;
+
     lastElement->layoutDirection = es.layoutDirection;
     lastElement->callbacks.whileSelected = es.whileSelected;
     lastElement->callbacks.onUpdate = es.onUpdate;
@@ -320,7 +326,7 @@ ElementHandle addChildrenAsGridWithGenerator(ElementSettings parentData, Element
         for (int ii = 0; ii < numY; ii++) {
             es.pos.x = (parentData.childGap + childWidth) * i;
             es.pos.y = (parentData.childGap + childHeight) * ii;
-            addChildElements(parent, generateElement(i, ii, es));
+            Element_addChildren(parent, generateElement(i, ii, es));
         }
     }
     return parentHandle;

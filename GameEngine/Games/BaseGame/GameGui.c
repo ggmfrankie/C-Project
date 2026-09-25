@@ -25,7 +25,7 @@ static void quitTask(void*) {
 }
 
 static void generateDebugGui(Element* guiRoot) {
-    addChildElements(guiRoot,
+    Element_addChildren(guiRoot,
             Element_new((ElementSettings){
                 .minHeight = 20,
                 .maxHeight = true,
@@ -53,7 +53,7 @@ static void generateMainMenuGui(Element* guiRoot) {
 
     const Task runCommand = {Engine_runCommand};
 
-    addChildElements(guiRoot,
+    Element_addChildren(guiRoot,
         Element_new((ElementSettings){
             .name = "Home Screen",
             .pos = {0, 0},
@@ -154,7 +154,7 @@ static ElementHandle TestElement() {
 }
 
 static void generateTestGui(Element* guiRoot) {
-    addChildElements(guiRoot,
+    Element_addChildren(guiRoot,
         Element_new((ElementSettings){
             .color = GUI_COLOR_DARKGRAY2,
             .pos = {400, 400},

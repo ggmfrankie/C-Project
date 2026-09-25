@@ -6,7 +6,7 @@
 #include "GUI/GuiElement/GuiElement.h"
 
 void generateGame2DGui(Element *guiRoot) {
-    addChildElements(guiRoot,
+    Element_addChildren(guiRoot,
             Element_new((ElementSettings){
                 .text = "Heloowow",
                 .padding = {4,4,4,4},

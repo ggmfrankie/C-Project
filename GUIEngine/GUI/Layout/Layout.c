@@ -48,7 +48,6 @@ static void clearCache(Element* self) {
 }
 
 static Vec2f calculateTextSize(const Element* self) {
-    //TODO fix incorrect height for letters like 'g'
     if (self->textElement.hasText) {
         return Text_measureElementText(&self->textElement);
     }

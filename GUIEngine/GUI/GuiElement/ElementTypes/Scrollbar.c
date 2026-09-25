@@ -51,14 +51,14 @@ ElementHandle Scrollbar_new(ScrollbarSettings settings) {
     Element* slider = Element_get(sliderHandle);
     slider->type = ELEMENT_TYPE_SCROLLBAR_SLIDER;
     slider->elementData.ptr = data;
-    slider->elementData.needsFree = false;
+    slider->elementData.destructor = nullptr;
 
     slider->callbacks.requestMove = Scrollbar_handleDragging;
 
     Element* rail = Element_get(railHandle);
     rail->type = ELEMENT_TYPE_SCROLLBAR_RAIL;
     rail->elementData.ptr = data;
-    rail->elementData.needsFree = true;
+    rail->elementData.destructor = free;
     rail->callbacks.onLayoutUpdate = Scrollbar_updateSlider;
 
     return railHandle;

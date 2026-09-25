@@ -8,6 +8,7 @@
 #include "GuiTypes.h"
 #include "Drawing/Shader/ComputeShader.h"
 #include "Drawing/Shader/Shader.h"
+#include "Drawing/Texture/Texture.h"
 #include "GuiElement/GuiElement.h"
 
 typedef struct GuiState {

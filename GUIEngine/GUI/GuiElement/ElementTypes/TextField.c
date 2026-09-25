@@ -105,6 +105,12 @@ static void TextField_setClosestCursorPos(const Element* self, float pos) {
     TextField_moveCursorTo(self, index);
 }
 
+static void TextField_freeData(void* data) {
+    TextFieldData* textFieldData = data;
+    strFree(&textFieldData->sText);
+    free(data);
+}
+
 static bool TextField_onClick(Element *self) {
     if(self->type != ELEMENT_TYPE_TEXTFIELD) return false;
 
@@ -128,7 +134,7 @@ ElementHandle TextField_new(const ElementSettings elementSettings, bool (*onEnte
         (ElementSettings){
             .minWidth = elementSettings.minWidth,
             .minHeight = elementSettings.minHeight,
-            .elementData = textData,
+            .elementData = {.ptr = textData, .destructor = TextField_freeData},
             .color = v_mul(elementSettings.color, 0.8f),
             .padding = {5,5,5,5},
             .onClick = TextField_onClick,
@@ -142,14 +148,14 @@ ElementHandle TextField_new(const ElementSettings elementSettings, bool (*onEnte
     textField->type = ELEMENT_TYPE_TEXTFIELD;
     textField->dims.height = Text_getMaxCharacterHeight(&textField->textElement);
 
-    addChildElements(Element_get(element), textFieldHandle);
+    Element_addChildren(Element_get(element), textFieldHandle);
 
     return element;
 }
 
 bool TextField_runTask(Element *element) {
     if(element->type != ELEMENT_TYPE_TEXTFIELD) return false;
-    TextFieldData* data = element->elementData.ptr;
+    const TextFieldData* data = element->elementData.ptr;
     if (strIsEmpty(data->sText)) return false;
 
     const size_t len = strLen(data->sText);

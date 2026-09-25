@@ -735,11 +735,11 @@ static ElementHandle createChessSquares(const int row, const int col, ElementSet
     const ElementHandle piece  = createElement(pieceDisplaySettings);
 
     pieceSlots[col][row] = piece;
-    return addChildElements(Element_get(square), piece);
+    return Element_addChildren(Element_get(square), piece);
 }
 
 static void createChessBoard(Element* root) {
-    addChildElements(root,
+    Element_addChildren(root,
             Element_new((ElementSettings){
                 .color = COOL_COLOR,
                 .pos = {0,0},
@@ -848,7 +848,7 @@ static void createChessBoard(Element* root) {
 }
 
 static void createStartScreen(Element* root) {
-    addChildElements(root,
+    Element_addChildren(root,
             Element_new((ElementSettings){
                 .color = COOL_COLOR,
                 .posMode = POS_RELATIVE,
@@ -897,7 +897,7 @@ static void createStartScreen(Element* root) {
 }
 
 static void createEndScreen(Element* root) {
-    addChildElements(root,
+    Element_addChildren(root,
             Element_new((ElementSettings){
                 .color = COOL_COLOR,
                 .posMode = POS_RELATIVE,

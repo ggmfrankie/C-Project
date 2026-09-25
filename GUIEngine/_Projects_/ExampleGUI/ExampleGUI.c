@@ -31,6 +31,7 @@ static ElementHandle TestElement2() {
         .minWidth = 200,
         .maxWidth = 200,
         .minHeight = 10,
+        .onUpdate = Text_reloadTextQuads,
         .color = GUI_COLOR_DARKGRAY3,
         .text = "Dieser Text dürfte zu lang sein für das element",
         .textColor = GUI_COLOR_LIGHTGRAY3,
@@ -111,7 +112,7 @@ static ElementHandle teste() {
 }
 
 void ExampleGui_generate_1(Element* root) {
-    addChildElements(root,
+    Element_addChildren(root,
         Element_new((ElementSettings){
             .color = GUI_COLOR_DARKGRAY1,
             .grow = true,
@@ -148,7 +149,7 @@ static ElementHandle createColoredSquares(const int row, const int col, ElementS
 }
 
 void ExampleGui_generate_2(Element* root) {
-    addChildElements(root,
+    Element_addChildren(root,
         Element_new((ElementSettings){
             .color = GUI_COLOR_DARKGRAY1,
             .grow = true,

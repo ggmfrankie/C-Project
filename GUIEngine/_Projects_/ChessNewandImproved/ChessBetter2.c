@@ -329,7 +329,7 @@ static ElementHandle createChessSquares(const int row, const int col, ElementSet
     const ElementHandle square = createElement(es);
     const ElementHandle piece  = createElement(pieceDisplaySettings);
 
-    return addChildElements(Element_get(square), piece);
+    return Element_addChildren(Element_get(square), piece);
 }
 
 void chess_createChessBoard(Element* element) {
