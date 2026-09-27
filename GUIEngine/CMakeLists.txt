@@ -97,6 +97,8 @@ add_library(GUI STATIC
         Utils/Json/CJson.h
         Utils/DataStructures/CString.c
         Utils/DataStructures/CString.h
+        Utils/DataStructures/CHashTable.c
+        Utils/DataStructures/CHashTable.h
 )
 
 set_target_properties(GUI PROPERTIES LINKER_LANGUAGE C)

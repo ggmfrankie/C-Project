@@ -17,6 +17,12 @@
 static SparseSet gElements;
 static ElementHandle* gmElements;
 
+bool Element_isNullHandle(ElementHandle handle) {
+    const auto null = ELEMENT_HANDLE_NULL;
+
+    return handle.ID == null.ID;
+}
+
 void Element_init() {
     Log_info("Initializing element storage");
     Log_debug("SparseSet capacity: 512");
@@ -123,17 +129,19 @@ static void Element_deleteRec(ElementHandle selfHandle) {
     arrFree(element->layoutCache.aLines);
 
     SparseSet_remove_keepOrder(&gElements, selfHandle.ID);
+    Log_debug("Deleting element");
 }
 
 void Engine_invalidate();
 
 void Element_delete(ElementHandle selfHandle) {
     Engine_invalidate();
+
     // removes itself from the parent element
     bool found = false;
     Element* parent = Element_get(Element_get(selfHandle)->parentElement);
     arrRemoveIf(flowElement, parent->aFlowElements, ({found = flowElement->ID == selfHandle.ID;}));
-    if (!found) arrRemoveIf(flowElement, parent->aFlowElements, ({flowElement->ID == selfHandle.ID;}));
+    if (!found) arrRemoveIf(flowElement, parent->aStaticElements, ({flowElement->ID == selfHandle.ID;}));
 
     Element_deleteRec(selfHandle);
 }
@@ -202,8 +210,9 @@ void Element_setColor(ElementHandle selfHandle, const Vec3f color) {
 
 ElementHandle Element_getElement(const char *name) {
     assert(name != nullptr);
-    const ElementHandle out = *mapGet(gmElements, name);
-    return out;
+    const ElementHandle* found = mapGet(gmElements, name);
+    if (!found) return ELEMENT_HANDLE_NULL;
+    return *found;
 }
 
 static bool Element_isQuadBB(const Element *element, Vec2f mousePos) {

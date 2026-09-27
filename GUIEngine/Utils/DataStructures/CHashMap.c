@@ -75,7 +75,6 @@ void* _mapGet(void* map, size_t typeSize, const char* key) {
         if (slot >= end) slot = map;
     }
 
-    //WARNING_("Key is not inside the hashmap");
     return nullptr;
 }
 

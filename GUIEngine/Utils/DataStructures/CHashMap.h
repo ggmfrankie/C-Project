@@ -9,10 +9,12 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+
 typedef struct {
     size_t size;
     size_t capacity;
 } _Map_Header_;
+
 
 void _mapNew(void** map, size_t typeSize, size_t capacity);
 void _mapResize(void** map, size_t typeSize, size_t newCapacity);
@@ -52,3 +54,5 @@ void* _mapGetEmptySlotImpl(void* map, size_t typeSize, const char* key);
             _mapGetHead(map)->size++;\
         }\
     } while (0)
+
+

@@ -41,8 +41,16 @@ static ElementHandle TestElement2() {
     });
 }
 
-static void deleteElement(void*) {
+static bool deleteElement(Element*) {
     Element_delete(Element_getElement("remove"));
+    return true;
+}
+
+static bool addNewElement(Element* self) {
+    Element_addChildren(self,
+        TestElement2()
+    );
+    return false;
 }
 
 static ElementHandle TestScrollArea() {
@@ -85,8 +93,12 @@ static ElementHandle TestScrollArea() {
                     Element_new((ElementSettings){
                         .color = GUI_COLOR_AZURE,
                         .text = "Press Me!",
-                        .onClick = runTaskFun,
-                        .task = {deleteElement}
+                        .onClick = deleteElement
+                    }),
+                    Element_new((ElementSettings){
+                        .color = GUI_COLOR_AZURE,
+                        .text = "Press Me TOoo!",
+                        .onClick = addNewElement
                     })
                 )
             );

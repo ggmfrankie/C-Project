@@ -57,6 +57,10 @@ typedef struct ElementHandle {
     ssize_t ID;
 } ElementHandle;
 
+#define ELEMENT_HANDLE_NULL (ElementHandle){.ID = -1}
+
+bool Element_isNullHandle(ElementHandle handle);
+
 typedef struct Element {
     const char* name;
     ElementType type;

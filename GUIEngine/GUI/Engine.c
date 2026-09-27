@@ -234,7 +234,9 @@ bool gui_getActive(const char* name) {
 
 void gui_delete(const char* name) {
     Thread_Locked(
-        Element_delete(Element_getElement(name));
+        const ElementHandle found = Element_getElement(name);
+        if (Element_isNullHandle(found)) return;
+        Element_delete(found);
     )
 }
 

@@ -328,10 +328,7 @@ static bool doesMoveCauseCheck(const int row, const int column, const int pieceR
 
 void createChessGUI(Element* root) {
     chess_loadTextures();
-    createChessBoard(root);
     createStartScreen(root);
-
-    createEndScreen(root);
 }
 
 char *Chess_getBoardFEN() {
@@ -404,16 +401,16 @@ static void joinGame(const char* ip) {
 }
 #endif
 
-static void startChessGameTask(void*) {
+static bool startChessGameTask(Element*) {
     ElementHandle mainMenu = Element_getElement("start screen");
     ElementHandle chessBoard = Element_getElement("game board");
     Element_setActive(mainMenu, false);
     Element_setActive(chessBoard, true);
+    return true;
 }
 
 static void showWinnerScreen(const bool winner) {
-    ElementHandle endScreen = Element_getElement("end screen");
-    Element_setActive(endScreen, true);
+    gui_delete("end screen");
     ElementHandle colorDisplay = Element_getElement("color display");
     Element_setColor(colorDisplay, winner ? COLOR_WHITE : COLOR_GRAY);
     Element_setText(colorDisplay, winner ? "White won" : "Black won");
@@ -555,8 +552,6 @@ static void resetBoard(void*) {
     whiteCanCastle = true;
     setUpPieces();
     unmarkAll(0,0,0,0);
-
-    Element_setActive(Element_getElement("end screen"), false);
 
     syncGui();
 }
@@ -715,9 +710,17 @@ static void chess_loadTextures() {
     );
 }
 
-static void closeGame(void*) {
-    gui_setActive("game board", false);
+static bool createGame(Element* self) {
+    createChessBoard(self->elementData.ptr);
+    gui_setActive("start screen", false);
+    return false;
+}
+
+static bool closeGame(Element*) {
     resetBoard(nullptr);
+    gui_delete("game board");
+    gui_setActive("start screen", true);
+    return false;
 }
 
 static ElementHandle createChessSquares(const int row, const int col, ElementSettings es) {
@@ -836,14 +839,12 @@ static void createChessBoard(Element* root) {
                         .padding = {10, 10, 10 ,10},
                         .canBeHovered = true,
                             .cornerRadius = 15,
-                        .onClick = runTaskFun,
-                        .flexGrow = 1.0f,
-                        .task = {closeGame},
+                        .onClick = closeGame,
+                        .flexGrow = 1.0f
                     })
                 )
             )
     );
-    gui_setActive("game board", false);
     // alt+shift = moveLine
 }
 
@@ -875,10 +876,10 @@ static void createStartScreen(Element* root) {
                         .padding = {10,10,10,10},
                         .text = "Start",
                         .canBeHovered = true,
-                        .onClick = runTaskFun,
-                        .task = startChessGameTask,
+                        .onClick = createGame,
                         .cornerRadius = 10,
-                        .flexGrow = .75
+                        .flexGrow = .75,
+                        .elementData = {.ptr = root}
                     }),
                     Element_new((ElementSettings){
                         .color = {.4, .0, .0},
@@ -893,7 +894,6 @@ static void createStartScreen(Element* root) {
                 )
             )
     );
-    gui_setActive("start screen", false);
 }
 
 static void createEndScreen(Element* root) {
