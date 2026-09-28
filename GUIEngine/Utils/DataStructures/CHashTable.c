@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "Utils/Macros/Defer.h"
 #include "Utils/Math/Vector.h"
 
 #define CHashTable_Seed 342341431UL
@@ -34,38 +35,33 @@ void _CHashTable_new(void **table, size_t typeSize, size_t capacity) {
     const size_t tableCapacity = capacity * 4;
     ssize_t* indices = malloc(sizeof(*indices) * tableCapacity);
     assert(indices != nullptr);
-    memset(indices, -1, tableCapacity);
+    memset(indices, -1, tableCapacity * sizeof(*indices));
 
     header->table.data = indices;
     header->table.capacity = tableCapacity;
 
     *table = (void*) (header+1);
-    puts("Initialized Table");
 }
 
-void* _CHashTable_get(void *hashTable, const byte *keyData, size_t keySize, size_t typeSize) {
+void* _CHashTable_get(void* hashTable, const byte* keyData, size_t keySize, size_t typeSize, bool isString) {
     assert(hashTable != nullptr && keyData != nullptr);
     const CHashTable_Header* header = _CHashTable_getHeader(hashTable);
 
     const ssize_t* indices = header->table.data;
     const size_t capacity = header->table.capacity;
 
-    const ssize_t hash = CHashTable_hash(keyData, keySize);
+    const ssize_t index = CHashTable_hash(keyData, keySize) % capacity;
 
-    printf("hash=%zu slot=%zu\n", hash, hash % capacity);
+    const ssize_t* it = indices + index;
 
-    const ssize_t* it = indices + hash % capacity;
-    printf(
-        "Slot: %p, index: %zd\n",
-        (void *) it,
-        *it
-    );
     const ssize_t* end = indices + capacity;
 
     while (*it != -1) {
         // Key at the iterator equals the provided key
-        void* slot = (byte*)hashTable + (*it) * typeSize;
-        if (memcmp(slot, keyData, keySize) == 0) return slot;
+        void* slot = (byte*)hashTable + ((*it) * typeSize);
+        if ((isString)
+            ? strcmp(*(char**)slot, (char*)keyData)  == 0
+            : memcmp(slot, keyData, keySize) == 0) return slot;
         ++it;
         // Wrap around at the end
         if(it == end) it = indices;
@@ -75,15 +71,12 @@ void* _CHashTable_get(void *hashTable, const byte *keyData, size_t keySize, size
 }
 
 ssize_t* _CHashTable_getFreeIndex(void* hashTable, const byte *keyData, size_t keySize) {
-    assert(hashTable != nullptr && data != nullptr && len != 0);
     const CHashTable_Header* header = _CHashTable_getHeader(hashTable);
 
     ssize_t* indices = header->table.data;
     const size_t capacity = header->table.capacity;
 
     const ssize_t hash = CHashTable_hash(keyData, keySize);
-
-    printf("hash=%zu slot=%zu\n", hash, hash % capacity);
 
     ssize_t* it = indices + hash  % capacity;
     const ssize_t* end = indices + capacity;
@@ -95,22 +88,17 @@ ssize_t* _CHashTable_getFreeIndex(void* hashTable, const byte *keyData, size_t k
         if(it == end) it = indices;
     }
 
-    printf(
-        "Free slot: %p, current value: %zd\n",
-        (void *) it,
-        *it
-    );
     return it;
 }
 
-void CHashTable_growIfNeeded(void **hashTable, uint32_t typeSize, uint32_t keySize, bool isString) {
+void _CHashTable_growIfNeeded(void **hashTable, uint32_t typeSize, uint32_t keySize, bool isString) {
     CHashTable_Header* header = _CHashTable_getHeader(*hashTable);
 
     if ((float)header->size / header->table.capacity > 0.75) {
         const size_t newCapacity = header->table.capacity *2;
 
-        ssize_t* newIndices = realloc(header->table.data, newCapacity);
-        memset(newIndices, -1, newCapacity);
+        ssize_t* newIndices = realloc(header->table.data, newCapacity * sizeof(*newIndices));
+        memset(newIndices, -1, newCapacity * sizeof(*newIndices));
         assert(newIndices != nullptr);
 
         header->table.data = newIndices;
@@ -124,7 +112,7 @@ void CHashTable_growIfNeeded(void **hashTable, uint32_t typeSize, uint32_t keySi
             ssize_t* it = newIndices + CHashTable_hash(actualKeyPtr, keySize) % newCapacity;
 
             for (const ssize_t* end = newIndices + newCapacity; *it == -1;) {
-                it = (it != end)? it : newIndices;
+                if (it == end) it = newIndices;
             }
 
             *it = i;
@@ -142,6 +130,11 @@ void CHashTable_growIfNeeded(void **hashTable, uint32_t typeSize, uint32_t keySi
     }
 }
 
+void _CHashTable_free(void **table) {
+    if (*table == nullptr) return;
+    free(_CHashTable_getHeader(*table));
+}
+
 void CHashTable_test() {
     typedef struct {
         Vec2f key;
@@ -150,17 +143,19 @@ void CHashTable_test() {
 
     typedef struct {
         const char* key;
-        int* value;
+        ElementKeyValue value;
     } AnotherTestStruct;
 
-    ElementKeyValue* table = {};
-    AnotherTestStruct* tanl = {};
+    //defer(defer_CHashTableFree) ElementKeyValue* table = {};
+    defer(defer_CHashTableFree) AnotherTestStruct* tanl = {};
 
-    CHashTable_insert(table, (Vec2f){3}, 43);
+    //CHashTable_insert(table, (Vec2f){3}, 43);
 
-    //CHashTable_insert(tanl, "Hassan", nullptr);
+    CHashTable_insert(tanl, "Hassan", ((ElementKeyValue){.key = (Vec2f){0.0, 1.69}}));
 
 
-    int value = CHashTable_get(table, (Vec2f){3})->value;
-    printf("value: %i\n", value);
+    //int value = CHashTable_get(table, (Vec2f){3})->value;
+    volatile auto value2 = CHashTable_get(tanl, "Hassan")->value.key;
+
+    printf("value: n");
 }

@@ -332,7 +332,9 @@ static ElementHandle createChessSquares(const int row, const int col, ElementSet
     return Element_addChildren(Element_get(square), piece);
 }
 
+
 void chess_createChessBoard(Element* element) {
+    [[maybe_unused]]
     ElementHandle board = addChildrenAsGridWithGenerator(
         (ElementSettings){
             .color = {0.5f, 0.0f, 0.3f},

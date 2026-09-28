@@ -10,6 +10,7 @@ typedef char* Str;
 void defer_closeFile(FILE** f);
 void defer_free(void* p);
 void defer_arrDelete(void* a);
+void defer_CHashTableFree(void* t);
 
 #define defer(func) __attribute__((cleanup(func)))
 

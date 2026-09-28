@@ -21,10 +21,3 @@ typedef struct {
 Arena Arena_create(size_t size);
 void Arena_free(Arena *arena);
 void* Arena_alloc(Arena *arena, size_t size);
-
-
-static ArenaFunctions Arenas = {
-    .create = Arena_create,
-    .alloc = Arena_alloc,
-    .free = Arena_free
-};

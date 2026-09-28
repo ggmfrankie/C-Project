@@ -129,12 +129,12 @@ static void Element_deleteRec(ElementHandle selfHandle) {
     arrFree(element->layoutCache.aLines);
 
     SparseSet_remove_keepOrder(&gElements, selfHandle.ID);
-    Log_debug("Deleting element");
 }
 
 void Engine_invalidate();
 
 void Element_delete(ElementHandle selfHandle) {
+    Log_debug("Deleting element and its children. TODO: Remove from name hashmap");
     Engine_invalidate();
 
     // removes itself from the parent element
@@ -162,8 +162,6 @@ void Element_setBoundingBox(Element* element, bool (*isMouseOver)(const Element 
 }
 
 void Element_setText_ptr(Element* self, const char* text) {
-    assert(element != nullptr);
-
     strClear(self->textElement.sText);
     strAppend_sprintf(&self->textElement.sText, text);
 
@@ -185,7 +183,6 @@ void Element_setText_va(Element* element, const char* fmt, va_list args) {
 }
 
 void Element_setTextF(ElementHandle selfHandle, const char* fmt, ...) {
-    assert(element != nullptr);
     va_list args;
     va_start(args, fmt);
     Element_setText_va(Element_get(selfHandle), fmt, args);
@@ -193,18 +190,15 @@ void Element_setTextF(ElementHandle selfHandle, const char* fmt, ...) {
 }
 
 void Element_setActive(ElementHandle selfHandle, const bool b) {
-    assert(element != nullptr);
     Element_get(selfHandle)->flags.isActive = b;
 }
 
 void Element_toggleVisible(ElementHandle selfHandle) {
-    assert(element != nullptr);
     Element* self = Element_get(selfHandle);
     self->flags.isActive = !self->flags.isActive;
 }
 
 void Element_setColor(ElementHandle selfHandle, const Vec3f color) {
-    assert(element != nullptr);
     Element_get(selfHandle)->visuals.color = color;
 }
 

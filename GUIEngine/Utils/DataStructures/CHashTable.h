@@ -42,16 +42,16 @@ typedef struct {
     )
 
 void _CHashTable_new(void** table, size_t typeSize, size_t capacity);
-
-void *_CHashTable_get(void *hashTable, const byte *keyData, size_t keySize, size_t typeSize);
+void *_CHashTable_get(void *hashTable, const byte *keyData, size_t keySize, size_t typeSize, bool isString);
 ssize_t* _CHashTable_getFreeIndex(void* hashTable, const byte* keyData, size_t keySize);
+void _CHashTable_growIfNeeded(void** hashTable, uint32_t typeSize, uint32_t keySize, bool isString);
 
 #define CHashTable_insert(table, key, value)\
 do {\
     if ((table) == nullptr) _CHashTable_new((void**)(&table), sizeof(*(table)), CHASH_TABLE_INIT_CAPACITY);\
     const size_t keySize = _CHashTable_getKeySize(key);\
 \
-    CHashTable_growIfNeeded((void**)(&table), sizeof(*(table)), keySize, _CHashTable_isString(key));\
+    _CHashTable_growIfNeeded((void**)(&table), sizeof(*(table)), keySize, _CHashTable_isString(key));\
 \
     const size_t index = _CHashTable_getHeader(table)->size++;\
     (table)[index] = (typeof(*(table))){key, value};\
@@ -61,8 +61,9 @@ do {\
     *_CHashTable_getFreeIndex((table), keyAddress, keySize) = index;\
 } while (0)
 
-#define CHashTable_get(table, key) ((typeof(table)) _CHashTable_get((table), _CHashTable_getKeyAddress(key), _CHashTable_getKeySize(key), sizeof(*(table))))
+#define CHashTable_get(table, key) ((typeof(table)) _CHashTable_get((table), _CHashTable_getKeyAddress(key), sizeof(key), sizeof(*(table)), _CHashTable_isString(key)))
 
-void CHashTable_growIfNeeded(void** hashTable, uint32_t typeSize, uint32_t keySize, bool isString);
+void _CHashTable_free(void** table);
+#define CHashTable_free(table) _CHashTable_free((void**)(&table))
 
 void CHashTable_test();

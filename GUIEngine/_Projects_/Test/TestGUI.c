@@ -8,5 +8,5 @@
 #include "../../GUI/GuiElement/ElementTypes/TextField.h"
 #include "../../GUI/GuiElement/CallbackHelper.h"
 
-void generateTestGUI(Element *guiRoot) {
+void generateTestGUI([[maybe_unused]] Element *guiRoot) {
 }

@@ -8,7 +8,7 @@
 #include "../DataStructures/CArrayList.h"
 #include "StringBuilder.h"
 
-static StringFunctions Strings = {
+[[maybe_unused]] static StringFunctions Strings = {
     .charAt = str_getCharAt,
     .combine = str_combine,
     .delete_ = str_delete,

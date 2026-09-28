@@ -26,7 +26,7 @@ void _mapResize(void** map, size_t typeSize, size_t newCapacity) {
 
     if (!newContent) ERROR_("HashMap resize failed");
 
-    int i = 0;
+    size_t i = 0;
     for (auto oldSlot = (byte*) *map; i < header->capacity; oldSlot += typeSize, ++i) {
         const char* _key_ = _mapKey(oldSlot);
         if (_key_ == nullptr) continue;

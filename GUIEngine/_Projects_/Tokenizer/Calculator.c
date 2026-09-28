@@ -238,6 +238,7 @@ static double evaluateExpression(const TokenStack* list) {
 #undef push
 #undef pop
 
+[[maybe_unused]]
 static void printTokens_List(const TokenList* list) {
     static char* mapping[] = {"operatorToken", "numberToken", "decNumberToken", "braceOpenToken", "braceCloseToken"};
     for (int i = 0; i < list->length; i++) {
@@ -249,6 +250,7 @@ static void printTokens_List(const TokenList* list) {
     }
 }
 
+[[maybe_unused]]
 static void printTokens_Stack(const TokenStack* stack) {
     static char* mapping[] = {"operatorToken", "numberToken", "decNumberToken", "braceOpenToken", "braceCloseToken"};
     for (int i = 0; i < stack->size; i++) {

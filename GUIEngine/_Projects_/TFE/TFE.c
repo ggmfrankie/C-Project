@@ -12,6 +12,7 @@
 
 void* game = nullptr;
 
+[[maybe_unused]]
 static void TFE_onKeyPress(int key, int scancode, int action, int mods) {
     puts("some key pressed");
 }

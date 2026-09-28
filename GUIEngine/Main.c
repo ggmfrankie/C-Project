@@ -11,7 +11,7 @@
 #include "Utils/DataStructures/CString.h"
 #include "_Projects_/Chess/ChessGame.h"
 #include "_Projects_/ExampleGUI/ExampleGUI.h"
-#if 1
+#if 0
 int main(){
     //Test_run();
 

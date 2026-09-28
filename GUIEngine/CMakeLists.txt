@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 4.0)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Og -g -pthread")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Og -g -pthread -Werror")
 
 set(CMAKE_C_STANDARD 23)
 set(CMAKE_C_STANDARD_REQUIRED ON)

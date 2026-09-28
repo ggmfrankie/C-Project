@@ -5,17 +5,22 @@
 #include "Defer.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "../DataStructures/CStr.h"
 #include "Utils/DataStructures/CArrayList.h"
+#include "Utils/DataStructures/CHashTable.h"
 
 void defer_closeFile(FILE** f) {
     if (*f) fclose(*f);
 }
 
 void defer_free(void* p) {
-    free(*(void**)p);
+    void* data = *(void**)p;
+    if (data) free(data);
 }
 
 void defer_arrDelete(void *a) {
-    arrFree(a);
+    arrFree(*(void**)a);
+}
+
+void defer_CHashTableFree(void *t) {
+    CHashTable_free(*(void**)t);
 }
