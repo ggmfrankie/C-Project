@@ -95,6 +95,7 @@ const char* strEnd(Str s);
 Str* cstrSplit(const char* s, char del);
 Str cstrConcat(const char* a, const char* b);
 void cstrbConcat(char* buff, size_t size, const char* a, const char* b);
+bool cstrEquals(const char* a, const char* b);
 
 #ifdef __cplusplus
 }

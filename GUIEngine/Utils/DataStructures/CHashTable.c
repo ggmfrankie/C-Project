@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "CStr.h"
 #include "Utils/Macros/Defer.h"
 #include "Utils/Math/Vector.h"
 
@@ -25,7 +26,7 @@ uint32_t CHashTable_hash(const byte* key, size_t len) {
     return h;
 }
 
-void _CHashTable_new(void **table, size_t typeSize, size_t capacity) {
+void _CHashTable_new(void* table[], size_t typeSize, size_t capacity) {
     CHashTable_Header* header = malloc(sizeof(CHashTable_Header) + typeSize * capacity);
     assert(header != nullptr);
 
@@ -60,7 +61,7 @@ void* _CHashTable_get(void* hashTable, const byte* keyData, size_t keySize, size
         // Key at the iterator equals the provided key
         void* slot = (byte*)hashTable + ((*it) * typeSize);
         if ((isString)
-            ? strcmp(*(char**)slot, (char*)keyData)  == 0
+            ? cstrEquals(*(char**)slot, (char*)keyData)
             : memcmp(slot, keyData, keySize) == 0) return slot;
         ++it;
         // Wrap around at the end
@@ -91,7 +92,7 @@ ssize_t* _CHashTable_getFreeIndex(void* hashTable, const byte *keyData, size_t k
     return it;
 }
 
-void _CHashTable_growIfNeeded(void **hashTable, uint32_t typeSize, uint32_t keySize, bool isString) {
+void _CHashTable_growIfNeeded(void* hashTable[], uint32_t typeSize, uint32_t keySize, bool isString) {
     CHashTable_Header* header = _CHashTable_getHeader(*hashTable);
 
     if ((float)header->size / header->table.capacity > 0.75) {
@@ -146,7 +147,7 @@ void CHashTable_test() {
         ElementKeyValue value;
     } AnotherTestStruct;
 
-    //defer(defer_CHashTableFree) ElementKeyValue* table = {};
+    defer(defer_CHashTableFree) ElementKeyValue* table = {};
     defer(defer_CHashTableFree) AnotherTestStruct* tanl = {};
 
     //CHashTable_insert(table, (Vec2f){3}, 43);
@@ -156,6 +157,10 @@ void CHashTable_test() {
 
     //int value = CHashTable_get(table, (Vec2f){3})->value;
     volatile auto value2 = CHashTable_get(tanl, "Hassan")->value.key;
+
+    for CHashTable_each(ach, tanl) {
+        printf("%s\n", ach->key);
+    }
 
     printf("value: n");
 }

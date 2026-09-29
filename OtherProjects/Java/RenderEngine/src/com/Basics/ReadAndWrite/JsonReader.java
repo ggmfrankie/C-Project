@@ -28,8 +28,6 @@ public class JsonReader {
         }
     }
 
-
-
     private JsonObject convertData(JsonObject object, String file){
         boolean inValue = false;
         boolean inKey = false;
@@ -124,7 +122,6 @@ public class JsonReader {
     }
 
     private String getObject(String s){
-        //System.out.println("String in the length calculator is: " + s);
         int countBracks = 0;
         for(int i = 0; i < s.length(); i++){
             char currentChar = s.charAt(i);

@@ -171,7 +171,7 @@ static void Test_arrayList() {
     int* array = nullptr;
 
     arrNew(array, 2);
-    TEST(_arrGetHead(array)->capacity == 2, "arrNew capacity expected 2, got %zu", _arrGetHead(array)->capacity);
+    TEST(_CArrayList_getHeader(array)->capacity == 2, "arrNew capacity expected 2, got %zu", _CArrayList_getHeader(array)->capacity);
     TEST(arrLen(array) == 0, "arrNew size expected 0, got %zu", arrLen(array));
 
     arrPush(array, 0);
@@ -183,7 +183,7 @@ static void Test_arrayList() {
     }
     TEST(arrLen(array) == 10, "arrLen expected 10 after pushes, got %zu", arrLen(array));
     TEST(*arrPeek(array) == 9, "arrGetLast expected 9 after pushes, got %d", *arrPeek(array));
-    TEST(_arrGetHead(array)->capacity >= 10, "capacity expected growth to >= 10, got %zu", _arrGetHead(array)->capacity);
+    TEST(_CArrayList_getHeader(array)->capacity >= 10, "capacity expected growth to >= 10, got %zu", _CArrayList_getHeader(array)->capacity);
 
     int a = arrPop(array);
     TEST(a == 9, "arrPop expected 9, got %d", a);
@@ -208,7 +208,7 @@ static void Test_arrayList() {
 
     Pair* pairs = nullptr;
     arrNew(pairs, 1);
-    TEST(_arrGetHead(pairs)->capacity == 1, "pair array capacity expected 1, got %zu", _arrGetHead(pairs)->capacity);
+    TEST(_CArrayList_getHeader(pairs)->capacity == 1, "pair array capacity expected 1, got %zu", _CArrayList_getHeader(pairs)->capacity);
 
     arrPush(pairs, ((Pair){.x = 1, .y = 2}));
     arrPush(pairs, ((Pair){.x = 3, .y = 4}));
@@ -221,8 +221,8 @@ static void Test_arrayList() {
     TEST(arrLen(pairs) == 1, "pair array length expected 1 after pop, got %zu", arrLen(pairs));
 
     arrClear(array);
-    TEST(_arrGetHead(array)->capacity >= 9, "capacity expected >= 9 after clear, got %zu", _arrGetHead(array)->capacity);
-    TEST(_arrGetHead(array)->size == 0, "size expected 0 after clear, got %zu", _arrGetHead(array)->size);
+    TEST(_CArrayList_getHeader(array)->capacity >= 9, "capacity expected >= 9 after clear, got %zu", _CArrayList_getHeader(array)->capacity);
+    TEST(_CArrayList_getHeader(array)->size == 0, "size expected 0 after clear, got %zu", _CArrayList_getHeader(array)->size);
     TEST(arrPeek(array) == nullptr, "arrTryGetLast on empty array should return nullptr");
 
     int* res = arrGet(array, 100);

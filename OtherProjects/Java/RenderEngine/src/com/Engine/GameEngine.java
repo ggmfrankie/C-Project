@@ -143,9 +143,9 @@ public class GameEngine implements Runnable{
     }
 
     public void saveAll(){
-        GUIJsonWriter GUIJsonWriter = new GUIJsonWriter("GuiLayout.json");
-        HashSet<BaseGuiComponent> guiComponents = guiRenderer.getGuiComponents();
-        for(BaseGuiComponent guiComponent : guiComponents){
+        var GUIJsonWriter = new GUIJsonWriter("GuiLayout.json");
+        var guiComponents = guiRenderer.getGuiComponents();
+        for(var guiComponent : guiComponents){
             GUIJsonWriter.addGuiComponent(guiComponent);
         }
         GUIJsonWriter.printToFile();

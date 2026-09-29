@@ -337,6 +337,12 @@ void cstrbConcat(char *buff, size_t size, const char *a, const char *b) {
     buff[total] = '\0';
 }
 
+bool cstrEquals(const char* a, const char* b) {
+    if (a == nullptr || b == nullptr) return false;
+    if (a == b) return true;
+    return strcmp(a, b) == 0;
+}
+
 #define content(a, b) assert(strcmp(a, b) == 0)
 #define length(s, size) assert(strLen(s) == size)
 static void _strTest() {

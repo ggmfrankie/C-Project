@@ -109,7 +109,7 @@ Element* Element_get(ElementHandle handle) {
 }
 
 static void Element_deleteRec(ElementHandle selfHandle) {
-    // first let children delete themselves
+    // First: let children delete themselves
 
     for arrEach(childHandle, Element_get(selfHandle)->aFlowElements) {
         Element_deleteRec(*childHandle);
@@ -120,6 +120,7 @@ static void Element_deleteRec(ElementHandle selfHandle) {
 
     Element* element = Element_get(selfHandle);
 
+    // Second: let parent delete all of its data
     if (element->elementData.ptr && element->elementData.destructor) element->elementData.destructor(element->elementData.ptr);
     if (element->task.userdata && element->task.needsFree) free(element->task.userdata);
     if (element->textElement.sText) strFree(&element->textElement.sText);
@@ -128,6 +129,7 @@ static void Element_deleteRec(ElementHandle selfHandle) {
     arrFree(element->aStaticElements);
     arrFree(element->layoutCache.aLines);
 
+    // Finally: remove parent form the elements
     SparseSet_remove_keepOrder(&gElements, selfHandle.ID);
 }
 
@@ -140,8 +142,8 @@ void Element_delete(ElementHandle selfHandle) {
     // removes itself from the parent element
     bool found = false;
     Element* parent = Element_get(Element_get(selfHandle)->parentElement);
-    arrRemoveIf(flowElement, parent->aFlowElements, ({found = flowElement->ID == selfHandle.ID;}));
-    if (!found) arrRemoveIf(flowElement, parent->aStaticElements, ({flowElement->ID == selfHandle.ID;}));
+    arrEraseIf(flowElement, parent->aFlowElements, ({found = flowElement->ID == selfHandle.ID;}));
+    if (!found) arrEraseIf(flowElement, parent->aStaticElements, ({flowElement->ID == selfHandle.ID;}));
 
     Element_deleteRec(selfHandle);
 }

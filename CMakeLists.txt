@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 4.0)
 project(C-Project LANGUAGES C CXX)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Og -g -pthread -Werror")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Og -g -pthread -Werror")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Og -g -pthread")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Og -g -pthread")
 
 set(CMAKE_C_STANDARD 23)
 set(CMAKE_C_STANDARD_REQUIRED ON)

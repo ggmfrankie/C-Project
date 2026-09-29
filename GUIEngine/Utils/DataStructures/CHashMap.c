@@ -5,6 +5,8 @@
 
 #include <assert.h>
 #include <string.h>
+
+#include "CStr.h"
 #include "Utils/Logging/Logging.h"
 
 void _mapNew(void** map, size_t typeSize, size_t capacity) {
@@ -70,7 +72,7 @@ void* _mapGet(void* map, size_t typeSize, const char* key) {
     const byte* end = (byte*)map + typeSize * capacity;
 
     while (_mapKey(slot) != nullptr) {
-        if (strcmp(_mapKey(slot), key) == 0) return slot + sizeof(char*);
+        if (cstrEquals(_mapKey(slot), key)) return slot + sizeof(char*);
         slot += typeSize;
         if (slot >= end) slot = map;
     }
@@ -101,7 +103,7 @@ void* _mapGetEmptySlotImpl(void* map, size_t typeSize, const char* key) {
     const byte* end = (byte*)map + typeSize * capacity;
 
     while (_mapKey(slot) != nullptr) {
-        if (strcmp(_mapKey(slot), key) == 0) return nullptr;
+        if (cstrEquals(_mapKey(slot), key)) return nullptr;
         slot += typeSize;
         if (slot >= end) slot = map;
     }

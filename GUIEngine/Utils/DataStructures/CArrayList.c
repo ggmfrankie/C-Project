@@ -9,7 +9,7 @@
 #include "Utils/Typedef.h"
 #include "Utils/Macros/Utils.h"
 
-void _arrNew(void** array, size_t typeSize, size_t capacity) {
+void _CArrayList_new(void** array, size_t typeSize, size_t capacity) {
     if(*array != nullptr) return;
 
     _Array_Header_* header = malloc(sizeof(_Array_Header_) + typeSize * capacity);
@@ -19,8 +19,8 @@ void _arrNew(void** array, size_t typeSize, size_t capacity) {
     *array = (void*) (header+1);
 }
 
-void _arrResize(void **array, size_t typeSize, size_t newCapacity) {
-    _Array_Header_* header = _arrGetHead(*array);
+void _CArrayList_resize(void **array, size_t typeSize, size_t newCapacity) {
+    _Array_Header_* header = _CArrayList_getHeader(*array);
     _Array_Header_* newHeader = realloc(header, sizeof(_Array_Header_) + typeSize * newCapacity);
 
     if (!newHeader) ERROR_("Failed to realloc ArrayList");
@@ -30,33 +30,33 @@ void _arrResize(void **array, size_t typeSize, size_t newCapacity) {
     *array = (void *) (newHeader + 1);
 }
 
-void _arrCopy(void** to, void** from, size_t typeSize) {
+void _CArrayList_copy(void** to, void** from, size_t typeSize) {
     if (*from == nullptr) return;
-    if (*to == nullptr) _arrNew(to, typeSize, ArrayInitCapacity);
+    if (*to == nullptr) _CArrayList_new(to, typeSize, ArrayInitCapacity);
 
-    _Array_Header_* toHeader = _arrGetHead(*to);
-    const _Array_Header_* fromHeader = _arrGetHead(*from);
+    _Array_Header_* toHeader = _CArrayList_getHeader(*to);
+    const _Array_Header_* fromHeader = _CArrayList_getHeader(*from);
 
     const size_t requiredCapacity = fromHeader->size;
-    if (toHeader->capacity < requiredCapacity) _arrResize(to, typeSize, requiredCapacity);
+    if (toHeader->capacity < requiredCapacity) _CArrayList_resize(to, typeSize, requiredCapacity);
 
     memcpy(toHeader, fromHeader, requiredCapacity * typeSize + sizeof(_Array_Header_));
 }
 
-void _arrErase(void** array, size_t typeSize, size_t index) {
+void _CArrayList_erase(void** array, size_t typeSize, size_t index) {
     byte* ptr = (byte*)*array + index * typeSize;
-    const size_t size = _arrGetHead(*array)->size;
-    const size_t capacity = _arrGetHead(*array)->capacity;
+    const size_t size = _CArrayList_getHeader(*array)->size;
+    const size_t capacity = _CArrayList_getHeader(*array)->capacity;
 
     memmove(ptr, ptr + typeSize, size - index - 1);
 
-    if (capacity > size * 2) _arrResize(array, typeSize, size);
+    if (capacity > size * 2) _CArrayList_resize(array, typeSize, size);
 
-    _arrGetHead(*array)->size--;
+    _CArrayList_getHeader(*array)->size--;
 }
 
-void _arrGrowIfNeededImpl(void **array, size_t typeSize) {
-    const _Array_Header_* header = _arrGetHead(*array);
+void _CArrayList_growIfNeededImpl(void **array, size_t typeSize) {
+    const _Array_Header_* header = _CArrayList_getHeader(*array);
     if (header->capacity > header->size) return;
-    _arrResize(array, typeSize, header->capacity * 2);
+    _CArrayList_resize(array, typeSize, header->capacity * 2);
 }

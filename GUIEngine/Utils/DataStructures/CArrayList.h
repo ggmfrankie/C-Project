@@ -11,48 +11,73 @@
 #include "../Logging/Logging.h"
 #include "../Macros/Macros.h"
 
+#define CARRAY_LIST_SHORT_NAMES
+#ifdef CARRAY_LIST_SHORT_NAMES
+
+#define arrNew     CArrayList_new
+#define arrClear   CArrayList_clear
+#define arrFree    CArrayList_free
+#define arrCopy    CArrayList_copy
+
+#define arrLen     CArrayList_len
+#define arrCap     CArrayList_cap
+#define arrIsEmpty CArrayList_isEmpty
+
+#define arrPush    CArrayList_push
+#define arrGet     CArrayList_get
+#define arrPeek    CArrayList_peek
+#define arrPop     CArrayList_pop
+#define arrErase   CArrayList_erase
+
+#define arrEach    CArrayList_each
+#define arrEachIdx CArrayList_eachIdx
+#define arrEachRev CArrayList_eachRev
+#define arrFindIf  CArrayList_findIf
+#define arrEraseIf CArrayList_eraseIf
+#endif
+
 typedef struct {
     size_t size;
     size_t capacity;
 } _Array_Header_;
 
-void _arrNew(void** array, size_t typeSize, size_t capacity);
-void _arrResize(void **array, size_t typeSize, size_t newCapacity);
-void _arrCopy(void** to, void** from, size_t typeSize);
-void _arrErase(void** array, size_t typeSize, size_t index);
+void _CArrayList_new(void** array, size_t typeSize, size_t capacity);
+void _CArrayList_resize(void **array, size_t typeSize, size_t newCapacity);
+void _CArrayList_copy(void** to, void** from, size_t typeSize);
+void _CArrayList_erase(void** array, size_t typeSize, size_t index);
 
-void _arrGrowIfNeededImpl(void **array, size_t typeSize);
+void _CArrayList_growIfNeededImpl(void **array, size_t typeSize);
 
 #define ArrayInitCapacity 16
 
-#define _arrGetHead(array) (&((_Array_Header_*)(array))[-1])
-#define _arrGrowIfNeeded(array) _arrGrowIfNeededImpl((void**)&(array), sizeof(*(array)))
+#define _CArrayList_getHeader(array) (&((_Array_Header_*)(array))[-1])
+#define _CArrayList_growIfNeeded(array) _CArrayList_growIfNeededImpl((void**)&(array), sizeof(*(array)))
 
-#define arrNew(array, size) _arrNew((void**)&(array), sizeof(*array), (size))
-#define arrLen(array) ((array) ? _arrGetHead(array)->size : 0)
-#define arrCap(array) ((array) ? _arrGetHead(array)->capacity : 0)
-#define arrIsEmpty(array) (arrLen(array) == 0)
+#define CArrayList_new(array, size) _CArrayList_new((void**)&(array), sizeof(*array), (size))
+#define CArrayList_len(array) ((array) ? _CArrayList_getHeader(array)->size : 0)
+#define CArrayList_cap(array) ((array) ? _CArrayList_getHeader(array)->capacity : 0)
+#define CArrayList_isEmpty(array) (CArrayList_len(array) == 0)
 
-#define arrPush(array, item) \
+#define CArrayList_push(array, item) \
     do {\
-        if((array) == nullptr) arrNew((array), ArrayInitCapacity);\
-        _arrGrowIfNeeded(array);\
-        (array)[_arrGetHead(array)->size++] = (item);\
+        if((array) == nullptr) CArrayList_new((array), ArrayInitCapacity);\
+        _CArrayList_growIfNeeded(array);\
+        (array)[_CArrayList_getHeader(array)->size++] = (item);\
     } while (0)
 
-#define arrGet(array, index) ((array) != nullptr && _arrGetHead(array)->size > (index)) ? &(array)[index] : nullptr
+#define CArrayList_get(array, index) ((array) != nullptr && _CArrayList_getHeader(array)->size > (index)) ? &(array)[index] : nullptr
 
-#define arrPeek(array) (arrIsEmpty(array) ? nullptr : &(array)[arrLen(array)-1])
+#define CArrayList_peek(array) (CArrayList_isEmpty(array) ? nullptr : &(array)[CArrayList_len(array)-1])
 
-#define arrPop(array)\
+#define CArrayList_pop(array)\
 ({\
-    if (arrIsEmpty(array)) ERROR_("Array does not contain any Items");\
-    (array)[--_arrGetHead(array)->size];\
+    if (CArrayList_isEmpty(array)) ERROR_("Array does not contain any Items");\
+    (array)[--_CArrayList_getHeader(array)->size];\
 })
 
-#define arrErase(array, index) do {\
-    if (index >= _arrGetHead(array)->size) ERROR_("Index %llu out of Bounds for Array with size %llu", (uint64_t)(index), _arrGetHead(array)->size);\
-    _arrErase((void**)&(array), sizeof(*array), index);\
+#define CArrayList_erase(array, index) do {\
+    if (index >= _CArrayList_getHeader(array)->size) ERROR_("Index %llu out of Bounds for Array with size %llu", (uint64_t)(index), _CArrayList_getHeader(array)->size);\
+    _CArrayList_erase((void**)&(array), sizeof(*array), index);\
 } while(0)
 
 /**
@@ -61,54 +86,54 @@ void _arrGrowIfNeededImpl(void **array, size_t typeSize);
  * @param from - the source array
  * @warning content inside 'to' is overridden
  */
-#define arrCopy(to, from) _arrCopy((void**)&to, (void**)&from, sizeof(*to))
+#define CArrayList_copy(to, from) _CArrayList_copy((void**)&to, (void**)&from, sizeof(*to))
 
 /**
  * @brief clears array (sets its size to 0, capacity remains)
  * @param array - the array being cleared
  */
-#define arrClear(array)\
+#define CArrayList_clear(array)\
     do {\
         if ((array) == nullptr) break;\
-        _arrGetHead(array)->size = 0;\
+        _CArrayList_getHeader(array)->size = 0;\
     } while (0)
 
 /**
  * @brief deletes array
  * @param array - the array being deleted
  */
-#define arrFree(array) \
+#define CArrayList_free(array) \
     do {\
         if((array) == nullptr) break;\
-        free(_arrGetHead(array));\
+        free(_CArrayList_getHeader(array));\
         (array) = nullptr;\
     } while (0)
 
-//@brief usage for arrEach(itemName, array) {...}
-#define arrEach_impl(_end, item, array) (typeof(*(array))* item = (array), *_end = (array) + arrLen(array); (item) != _end; ++(item))
+//@brief usage for CArrayList_each(itemName, array) {...}
+#define CArrayList_each_impl(_end, item, array) (typeof(*(array))* item = (array), *_end = (array) + CArrayList_len(array); (item) != _end; ++(item))
 /**
- * @brief usage for arrEach(item, array) {...}
+ * @brief usage for CArrayList_each(item, array) {...}
  * @param item - pointer to the current item in the array
  * @param array - the array being iterated over
  */
-#define arrEach(item, array) arrEach_impl(CONCAT(_end, __COUNTER__), item, array)
+#define CArrayList_each(item, array) CArrayList_each_impl(CONCAT(_end, __COUNTER__), item, array)
 
 /**
- * @brief usage for arrEachIdx(item, index, array) {...}
+ * @brief usage for CArrayList_eachIdx(item, index, array) {...}
  * @param item - pointer to the current item in the array
  * @param index - current index
  * @param array - the array being iterated over
  * @warning break does not work, use goto
  */
-#define arrEachIdx(item, index, array) (size_t index = 0, _end = arrLen(array); (index) < _end; ++(index)) \
+#define CArrayList_eachIdx(item, index, array) (size_t index = 0, _end = CArrayList_len(array); (index) < _end; ++(index)) \
               for (typeof(*(array))* (item) = &(array)[index]; (item); (item) = nullptr)
 
-#define arrEachRev(item, array) (typeof(*(array))* item = (array) + arrLen(array), *_end = (array); (item)-- != _end;)
+#define CArrayList_eachRev(item, array) (typeof(*(array))* item = (array) + CArrayList_len(array), *_end = (array); (item)-- != _end;)
 
-#define arrFindIf(item, array, ...)\
+#define CArrayList_findIf(item, array, ...)\
 ({\
 typeof(array) CONCAT(_local, __LINE__) = nullptr;\
-for arrEach(item, array) {\
+for CArrayList_each(item, array) {\
     if (__VA_ARGS__) {\
         CONCAT(_local, __LINE__) = item;\
         break;\
@@ -117,11 +142,11 @@ for arrEach(item, array) {\
 CONCAT(_local, __LINE__);\
 })
 
-#define arrRemoveIf(element, array, ...)\
+#define CArrayList_eraseIf(item, array, ...)\
 do {\
-    for arrEachIdx(element, CONCAT(_localIdx, __LINE__), array) {\
+    for CArrayList_eachIdx(item, CONCAT(_localIdx, __LINE__), array) {\
         if (__VA_ARGS__) {\
-            arrErase(array, CONCAT(_localIdx, __LINE__));\
+            CArrayList_erase(array, CONCAT(_localIdx, __LINE__));\
             break;\
         }\
     }\
