@@ -43,31 +43,12 @@ static ElementHandle Element_allocateNewV2(const Vec2f pos, const int width, con
                         .maxWidth = FLT_MAX,
                         .maxHeight = FLT_MAX
                       },
-                    .callbacks = {
-                        .onClick = nullptr,
-                        .onHover = nullptr,
-                        .isMouseOver = nullptr,
-                        .onUpdate = nullptr,
-                        .whileSelected = nullptr,
-                        .requestMove = nullptr
-                      },
                     .visuals = {
                         .brightness = 1.0f,
-                        .texture = nullptr,
-                        .transparency = 0,
                       },
                   .textElement = {.aCharQuads = nullptr, .scale = 1.0f},
-                  .parentElement = 0,
-                  .aFlowElements = nullptr,
-                  .padding = {0, 0, 0, 0},
                   .flags = {.isActive = true},
-                  .task = (Task){nullptr, nullptr},
-                  .childGap = 0,
-                  .elementData = nullptr,
                   .positionMode = POS_FIT,
-                  .layoutDirection = 0,
-                  .type = 0,
-                  .generateMesh = nullptr
         })
     };
     Element_get(handle)->handle = handle;
@@ -168,7 +149,7 @@ void Element_setText_ptr(Element* self, const char* text) {
     strAppend_sprintf(&self->textElement.sText, text);
 
     self->textElement.hasText = true;
-    Text_reloadTextQuads(self);
+    Text_reloadTextQuads(self, INT_MAX, INT_MAX);
 }
 
 void Element_setText(ElementHandle selfHandle, const char* text) {
@@ -181,7 +162,7 @@ void Element_setText_va(Element* element, const char* fmt, va_list args) {
     strAppend_sprintfVa(&element->textElement.sText, fmt, args);
     va_end(args);
     element->textElement.hasText = true;
-    Text_reloadTextQuads(element);
+    Text_reloadTextQuads(element, INT_MAX, INT_MAX);
 }
 
 void Element_setTextF(ElementHandle selfHandle, const char* fmt, ...) {
@@ -295,7 +276,7 @@ ElementHandle createElement(ElementSettings es) {
         t->font = Engine_getDefaultFont();
         t->scale = es.textScale ? es.textScale : 1.0f;
         Element_setText_ptr(lastElement, es.text);
-        Text_reloadTextQuads(lastElement);
+        Text_reloadTextQuads(lastElement, INT_MAX, INT_MAX);
     }
     return handle;
 }

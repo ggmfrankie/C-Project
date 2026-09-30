@@ -31,7 +31,6 @@ static ElementHandle TestElement2() {
         .minWidth = 200,
         .maxWidth = 200,
         .minHeight = 10,
-        .onUpdate = Text_reloadTextQuads,
         .color = GUI_COLOR_DARKGRAY3,
         .text = "Dieser Text dürfte zu lang sein für das element",
         .textColor = GUI_COLOR_LIGHTGRAY3,

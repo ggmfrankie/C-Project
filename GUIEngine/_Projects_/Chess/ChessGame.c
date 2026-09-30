@@ -799,7 +799,7 @@ static void createChessBoard(Element* root) {
                     .padding = {5,5,5,5},
                     .childGap = 10,
                     .grow = true,
-                    .maxWidth = 400,
+                    .maxWidth = 420,
                     .layoutDirection = LAYOUT_RIGHT,
                     .notSelectable = true,
                     .cornerRadius = 10,

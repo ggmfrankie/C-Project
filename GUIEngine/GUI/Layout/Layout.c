@@ -188,8 +188,15 @@ static Cache* cacheLayout(Element* self, float maxAvailableWidth, float maxAvail
     const Vec2f textDims   = calculateTextSize(self);
     const Vec2f manualDims = getManualDims(self);
 
-    //Recursion
-    const Vec2f childDims  = getDimsFromChildren(self, maxAvailableWidth, maxAvailableHeight);
+    const Element* parent = Element_get(self->parentElement);
+
+    /* Recursion
+     * Wee need to make the remaining space relative to the elements position
+     */
+    const Vec2f childDims  = getDimsFromChildren(self,
+        maxAvailableWidth - (self->dims.worldPos.x - parent->dims.worldPos.x),
+        maxAvailableHeight - (self->dims.worldPos.y - parent->dims.worldPos.y)
+    );
 
     self->layoutCache.minWidth  =
         self->padding.left +

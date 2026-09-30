@@ -20,32 +20,32 @@ static struct {
     GLuint EBO;
     GLuint elementSSBO;
     GLuint meshSSBO;
-} graphicsData;
+} gGraphicsData;
 
 #define MAX_GUI_INSTANCES 81920
 
 static void initBuffers() {
     Log_info("Creating OpenGL buffers");
-    glGenVertexArrays(1, &graphicsData.VAO);
-    glBindVertexArray(graphicsData.VAO);
+    glGenVertexArrays(1, &gGraphicsData.VAO);
+    glBindVertexArray(gGraphicsData.VAO);
 
-    Log_debug("VAO id: %u", graphicsData.VAO);
+    Log_debug("VAO id: %u", gGraphicsData.VAO);
 
-    glGenBuffers(1, &graphicsData.VBO);
-    glBindBuffer(GL_ARRAY_BUFFER, graphicsData.VBO);
+    glGenBuffers(1, &gGraphicsData.VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, gGraphicsData.VBO);
     glBufferData(GL_ARRAY_BUFFER,
                  MAX_GUI_VERTICES * sizeof(GuiVertex),
                  nullptr,
                  GL_DYNAMIC_DRAW);
-    Log_debug("VBO id: %u", graphicsData.VBO);
+    Log_debug("VBO id: %u", gGraphicsData.VBO);
 
-    glGenBuffers(1, &graphicsData.EBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, graphicsData.EBO);
+    glGenBuffers(1, &gGraphicsData.EBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gGraphicsData.EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER,
                  MAX_GUI_INDICES * sizeof(uint32_t),
                  nullptr,
                  GL_DYNAMIC_DRAW);
-    Log_debug("EBO id: %u", graphicsData.EBO);
+    Log_debug("EBO id: %u", gGraphicsData.EBO);
 
     Log_debug("Configuring vertex attributes");
     // pos (location = 0)
@@ -69,19 +69,19 @@ static void initBuffers() {
 
     Log_debug("Creating SSBOs");
 
-    glGenBuffers(1, &graphicsData.elementSSBO);
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, graphicsData.elementSSBO);
+    glGenBuffers(1, &gGraphicsData.elementSSBO);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, gGraphicsData.elementSSBO);
     glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(ElementInstanceData) * MAX_GUI_INSTANCES, nullptr, GL_DYNAMIC_DRAW);
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, graphicsData.elementSSBO);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, gGraphicsData.elementSSBO);
 
-    Log_debug("Element SSBO id: %u", graphicsData.elementSSBO);
+    Log_debug("Element SSBO id: %u", gGraphicsData.elementSSBO);
 
-    glGenBuffers(1, &graphicsData.meshSSBO);
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, graphicsData.meshSSBO);
+    glGenBuffers(1, &gGraphicsData.meshSSBO);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, gGraphicsData.meshSSBO);
     glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(MeshInstanceData) * MAX_GUI_INSTANCES, nullptr, GL_DYNAMIC_DRAW);
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, graphicsData.meshSSBO);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, gGraphicsData.meshSSBO);
 
-    Log_debug("Mesh SSBO id: %u", graphicsData.meshSSBO);
+    Log_debug("Mesh SSBO id: %u", gGraphicsData.meshSSBO);
 }
 
 void Render_init(GuiState *guiState) {
@@ -105,15 +105,15 @@ static void uploadVertices(const GuiVertex *aVertices, const int *aIndices, int 
     );
 #endif
 
-    glBindVertexArray(graphicsData.VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, graphicsData.VBO);
+    glBindVertexArray(gGraphicsData.VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, gGraphicsData.VBO);
     glBufferSubData(GL_ARRAY_BUFFER,
         vertexOffset * sizeof(GuiVertex),
         sizeof(GuiVertex) * arrLen(aVertices),
         aVertices
     );
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, graphicsData.EBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gGraphicsData.EBO);
     glBufferSubData(GL_ELEMENT_ARRAY_BUFFER,
         indexOffset * sizeof(int),
         sizeof(int) * arrLen(aIndices),
@@ -123,7 +123,7 @@ static void uploadVertices(const GuiVertex *aVertices, const int *aIndices, int 
 
 static void uploadElementData(const ElementInstanceData* aElementData, int offset) {
     if (arrIsEmpty(aElementData)) return;
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, graphicsData.elementSSBO);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, gGraphicsData.elementSSBO);
 
     glBufferSubData(GL_SHADER_STORAGE_BUFFER,
         offset * sizeof(ElementInstanceData),
@@ -134,7 +134,7 @@ static void uploadElementData(const ElementInstanceData* aElementData, int offse
 
 static void uploadMeshData(const MeshInstanceData* aMeshData, int offset) {
     if (arrIsEmpty(aMeshData)) return;
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, graphicsData.meshSSBO);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, gGraphicsData.meshSSBO);
 
     glBufferSubData(GL_SHADER_STORAGE_BUFFER,
         offset * sizeof(MeshInstanceData),
@@ -202,7 +202,10 @@ static ssize_t addElementData(const Element* element, Batch* batch) {
     ElementInstanceData out = {};
     const ssize_t id = arrLen(batch->aElementData);
     const float brightness = (element->flags.isHovered && element->flags.canBeHovered) ? element->visuals.brightness - 0.2 : element->visuals.brightness;
-    out.worldPos = element->dims.worldPos;
+    out.worldPos = (Vec2f){
+        roundf(element->dims.worldPos.x),
+        roundf(element->dims.worldPos.y)
+    };
     out.color = (Vec4f){
         .x = element->visuals.color.x * brightness,
         .y = element->visuals.color.y * brightness,

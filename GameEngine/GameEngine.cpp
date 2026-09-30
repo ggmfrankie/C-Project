@@ -79,5 +79,6 @@ GameEngine& GameEngine::New(Game::IGame& game) {
 }
 
 GameEngine& GameEngine::Get() {
+    assert(engineInstance != nullptr);
     return *engineInstance;
 }

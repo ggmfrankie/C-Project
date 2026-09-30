@@ -237,7 +237,7 @@ static Vec2f measureText(const Font *font, const char *text) {
     };
 }
 
-void Text_reloadTextQuads(Element *element) {
+void Text_reloadTextQuads(Element *element, int maxAvailableWidth, int maxAvailableHeight) {
     TextElement *textElement = &element->textElement;
     arrClear(textElement->aCharQuads);
 
@@ -261,7 +261,7 @@ void Text_reloadTextQuads(Element *element) {
     float prevX = 0.0f;
     float maxY = 0.0f;
 
-    const float maxWidth = element->dims.maxWidth - (element->padding.left + element->padding.right);
+    const float maxWidth = min(maxAvailableWidth, element->dims.maxWidth - (element->padding.left + element->padding.right));
 
     const Font* font = textElement->font;
 

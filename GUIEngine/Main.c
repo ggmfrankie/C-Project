@@ -11,13 +11,14 @@
 #include "Utils/DataStructures/CString.h"
 #include "_Projects_/Chess/ChessGame.h"
 #include "_Projects_/ExampleGUI/ExampleGUI.h"
-#if 0
+#if 1
 int main(){
     //Test_run();
 
     //Engine_loop(createChessGUI);
-    //Engine_loop(generateGUI);
-CHashTable_test();
+    Engine_loop(generateGUI);
+    //Engine_loop(ExampleGui_generate_1);
+    //CHashTable_test();
     //String_test();
 
     return 0;
