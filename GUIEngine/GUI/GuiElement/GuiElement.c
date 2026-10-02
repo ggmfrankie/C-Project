@@ -97,7 +97,6 @@ Element* Element_get(ElementHandle handle) {
 
 static void Element_deleteRec(ElementHandle selfHandle) {
     // First: let children delete themselves
-
     for arrEach(childHandle, Element_get(selfHandle)->aFlowElements) {
         Element_deleteRec(*childHandle);
     }
@@ -105,16 +104,18 @@ static void Element_deleteRec(ElementHandle selfHandle) {
         Element_deleteRec(*childHandle);
     }
 
-    Element* element = Element_get(selfHandle);
+    Element* self = Element_get(selfHandle);
+    
+    if (self->name) CHashTable_remove(gmElements, self->name);
 
     // Second: let parent delete all of its data
-    if (element->elementData.ptr && element->elementData.destructor) element->elementData.destructor(element->elementData.ptr);
-    if (element->task.userdata && element->task.needsFree) free(element->task.userdata);
-    if (element->textElement.sText) strFree(&element->textElement.sText);
+    if (self->elementData.ptr && self->elementData.destructor) self->elementData.destructor(self->elementData.ptr);
+    if (self->task.userdata && self->task.needsFree) free(self->task.userdata);
+    if (self->textElement.sText) strFree(&self->textElement.sText);
 
-    arrFree(element->aFlowElements);
-    arrFree(element->aStaticElements);
-    arrFree(element->layoutCache.aLines);
+    arrFree(self->aFlowElements);
+    arrFree(self->aStaticElements);
+    arrFree(self->layoutCache.aLines);
 
     // Finally: remove parent form the elements
     SparseSet_remove_keepOrder(&gElements, selfHandle.ID);
@@ -123,7 +124,6 @@ static void Element_deleteRec(ElementHandle selfHandle) {
 void Engine_invalidate();
 
 void Element_delete(ElementHandle selfHandle) {
-    Log_debug("Deleting element and its children. TODO: Remove from name hashmap");
     Engine_invalidate();
 
     // removes itself from the parent element
@@ -268,6 +268,7 @@ ElementHandle createElement(ElementSettings es) {
 
     if (es.name) {
         CHashTable_insert(gmElements, es.name, handle);
+        assert(CHashTable_get(gmElements, es.name)->value.ID == handle.ID);
     }
 
     if (es.text) {

@@ -16,6 +16,10 @@
 
 #define CHashTable_Seed 342341431UL
 
+static void CHashTable_printHeader(const CHashTable_Header* header) {
+    printf("Header:\n  {data = %p; capacity = %llu;} table\n {capacity = %llu;} data\n size = %llu\n", header->table.data, header->table.capacity, header->data.capacity, header->size);
+}
+
 uint32_t CHashTable_hash(const byte* key, size_t len) {
     assert(key != nullptr);
     uint32_t h = CHashTable_Seed;
@@ -68,8 +72,7 @@ void* _CHashTable_get(void* hashTable, const byte* keyData, size_t keySize, size
         // Wrap around at the end
         if(it == end) it = indices;
     }
-
-    Log_debug("Value not inside hashtable");
+    Log_trace("Value not inside hashtable");
     return nullptr;
 }
 
@@ -111,9 +114,11 @@ void _CHashTable_growIfNeeded(void* hashTable[], uint32_t typeSize, uint32_t key
             const void* keyPtr = (byte*)(*hashTable) + i * typeSize;
 
             const void* keyData = isString ? *(char**) keyPtr : keyPtr;
-            const int size = isString ? keySize : strlen(keyData);
+            const int size = isString ? strlen(keyData) : keySize;
 
-            ssize_t* it = newIndices + CHashTable_hash(keyData, size) % newCapacity;
+            const size_t index = CHashTable_hash(keyData, size) % newCapacity;
+
+            ssize_t* it = newIndices + index;
 
             const ssize_t* end = newIndices + newCapacity;
 
@@ -135,16 +140,16 @@ void _CHashTable_growIfNeeded(void* hashTable[], uint32_t typeSize, uint32_t key
 
         newHeader->data.capacity = newCapacity;
         *hashTable = (void*)(newHeader + 1);
-        puts("reallocation");
     }
 }
 
 void _CHashTable_free(void **table) {
     if (*table == nullptr) return;
     free(_CHashTable_getHeader(*table));
+    *table = nullptr;
 }
 
-void _CHashTable_remove(void* table[], const byte* keyData, size_t keySize, size_t typeSize) {
+void _CHashTable_remove(void* table[], const byte* keyData, size_t keySize, size_t typeSize, bool isString) {
     CHashTable_Header* header = _CHashTable_getHeader(*table);
     const size_t size = header->size;
     const size_t capacity = header->table.capacity;
@@ -155,6 +160,7 @@ void _CHashTable_remove(void* table[], const byte* keyData, size_t keySize, size
 
     if (*slot < size) {
         memcpy((byte*)(*table) + *slot, (byte*)(*table) + size, typeSize);
+        // TODO: fix deletion not updating the indices inside the table for the last element;
     }
 
     *slot = -1;

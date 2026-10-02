@@ -40,7 +40,7 @@ typedef struct {
 
 void _CHashTable_new(void* table[], size_t typeSize, size_t capacity);
 void _CHashTable_free(void** table);
-void _CHashTable_remove(void* table[], const byte* keyData, size_t keySize, size_t typeSize);
+void _CHashTable_remove(void* table[], const byte* keyData, size_t keySize, size_t typeSize, bool isString);
 void _CHashTable_growIfNeeded(void* hashTable[], uint32_t typeSize, uint32_t keySize, bool isString);
 void* _CHashTable_get(void *hashTable, const byte *keyData, size_t keySize, size_t typeSize, bool isString);
 ssize_t* _CHashTable_getFreeIndex(void* hashTable, const byte* keyData, size_t keySize);
@@ -84,6 +84,7 @@ do {\
 #define CHashTable_isEmpty(table) ((table)?CHashTable_len(table)==0:true)
 
 #define CHashTable_free(table) _CHashTable_free((void**)(&table))
+#define CHashTable_remove(table, key) _CHashTable_remove((void**)(&table), _CHashTable_getKeyAddress(key), _CHashTable_getKeySize(key), sizeof(*(table), _CHashTable_isString(key)))
 
 #define CHashTable_each_impl(_end, item, table) (typeof(*(table))* item = (table), *_end = (table) + CHashTable_len(table); (item) != _end; ++(item))
 #define CHashTable_each(item, table) CHashTable_each_impl(CONCAT(_end, __COUNTER__), item, table)

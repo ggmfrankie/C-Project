@@ -11,7 +11,7 @@
 #include "GUIEngine/Utils/DataStructures/CStr.h"
 #include "Utils/Test.h"
 
-#if 0
+#if 1
 int main() {
     Test_run();
     try {
