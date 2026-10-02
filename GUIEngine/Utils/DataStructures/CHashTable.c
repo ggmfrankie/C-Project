@@ -10,6 +10,7 @@
 #include <string.h>
 
 #include "CStr.h"
+#include "Utils/Logging/Logging.h"
 #include "Utils/Macros/Defer.h"
 #include "Utils/Math/Vector.h"
 
@@ -68,6 +69,7 @@ void* _CHashTable_get(void* hashTable, const byte* keyData, size_t keySize, size
         if(it == end) it = indices;
     }
 
+    Log_debug("Value not inside hashtable");
     return nullptr;
 }
 
@@ -77,18 +79,15 @@ ssize_t* _CHashTable_getFreeIndex(void* hashTable, const byte *keyData, size_t k
     ssize_t* indices = header->table.data;
     const size_t capacity = header->table.capacity;
 
-    const ssize_t hash = CHashTable_hash(keyData, keySize);
+    const ssize_t index = CHashTable_hash(keyData, keySize) % capacity;
 
-    ssize_t* it = indices + hash  % capacity;
+    ssize_t* it = indices + index;
     const ssize_t* end = indices + capacity;
 
     while (*it != -1) {
-        // Key at the iterator equals the provided key
         ++it;
-        // Wrap around at the end
         if(it == end) it = indices;
     }
-
     return it;
 }
 
@@ -99,41 +98,67 @@ void _CHashTable_growIfNeeded(void* hashTable[], uint32_t typeSize, uint32_t key
         const size_t newCapacity = header->table.capacity *2;
 
         ssize_t* newIndices = realloc(header->table.data, newCapacity * sizeof(*newIndices));
-        memset(newIndices, -1, newCapacity * sizeof(*newIndices));
         assert(newIndices != nullptr);
+        memset(newIndices, -1, newCapacity * sizeof(*newIndices));
 
         header->table.data = newIndices;
         header->table.capacity = newCapacity;
 
+        /*
+         * Iterate over the data array and rehash all the entries
+         */
         for (int i = 0; i < header->size; ++i) {
             const void* keyPtr = (byte*)(*hashTable) + i * typeSize;
 
-            const void* actualKeyPtr = isString ? *(char**) keyPtr : keyPtr;
+            const void* keyData = isString ? *(char**) keyPtr : keyPtr;
+            const int size = isString ? keySize : strlen(keyData);
 
-            ssize_t* it = newIndices + CHashTable_hash(actualKeyPtr, keySize) % newCapacity;
+            ssize_t* it = newIndices + CHashTable_hash(keyData, size) % newCapacity;
 
-            for (const ssize_t* end = newIndices + newCapacity; *it == -1;) {
-                if (it == end) it = newIndices;
+            const ssize_t* end = newIndices + newCapacity;
+
+            while (*it != -1) {
+                ++it;
+                if(it == end) it = newIndices;
             }
 
             *it = i;
         }
     }
 
+    // Handle growing the data array
     if (header->size == header->data.capacity) {
         const size_t newCapacity = header->data.capacity *2;
 
-        CHashTable_Header* newHeader = realloc(header, newCapacity);
+        CHashTable_Header* newHeader = realloc(header, sizeof(CHashTable_Header) + newCapacity * typeSize);
         assert(newHeader != nullptr);
 
         newHeader->data.capacity = newCapacity;
-        *hashTable = newHeader;
+        *hashTable = (void*)(newHeader + 1);
+        puts("reallocation");
     }
 }
 
 void _CHashTable_free(void **table) {
     if (*table == nullptr) return;
     free(_CHashTable_getHeader(*table));
+}
+
+void _CHashTable_remove(void* table[], const byte* keyData, size_t keySize, size_t typeSize) {
+    CHashTable_Header* header = _CHashTable_getHeader(*table);
+    const size_t size = header->size;
+    const size_t capacity = header->table.capacity;
+    const ssize_t tableIndex = CHashTable_hash(keyData, keySize) % capacity;
+
+    ssize_t* slot = &header->table.data[tableIndex];
+    if (*slot == -1) return;
+
+    if (*slot < size) {
+        memcpy((byte*)(*table) + *slot, (byte*)(*table) + size, typeSize);
+    }
+
+    *slot = -1;
+    header->size--;
 }
 
 void CHashTable_test() {

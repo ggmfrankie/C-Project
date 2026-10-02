@@ -261,9 +261,11 @@ void Text_reloadTextQuads(Element *element, int maxAvailableWidth, int maxAvaila
     float prevX = 0.0f;
     float maxY = 0.0f;
 
-    const float maxWidth = min(maxAvailableWidth, element->dims.maxWidth - (element->padding.left + element->padding.right));
+    const float maxWidth = clamp(maxAvailableWidth, 0, element->dims.maxWidth - (element->padding.left + element->padding.right));
 
     const Font* font = textElement->font;
+
+    int charsInLine = 0;
 
     for strEach(c, textElement->sText) {
         if (c < 32) continue;
@@ -287,7 +289,10 @@ void Text_reloadTextQuads(Element *element, int maxAvailableWidth, int maxAvaila
         if (cursor.x > maxWidth) {
             cursor.x = 0;
             cursor.y = maxY + element->childGap + element->textElement.font->maxCharHeight * element->textElement.scale;
-            goto Retry;
+            if (charsInLine > 0) {
+                charsInLine = 0;
+                goto Retry;
+            }
         }
 
         const float glyphWidth  = (q.x1 - q.x0) * textScale;
@@ -302,6 +307,8 @@ void Text_reloadTextQuads(Element *element, int maxAvailableWidth, int maxAvaila
         character->advance = cursor.x - prevX;
         prevX = cursor.x;
         maxY = max(maxY, cursor.y + glyphHeight);
+
+        charsInLine++;
     }
     textElement->width = cursor.x * textScale;
 }

@@ -8,7 +8,7 @@
 
 namespace Engine {
     class Task {
-        std::function<void()> _fn_;
+        std::function<void()> mFunction;
     public:
         explicit Task(std::function<void()> fn);
         ~Task() = default;

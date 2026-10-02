@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "DataStructures/CHashTable.h"
 #include "DataStructures/CSStringView.h"
 #include "Json/CJson.h"
 #include "Macros/Defer.h"
@@ -272,6 +273,51 @@ static void Test_hashMap() {
     mapFree(map);
 }
 
+static void Test_hashTable() {
+    typedef struct {
+        const char* key;
+        int value;
+    } TestStruct;
+
+    TestStruct* map = nullptr;
+    TEST(CHashTable_isEmpty(map) == true, "new map should be empty");
+
+    CHashTable_insert(map, "one", 1);
+    TEST(CHashTable_get(map, "one")->value == 1, "map['one'] expected 1, got %d", CHashTable_get(map, "one")->value);
+
+    CHashTable_insert(map, "two", 2);
+    TEST(CHashTable_get(map, "two")->value == 2, "map['two'] expected 2, got %d", CHashTable_get(map, "two")->value);
+    TEST(CHashTable_len(map) == 2, "mapLen expected 2, got %zu", CHashTable_len(map));
+
+    // Missing key should return nullptr.
+    TEST(CHashTable_get(map, "does-not-exist") == nullptr, "missing key should return nullptr");
+
+    // Stress insertion and retrieval with stable key buffers.
+    enum { extraEntries = 300 };
+    char keys[extraEntries][32];
+    for (int i = 0; i < extraEntries; ++i) {
+        snprintf(keys[i], sizeof(keys[i]), "k_%d", i);
+        CHashTable_insert(map, keys[i], i * 3);
+    }
+
+    TEST(CHashTable_len(map) == (size_t)(2 + extraEntries), "mapLen expected %zu after bulk insert, got %zu", (size_t)(2 + extraEntries), CHashTable_len(map));
+    TEST(CHashTable_len(map) > 256, "mapCap expected growth beyond 256, got %zu", CHashTable_len(map));
+
+    for (int i = 0; i < extraEntries; ++i) {
+        auto value = ((typeof(map)) _CHashTable_get((map), _CHashTable_getKeyAddress(keys[i]),
+                                                    _CHashTable_getKeySize(keys[i]), sizeof(*(map)),
+                                                    _CHashTable_isString(keys[i])));
+        TEST(value != nullptr, "value for key '%s' should not be nullptr", keys[i]);
+        TEST(value->value == i * 3, "value for key '%s' expected %d got %d", keys[i], i * 3, value ? value->value : -1);
+    }
+
+    // Original entries must still be retrievable after rehash growth.
+    TEST(CHashTable_get(map, "one")->value == 1, "map['one'] changed after growth, got %d", CHashTable_get(map, "one")->value);
+    TEST(CHashTable_get(map, "two")->value == 2, "map['two'] changed after growth, got %d", CHashTable_get(map, "two")->value);
+
+    CHashTable_free(map);
+}
+
 static void Test_sparseSet_removeKeepOrder() {
     SparseSet set = SparseSet_new(int, 16);
 
@@ -466,6 +512,8 @@ static void Test_dataStructures() {
     INFO_("CArrayList passed");
     Test_hashMap();
     INFO_("CHashMap passed");
+    Test_hashTable();
+    INFO_("CHashTable passed");
     Test_sparseSet();
     INFO_("CSparseSet passed");
     Test_cString();

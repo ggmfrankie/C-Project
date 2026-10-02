@@ -4,6 +4,7 @@
 
 #pragma once
 #include <stdint.h>
+#include <string.h>
 
 #include "Utils/Typedef.h"
 #include "../Macros/Macros.h"
@@ -39,6 +40,7 @@ typedef struct {
 
 void _CHashTable_new(void* table[], size_t typeSize, size_t capacity);
 void _CHashTable_free(void** table);
+void _CHashTable_remove(void* table[], const byte* keyData, size_t keySize, size_t typeSize);
 void _CHashTable_growIfNeeded(void* hashTable[], uint32_t typeSize, uint32_t keySize, bool isString);
 void* _CHashTable_get(void *hashTable, const byte *keyData, size_t keySize, size_t typeSize, bool isString);
 ssize_t* _CHashTable_getFreeIndex(void* hashTable, const byte* keyData, size_t keySize);
@@ -76,10 +78,10 @@ do {\
     *_CHashTable_getFreeIndex((table), keyAddress, keySize) = index;\
 } while (0)
 
-#define CHashTable_get(table, key) ((typeof(table)) _CHashTable_get((table), _CHashTable_getKeyAddress(key), sizeof(key), sizeof(*(table)), _CHashTable_isString(key)))
+#define CHashTable_get(table, key) ((typeof(table)) _CHashTable_get((table), _CHashTable_getKeyAddress(key), _CHashTable_getKeySize(key), sizeof(*(table)), _CHashTable_isString(key)))
 
 #define CHashTable_len(table) (_CHashTable_getHeader(table)->size)
-
+#define CHashTable_isEmpty(table) ((table)?CHashTable_len(table)==0:true)
 
 #define CHashTable_free(table) _CHashTable_free((void**)(&table))
 

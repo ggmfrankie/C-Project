@@ -190,12 +190,20 @@ static Cache* cacheLayout(Element* self, float maxAvailableWidth, float maxAvail
 
     const Element* parent = Element_get(self->parentElement);
 
+    maxAvailableWidth  -= (self->dims.worldPos.x - parent->dims.worldPos.x) + self->padding.left;
+    maxAvailableHeight -= (self->dims.worldPos.y - parent->dims.worldPos.y) + self->padding.up;
+
+    if (self->textElement.hasText) Text_reloadTextQuads(self,
+        maxAvailableWidth,
+        maxAvailableHeight
+    );
+
     /* Recursion
      * Wee need to make the remaining space relative to the elements position
      */
     const Vec2f childDims  = getDimsFromChildren(self,
-        maxAvailableWidth - (self->dims.worldPos.x - parent->dims.worldPos.x),
-        maxAvailableHeight - (self->dims.worldPos.y - parent->dims.worldPos.y)
+        maxAvailableWidth,
+        maxAvailableHeight
     );
 
     self->layoutCache.minWidth  =

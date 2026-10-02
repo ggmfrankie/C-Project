@@ -6,7 +6,7 @@
 
 namespace Engine {
     void Task::execute() const {
-        _fn_();
+        mFunction();
     }
-    Task::Task(std::function<void()> fn): _fn_(std::move(fn)){}
+    Task::Task(std::function<void()> fn): mFunction(std::move(fn)){}
 } // Engine

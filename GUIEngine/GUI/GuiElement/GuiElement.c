@@ -11,11 +11,17 @@
 #include "../Engine.h"
 #include "../Drawing/Mesh/Mesh.h"
 #include "Utils/DataStructures/CArrayList.h"
-#include "Utils/DataStructures/CHashMap.h"
+#include "Utils/DataStructures/CHashTable.h"
 #include "Utils/DataStructures/CSparseSet.h"
 
 static SparseSet gElements;
-static ElementHandle* gmElements;
+
+typedef struct {
+    const char* key;
+    ElementHandle value;
+} ElementStringReference;
+
+static ElementStringReference* gmElements;
 
 bool Element_isNullHandle(ElementHandle handle) {
     const auto null = ELEMENT_HANDLE_NULL;
@@ -187,9 +193,9 @@ void Element_setColor(ElementHandle selfHandle, const Vec3f color) {
 
 ElementHandle Element_getElement(const char *name) {
     assert(name != nullptr);
-    const ElementHandle* found = mapGet(gmElements, name);
+    const auto found = CHashTable_get(gmElements, name);
     if (!found) return ELEMENT_HANDLE_NULL;
-    return *found;
+    return found->value;
 }
 
 static bool Element_isQuadBB(const Element *element, Vec2f mousePos) {
@@ -261,7 +267,7 @@ ElementHandle createElement(ElementSettings es) {
     lastElement->visuals.texture = (es.texture) ?: "White.png";
 
     if (es.name) {
-        mapInsert(gmElements, es.name, handle);
+        CHashTable_insert(gmElements, es.name, handle);
     }
 
     if (es.text) {

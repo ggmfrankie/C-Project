@@ -113,6 +113,8 @@ void SparseSet_remove_keepOrder(SparseSet *set, size_t id) {
 }
 
 void* _SparseSet_get(const SparseSet *set, size_t id) {
-    if (id >= set->indices.capacity) ERROR_("Index %llu out of bounds for size %llu", id, set->numElements);
+    if (id >= set->indices.capacity) {
+        ERROR_("Index %llu out of bounds for size %llu", id, set->numElements);
+    }
     return &set->data.m[set->indices.toData[id] * set->VALUE_SIZE];
 }
