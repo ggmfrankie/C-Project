@@ -25,7 +25,18 @@
 
 #define CHASH_TABLE_INIT_CAPACITY 16
 
+typedef bool (*CHashTable_keyComparator)(const void* keyPtrA, const void* keyPtrB, size_t keySize);
+typedef uint32_t (*CHashTable_keyHash)(const byte* key, size_t len);
+
 typedef struct {
+    CHashTable_keyHash hash;
+    CHashTable_keyComparator comparator;
+
+    struct {
+        size_t size;
+        size_t offset;
+    } key;
+
     struct {
         ssize_t* data;
         size_t capacity;
@@ -33,60 +44,87 @@ typedef struct {
 
     struct {
         size_t capacity;
+        size_t typeSize;
     } data;
 
     size_t size;
 } CHashTable_Header;
 
-void _CHashTable_new(void* table[], size_t typeSize, size_t capacity);
+void _CHashTable_new(
+    void* table[],
+    size_t capacity,
+
+    size_t typeSize,
+    size_t keySize,
+    size_t keyOffset,
+    CHashTable_keyComparator keyComparator,
+    CHashTable_keyHash keyHash
+);
+
 void _CHashTable_free(void** table);
-void _CHashTable_remove(void* table[], const byte* keyData, size_t keySize, size_t typeSize, bool isString);
-void _CHashTable_growIfNeeded(void* hashTable[], uint32_t typeSize, uint32_t keySize, bool isString);
-void* _CHashTable_get(void *hashTable, const byte *keyData, size_t keySize, size_t typeSize, bool isString);
-ssize_t* _CHashTable_getFreeIndex(void* hashTable, const byte* keyData, size_t keySize);
 
-#define _CHashTable_getHeader(hashTable) (&((CHashTable_Header*)(hashTable))[-1])
+void _CHashTable_remove(
+    void* table[],
+    const byte* keyData
+);
 
-#define _CHashTable_typeIdentity(type, arg) _Generic((arg), type: (arg), default: (type)0)
+void _CHashTable_growIfNeeded(
+    void* table[]
+);
 
-#define _CHashTable_isString(type) _Generic((type), char*: true, const char*: true, default: false)
-#define _CHashTable_getKeySize(key)\
-    _Generic((key),\
-        char* : strlen(_CHashTable_typeIdentity(char*, (key))),\
-        const char* : strlen(_CHashTable_typeIdentity(const char*, (key))),\
-        default: sizeof((key))\
-    )
-#define _CHashTable_getKeyAddress(key)\
-(byte*)_Generic((key),\
-        char* : (key),\
-        const char* : (key),\
-        default: &(key)\
-    )
+void* _CHashTable_get(
+    void *hashTable,
+    const byte *keyPtr
+);
 
-#define CHashTable_insert(table, key, value)\
+ssize_t* _CHashTable_getFreeIndex(
+    void* hashTable,
+    const byte* keyData
+);
+
+bool CHashTable_memoryComp(const void* keyPtrA, const void* keyPtrB, size_t keySize);
+bool CHashTable_stringComp(const void* keyPtrA, const void* keyPtrB, size_t);
+uint32_t CHashTable_memoryHash(const byte* key, size_t len);
+uint32_t CHashTable_stringHash(const byte* key, size_t);
+
+#define _CHashTable_getHeader(pHashTable) (&((CHashTable_Header*)(pHashTable))[-1])
+
+#define _CHashTable_getKeyComparator(pKey)\
+_Generic((pKey),\
+    char* :       CHashTable_stringComp,\
+    const char* : CHashTable_stringComp,\
+    default:      CHashTable_memoryComp\
+)
+
+#define _CHashTable_getKeyHash(pKey)\
+_Generic((pKey),\
+    char* :       CHashTable_stringHash,\
+    const char* : CHashTable_stringHash,\
+    default:      CHashTable_memoryHash\
+)
+
+#define CHashTable_insert(pTable, pKey, pValue)\
 do {\
-    if ((table) == nullptr) _CHashTable_new((void**)(&table), sizeof(*(table)), CHASH_TABLE_INIT_CAPACITY);\
-    const size_t keySize = _CHashTable_getKeySize(key);\
+    if ((pTable) == nullptr) _CHashTable_new((void**)(&pTable), CHASH_TABLE_INIT_CAPACITY, sizeof(*(pTable)), sizeof((pTable)->key), offsetof(typeof(*pTable), key), _CHashTable_getKeyComparator((pTable)->key), _CHashTable_getKeyHash((pTable)->key));\
 \
-    _CHashTable_growIfNeeded((void**)(&table), sizeof(*(table)), keySize, _CHashTable_isString(key));\
+    _CHashTable_growIfNeeded((void**)(&pTable));\
 \
-    const size_t index = _CHashTable_getHeader(table)->size++;\
-    (table)[index] = (typeof(*(table))){key, value};\
+    const size_t index = _CHashTable_getHeader(pTable)->size++;\
+    (pTable)[index] = (typeof(*(pTable))){pKey, pValue};\
 \
-    const byte* keyAddress = _CHashTable_getKeyAddress(key);\
-\
-    *_CHashTable_getFreeIndex((table), keyAddress, keySize) = index;\
+    auto key = pKey;\
+    *_CHashTable_getFreeIndex((pTable), (byte*) &(key)) = index;\
 } while (0)
 
-#define CHashTable_get(table, key) ((typeof(table)) _CHashTable_get((table), _CHashTable_getKeyAddress(key), _CHashTable_getKeySize(key), sizeof(*(table)), _CHashTable_isString(key)))
+#define CHashTable_get(pTable, pKey) ({auto key = pKey; (typeof(pTable)) _CHashTable_get((pTable), (byte*)&(key));})
 
-#define CHashTable_len(table) (_CHashTable_getHeader(table)->size)
-#define CHashTable_isEmpty(table) ((table)?CHashTable_len(table)==0:true)
+#define CHashTable_len(pTable) ((pTable)?_CHashTable_getHeader(pTable)->size:0)
+#define CHashTable_isEmpty(pTable) ((pTable)?CHashTable_len(pTable)==0:true)
 
-#define CHashTable_free(table) _CHashTable_free((void**)(&table))
-#define CHashTable_remove(table, key) _CHashTable_remove((void**)(&table), _CHashTable_getKeyAddress(key), _CHashTable_getKeySize(key), sizeof(*(table), _CHashTable_isString(key)))
+#define CHashTable_free(pTable) _CHashTable_free((void**)(&pTable))
+#define CHashTable_remove(pTable, pKey) ({auto key = pKey; _CHashTable_remove((void**)(&pTable), (byte*)&(key));})
 
-#define CHashTable_each_impl(_end, item, table) (typeof(*(table))* item = (table), *_end = (table) + CHashTable_len(table); (item) != _end; ++(item))
-#define CHashTable_each(item, table) CHashTable_each_impl(CONCAT(_end, __COUNTER__), item, table)
+#define CHashTable_each_impl(_end, pItem, pTable) (typeof(*(pTable))* pItem = (pTable), *_end = (pTable) + CHashTable_len(pTable); (pItem) != _end; ++(pItem))
+#define CHashTable_each(pItem, pTable) CHashTable_each_impl(CONCAT(_end, __COUNTER__), pItem, pTable)
 
 void CHashTable_test();

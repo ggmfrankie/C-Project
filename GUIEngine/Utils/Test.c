@@ -304,9 +304,7 @@ static void Test_hashTable() {
     TEST(CHashTable_len(map) > 256, "mapCap expected growth beyond 256, got %zu", CHashTable_len(map));
 
     for (int i = 0; i < extraEntries; ++i) {
-        auto value = ((typeof(map)) _CHashTable_get((map), _CHashTable_getKeyAddress(keys[i]),
-                                                    _CHashTable_getKeySize(keys[i]), sizeof(*(map)),
-                                                    _CHashTable_isString(keys[i])));
+        const auto value = CHashTable_get(map, keys[i]);
         TEST(value != nullptr, "value for key '%s' should not be nullptr", keys[i]);
         TEST(value->value == i * 3, "value for key '%s' expected %d got %d", keys[i], i * 3, value ? value->value : -1);
     }

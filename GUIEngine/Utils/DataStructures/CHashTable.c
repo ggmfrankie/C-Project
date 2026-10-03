@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stddef.h>
 
 #include "CStr.h"
 #include "Utils/Logging/Logging.h"
@@ -18,6 +19,14 @@
 
 static void CHashTable_printHeader(const CHashTable_Header* header) {
     printf("Header:\n  {data = %p; capacity = %llu;} table\n {capacity = %llu;} data\n size = %llu\n", header->table.data, header->table.capacity, header->data.capacity, header->size);
+}
+
+bool CHashTable_memoryComp(const void* keyPtrA, const void* keyPtrB, size_t keySize) {
+    return memcmp(keyPtrA, keyPtrB, keySize) == 0;
+}
+
+bool CHashTable_stringComp(const void* keyPtrA, const void* keyPtrB, size_t) {
+    return cstrEquals(*(char**)keyPtrA, *(char**)keyPtrB);
 }
 
 uint32_t CHashTable_hash(const byte* key, size_t len) {
@@ -31,11 +40,21 @@ uint32_t CHashTable_hash(const byte* key, size_t len) {
     return h;
 }
 
-void _CHashTable_new(void* table[], size_t typeSize, size_t capacity) {
+uint32_t CHashTable_memoryHash(const byte* key, size_t len) {
+    return CHashTable_hash(key, len);
+}
+
+uint32_t CHashTable_stringHash(const byte* key, size_t) {
+    return CHashTable_hash((byte*)*(char**)key, strlen(*(char**)key));
+}
+
+void _CHashTable_new(void* table[], size_t capacity, size_t typeSize, size_t keySize, size_t keyOffset, CHashTable_keyComparator keyComparator, CHashTable_keyHash keyHash) {
     CHashTable_Header* header = malloc(sizeof(CHashTable_Header) + typeSize * capacity);
     assert(header != nullptr);
 
     header->data.capacity = capacity;
+    header->data.typeSize = typeSize;
+    header->key.size = keySize;
     header->size = 0;
 
     const size_t tableCapacity = capacity * 4;
@@ -46,28 +65,37 @@ void _CHashTable_new(void* table[], size_t typeSize, size_t capacity) {
     header->table.data = indices;
     header->table.capacity = tableCapacity;
 
+    header->comparator = keyComparator;
+    header->hash = keyHash;
+    header->key.offset = keyOffset;
+
     *table = (void*) (header+1);
 }
 
-void* _CHashTable_get(void* hashTable, const byte* keyData, size_t keySize, size_t typeSize, bool isString) {
-    assert(hashTable != nullptr && keyData != nullptr);
+void* _CHashTable_get(void* hashTable, const byte* keyPtr) {
+    assert(hashTable != nullptr && keyPtr != nullptr);
+
     const CHashTable_Header* header = _CHashTable_getHeader(hashTable);
 
     const ssize_t* indices = header->table.data;
     const size_t capacity = header->table.capacity;
 
-    const ssize_t index = CHashTable_hash(keyData, keySize) % capacity;
+    const size_t typeSize = header->data.typeSize;
+    const size_t keySize = header->key.size;
+    const size_t keyOffset = header->key.offset;
 
-    const ssize_t* it = indices + index;
+    const CHashTable_keyComparator comparator = header->comparator;
 
-    const ssize_t* end = indices + capacity;
+    const ssize_t index = header->hash(keyPtr, keySize) % capacity;
+
+    const ssize_t* it = &indices[index];
+
+    const ssize_t* end = &indices[capacity];
 
     while (*it != -1) {
         // Key at the iterator equals the provided key
-        void* slot = (byte*)hashTable + ((*it) * typeSize);
-        if ((isString)
-            ? cstrEquals(*(char**)slot, (char*)keyData)
-            : memcmp(slot, keyData, keySize) == 0) return slot;
+        void* keySlot = (byte*) hashTable + ((*it) * typeSize) + keyOffset;
+        if (comparator(keySlot, keyPtr, keySize)) return keySlot;
         ++it;
         // Wrap around at the end
         if(it == end) it = indices;
@@ -76,16 +104,17 @@ void* _CHashTable_get(void* hashTable, const byte* keyData, size_t keySize, size
     return nullptr;
 }
 
-ssize_t* _CHashTable_getFreeIndex(void* hashTable, const byte *keyData, size_t keySize) {
+ssize_t* _CHashTable_getFreeIndex(void* hashTable, const byte *keyData) {
     const CHashTable_Header* header = _CHashTable_getHeader(hashTable);
 
     ssize_t* indices = header->table.data;
     const size_t capacity = header->table.capacity;
+    const size_t keySize = header->key.size;
 
-    const ssize_t index = CHashTable_hash(keyData, keySize) % capacity;
+    const ssize_t index = header->hash(keyData, keySize) % capacity;
 
-    ssize_t* it = indices + index;
-    const ssize_t* end = indices + capacity;
+    ssize_t* it = &indices[index];
+    const ssize_t* end = &indices[capacity];
 
     while (*it != -1) {
         ++it;
@@ -94,8 +123,8 @@ ssize_t* _CHashTable_getFreeIndex(void* hashTable, const byte *keyData, size_t k
     return it;
 }
 
-void _CHashTable_growIfNeeded(void* hashTable[], uint32_t typeSize, uint32_t keySize, bool isString) {
-    CHashTable_Header* header = _CHashTable_getHeader(*hashTable);
+void _CHashTable_growIfNeeded(void* table[]) {
+    CHashTable_Header* header = _CHashTable_getHeader(*table);
 
     if ((float)header->size / header->table.capacity > 0.75) {
         const size_t newCapacity = header->table.capacity *2;
@@ -107,18 +136,19 @@ void _CHashTable_growIfNeeded(void* hashTable[], uint32_t typeSize, uint32_t key
         header->table.data = newIndices;
         header->table.capacity = newCapacity;
 
-        /*
-         * Iterate over the data array and rehash all the entries
-         */
+        const size_t keySize = header->key.size;
+        const size_t keyOffset = header->key.offset;
+        const size_t typeSize = header->data.typeSize;
+
+        const CHashTable_keyHash hash = header->hash;
+
+        // Iterate over the data array and rehash all the entries
         for (int i = 0; i < header->size; ++i) {
-            const void* keyPtr = (byte*)(*hashTable) + i * typeSize;
+            const void* keyPtr = (byte*) (*table) + i * typeSize + keyOffset;
 
-            const void* keyData = isString ? *(char**) keyPtr : keyPtr;
-            const int size = isString ? strlen(keyData) : keySize;
+            const size_t hashIndex = hash(keyPtr, keySize) % newCapacity;
 
-            const size_t index = CHashTable_hash(keyData, size) % newCapacity;
-
-            ssize_t* it = newIndices + index;
+            ssize_t* it = newIndices + hashIndex;
 
             const ssize_t* end = newIndices + newCapacity;
 
@@ -135,11 +165,11 @@ void _CHashTable_growIfNeeded(void* hashTable[], uint32_t typeSize, uint32_t key
     if (header->size == header->data.capacity) {
         const size_t newCapacity = header->data.capacity *2;
 
-        CHashTable_Header* newHeader = realloc(header, sizeof(CHashTable_Header) + newCapacity * typeSize);
+        CHashTable_Header* newHeader = realloc(header, sizeof(CHashTable_Header) + newCapacity * header->data.typeSize);
         assert(newHeader != nullptr);
 
         newHeader->data.capacity = newCapacity;
-        *hashTable = (void*)(newHeader + 1);
+        *table = (void*)(newHeader + 1);
     }
 }
 
@@ -149,22 +179,62 @@ void _CHashTable_free(void **table) {
     *table = nullptr;
 }
 
-void _CHashTable_remove(void* table[], const byte* keyData, size_t keySize, size_t typeSize, bool isString) {
+void _CHashTable_remove(void* table[], const byte* keyData) {
     CHashTable_Header* header = _CHashTable_getHeader(*table);
+
     const size_t size = header->size;
     const size_t capacity = header->table.capacity;
-    const ssize_t tableIndex = CHashTable_hash(keyData, keySize) % capacity;
+    const size_t keySize = header->key.size;
+    const size_t keyOffset = header->key.offset;
+    const size_t typeSize = header->data.typeSize;
 
-    ssize_t* slot = &header->table.data[tableIndex];
-    if (*slot == -1) return;
+    ssize_t* indices = header->table.data;
 
-    if (*slot < size) {
-        memcpy((byte*)(*table) + *slot, (byte*)(*table) + size, typeSize);
-        // TODO: fix deletion not updating the indices inside the table for the last element;
+    const CHashTable_keyHash hash = header->hash;
+    const CHashTable_keyComparator comparator = header->comparator;
+
+    // First: find the element that needs to be deleted
+    const ssize_t hashIndex = hash((byte*)keyData, keySize) % capacity;
+
+    //TODO: Probing
+    ssize_t* slot = &header->table.data[hashIndex];
+    const ssize_t* end = indices + capacity;
+
+    ssize_t index = -1;
+    while (*slot != -1) {
+        const void* keySlot = (byte*)(*table) + ((*slot) * typeSize) + keyOffset;
+        if (comparator(keySlot, keyData, keySize)) {
+            index = *slot;
+            break;
+        }
+        ++slot;
+        // Wrap around at the end
+        if(slot == end) slot = indices;
     }
-
+    if (index == -1) return;
     *slot = -1;
-    header->size--;
+
+    if (index < size) {
+        memcpy((byte*)(*table) + index, (byte*)(*table) + size, header->data.typeSize);
+
+        const void* lastKey = (*table) + index * typeSize + keyOffset;
+        const size_t lastHashIndex = hash(lastKey, keySize) % capacity;
+
+        ssize_t* it = &header->table.data[lastHashIndex];
+
+        while (*it != -1) {
+            const void* keySlot = (byte*) table + ((*it) * typeSize) + keyOffset;
+            if (comparator(keySlot, lastKey, keySize)) {
+                *it = index;
+                header->size--;
+                return;
+            }
+            ++it;
+            // Wrap around at the end
+            if(it == end) it = indices;
+        }
+        Log_trace("????");
+    }
 }
 
 void CHashTable_test() {
@@ -183,8 +253,18 @@ void CHashTable_test() {
 
     //CHashTable_insert(table, (Vec2f){3}, 43);
 
-    CHashTable_insert(tanl, "Hassan", ((ElementKeyValue){.key = (Vec2f){0.0, 1.69}}));
-
+    do {
+        if ((tanl) == nullptr) _CHashTable_new((void **) (&tanl), CHASH_TABLE_INIT_CAPACITY, sizeof(*(tanl)),
+                                               sizeof((tanl)->key), offsetof(typeof(*tanl), key),
+                                               _CHashTable_getKeyComparator((tanl)->key),
+                                               _CHashTable_getKeyHash((tanl)->key));
+        _CHashTable_growIfNeeded((void **) (&tanl));
+        const size_t index = _CHashTable_getHeader(tanl)->size++;
+        (tanl)[index] = (typeof(*(tanl))){"Hassan", ((ElementKeyValue){.key = (Vec2f){0.0, 1.69}})};
+        auto key = "Hassan";
+        auto keyPtr = &key;
+        *_CHashTable_getFreeIndex((tanl), (byte *) (keyPtr)) = index;
+    } while (0);
 
     //int value = CHashTable_get(table, (Vec2f){3})->value;
     volatile auto value2 = CHashTable_get(tanl, "Hassan")->value.key;
