@@ -122,7 +122,7 @@ do {\
 #define CHashTable_isEmpty(pTable) ((pTable)?CHashTable_len(pTable)==0:true)
 
 #define CHashTable_free(pTable) _CHashTable_free((void**)(&pTable))
-#define CHashTable_remove(pTable, pKey) ({auto key = pKey; _CHashTable_remove((void**)(&pTable), (byte*)&(key));})
+#define CHashTable_remove(pTable, pKey) do {auto key = pKey; _CHashTable_remove((void**)(&pTable), (byte*)&(key));} while(0)
 
 #define CHashTable_each_impl(_end, pItem, pTable) (typeof(*(pTable))* pItem = (pTable), *_end = (pTable) + CHashTable_len(pTable); (pItem) != _end; ++(pItem))
 #define CHashTable_each(pItem, pTable) CHashTable_each_impl(CONCAT(_end, __COUNTER__), pItem, pTable)

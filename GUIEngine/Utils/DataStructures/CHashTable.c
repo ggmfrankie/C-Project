@@ -196,7 +196,6 @@ void _CHashTable_remove(void* table[], const byte* keyData) {
     // First: find the element that needs to be deleted
     const ssize_t hashIndex = hash((byte*)keyData, keySize) % capacity;
 
-    //TODO: Probing
     ssize_t* slot = &header->table.data[hashIndex];
     const ssize_t* end = indices + capacity;
 
@@ -212,10 +211,19 @@ void _CHashTable_remove(void* table[], const byte* keyData) {
         if(slot == end) slot = indices;
     }
     if (index == -1) return;
-    *slot = -1;
 
-    if (index < size) {
-        memcpy((byte*)(*table) + index, (byte*)(*table) + size, header->data.typeSize);
+    const ssize_t* probe = slot + 1;
+
+    // Need move possible probing blob
+    while (*probe != -1) {
+        ++probe;
+        if (probe == end) probe = indices;
+    }
+
+    if (probe - slot > 1) memmove(slot, slot+1, (probe - slot) * sizeof(*slot));
+
+    if (index < size-1) {
+        memcpy((byte*)(*table) + index * typeSize, (byte*)(*table) + (size-1) * typeSize, header->data.typeSize);
 
         const void* lastKey = (*table) + index * typeSize + keyOffset;
         const size_t lastHashIndex = hash(lastKey, keySize) % capacity;
@@ -223,11 +231,10 @@ void _CHashTable_remove(void* table[], const byte* keyData) {
         ssize_t* it = &header->table.data[lastHashIndex];
 
         while (*it != -1) {
-            const void* keySlot = (byte*) table + ((*it) * typeSize) + keyOffset;
+            const void* keySlot = (byte*)(*table) + ((*it) * typeSize) + keyOffset;
             if (comparator(keySlot, lastKey, keySize)) {
                 *it = index;
-                header->size--;
-                return;
+                goto PopLast;
             }
             ++it;
             // Wrap around at the end
@@ -235,6 +242,8 @@ void _CHashTable_remove(void* table[], const byte* keyData) {
         }
         Log_trace("????");
     }
+    PopLast:
+    header->size--;
 }
 
 void CHashTable_test() {

@@ -106,7 +106,11 @@ static void Element_deleteRec(ElementHandle selfHandle) {
 
     Element* self = Element_get(selfHandle);
     
-    if (self->name) CHashTable_remove(gmElements, self->name);
+    if (self->name) do {
+        auto key = self->name;
+        puts(key);
+        _CHashTable_remove((void **) (&gmElements), (byte *) &(key));
+    } while (0);
 
     // Second: let parent delete all of its data
     if (self->elementData.ptr && self->elementData.destructor) self->elementData.destructor(self->elementData.ptr);
