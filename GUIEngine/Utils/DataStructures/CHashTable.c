@@ -194,7 +194,7 @@ void _CHashTable_remove(void* table[], const byte* keyData) {
     const CHashTable_keyComparator comparator = header->comparator;
 
     // First: find the element that needs to be deleted
-    const ssize_t hashIndex = hash((byte*)keyData, keySize) % capacity;
+    const ssize_t hashIndex  = hash((byte*)keyData, keySize) % capacity;
 
     ssize_t* slot = &header->table.data[hashIndex];
     const ssize_t* end = indices + capacity;
@@ -208,20 +208,43 @@ void _CHashTable_remove(void* table[], const byte* keyData) {
         }
         ++slot;
         // Wrap around at the end
-        if(slot == end) slot = indices;
+        if (slot == end) slot = indices;
     }
     if (index == -1) return;
 
-    const ssize_t* probe = slot + 1;
+    ssize_t* probeSlot = slot + 1;
+
+    if (probeSlot == end) probeSlot = indices;
+
+    ssize_t* probeScan = probeSlot;
 
     // Need move possible probing blob
-    while (*probe != -1) {
-        ++probe;
-        if (probe == end) probe = indices;
+    while (*probeScan != -1) {
+        // Handel wrapping
+        if (probeScan == end) {
+            if (probeScan - probeSlot == 0) break;
+
+            memmove(probeSlot, probeSlot + 1, (probeScan - probeSlot) * sizeof(*slot));
+            *(probeScan-1) = -1;
+
+            probeSlot = indices;
+            probeScan = indices;
+        }
+
+        const size_t probeHashIndex = hash((byte*)(*table) + ((*slot) * typeSize) + keyOffset, keySize) % capacity;
+        // Move probe forward if the item referenced shares the same hash key
+        if (probeHashIndex == hashIndex) {
+            probeScan++;
+        } else {
+            if (probeScan - probeSlot == 0) break;
+            // Move the blob one over
+            memmove(probeSlot, probeSlot + 1, (probeScan - probeSlot) * sizeof(*slot));
+            *(probeScan-1) = -1;
+            probeSlot = probeScan;
+        }
     }
 
-    if (probe - slot > 1) memmove(slot, slot+1, (probe - slot) * sizeof(*slot));
-
+    // Else we can just pop the back
     if (index < size-1) {
         memcpy((byte*)(*table) + index * typeSize, (byte*)(*table) + (size-1) * typeSize, header->data.typeSize);
 
@@ -240,7 +263,6 @@ void _CHashTable_remove(void* table[], const byte* keyData) {
             // Wrap around at the end
             if(it == end) it = indices;
         }
-        Log_trace("????");
     }
     PopLast:
     header->size--;
@@ -271,7 +293,7 @@ void CHashTable_test() {
         const size_t index = _CHashTable_getHeader(tanl)->size++;
         (tanl)[index] = (typeof(*(tanl))){"Hassan", ((ElementKeyValue){.key = (Vec2f){0.0, 1.69}})};
         auto key = "Hassan";
-        auto keyPtr = &key;
+        const auto keyPtr = &key;
         *_CHashTable_getFreeIndex((tanl), (byte *) (keyPtr)) = index;
     } while (0);
 
