@@ -99,6 +99,8 @@ add_library(GUI STATIC
         Utils/DataStructures/CString.h
         Utils/DataStructures/CHashTable.c
         Utils/DataStructures/CHashTable.h
+        Utils/DataStructures/CInlineStack.h
+        Utils/DataStructures/CInlineStack.c
 )
 
 set_target_properties(GUI PROPERTIES LINKER_LANGUAGE C)

@@ -8,10 +8,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stddef.h>
 
+#include "CInlineStack.h"
 #include "CStr.h"
-#include "Utils/Logging/Logging.h"
 #include "Utils/Macros/Defer.h"
 #include "Utils/Math/Vector.h"
 
@@ -72,39 +71,49 @@ void _CHashTable_new(void* table[], size_t capacity, size_t typeSize, size_t key
     *table = (void*) (header+1);
 }
 
-void* _CHashTable_get(void* hashTable, const byte* keyPtr) {
-    assert(hashTable != nullptr && keyPtr != nullptr);
+static byte* CHashTable_getDataSlot(void* hashTable, size_t index) {
+    const CHashTable_Header* header = _CHashTable_getHeader(hashTable);
+    return (byte*) hashTable + index * header->data.typeSize;
+}
 
+static ssize_t* CHashTable_getHashIndexSlot(void* hashTable, const byte* keyPtr) {
     const CHashTable_Header* header = _CHashTable_getHeader(hashTable);
 
-    const ssize_t* indices = header->table.data;
     const size_t capacity = header->table.capacity;
 
-    const size_t typeSize = header->data.typeSize;
     const size_t keySize = header->key.size;
-    const size_t keyOffset = header->key.offset;
 
-    const CHashTable_keyComparator comparator = header->comparator;
+    ssize_t* indices = header->table.data;
 
     const ssize_t index = header->hash(keyPtr, keySize) % capacity;
-
-    const ssize_t* it = &indices[index];
+    ssize_t* it = &indices[index];
 
     const ssize_t* end = &indices[capacity];
 
+    const CHashTable_keyComparator comparator = header->comparator;
+
     while (*it != -1) {
         // Key at the iterator equals the provided key
-        void* keySlot = (byte*) hashTable + ((*it) * typeSize) + keyOffset;
-        if (comparator(keySlot, keyPtr, keySize)) return keySlot;
+        const void* keySlot = CHashTable_getDataSlot(hashTable, *it);
+        if (comparator(keySlot, keyPtr, keySize)) return it;
         ++it;
         // Wrap around at the end
         if(it == end) it = indices;
     }
-    Log_trace("Value not inside hashtable");
     return nullptr;
 }
 
-ssize_t* _CHashTable_getFreeIndex(void* hashTable, const byte *keyData) {
+void* _CHashTable_get(void* hashTable, const byte* keyPtr) {
+    assert(hashTable != nullptr && keyPtr != nullptr);
+
+    const ssize_t* hashIndex = CHashTable_getHashIndexSlot(hashTable, keyPtr);
+
+    return hashIndex
+        ? CHashTable_getDataSlot(hashTable, *hashIndex)
+        : nullptr;
+}
+
+ssize_t* _CHashTable_getFreeHashIndexSlot(void* hashTable, const byte *keyData) {
     const CHashTable_Header* header = _CHashTable_getHeader(hashTable);
 
     ssize_t* indices = header->table.data;
@@ -123,6 +132,21 @@ ssize_t* _CHashTable_getFreeIndex(void* hashTable, const byte *keyData) {
     return it;
 }
 
+static void CHashTable_rehash(void* table[]) {
+    const CHashTable_Header* header = _CHashTable_getHeader(*table);
+
+    const size_t capacity = header->table.capacity;
+    ssize_t* indices = header->table.data;
+
+    memset(indices, -1, capacity * sizeof(*indices));
+
+    // Iterate over the data array and rehash all the entries
+    for (int i = 0; i < header->size; ++i) {
+        const void* keyPtr = CHashTable_getDataSlot(*table, i) + header->key.offset;
+        *_CHashTable_getFreeHashIndexSlot(*table, keyPtr) = i;
+    }
+}
+
 void _CHashTable_growIfNeeded(void* table[]) {
     CHashTable_Header* header = _CHashTable_getHeader(*table);
 
@@ -131,34 +155,11 @@ void _CHashTable_growIfNeeded(void* table[]) {
 
         ssize_t* newIndices = realloc(header->table.data, newCapacity * sizeof(*newIndices));
         assert(newIndices != nullptr);
-        memset(newIndices, -1, newCapacity * sizeof(*newIndices));
 
         header->table.data = newIndices;
         header->table.capacity = newCapacity;
 
-        const size_t keySize = header->key.size;
-        const size_t keyOffset = header->key.offset;
-        const size_t typeSize = header->data.typeSize;
-
-        const CHashTable_keyHash hash = header->hash;
-
-        // Iterate over the data array and rehash all the entries
-        for (int i = 0; i < header->size; ++i) {
-            const void* keyPtr = (byte*) (*table) + i * typeSize + keyOffset;
-
-            const size_t hashIndex = hash(keyPtr, keySize) % newCapacity;
-
-            ssize_t* it = newIndices + hashIndex;
-
-            const ssize_t* end = newIndices + newCapacity;
-
-            while (*it != -1) {
-                ++it;
-                if(it == end) it = newIndices;
-            }
-
-            *it = i;
-        }
+        CHashTable_rehash(table);
     }
 
     // Handle growing the data array
@@ -194,78 +195,84 @@ void _CHashTable_remove(void* table[], const byte* keyData) {
     const CHashTable_keyComparator comparator = header->comparator;
 
     // First: find the element that needs to be deleted
-    const ssize_t hashIndex  = hash((byte*)keyData, keySize) % capacity;
+    ssize_t* slot = CHashTable_getHashIndexSlot(*table, keyData);
 
-    ssize_t* slot = &header->table.data[hashIndex];
-    const ssize_t* end = indices + capacity;
+    if (slot == nullptr || *slot == -1) return;
 
-    ssize_t index = -1;
-    while (*slot != -1) {
-        const void* keySlot = (byte*)(*table) + ((*slot) * typeSize) + keyOffset;
-        if (comparator(keySlot, keyData, keySize)) {
-            index = *slot;
-            break;
+    const ssize_t index = *slot;
+
+    const ssize_t* hashTableEnd = indices + capacity;
+
+//--------------------------------------------------------------------------------//
+    {
+        // Deletion of the hash index inside the index array
+        ssize_t* probeStart = slot + 1;
+        if (probeStart == hashTableEnd) probeStart = indices;
+        ssize_t* probeScan = probeStart;
+
+        // Need move possible probing blob
+        size_t blockSize = 0;
+
+        // Get the block size
+        while (*probeScan != -1) {
+            // Handel wrapping
+            ++blockSize;
+
+            ++probeScan;
+            if (probeScan == hashTableEnd) probeScan = indices;
         }
-        ++slot;
-        // Wrap around at the end
-        if (slot == end) slot = indices;
+
+        const ssize_t* probeEnd = probeScan;
+        probeScan = probeStart;
+
+        size_t rehashStack[blockSize];
+        size_t rehashStackSize = 0;
+
+        // Store indices of elements that need rehashing
+        while (probeScan != probeEnd) {
+            rehashStack[rehashStackSize++] = *probeScan;
+            *probeScan = -1;
+
+            ++probeScan;
+            if (probeScan == hashTableEnd) probeScan = indices;
+        }
+
+        for (size_t i = 0; i < rehashStackSize; ++i) {
+            const size_t dataIndex = rehashStack[i];
+            const void* keyPtr = CHashTable_getDataSlot(*table, dataIndex) + keyOffset;
+            ssize_t* foundHashTableSlot = _CHashTable_getFreeHashIndexSlot(*table, keyPtr);
+
+            *foundHashTableSlot = dataIndex;
+        }
     }
-    if (index == -1) return;
 
-    ssize_t* probeSlot = slot + 1;
+//--------------------------------------------------------------------------------//
+    {
+        // Deletion of the actual element inside the data array
+        if (index < size-1) {
+            void* deleteSlot = CHashTable_getDataSlot(*table, index);
+            memcpy(deleteSlot, CHashTable_getDataSlot(*table, size-1), header->data.typeSize);
 
-    if (probeSlot == end) probeSlot = indices;
+            const void* lastKey = deleteSlot + keyOffset;
+            const size_t lastHashIndex = hash(lastKey, keySize) % capacity;
 
-    ssize_t* probeScan = probeSlot;
+            ssize_t* it = &header->table.data[lastHashIndex];
 
-    // Need move possible probing blob
-    while (*probeScan != -1) {
-        // Handel wrapping
-        if (probeScan == end) {
-            if (probeScan - probeSlot == 0) break;
-
-            memmove(probeSlot, probeSlot + 1, (probeScan - probeSlot) * sizeof(*slot));
-            *(probeScan-1) = -1;
-
-            probeSlot = indices;
-            probeScan = indices;
-        }
-
-        const size_t probeHashIndex = hash((byte*)(*table) + ((*slot) * typeSize) + keyOffset, keySize) % capacity;
-        // Move probe forward if the item referenced shares the same hash key
-        if (probeHashIndex == hashIndex) {
-            probeScan++;
-        } else {
-            if (probeScan - probeSlot == 0) break;
-            // Move the blob one over
-            memmove(probeSlot, probeSlot + 1, (probeScan - probeSlot) * sizeof(*slot));
-            *(probeScan-1) = -1;
-            probeSlot = probeScan;
-        }
-    }
-
-    // Else we can just pop the back
-    if (index < size-1) {
-        memcpy((byte*)(*table) + index * typeSize, (byte*)(*table) + (size-1) * typeSize, header->data.typeSize);
-
-        const void* lastKey = (*table) + index * typeSize + keyOffset;
-        const size_t lastHashIndex = hash(lastKey, keySize) % capacity;
-
-        ssize_t* it = &header->table.data[lastHashIndex];
-
-        while (*it != -1) {
-            const void* keySlot = (byte*)(*table) + ((*it) * typeSize) + keyOffset;
-            if (comparator(keySlot, lastKey, keySize)) {
-                *it = index;
-                goto PopLast;
+            // Probing
+            while (*it != -1) {
+                const void* keySlot = (byte*)(*table) + ((*it) * typeSize) + keyOffset;
+                if (comparator(keySlot, lastKey, keySize)) {
+                    *it = index;
+                    goto PopLast;
+                }
+                ++it;
+                // Wrap around at the end
+                if(it == hashTableEnd) it = indices;
             }
-            ++it;
-            // Wrap around at the end
-            if(it == end) it = indices;
         }
+        PopLast:
+        header->size--;
     }
-    PopLast:
-    header->size--;
 }
 
 void CHashTable_test() {
@@ -284,21 +291,7 @@ void CHashTable_test() {
 
     //CHashTable_insert(table, (Vec2f){3}, 43);
 
-    do {
-        if ((tanl) == nullptr) _CHashTable_new((void **) (&tanl), CHASH_TABLE_INIT_CAPACITY, sizeof(*(tanl)),
-                                               sizeof((tanl)->key), offsetof(typeof(*tanl), key),
-                                               _CHashTable_getKeyComparator((tanl)->key),
-                                               _CHashTable_getKeyHash((tanl)->key));
-        _CHashTable_growIfNeeded((void **) (&tanl));
-        const size_t index = _CHashTable_getHeader(tanl)->size++;
-        (tanl)[index] = (typeof(*(tanl))){"Hassan", ((ElementKeyValue){.key = (Vec2f){0.0, 1.69}})};
-        auto key = "Hassan";
-        const auto keyPtr = &key;
-        *_CHashTable_getFreeIndex((tanl), (byte *) (keyPtr)) = index;
-    } while (0);
-
     //int value = CHashTable_get(table, (Vec2f){3})->value;
-    volatile auto value2 = CHashTable_get(tanl, "Hassan")->value.key;
 
     for CHashTable_each(ach, tanl) {
         printf("%s\n", ach->key);

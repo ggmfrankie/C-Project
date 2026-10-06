@@ -280,38 +280,261 @@ static void Test_hashTable() {
     } TestStruct;
 
     TestStruct* map = nullptr;
-    TEST(CHashTable_isEmpty(map) == true, "new map should be empty");
+
+    //------------------------------------------------------------------------//
+    // Basic insertion / retrieval
+
+    TEST(CHashTable_isEmpty(map) == true,
+         "new map should be empty");
 
     CHashTable_insert(map, "one", 1);
-    TEST(CHashTable_get(map, "one")->value == 1, "map['one'] expected 1, got %d", CHashTable_get(map, "one")->value);
+    TEST(CHashTable_get(map, "one")->value == 1,
+         "map['one'] expected 1, got %d",
+         CHashTable_get(map, "one")->value);
 
     CHashTable_insert(map, "two", 2);
-    TEST(CHashTable_get(map, "two")->value == 2, "map['two'] expected 2, got %d", CHashTable_get(map, "two")->value);
-    TEST(CHashTable_len(map) == 2, "mapLen expected 2, got %zu", CHashTable_len(map));
+    TEST(CHashTable_get(map, "two")->value == 2,
+         "map['two'] expected 2, got %d",
+         CHashTable_get(map, "two")->value);
 
-    // Missing key should return nullptr.
-    TEST(CHashTable_get(map, "does-not-exist") == nullptr, "missing key should return nullptr");
+    TEST(CHashTable_len(map) == 2,
+         "mapLen expected 2, got %zu",
+         CHashTable_len(map));
 
-    // Stress insertion and retrieval with stable key buffers.
+    TEST(CHashTable_get(map, "does-not-exist") == nullptr,
+         "missing key should return nullptr");
+
+
+    //------------------------------------------------------------------------//
+    // Bulk insertion / growth
+
     enum { extraEntries = 300 };
     char keys[extraEntries][32];
+
     for (int i = 0; i < extraEntries; ++i) {
         snprintf(keys[i], sizeof(keys[i]), "k_%d", i);
         CHashTable_insert(map, keys[i], i * 3);
     }
 
-    TEST(CHashTable_len(map) == (size_t)(2 + extraEntries), "mapLen expected %zu after bulk insert, got %zu", (size_t)(2 + extraEntries), CHashTable_len(map));
-    TEST(CHashTable_len(map) > 256, "mapCap expected growth beyond 256, got %zu", CHashTable_len(map));
+    TEST(CHashTable_len(map) == (size_t)(2 + extraEntries),
+         "mapLen expected %zu after bulk insert, got %zu",
+         (size_t)(2 + extraEntries),
+         CHashTable_len(map));
+
+    TEST(CHashTable_len(map) > 256,
+         "mapCap expected growth beyond 256, got %zu",
+         CHashTable_len(map));
 
     for (int i = 0; i < extraEntries; ++i) {
         const auto value = CHashTable_get(map, keys[i]);
-        TEST(value != nullptr, "value for key '%s' should not be nullptr", keys[i]);
-        TEST(value->value == i * 3, "value for key '%s' expected %d got %d", keys[i], i * 3, value ? value->value : -1);
+
+        TEST(value != nullptr,
+             "value for key '%s' should not be nullptr",
+             keys[i]);
+
+        TEST(value->value == i * 3,
+             "value for key '%s' expected %d got %d",
+             keys[i],
+             i * 3,
+             value ? value->value : -1);
     }
 
-    // Original entries must still be retrievable after rehash growth.
-    TEST(CHashTable_get(map, "one")->value == 1, "map['one'] changed after growth, got %d", CHashTable_get(map, "one")->value);
-    TEST(CHashTable_get(map, "two")->value == 2, "map['two'] changed after growth, got %d", CHashTable_get(map, "two")->value);
+    TEST(CHashTable_get(map, "one")->value == 1,
+         "map['one'] changed after growth, got %d",
+         CHashTable_get(map, "one")->value);
+
+    TEST(CHashTable_get(map, "two")->value == 2,
+         "map['two'] changed after growth, got %d",
+         CHashTable_get(map, "two")->value);
+
+
+    //------------------------------------------------------------------------//
+    // Delete missing key
+
+    const size_t sizeBeforeMissingDelete = CHashTable_len(map);
+
+    CHashTable_remove(map, "does-not-exist");
+
+    TEST(CHashTable_len(map) == sizeBeforeMissingDelete,
+         "removing missing key changed map size");
+
+    TEST(CHashTable_get(map, "one") != nullptr,
+         "'one' disappeared after removing missing key");
+
+
+    //------------------------------------------------------------------------//
+    // Delete an element
+
+    CHashTable_remove(map, "one");
+
+    TEST(CHashTable_get(map, "one") == nullptr,
+         "deleted key 'one' should return nullptr");
+
+    TEST(CHashTable_len(map) == sizeBeforeMissingDelete - 1,
+         "map size incorrect after deleting 'one'");
+
+
+    //------------------------------------------------------------------------//
+    // Delete another element
+
+    CHashTable_remove(map, "two");
+
+    TEST(CHashTable_get(map, "two") == nullptr,
+         "deleted key 'two' should return nullptr");
+
+    TEST(CHashTable_len(map) == sizeBeforeMissingDelete - 2,
+         "map size incorrect after deleting 'two'");
+
+    TEST(CHashTable_get(map, keys[0]) != nullptr,
+         "bulk entry disappeared after deleting unrelated keys");
+
+
+    //------------------------------------------------------------------------//
+    // Delete a middle element.
+    //
+    // This is particularly important because your implementation moves the
+    // final data element into the deleted element's physical data slot.
+
+    const size_t sizeBeforeMiddleDelete = CHashTable_len(map);
+
+    CHashTable_remove(map, keys[100]);
+
+    TEST(CHashTable_get(map, keys[100]) == nullptr,
+         "deleted middle key should return nullptr");
+
+    TEST(CHashTable_len(map) == sizeBeforeMiddleDelete - 1,
+         "map size incorrect after middle deletion");
+
+    for (int i = 0; i < extraEntries; ++i) {
+        if (i == 100)
+            continue;
+
+        const auto value = CHashTable_get(map, keys[i]);
+
+        TEST(value != nullptr,
+             "key '%s' disappeared after deleting keys[100]",
+             keys[i]);
+
+        if (value) {
+            TEST(value->value == i * 3,
+                 "key '%s' changed value after deletion",
+                 keys[i]);
+        }
+    }
+
+
+    //------------------------------------------------------------------------//
+    // Delete the last logical element.
+    //
+    // This exercises the index == size - 1 path where no memcpy is performed.
+
+    const size_t sizeBeforeLastDelete = CHashTable_len(map);
+
+    CHashTable_remove(map, keys[299]);
+
+    TEST(CHashTable_get(map, keys[299]) == nullptr,
+         "deleted last key should return nullptr");
+
+    TEST(CHashTable_len(map) == sizeBeforeLastDelete - 1,
+         "map size incorrect after deleting last element");
+
+
+    //------------------------------------------------------------------------//
+    // Delete many elements.
+    //
+    // This stresses repeated cluster rebuilding and physical compaction.
+
+    for (int i = 0; i < extraEntries; i += 3) {
+        if (i == 100 || i == 299)
+            continue;
+
+        CHashTable_remove(map, keys[i]);
+
+        TEST(CHashTable_get(map, keys[i]) == nullptr,
+             "key '%s' should be gone after deletion",
+             keys[i]);
+    }
+
+    // Verify all remaining keys.
+    for (int i = 0; i < extraEntries; ++i) {
+        if (i == 100 || i == 299 || i % 3 == 0)
+            continue;
+
+        const auto value = CHashTable_get(map, keys[i]);
+
+        TEST(value != nullptr,
+             "remaining key '%s' disappeared after repeated deletions",
+             keys[i]);
+
+        if (value) {
+            TEST(value->value == i * 3,
+                 "remaining key '%s' has wrong value: expected %d got %d",
+                 keys[i],
+                 i * 3,
+                 value->value);
+        }
+    }
+
+
+    //------------------------------------------------------------------------//
+    // Reinsertion after deletion.
+    //
+    // Important: deleted slots must remain usable.
+
+    CHashTable_insert(map, "reinserted", 12345);
+
+    TEST(CHashTable_get(map, "reinserted") != nullptr,
+         "reinserted key should be found");
+
+    TEST(CHashTable_get(map, "reinserted")->value == 12345,
+         "reinserted key has wrong value");
+
+    CHashTable_insert(map, "another", 54321);
+
+    TEST(CHashTable_get(map, "another") != nullptr,
+         "second reinserted key should be found");
+
+    TEST(CHashTable_get(map, "another")->value == 54321,
+         "second reinserted key has wrong value");
+
+
+    //------------------------------------------------------------------------//
+    // Delete everything that remains.
+    //
+    // This catches size bookkeeping errors.
+
+    CHashTable_remove(map, "reinserted");
+    CHashTable_remove(map, "another");
+
+    for (int i = 0; i < extraEntries; ++i) {
+        if (i == 100 || i == 299 || i % 3 == 0)
+            continue;
+
+        CHashTable_remove(map, keys[i]);
+    }
+
+    TEST(CHashTable_len(map) == 0,
+         "map should be empty after deleting everything, got %zu",
+         CHashTable_len(map));
+
+    TEST(CHashTable_isEmpty(map),
+         "map should report empty after deleting everything");
+
+
+    //------------------------------------------------------------------------//
+    // Insert into completely emptied table.
+
+    CHashTable_insert(map, "after-empty", 999);
+
+    TEST(CHashTable_len(map) == 1,
+         "map should contain one element after reinsertion");
+
+    TEST(CHashTable_get(map, "after-empty") != nullptr,
+         "key inserted into emptied table should be found");
+
+    TEST(CHashTable_get(map, "after-empty")->value == 999,
+         "key inserted into emptied table has wrong value");
+
 
     CHashTable_free(map);
 }

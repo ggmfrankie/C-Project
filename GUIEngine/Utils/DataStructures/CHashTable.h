@@ -77,7 +77,7 @@ void* _CHashTable_get(
     const byte *keyPtr
 );
 
-ssize_t* _CHashTable_getFreeIndex(
+ssize_t* _CHashTable_getFreeHashIndexSlot(
     void* hashTable,
     const byte* keyData
 );
@@ -113,7 +113,7 @@ do {\
     (pTable)[index] = (typeof(*(pTable))){pKey, pValue};\
 \
     auto key = pKey;\
-    *_CHashTable_getFreeIndex((pTable), (byte*) &(key)) = index;\
+    *_CHashTable_getFreeHashIndexSlot((pTable), (byte*) &(key)) = index;\
 } while (0)
 
 #define CHashTable_get(pTable, pKey) ({auto key = pKey; (typeof(pTable)) _CHashTable_get((pTable), (byte*)&(key));})
