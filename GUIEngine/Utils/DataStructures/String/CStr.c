@@ -9,10 +9,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "CArrayList.h"
-#include "../Logging/Logging.h"
-#include "../Macros/Utils.h"
-#include "../Macros/Defer.h"
+#include "../CArrayList.h"
+#include "../../Logging/Logging.h"
+#include "../../Macros/Utils.h"
+#include "../../Macros/Defer.h"
 
 #define IDENTIFIER 0xFADEDBEEF0
 
@@ -28,7 +28,7 @@ static struct _StringHeader_* strAllocate(size_t capacity){
 
 #define strGetHead(s) (&((struct _StringHeader_*)(s))[-1])
 
-#define strAssert(str) assert((str) != nullptr); strAssertIsValid(str)
+#define strAssert(str) do { assert((str) != nullptr); strAssertIsValid(str); } while(0)
 
 static void strAssertIsValid(const char* c){
     if (strGetHead(c)->_IDENTIFIER_ != IDENTIFIER)
@@ -228,7 +228,7 @@ void strAppend_sprintfVa(Str* s, const char* fmt, va_list args) {
     va_list argsCopy;
     va_copy(argsCopy, args);
 
-    const size_t len = vsnprintf(nullptr, 0, fmt, args);
+    const ssize_t len = vsnprintf(nullptr, 0, fmt, args);
     va_end(args);
     if (len < 0) ERROR_("Could not parse formatstring");
 
@@ -329,7 +329,7 @@ void cstrbConcat(char *buff, size_t size, const char *a, const char *b) {
     const size_t total = lenA + lenB;
 
     if(size < total + 1) {
-        ERROR_("Buffer of size: %lu is not sufficient for string length %lu\n", size, total);
+        ERROR_("Buffer of size: %i is not sufficient for string length %i\n", (int)size, (int)total);
         return;
     }
     memcpy(buff, a, lenA);

@@ -1,15 +1,14 @@
 #include "Test.h"
 #include "DataStructures/CArrayList.h"
-#include "DataStructures/CHashMap.h"
+#include "DataStructures/Hashing/CHashMap.h"
 #include "DataStructures/CSparseSet.h"
-#include "DataStructures/CStr.h"
+#include "DataStructures/String/CStr.h"
 #include "Os/Time.h"
-#include <assert.h>
 #include <stdio.h>
 #include <string.h>
 
-#include "DataStructures/CHashTable.h"
-#include "DataStructures/CSStringView.h"
+#include "DataStructures/Hashing/CHashTable.h"
+#include "DataStructures/String/CSStringView.h"
 #include "Json/CJson.h"
 #include "Macros/Defer.h"
 #include "OtherProjects/C/Extern/CVector.h"

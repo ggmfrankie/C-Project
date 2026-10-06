@@ -13,7 +13,7 @@
 #include "../Dependencies/include/stb/stb_truetype.h"
 #include "Utils/Math/Vector.h"
 #include "Texture/Texture.h"
-#include "Utils/DataStructures/CStr.h"
+#include "../../Utils/DataStructures/String/CStr.h"
 
 typedef struct Font {
     StandaloneTexture fontAtlas;

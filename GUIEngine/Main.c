@@ -5,10 +5,10 @@
 #include "GuiInterface.h"
 #include "../GameEngine/Games/BaseGame/GameGui.h"
 #include "Utils/Test.h"
-#include "Utils/DataStructures/CHashTable.h"
+#include "Utils/DataStructures/Hashing/CHashTable.h"
 #include "Utils/Json/CJson.h"
 #include "Utils/Logging/Logging.h"
-#include "Utils/DataStructures/CString.h"
+#include "Utils/DataStructures/String/CString.h"
 #include "_Projects_/Chess/ChessGame.h"
 #include "_Projects_/ExampleGUI/ExampleGUI.h"
 #if 0

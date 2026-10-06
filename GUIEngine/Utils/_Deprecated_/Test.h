@@ -4,7 +4,7 @@
 #pragma once
 
 #include "../DataStructures/CArrayList.h"
-#include "../DataStructures/CHashMap.h"
+#include "../DataStructures/Hashing/CHashMap.h"
 
 
 static void Utils_test() {

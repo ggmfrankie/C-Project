@@ -8,13 +8,12 @@
 #include "GameEngine/Games/BaseGame/BaseGame.hpp"
 #include "GameEngine/Games/Game2D/Game2D.hpp"
 #include "GameEngine/Test/Test.hpp"
-#include "GUIEngine/Utils/DataStructures/CStr.h"
+#include "GUIEngine/Utils/DataStructures/String/CStr.h"
 #include "Utils/Test.h"
 
 #if 1
 int main() {
     Test_run();
-    return 0;
     try {
         JPH::RegisterDefaultAllocator();
         Game::BaseGame game {};

@@ -11,7 +11,7 @@
 #include "../Engine.h"
 #include "../Drawing/Mesh/Mesh.h"
 #include "Utils/DataStructures/CArrayList.h"
-#include "Utils/DataStructures/CHashTable.h"
+#include "../../Utils/DataStructures/Hashing/CHashTable.h"
 #include "Utils/DataStructures/CSparseSet.h"
 
 static SparseSet gElements;

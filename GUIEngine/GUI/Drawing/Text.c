@@ -14,7 +14,7 @@
 #include "RenderTypes.h"
 #include "GUI/GuiElement/GuiElement.h"
 #include "Utils/DataStructures/CArrayList.h"
-#include "Utils/DataStructures/CStr.h"
+#include "../../Utils/DataStructures/String/CStr.h"
 #include "glad/gl.h"
 #include "Utils/Macros/Defer.h"
 #include "Utils/Macros/Utils.h"

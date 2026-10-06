@@ -5,11 +5,11 @@
 #pragma once
 #include <stdint.h>
 
-#include "Utils/DataStructures/CStr.h"
+#include "CStr.h"
 
 /**
  * @brief <[tag|length][\0][c5][c4][c3][c2][c1][c0]>
- *        <Str>
+ *        <Str------------------------------------->
  */
 typedef struct {
     union {

@@ -4,9 +4,9 @@
 
 #pragma once
 #include "Utils/Typedef.h"
-#include "Utils/DataStructures/CStr.h"
+#include "Utils/DataStructures/String/CStr.h"
 #include "Utils/Macros/Defer.h"
-#include "../DataStructures/CString.h"
+#include "../DataStructures/String/CString.h"
 
 typedef enum {
     CJSON_NULL,

@@ -3,7 +3,7 @@
 //
 
 #pragma once
-#include "../DataStructures/CStr.h"
+#include "../DataStructures/String/CStr.h"
 #include "GuiDefines.h"
 
 Str readFile(const char* fileName);

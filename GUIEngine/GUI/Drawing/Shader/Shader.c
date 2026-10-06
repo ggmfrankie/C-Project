@@ -8,7 +8,7 @@
 #include <string.h>
 
 #include "Utils/Os/FileIO.h"
-#include "Utils/DataStructures/CHashMap.h"
+#include "../../../Utils/DataStructures/Hashing/CHashMap.h"
 #include "Utils/Macros/Defer.h"
 #include "Utils/Logging/Logging.h"
 

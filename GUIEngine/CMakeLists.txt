@@ -37,13 +37,13 @@ add_library(GUI STATIC
         _Projects_/TFE/TFE.h
         GuiTypes.h
         GuiDefines.h
-        Utils/DataStructures/CHashMap.h
+        Utils/DataStructures/Hashing/CHashMap.h
         Utils/_Deprecated_/Test.h
-        Utils/DataStructures/CHashMap.c
+        Utils/DataStructures/Hashing/CHashMap.c
         Utils/Typedef.h
         Utils/Macros/Defer.c
-        Utils/DataStructures/CStr.c
-        Utils/DataStructures/CStr.h
+        Utils/DataStructures/String/CStr.c
+        Utils/DataStructures/String/CStr.h
         Utils/Logging/Logging.h
         Utils/_Deprecated_/NamedParameters.h
         Utils/Test.c
@@ -86,8 +86,8 @@ add_library(GUI STATIC
         GUI/GuiElement/ElementTypes/ScrollArea.h
         GUI/GuiElement/ElementTypes.h
         GuiColors.h
-        Utils/DataStructures/CSStringView.c
-        Utils/DataStructures/CSStringView.h
+        Utils/DataStructures/String/CSStringView.c
+        Utils/DataStructures/String/CSStringView.h
         _Projects_/ExampleGUI/ExampleGUI.c
         _Projects_/ExampleGUI/ExampleGUI.h
         GUI/GuiElement/ElementTypes/TextArea.c
@@ -95,10 +95,10 @@ add_library(GUI STATIC
         Utils/Logging/Logging.c
         Utils/Json/CJson.c
         Utils/Json/CJson.h
-        Utils/DataStructures/CString.c
-        Utils/DataStructures/CString.h
-        Utils/DataStructures/CHashTable.c
-        Utils/DataStructures/CHashTable.h
+        Utils/DataStructures/String/CString.c
+        Utils/DataStructures/String/CString.h
+        Utils/DataStructures/Hashing/CHashTable.c
+        Utils/DataStructures/Hashing/CHashTable.h
         Utils/DataStructures/CInlineStack.h
         Utils/DataStructures/CInlineStack.c
 )

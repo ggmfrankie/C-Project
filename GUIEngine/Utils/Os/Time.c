@@ -7,7 +7,7 @@
 #include <stdint.h>
 #include <time.h>
 
-#include "Utils/DataStructures/CStr.h"
+#include "../DataStructures/String/CStr.h"
 
 #ifdef _WIN32
 #define NOMINMAX

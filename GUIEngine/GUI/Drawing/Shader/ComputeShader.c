@@ -9,7 +9,7 @@
 #include "Shader.h"
 #include "Utils/Math/Vector.h"
 #include "Utils/DataStructures/CArrayList.h"
-#include "Utils/DataStructures/CHashMap.h"
+#include "../../../Utils/DataStructures/Hashing/CHashMap.h"
 #include "Utils/Macros/Defer.h"
 #include "GUI/Drawing/Texture/Texture.h"
 

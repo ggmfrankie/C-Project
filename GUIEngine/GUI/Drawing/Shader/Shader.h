@@ -6,7 +6,7 @@
 #include "Utils/_Deprecated_/CString_v1.h"
 #include "Utils/Math/Vector.h"
 #include "../Dependencies/include/glad/gl.h"
-#include "Utils/DataStructures/CStr.h"
+#include "../../../Utils/DataStructures/String/CStr.h"
 
 
 typedef struct Shader {

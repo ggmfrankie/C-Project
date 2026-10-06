@@ -6,7 +6,7 @@
 #include <assert.h>
 #include <string.h>
 
-#include "CStr.h"
+#include "../String/CStr.h"
 #include "Utils/Logging/Logging.h"
 
 void _mapNew(void** map, size_t typeSize, size_t capacity) {

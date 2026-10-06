@@ -10,9 +10,9 @@
 #include <stb/stb_rect_pack.h>
 
 #include "Utils/DataStructures/CArrayList.h"
-#include "Utils/DataStructures/CStr.h"
+#include "../../../Utils/DataStructures/String/CStr.h"
 #include "glad/gl.h"
-#include "Utils/DataStructures/CHashMap.h"
+#include "../../../Utils/DataStructures/Hashing/CHashMap.h"
 #include "Utils/Logging/Logging.h"
 #include "Utils/Macros/Defer.h"
 

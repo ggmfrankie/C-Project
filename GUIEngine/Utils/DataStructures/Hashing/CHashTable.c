@@ -9,8 +9,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "CInlineStack.h"
-#include "CStr.h"
+#include "../CInlineStack.h"
+#include "../String/CStr.h"
 #include "Utils/Macros/Defer.h"
 #include "Utils/Math/Vector.h"
 
@@ -185,14 +185,9 @@ void _CHashTable_remove(void* table[], const byte* keyData) {
 
     const size_t size = header->size;
     const size_t capacity = header->table.capacity;
-    const size_t keySize = header->key.size;
     const size_t keyOffset = header->key.offset;
-    const size_t typeSize = header->data.typeSize;
 
     ssize_t* indices = header->table.data;
-
-    const CHashTable_keyHash hash = header->hash;
-    const CHashTable_keyComparator comparator = header->comparator;
 
     // First: find the element that needs to be deleted
     ssize_t* slot = CHashTable_getHashIndexSlot(*table, keyData);
@@ -201,10 +196,10 @@ void _CHashTable_remove(void* table[], const byte* keyData) {
 
     const ssize_t index = *slot;
 
-    const ssize_t* hashTableEnd = indices + capacity;
-
-//--------------------------------------------------------------------------------//
+    //--------------------------------------------------------------------------------//
+    // Handle possible probe inserted elements
     {
+        const ssize_t* hashTableEnd = indices + capacity;
         // Deletion of the hash index inside the index array
         ssize_t* probeStart = slot + 1;
         if (probeStart == hashTableEnd) probeStart = indices;
@@ -246,31 +241,20 @@ void _CHashTable_remove(void* table[], const byte* keyData) {
         }
     }
 
-//--------------------------------------------------------------------------------//
+    //--------------------------------------------------------------------------------//
+    // Deletion of the actual element inside the data array
     {
-        // Deletion of the actual element inside the data array
         if (index < size-1) {
             void* deleteSlot = CHashTable_getDataSlot(*table, index);
             memcpy(deleteSlot, CHashTable_getDataSlot(*table, size-1), header->data.typeSize);
 
             const void* lastKey = deleteSlot + keyOffset;
-            const size_t lastHashIndex = hash(lastKey, keySize) % capacity;
 
-            ssize_t* it = &header->table.data[lastHashIndex];
+            ssize_t* it = CHashTable_getHashIndexSlot(*table, lastKey);
 
-            // Probing
-            while (*it != -1) {
-                const void* keySlot = (byte*)(*table) + ((*it) * typeSize) + keyOffset;
-                if (comparator(keySlot, lastKey, keySize)) {
-                    *it = index;
-                    goto PopLast;
-                }
-                ++it;
-                // Wrap around at the end
-                if(it == hashTableEnd) it = indices;
-            }
+            *it = index;
         }
-        PopLast:
+
         header->size--;
     }
 }
