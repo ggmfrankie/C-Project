@@ -117,13 +117,13 @@ do {\
     *_CHashTable_getFreeHashIndexSlot((pTable), (byte*) &(key)) = index;\
 } while (0)
 
-#define CHashTable_get(pTable, pKey) ({auto key = pKey; (typeof(pTable)) _CHashTable_get((pTable), (byte*)&(key));})
+#define CHashTable_get(pTable, pKey) ({auto CONCAT(key, __LINE__) = pKey; (typeof(pTable)) _CHashTable_get((pTable), (byte*)&(CONCAT(key, __LINE__)));})
 
 #define CHashTable_len(pTable) ((pTable)?_CHashTable_getHeader(pTable)->size:0)
 #define CHashTable_isEmpty(pTable) ((pTable)?CHashTable_len(pTable)==0:true)
 
 #define CHashTable_free(pTable) _CHashTable_free((void**)(&pTable))
-#define CHashTable_remove(pTable, pKey) do {auto key = pKey; _CHashTable_remove((void**)(&pTable), (byte*)&(key));} while(0)
+#define CHashTable_remove(pTable, pKey) do {auto CONCAT(key, __LINE__) = pKey; _CHashTable_remove((void**)(&pTable), (byte*)&(CONCAT(key, __LINE__)));} while(0)
 
 #define CHashTable_each_impl(_end, pItem, pTable) (typeof(*(pTable))* pItem = (pTable), *_end = (pTable) + CHashTable_len(pTable); (pItem) != _end; ++(pItem))
 #define CHashTable_each(pItem, pTable) CHashTable_each_impl(CONCAT(_end, __COUNTER__), pItem, pTable)
