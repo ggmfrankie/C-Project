@@ -5,6 +5,7 @@
 #include "GuiElement.h"
 
 #include <float.h>
+#include <limits.h>
 #include <pthread.h>
 #include <stdarg.h>
 #include "CallbackHelper.h"

@@ -76,7 +76,7 @@ void _CArrayList_growIfNeededImpl(void **array, size_t typeSize);
 })
 
 #define CArrayList_erase(array, index) do {\
-    if (index >= _CArrayList_getHeader(array)->size) ERROR_("Index %llu out of Bounds for Array with size %llu", (uint64_t)(index), _CArrayList_getHeader(array)->size);\
+    if (index >= _CArrayList_getHeader(array)->size) ERROR_("Index %lu out of Bounds for Array with size %lu", (uint64_t)(index), _CArrayList_getHeader(array)->size);\
     _CArrayList_erase((void**)&(array), sizeof(*array), index);\
 } while(0)
 
