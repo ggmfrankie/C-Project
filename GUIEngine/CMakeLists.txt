@@ -101,6 +101,8 @@ add_library(GUI STATIC
         Utils/DataStructures/Hashing/CHashTable.h
         Utils/DataStructures/CInlineStack.h
         Utils/DataStructures/CInlineStack.c
+        ../OtherProjects/C/AuD/SumOfTwoNumbers.c
+        ../OtherProjects/C/AuD/SumOfTwoNumbers.h
 )
 
 set_target_properties(GUI PROPERTIES LINKER_LANGUAGE C)
