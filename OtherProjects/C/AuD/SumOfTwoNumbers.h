@@ -3,4 +3,4 @@
 //
 #pragma once
 
-int* SumTwo_calculate(int* aNums, int* aTargets);
+void SumTwo_test();

@@ -60,3 +60,12 @@ void _CArrayList_growIfNeededImpl(void **array, size_t typeSize) {
     if (header->capacity > header->size) return;
     _CArrayList_resize(array, typeSize, header->capacity * 2);
 }
+
+void _CArrayList_sort(void* array[], size_t typeSize) {
+
+}
+
+static void CArrayList_test() {
+    int* array = {};
+
+}

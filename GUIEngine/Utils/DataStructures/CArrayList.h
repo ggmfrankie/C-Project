@@ -109,6 +109,9 @@ void _CArrayList_growIfNeededImpl(void **array, size_t typeSize);
         (array) = nullptr;\
     } while (0)
 
+#define CArrayList_sort(array)
+
+
 //@brief usage for CArrayList_each(itemName, array) {...}
 #define CArrayList_each_impl(_end, item, array) (typeof(*(array))* item = (array), *_end = (array) + CArrayList_len(array); (item) != _end; ++(item))
 /**
