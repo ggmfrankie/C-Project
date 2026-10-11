@@ -12,7 +12,7 @@
 #include "Utils/DataStructures/String/CString.h"
 #include "_Projects_/Chess/ChessGame.h"
 #include "_Projects_/ExampleGUI/ExampleGUI.h"
-#if 1
+#if 0
 int main() {
 
     SumTwo_test();

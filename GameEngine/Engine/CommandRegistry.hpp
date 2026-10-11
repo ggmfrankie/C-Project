@@ -10,20 +10,18 @@
 
 
 #include "Task.hpp"
-#include "Utils/DataStorage/InlineVector.hpp"
+#include "Utils/DataStorage/ArrayList.hpp"
 
-namespace Engine {
+namespace ggm {
     enum class TokenType {
-        command,
-        argument,
-        textLiteral
+        COMMAND,
+        ARGUMENT,
+        TEXT_LITERAL
     };
 
     struct Token {
         TokenType type;
         std::string_view value;
-
-        Token(const TokenType t, const std::string_view value) :type(t), value(value) {}
     };
 
     std::vector<Token> tokenize(const std::string& command);
@@ -80,13 +78,13 @@ namespace Engine {
             }
         };
 
-        std::unordered_map<std::string, std::unique_ptr<ICommand>> commands;
+        std::unordered_map<std::string, std::unique_ptr<ICommand>> mCommands;
 
     public:
         template<typename... Args, typename Func>
         void registerCommand(const std::string& name, Func func) {
             using Cmd = Command<Func, Args...>;
-            commands[name] = std::make_unique<Cmd>(func);
+            mCommands[name] = std::make_unique<Cmd>(func);
         }
 
         void run(const std::string& input) {
@@ -94,8 +92,8 @@ namespace Engine {
 
             try {
                 auto [command, rawArgs] = extractCommandAndArgs(tokens);
-                const auto it = commands.find(command);
-                if (it == commands.end()) return;
+                const auto it = mCommands.find(command);
+                if (it == mCommands.end()) return;
 
                 it->second->run(rawArgs);
             } catch (std::exception& e) {

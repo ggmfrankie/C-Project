@@ -5,15 +5,15 @@
 #pragma once
 #include "../EngineDefines.hpp"
 #include "PointMass.hpp"
-#include "Utils/DataStorage/InlineVector.hpp"
+#include "Utils/DataStorage/ArrayList.hpp"
 #include <vector>
 
 #include "Constrains/Spring.hpp"
 
 namespace PhysixBox {
     class SoftBody2D {
-        ggm::InlineVector<PointMass, 16> mPoints{};
-        ggm::InlineVector<Spring, 16> mSprings{};
+        ggm::ArrayList<PointMass, 16> mPoints{};
+        ggm::ArrayList<Spring, 16> mSprings{};
 
     public:
         SoftBody2D(const std::vector<PointMass>& points, const std::vector<Spring>& springs);
@@ -35,7 +35,7 @@ namespace PhysixBox {
 
         std::vector<ggm::Vector2f> getPositions();
 
-        ggm::InlineVector<PointMass, 16>& getPoints();
-        [[nodiscard]] const ggm::InlineVector<PointMass, 16>& getPoints() const;
+        ggm::ArrayList<PointMass, 16>& getPoints();
+        [[nodiscard]] const ggm::ArrayList<PointMass, 16>& getPoints() const;
     };
 }

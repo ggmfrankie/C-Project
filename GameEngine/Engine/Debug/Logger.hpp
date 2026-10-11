@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-namespace Engine {
+namespace ggm {
     class Logger {
         Logger() = default;
 
@@ -23,4 +23,4 @@ namespace Engine {
         void info(std::string& s);
         void error(std::string& s);
     };
-} // Engine
+} // ggm

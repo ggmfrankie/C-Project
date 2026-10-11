@@ -6,7 +6,7 @@
 #include "../EngineDefines.hpp"
 #include <functional>
 
-namespace Engine {
+namespace ggm {
     class Task {
         std::function<void()> mFunction;
     public:

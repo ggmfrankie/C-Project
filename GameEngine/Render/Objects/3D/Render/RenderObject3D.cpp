@@ -9,7 +9,7 @@
 #include "../Loader/OBJLoader.hpp"
 
 
-namespace Obj3D {
+namespace ggm {
     using ggm::Matrix4f;
     namespace fs = std::filesystem;
 
@@ -113,7 +113,7 @@ namespace Obj3D {
     RenderObject3D
     RenderObject3D::getDummyObject() {
         RenderObject3D dummy{};
-        dummy.mMeshes.add(Mesh::getDummyMesh());
+        dummy.mMeshes.add(Mesh3D::getDummyMesh());
         return dummy;
     }
 

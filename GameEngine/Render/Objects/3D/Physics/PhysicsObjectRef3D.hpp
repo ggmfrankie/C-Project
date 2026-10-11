@@ -10,13 +10,13 @@
 #include "Utils/Math/Quaternion.hpp"
 #include "Utils/Math/Vector.hpp"
 
-namespace Obj3D {
-    class PhysicsObjectRef {
+namespace ggm {
+    class PhysicsObjectRef3D {
         JPH::BodyID mBodyID;
         JPH::BodyInterface& mBodyInterface;
 
     public:
-        PhysicsObjectRef(JPH::BodyID ID, JPH::BodyInterface& bodyInterface);
+        PhysicsObjectRef3D(JPH::BodyID ID, JPH::BodyInterface& bodyInterface);
 
         [[nodiscard]] JPH::BodyID getBodyID() const { return mBodyID; }
 

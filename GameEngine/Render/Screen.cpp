@@ -12,7 +12,7 @@
 #include "../../GUIEngine/GuiInterface.h"
 #include "../Games/Scene/3D/Scene3D.hpp"
 
-namespace Render {
+namespace ggm {
     Screen::Screen(std::string windowName, const int width, const int height) :
         name(std::move(windowName)),
         mScene(nullptr)
@@ -72,7 +72,7 @@ namespace Render {
     }
 
     //! @brief Attaches a scene to the Screen to be rendered and processed
-    void Screen::attachScene(Game::IScene *scene) {
+    void Screen::attachScene(ggm::IScene *scene) {
         assert(scene != nullptr);
         mScene = scene;
     }
@@ -89,7 +89,7 @@ namespace Render {
         mInput.endFrame();
     }
 
-    Game::IScene& Screen::getScene() const {
+    ggm::IScene& Screen::getScene() const {
         return *mScene;
     }
 

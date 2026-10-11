@@ -9,21 +9,21 @@
 
 #include "glad/gl.h"
 
-namespace Obj3D {
-    class Texture {
+namespace ggm {
+    class Texture3D {
     public:
-        explicit Texture(const std::filesystem::path& file);
+        explicit Texture3D(const std::filesystem::path& file);
 
-        Texture();
-        Texture(const Texture &other) noexcept;
-        Texture(Texture&& other) noexcept ;
+        Texture3D();
+        Texture3D(const Texture3D &other) noexcept;
+        Texture3D(Texture3D&& other) noexcept ;
 
         void init();
         [[nodiscard]] GLuint getId() const;
 
-        ~Texture() = default;
+        ~Texture3D() = default;
 
-        Texture& operator=(Texture&&) noexcept = default;
+        Texture3D& operator=(Texture3D&&) noexcept = default;
 
     private:
         GLuint mTextureId = 0;

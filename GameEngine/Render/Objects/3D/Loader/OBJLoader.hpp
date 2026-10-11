@@ -9,9 +9,9 @@
 #include <filesystem>
 
 #include "Utils/Math/Vector.hpp"
-#include "../Render/Mesh.hpp"
+#include "../Render/Mesh3D.hpp"
 
-namespace Obj3D::OBJLoader {
+namespace ggm::OBJLoader {
 
     class OBJObject {
     public:
@@ -19,7 +19,7 @@ namespace Obj3D::OBJLoader {
 
         void load();
 
-        Mesh getMesh();
+        Mesh3D getMesh();
 
     private:
         struct IdxGroup {
@@ -36,13 +36,13 @@ namespace Obj3D::OBJLoader {
 
         std::filesystem::path mFolderPath;
 
-        std::vector<ggm::Vector3f> mGlVertices;
-        std::vector<ggm::Vector3f> mGlNormals;
-        std::vector<ggm::Vector2f> mGlUv;
+        std::vector<Vector3f> mGlVertices;
+        std::vector<Vector3f> mGlNormals;
+        std::vector<Vector2f> mGlUv;
 
         std::vector<GLuint> mIndices;
 
-        Texture mTexture;
+        Texture3D mTexture;
 
         using Token = std::string_view;
         using Lines = std::vector<Token>;
@@ -54,10 +54,10 @@ namespace Obj3D::OBJLoader {
         auto getMaterialLib(const Lines &lines) -> std::string_view;
 
         [[nodiscard]] static
-        auto convertToVec3f(const Lines &lineList) -> std::vector<ggm::Vector3f>;
+        auto convertToVec3f(const Lines &lineList) -> std::vector<Vector3f>;
 
         [[nodiscard]] static
-        auto convertToVec2f(const Lines &lineList) -> std::vector<ggm::Vector2f>;
+        auto convertToVec2f(const Lines &lineList) -> std::vector<Vector2f>;
 
         [[nodiscard]] static
         auto loadIdxGroups(const Token &faceLine) -> std::vector<IdxGroup>;

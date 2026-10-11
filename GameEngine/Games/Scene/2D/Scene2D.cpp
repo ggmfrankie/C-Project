@@ -5,9 +5,9 @@
 #include "Scene2D.hpp"
 
 #include "GuiInterface.h"
-#include "Render/Objects/2D/Physics/PhysicsFactory.hpp"
+#include "Render/Objects/2D/Physics/PhysicsFactory2D.hpp"
 
-namespace Game2D {
+namespace ggm {
     Scene2D::Scene2D() :
         mLayerStack(mObjects)
     {}
@@ -31,11 +31,11 @@ namespace Game2D {
         mLayerStack.updateAll(dt);
     }
 
-    Render::Camera& Scene2D::getCamera() {
+    Camera& Scene2D::getCamera() {
         return mCamera;
     }
 
-    ggm::u64 Scene2D::addObject(const ggm::Vector3f &color, const PhysicsFactory2D::PhysicsSettings &settings) {
+    u64 Scene2D::addObject(const Vector3f &color, const PhysicsFactory2D::PhysicsSettings &settings) {
         auto ro = mRenderer.newObject(color, settings.points);
         auto po = mPhysicsSystem.addBody(settings);
 

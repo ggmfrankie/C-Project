@@ -14,7 +14,7 @@
 #include "Utils/Math/Matrix.hpp"
 #include "glad/gl.h"
 
-namespace Render {
+namespace ggm {
     enum class UniformType {
         Int,
         Float,
@@ -76,7 +76,7 @@ namespace Render {
         /// Does typechecking once and throws an error if types don't match.
         /// Uses the current file to generate a unique key to force unique functions per translation unit
 
-#define setUniform(Name, Value) setUniform_T<Render::Shader::ConstStr{Name}, Render::Shader::fnv1a(__FILE__)>(Value)
+#define setUniform(Name, Value) setUniform_T<ggm::Shader::ConstStr{Name}, ggm::Shader::fnv1a(__FILE__)>(Value)
 
         template<ConstStr Name, uint32_t ID, typename V>
         void setUniform_T(V value) {

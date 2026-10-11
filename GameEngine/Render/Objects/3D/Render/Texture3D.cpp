@@ -2,7 +2,7 @@
 // Created by ertls on 17.02.2026.
 //
 
-#include "Texture.hpp"
+#include "Texture3D.hpp"
 
 #include <iostream>
 #include <sstream>
@@ -10,30 +10,30 @@
 #include "glad/gl.h"
 #include "stb/stb_image.h"
 
-namespace Obj3D {
+namespace ggm {
     namespace fs = std::filesystem;
 
-    const std::filesystem::path Texture::defaultPath{fs::current_path().parent_path()/"Resources"/"Textures"};
+    const std::filesystem::path Texture3D::defaultPath{fs::current_path().parent_path()/"Resources"/"Textures"};
 
-    Texture::Texture(const std::filesystem::path& file):
+    Texture3D::Texture3D(const std::filesystem::path& file):
         mPath(file)
     {}
 
-    Texture::Texture():
+    Texture3D::Texture3D():
         mPath(defaultPath/"ERROR.png")
     {}
 
-    Texture::Texture(Texture&& other) noexcept:
+    Texture3D::Texture3D(Texture3D&& other) noexcept:
         mTextureId(other.mTextureId),
         mPath(other.mPath)
     {}
 
-    Texture::Texture(const Texture& other) noexcept:
+    Texture3D::Texture3D(const Texture3D& other) noexcept:
         mTextureId(other.mTextureId),
         mPath(other.mPath)
     {}
 
-    void Texture::init() {
+    void Texture3D::init() {
         int width, height, channels;
 
         stbi_set_flip_vertically_on_load(true);
@@ -67,7 +67,7 @@ namespace Obj3D {
         stbi_image_free(pixels);
     }
 
-    GLuint Texture::getId() const {
+    GLuint Texture3D::getId() const {
         return mTextureId;
     }
 } // Geometry

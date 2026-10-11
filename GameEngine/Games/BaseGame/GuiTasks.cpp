@@ -23,9 +23,9 @@ extern "C" void update_setFovHighlight(void* data) {
 
 extern "C" void Engine_runCommand(void* commandString) {
     std::string s = {static_cast<char *>(commandString)};
-    GameEngine::Get().pushTask(
-        Engine::Task( [s] {
-                GameEngine::Get().getCommandRegistry().run(s);
+    ggm::GameEngine::Get().pushTask(
+        ggm::Task( [s] {
+                ggm::GameEngine::Get().getCommandRegistry().run(s);
             }
         )
     );
@@ -34,9 +34,9 @@ extern "C" void Engine_runCommand(void* commandString) {
 
 extern "C" void Engine_changeFOV(void* FOV) {
     float fovValue = *static_cast<float*>(FOV);
-    GameEngine::Get().pushTask(
-        Engine::Task( [fovValue] {
-                GameEngine::Get().getScreen().getScene().getCamera().setFOV(fovValue);
+    ggm::GameEngine::Get().pushTask(
+        ggm::Task( [fovValue] {
+                ggm::GameEngine::Get().getScreen().getScene().getCamera().setFOV(fovValue);
                 auto* payload = new float(fovValue);
                 gui_pushUpdate(update_setFovHighlight, payload);
             }

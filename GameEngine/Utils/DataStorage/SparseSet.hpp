@@ -6,15 +6,15 @@
 
 #include <sstream>
 
-#include "Utils/DataStorage/InlineVector.hpp"
+#include "Utils/DataStorage/ArrayList.hpp"
 #include "../ggmdef.hpp"
 
 namespace ggm {
     template <typename T>
     class SparseSet {
-        InlineVector<T> mData;
-        InlineVector<u64> mIndices;
-        InlineVector<u64> mReverseIndices;
+        ArrayList<T> mData;
+        ArrayList<u64> mIndices;
+        ArrayList<u64> mReverseIndices;
 
         u64 updateIndices() {
             if (mIndices.size() < mData.size()) {

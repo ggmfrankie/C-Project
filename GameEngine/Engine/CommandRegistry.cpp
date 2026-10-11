@@ -13,7 +13,7 @@
 #include <variant>
 
 
-namespace Engine {
+namespace ggm {
     using std::string, std::string_view, std::array, std::vector, std::function, std::variant;
     namespace {
         enum class State {
@@ -51,9 +51,9 @@ namespace Engine {
         static auto state = State::start;
         static int begin = 0, end = 0;
 
-        static auto newCommandToken = [](vector<Token>& t, const string& s){if (end != begin) t.emplace_back(TokenType::command, string_view(s.data()+begin, end - begin)); begin = ++end;};
-        static auto newArgumentToken = [](vector<Token>& t, const string& s){if (end != begin) t.emplace_back(TokenType::argument, string_view(s.data()+begin, end - begin)); begin = ++end;};
-        static auto newTextLiteralToken = [](vector<Token>& t, const string& s){if (end != begin) t.emplace_back(TokenType::textLiteral, string_view(s.data()+begin, end - begin)); begin = ++end;};
+        static auto newCommandToken = [](vector<Token>& t, const string& s){if (end != begin) t.emplace_back(TokenType::COMMAND, string_view(s.data()+begin, end - begin)); begin = ++end;};
+        static auto newArgumentToken = [](vector<Token>& t, const string& s){if (end != begin) t.emplace_back(TokenType::ARGUMENT, string_view(s.data()+begin, end - begin)); begin = ++end;};
+        static auto newTextLiteralToken = [](vector<Token>& t, const string& s){if (end != begin) t.emplace_back(TokenType::TEXT_LITERAL, string_view(s.data()+begin, end - begin)); begin = ++end;};
 
         static auto moveBeginAndEnd = [](vector<Token>& t, const string& s){begin++; end++;};
         static auto moveEnd = [](vector<Token>& t, const string& s){end++;};
@@ -93,7 +93,7 @@ namespace Engine {
     }
 
     std::pair<std::string, std::vector<std::string>> extractCommandAndArgs(const std::vector<Token>& tokens) {
-        if (tokens.empty() || tokens[0].type != TokenType::command) {
+        if (tokens.empty() || tokens[0].type != TokenType::COMMAND) {
             throw std::runtime_error("Command not found");
         }
 
@@ -101,7 +101,7 @@ namespace Engine {
         std::vector<std::string> args;
 
         for (size_t i = 1; i < tokens.size(); ++i) {
-            if (tokens[i].type == TokenType::argument) {
+            if (tokens[i].type == TokenType::ARGUMENT) {
                 args.emplace_back(tokens[i].value);
             }
         }
@@ -121,4 +121,4 @@ namespace Engine {
         return tokens;
     }
 
-} // Engine
+} // ggm

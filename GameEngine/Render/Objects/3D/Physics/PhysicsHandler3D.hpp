@@ -7,14 +7,12 @@
 #include <Jolt/Jolt.h>
 #include <Jolt/Physics/PhysicsSystem.h>
 #include <Jolt/Core/JobSystemThreadPool.h>
-#include "Render/Objects/3D/Physics/PhysicsObjectRef.hpp"
+#include "Render/Objects/3D/Physics/PhysicsObjectRef3D.hpp"
 #include "Utils/ggmdef.hpp"
 
-namespace Obj3D {
+namespace ggm {
     struct PhysicsSettings;
-}
 
-namespace Game {
     namespace Layers
     {
         static constexpr JPH::ObjectLayer NON_MOVING = 0;
@@ -26,7 +24,7 @@ namespace Game {
     {
         static constexpr JPH::BroadPhaseLayer NON_MOVING(0);
         static constexpr JPH::BroadPhaseLayer MOVING(1);
-        static constexpr ggm::u32 NUM_LAYERS(2);
+        static constexpr u32 NUM_LAYERS(2);
     }
 
     class PhysicsHandler3D  {
@@ -35,7 +33,7 @@ namespace Game {
         class BPLayerInterfaceImpl final : public JPH::BroadPhaseLayerInterface {
             JPH::BroadPhaseLayer mObjectToBroadPhase[Layers::NUM_LAYERS]{};
         public:
-            [[nodiscard]] ggm::u32 GetNumBroadPhaseLayers() const override;
+            [[nodiscard]] u32 GetNumBroadPhaseLayers() const override;
             [[nodiscard]] JPH::BroadPhaseLayer GetBroadPhaseLayer(JPH::ObjectLayer inLayer) const override;
 
         #if defined(JPH_EXTERNAL_PROFILE) || defined(JPH_PROFILE_ENABLED)
@@ -57,10 +55,10 @@ namespace Game {
 
         JPH::TempAllocatorImpl mTempAllocator;
 
-        const ggm::u32 cMaxBodies = 1024;
-        const ggm::u32 cNumBodyMutexes = 0;
-        const ggm::u32 cMaxBodyPairs = 1024;
-        const ggm::u32 cMaxContactConstraints = 1024;
+        const u32 cMaxBodies = 1024;
+        const u32 cNumBodyMutexes = 0;
+        const u32 cMaxBodyPairs = 1024;
+        const u32 cMaxContactConstraints = 1024;
 
         BPLayerInterfaceImpl mLayerInterface;
         ObjectLayerPairFilterImpl mObjectCollisionFilter;
@@ -76,7 +74,7 @@ namespace Game {
         void init() ;
 
         JPH::PhysicsSystem& getPhysicsSystem();
-        Obj3D::PhysicsObjectRef newObject(const Obj3D::PhysicsSettings& s);
+        PhysicsObjectRef3D newObject(const PhysicsSettings& s);
     };
 } // Game
 

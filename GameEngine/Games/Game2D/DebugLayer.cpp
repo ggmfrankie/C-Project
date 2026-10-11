@@ -4,9 +4,9 @@
 
 #include "DebugLayer.hpp"
 
-#include "Render/Objects/2D/Render/Renderer.hpp"
+#include "Render/Objects/2D/Render/Renderer2D.hpp"
 
-namespace Game2D {
+namespace ggm {
 
     // TODO: FIX
     DebugLayer::DebugLayer() :
@@ -38,7 +38,7 @@ namespace Game2D {
         mShader.compileAndLink();
     }
 
-    void DebugLayer::onAttach(ggm::SparseSet<GameObject>& data) {
+    void DebugLayer::onAttach(ggm::SparseSet<GameObject2D>& data) {
         mObjects = &data;
     }
 

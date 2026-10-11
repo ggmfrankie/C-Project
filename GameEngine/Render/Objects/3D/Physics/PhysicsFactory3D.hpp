@@ -14,17 +14,17 @@ namespace JPH {
     class Shape;
 }
 
-namespace Obj3D {
+namespace ggm {
     struct PhysicsSettings {
 
         const JPH::RefConst<JPH::Shape> shape ;
-        ggm::Vector3f pos;
-        ggm::Vector3f rot;
+        Vector3f pos;
+        Vector3f rot;
 
         JPH::EMotionType motionType;
     };
 
     namespace PhysicsFactory {
-        PhysicsSettings newBox(float x, float y, float z, const ggm::Vector3f &pos, JPH::EMotionType motionType = JPH::EMotionType::Dynamic);
+        PhysicsSettings newBox(float x, float y, float z, const Vector3f &pos, JPH::EMotionType motionType = JPH::EMotionType::Dynamic);
     }
 } // Obj

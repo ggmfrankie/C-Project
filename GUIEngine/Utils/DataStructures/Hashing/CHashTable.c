@@ -270,8 +270,8 @@ void CHashTable_test() {
         ElementKeyValue value;
     } AnotherTestStruct;
 
-    defer(defer_CHashTableFree) ElementKeyValue* table = {};
-    defer(defer_CHashTableFree) AnotherTestStruct* tanl = {};
+    defer(defer_CHashTable_free) ElementKeyValue* table = {};
+    defer(defer_CHashTable_free) AnotherTestStruct* tanl = {};
 
     //CHashTable_insert(table, (Vec2f){3}, 43);
 

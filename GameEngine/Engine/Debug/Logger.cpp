@@ -4,7 +4,7 @@
 
 #include "Logger.hpp"
 
-namespace Engine {
+namespace ggm {
     Logger& Logger::Get() {
         static Logger logger;
 
@@ -16,4 +16,4 @@ namespace Engine {
 
     void Logger::error(std::string &s) {
     }
-} // Engine
+} // ggm

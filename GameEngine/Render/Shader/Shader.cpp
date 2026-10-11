@@ -16,7 +16,7 @@
 #include "Utils/StringUtils.hpp"
 #include "Utils/DataStorage/LazyStream.hpp"
 
-namespace Render {
+namespace ggm {
     using std::string;
     using std::filesystem::path;
     Shader::Shader(path&& fileVert, path&& fileFrag):

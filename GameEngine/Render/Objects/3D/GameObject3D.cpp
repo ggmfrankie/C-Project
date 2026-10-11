@@ -2,12 +2,12 @@
 // Created by Stefan on 15.03.2026.
 //
 
-#include "GameObject.hpp"
+#include "GameObject3D.hpp"
 
-namespace Obj3D {
+namespace ggm {
     using namespace ggm;
 
-    GameObject::GameObject(std::optional<RenderObjectRef> renderObj, std::optional<PhysicsObjectRef> physicsObj) :
+    GameObject3D::GameObject3D(std::optional<RenderObjectRef> renderObj, std::optional<PhysicsObjectRef3D> physicsObj) :
         mRenderObj(std::move(renderObj)),
         mPhysicsObj(std::move(physicsObj)),
         mPos(),
@@ -15,7 +15,7 @@ namespace Obj3D {
     {
     }
 
-    GameObject::GameObject(RenderObjectRef renderObj, PhysicsObjectRef physicsObj) :
+    GameObject3D::GameObject3D(RenderObjectRef renderObj, PhysicsObjectRef3D physicsObj) :
         mRenderObj(renderObj),
         mPhysicsObj(physicsObj),
         mPos(),
@@ -23,7 +23,7 @@ namespace Obj3D {
     {
     }
 
-    GameObject::GameObject(RenderObjectRef renderObj) :
+    GameObject3D::GameObject3D(RenderObjectRef renderObj) :
         mRenderObj(renderObj),
         mPhysicsObj(),
         mPos(),
@@ -31,7 +31,7 @@ namespace Obj3D {
     {
     }
 
-    GameObject::GameObject(PhysicsObjectRef physicsObj) :
+    GameObject3D::GameObject3D(PhysicsObjectRef3D physicsObj) :
         mRenderObj(),
         mPhysicsObj(physicsObj),
         mPos(),
@@ -39,7 +39,7 @@ namespace Obj3D {
     {
     }
 
-    void GameObject::sync() {
+    void GameObject3D::sync() {
         if (!mPhysicsObj || !mRenderObj) return;
         auto& rObj = mRenderObj->get();
 
@@ -52,14 +52,14 @@ namespace Obj3D {
         rObj.rotateTo(rot);
     }
 
-    GameObject& GameObject::moveTo(const Vector3f &pos) {
+    GameObject3D& GameObject3D::moveTo(const Vector3f &pos) {
         if (mPhysicsObj) mPhysicsObj->setPosition(pos.x, pos.y, pos.z);
         if (mRenderObj) mRenderObj->get().moveTo(pos);
         mPos = pos;
         return *this;
     }
 
-    GameObject& GameObject::rotateTo(const Vector3f &rot) {
+    GameObject3D& GameObject3D::rotateTo(const Vector3f &rot) {
         if (mPhysicsObj) mPhysicsObj->setRotation(rot.x, rot.y, rot.z);
         const auto rotation = Quaternion::fromEuler(rot);
         if (mRenderObj) mRenderObj->get().rotateTo(rotation);
@@ -67,7 +67,7 @@ namespace Obj3D {
         return *this;
     }
 
-    GameObject& GameObject::rotateToDeg(const Vector3f &rot) {
+    GameObject3D& GameObject3D::rotateToDeg(const Vector3f &rot) {
         rotateTo({toRad(rot.x), toRad(rot.y), toRad(rot.z)});
         return *this;
     }

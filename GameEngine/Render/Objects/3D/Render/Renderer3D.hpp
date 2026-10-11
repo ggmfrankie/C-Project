@@ -8,28 +8,28 @@
 #include "Render/Shader/Shader.hpp"
 #include "Utils/DataStorage/SparseSet.hpp"
 
-namespace Render {
+namespace ggm {
     class Camera;
 }
 
-namespace Game {
+namespace ggm {
 
     class Renderer3D  {
 
-        Render::Shader mShader;
-        Render::Camera* mCamera = nullptr;
+        ggm::Shader mShader;
+        ggm::Camera* mCamera = nullptr;
 
-        ggm::SparseSet<Obj3D::RenderObject3D> mObjects;
+        ggm::SparseSet<ggm::RenderObject3D> mObjects;
 
     public:
         Renderer3D();
         ~Renderer3D();
 
-        void init(Render::Camera* camera);
+        void init(ggm::Camera* camera);
         void render(int width, int height);
 
         template<typename... Args>
-        Obj3D::RenderObjectRef newObject(Args &&... args) {
+        ggm::RenderObjectRef newObject(Args &&... args) {
             return {mObjects.push(std::forward<Args>(args)...) , mObjects};
         }
     };

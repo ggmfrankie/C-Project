@@ -6,7 +6,7 @@
 
 #include "Utils/Math/Vector.hpp"
 
-namespace Render {
+namespace ggm {
     class PointLight {
         ggm::Vector3f pos{};
         ggm::Vector3f color{};

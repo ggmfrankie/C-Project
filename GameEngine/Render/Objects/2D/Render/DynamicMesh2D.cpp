@@ -2,21 +2,21 @@
 // Created by Stefan on 28.03.2026.
 //
 
-#include "DynamicMesh.hpp"
+#include "DynamicMesh2D.hpp"
 
 #include <cassert>
 #include <vector>
 
-namespace Game2D {
+namespace ggm {
     using namespace ggm;
 
-    DynamicMesh::DynamicMesh(const std::vector<Vector2f>& pos) :
+    DynamicMesh2D::DynamicMesh2D(const std::vector<Vector2f>& pos) :
         mVertices(pos)
     {}
 
-    DynamicMesh::~DynamicMesh() = default;
+    DynamicMesh2D::~DynamicMesh2D() = default;
 
-    void DynamicMesh::init() {
+    void DynamicMesh2D::init() {
         glGenVertexArrays(1, &mVAO);
         glBindVertexArray(mVAO);
         glGenBuffers(3, mVBOs.data());
@@ -41,7 +41,7 @@ namespace Game2D {
         mInitialized = true;
     }
 
-    void DynamicMesh::render() const {
+    void DynamicMesh2D::render() const {
         //glActiveTexture(GL_TEXTURE0);
         //glBindTexture(GL_TEXTURE_2D, mTexture.id());
 
@@ -50,7 +50,7 @@ namespace Game2D {
         glBindVertexArray(0);
     }
 
-    void DynamicMesh::update(const std::vector<Vector2f>& newVerts) const {
+    void DynamicMesh2D::update(const std::vector<Vector2f>& newVerts) const {
         assert(newVerts.size() == mNumVerts);
         glBindBuffer(GL_ARRAY_BUFFER, mVBOs[0]);
         glBufferSubData(
@@ -61,7 +61,7 @@ namespace Game2D {
         );
     }
 
-    DynamicMesh::VBOHandles DynamicMesh::getGlData() const {
+    DynamicMesh2D::VBOHandles DynamicMesh2D::getGlData() const {
         return {mVAO, mVBOs, mNumVerts};
     }
 } // Obj

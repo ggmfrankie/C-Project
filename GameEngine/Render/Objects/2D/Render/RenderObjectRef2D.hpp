@@ -4,28 +4,28 @@
 
 #pragma once
 #include "../EngineDefines.hpp"
-#include "RenderObject.hpp"
+#include "RenderObject2D.hpp"
 #include "Utils/DataStorage/SparseSet.hpp"
-#include "../../../../Utils/ggmdef.hpp"
+#include "Utils/ggmdef.hpp"
 
-namespace Game2D {
+namespace ggm {
 
     struct RenderObjRef2D {
     private:
-        ggm::u64 id = INVALID_ID;
-        ggm::SparseSet<RenderObject>& objects;
+        u64 id = INVALID_ID;
+        SparseSet<RenderObject2D>& objects;
 
     public:
-        RenderObjRef2D(ggm::u64 id, ggm::SparseSet<RenderObject>& objects) :
+        RenderObjRef2D(u64 id, SparseSet<RenderObject2D>& objects) :
             id(id), objects(objects)
         {}
 
-        [[nodiscard]] RenderObject& get() const {
+        [[nodiscard]] RenderObject2D& get() const {
             return objects.get(id);
         };
         [[nodiscard]] bool empty() const {
             return id == INVALID_ID;
         }
-        static constexpr ggm::u64 INVALID_ID = std::numeric_limits<ggm::u64>::max();
+        static constexpr u64 INVALID_ID = std::numeric_limits<u64>::max();
     };
 }

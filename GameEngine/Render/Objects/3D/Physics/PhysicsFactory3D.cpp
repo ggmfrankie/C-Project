@@ -1,11 +1,11 @@
 //
 // Created by Stefan on 04.04.2026.
 //
-#include "PhysicsFactory.hpp"
+#include "PhysicsFactory3D.hpp"
 
 #include "Jolt/Physics/Collision/Shape/BoxShape.h"
 
-namespace Obj3D::PhysicsFactory {
+namespace ggm::PhysicsFactory {
     using namespace JPH;
     using namespace ggm;
 

@@ -4,27 +4,25 @@
 
 #pragma once
 #include "EngineDefines.hpp"
-#include "RenderObject.hpp"
-#include "RenderObjectRef.hpp"
+#include "RenderObject2D.hpp"
+#include "RenderObjectRef2D.hpp"
 #include "Render/Shader/Shader.hpp"
 #include "Utils/DataStorage/SparseSet.hpp"
 
-namespace Render {
+namespace ggm {
     class Camera;
-}
 
-namespace Game2D {
-    class Renderer {
-        Render::Shader mShader;
-        Render::Camera* mCamera = nullptr;
+    class Renderer2D {
+        Shader mShader;
+        Camera* mCamera = nullptr;
 
-        ggm::SparseSet<RenderObject> mObjects;
+        SparseSet<RenderObject2D> mObjects;
 
     public:
-        Renderer();
-        ~Renderer();
+        Renderer2D();
+        ~Renderer2D();
 
-        void init(Render::Camera* camera);
+        void init(Camera* camera);
         void render(int width, int height);
 
         template<typename... Args>

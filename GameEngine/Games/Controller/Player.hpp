@@ -9,9 +9,9 @@
 #include "Jolt/Physics/Character/Character.h"
 #include "Render/Objects/3D/Render/RenderObject3D.hpp"
 
-namespace Game {
+namespace ggm {
     class Player {
-        Obj3D::RenderObject3D mRenderObj;
+        ggm::RenderObject3D mRenderObj;
         ggm::Vector3f mPos{};
 
         JPH::Ref<JPH::Character> mCharacter;

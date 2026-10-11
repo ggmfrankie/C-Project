@@ -4,13 +4,13 @@
 
 #pragma once
 #include "../EngineDefines.hpp"
-#include "Utils/DataStorage/InlineVector.hpp"
+#include "Utils/DataStorage/ArrayList.hpp"
 #include "Utils/Math/Quaternion.hpp"
 #include "Utils/Math/Matrix.hpp"
-#include "Mesh.hpp"
+#include "Mesh3D.hpp"
 
 
-namespace Obj3D {
+namespace ggm {
     class RenderObject3D {
     public:
         explicit RenderObject3D(const std::filesystem::path &objFile);
@@ -49,6 +49,6 @@ namespace Obj3D {
         float mScale = 1.0f;
 
         ggm::Matrix4f mModel = ggm::Matrix4f::Identity();
-        ggm::InlineVector<Mesh, 1> mMeshes{};
+        ggm::ArrayList<Mesh3D, 1> mMeshes{};
     };
 } // Core

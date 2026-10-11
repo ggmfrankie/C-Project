@@ -6,7 +6,7 @@
 
 #include <cmath>
 
-#include "Render/Objects/2D/Physics/PhysicsFactory.hpp"
+#include "Render/Objects/2D/Physics/PhysicsFactory2D.hpp"
 
 namespace PhysixBox {
 
@@ -194,7 +194,7 @@ PhysicsSystem::Collision PhysicsSystem::getCollision(SoftBody2D &body,
   return result;
 }
 
-Game2D::PhysicsObjectRef PhysicsSystem::addBody(const Game2D::PhysicsFactory2D::PhysicsSettings &settings) {
+ggm::PhysicsObjectRef2D PhysicsSystem::addBody(const ggm::PhysicsFactory2D::PhysicsSettings &settings) {
   const auto id = mBodies.push();
   auto &body = mBodies.get(id);
 

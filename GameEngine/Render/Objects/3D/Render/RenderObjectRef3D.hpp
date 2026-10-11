@@ -8,7 +8,7 @@
 #include "Utils/DataStorage/SparseSet.hpp"
 #include "../../../../Utils/ggmdef.hpp"
 
-namespace Obj3D {
+namespace ggm {
 
     struct RenderObjectRef {
         static constexpr ggm::u64 INVALID_ID = std::numeric_limits<ggm::u64>::max();

@@ -7,7 +7,7 @@
 #include "GuiInterface.h"
 #include "Render/Transformation/Camera.hpp"
 
-namespace Game {
+namespace ggm {
     Renderer3D::Renderer3D() :
         mShader("MainShader.vert", "MainShader.frag"),
         mObjects(64)
@@ -15,7 +15,7 @@ namespace Game {
 
     Renderer3D::~Renderer3D() = default;
 
-    void Renderer3D::init(Render::Camera* camera) {
+    void Renderer3D::init(ggm::Camera* camera) {
         mShader.compileAndLink();
         mCamera = camera;
 

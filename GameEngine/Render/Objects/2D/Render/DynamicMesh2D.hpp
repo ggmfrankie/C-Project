@@ -9,24 +9,24 @@
 #include "Utils/Math/Vector.hpp"
 #include <vector>
 
-#include "Render/Objects/3D/Render/Texture.hpp"
+#include "Render/Objects/3D/Render/Texture3D.hpp"
 
-namespace Game2D {
-    class DynamicMesh {
+namespace ggm {
+    class DynamicMesh2D {
         GLuint mVAO = 0;
         GLuint mEBO = 0;
 
         bool mInitialized = false;
         GLint mNumVerts = 0;
 
-        Obj3D::Texture mTexture;
+        ggm::Texture3D mTexture;
         std::vector<ggm::Vector2f> mVertices;
         std::vector<ggm::Vector2f> mUvs;
 
         std::array<GLuint, 2> mVBOs{};
     public:
-        explicit DynamicMesh(const std::vector<ggm::Vector2f>& pos);
-        ~DynamicMesh();
+        explicit DynamicMesh2D(const std::vector<ggm::Vector2f>& pos);
+        ~DynamicMesh2D();
 
         void init();
         void render() const;

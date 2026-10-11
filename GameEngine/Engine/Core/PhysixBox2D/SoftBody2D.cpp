@@ -83,11 +83,11 @@ namespace PhysixBox {
         return points;
     }
 
-    InlineVector<PointMass, 16>& SoftBody2D::getPoints() {
+    ArrayList<PointMass, 16>& SoftBody2D::getPoints() {
         return mPoints;
     }
 
-    const InlineVector<PointMass, 16>& SoftBody2D::getPoints() const {
+    const ArrayList<PointMass, 16>& SoftBody2D::getPoints() const {
         return mPoints;
     }
 }

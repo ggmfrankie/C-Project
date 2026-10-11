@@ -6,10 +6,10 @@
 
 #include "GuiInterface.h"
 #include "Render/Objects/3D/Render/Renderer3D.hpp"
-#include "Render/Objects/3D/Physics/PhysicsFactory.hpp"
+#include "Render/Objects/3D/Physics/PhysicsFactory3D.hpp"
 
-namespace Game {
-    using namespace Obj3D;
+namespace ggm {
+    using namespace ggm;
     namespace fs = std::filesystem;
 
     Scene3D::Scene3D() {
@@ -17,7 +17,7 @@ namespace Game {
     }
 
     //! @brief Creates a RenderObject from an .obj file and creates a PhysicsObject from the settings given. Creates a Game Object that reference both.
-    GameObject& Scene3D::addObject(const fs::path& objFile, float scale, const PhysicsSettings& settings) {
+    GameObject3D& Scene3D::addObject(const fs::path& objFile, float scale, const PhysicsSettings& settings) {
         auto ro = mRenderer.newObject(objFile);
         ro.get().scaleTo(scale);
         auto po = mPhysicsHandler.newObject(settings);
@@ -26,7 +26,7 @@ namespace Game {
         return mGameObjects.back();
     }
 
-    Render::Camera& Scene3D::getCamera() {
+    ggm::Camera& Scene3D::getCamera() {
         return mCamera;
     }
 

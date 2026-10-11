@@ -7,11 +7,11 @@
 #include "Games/Scene/2D/ILayer.hpp"
 #include "Render/Shader/Shader.hpp"
 
-namespace Game2D {
+namespace ggm {
 
 class DebugLayer final : public ILayer {
-    Render::Shader mShader;
-    ggm::SparseSet<GameObject>* mObjects = nullptr;
+    ggm::Shader mShader;
+    ggm::SparseSet<GameObject2D>* mObjects = nullptr;
 public:
     DebugLayer();
     void onUpdate(float dt) override;
@@ -20,7 +20,7 @@ public:
 
     void onInit() override;
 
-    void onAttach(ggm::SparseSet<GameObject>& data) override;
+    void onAttach(ggm::SparseSet<GameObject2D>& data) override;
 };
 
 }

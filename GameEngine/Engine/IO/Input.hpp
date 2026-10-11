@@ -8,7 +8,7 @@
 #include "glad/gl.h"
 #include "GLFW/glfw3.h"
 
-namespace Render {
+namespace ggm {
 
     class Input {
         static constexpr int KEY_COUNT = 348;

@@ -4,8 +4,8 @@
 
 #include "LayerStack.hpp"
 
-namespace Game2D {
-    LayerStack::LayerStack(ggm::SparseSet<GameObject>& objects) :
+namespace ggm {
+    LayerStack::LayerStack(ggm::SparseSet<GameObject2D>& objects) :
         mObjects(objects)
     {}
 

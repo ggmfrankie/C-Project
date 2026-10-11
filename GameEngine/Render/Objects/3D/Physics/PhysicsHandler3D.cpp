@@ -6,9 +6,9 @@
 #include "Jolt/Physics/Body/BodyCreationSettings.h"
 #include "Jolt/Physics/Collision/Shape/BoxShape.h"
 
-#include "Render/Objects/3D/Physics/PhysicsFactory.hpp"
+#include "Render/Objects/3D/Physics/PhysicsFactory3D.hpp"
 
-namespace Game {
+namespace ggm {
     using namespace JPH;
 
     PhysicsHandler3D::PhysicsHandler3D() :
@@ -42,7 +42,7 @@ namespace Game {
         return mPhysicsSystem;
     }
 
-    Obj3D::PhysicsObjectRef PhysicsHandler3D::newObject(const Obj3D::PhysicsSettings &s) {
+    ggm::PhysicsObjectRef3D PhysicsHandler3D::newObject(const ggm::PhysicsSettings &s) {
         const BodyCreationSettings settings {
             s.shape,
             Vec3(s.pos.x, s.pos.y, s.pos.z),

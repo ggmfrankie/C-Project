@@ -6,7 +6,7 @@
 #include "../EngineDefines.hpp"
 #include "Shader.hpp"
 
-namespace Render {
+namespace ggm {
     class DeferredShader final : public Shader {
         GLuint gBufferId = 0;
 

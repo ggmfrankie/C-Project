@@ -9,7 +9,7 @@
 #include "../../../../Utils/ggmdef.hpp"
 #include "Utils/Math/Vector.hpp"
 
-namespace Game2D::PhysicsFactory2D {
+namespace ggm::PhysicsFactory2D {
     struct PhysicsSettings {
         std::vector<ggm::Vector2f> points;
         std::vector<std::pair<ggm::u64, ggm::u64>> connections;

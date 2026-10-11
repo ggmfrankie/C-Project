@@ -5,17 +5,17 @@
 #pragma once
 #include <functional>
 
-#include "InlineVector.hpp"
+#include "ArrayList.hpp"
 
 
 namespace ggm {
     template<typename T>
     class Stream {
-        InlineVector<T> mData{};
+        ArrayList<T> mData{};
 
         template<typename S>
         class StreamBuilder {
-            InlineVector<S> mData{16};
+            ArrayList<S> mData{16};
         public:
             StreamBuilder() = default;
 
@@ -30,7 +30,7 @@ namespace ggm {
         };
     public:
         Stream()= default;
-        explicit Stream(InlineVector<T>&& data) : mData(std::move(data))
+        explicit Stream(ArrayList<T>&& data) : mData(std::move(data))
         {}
         template<std::ranges::input_range R>
         requires (!std::same_as<std::remove_cvref_t<R>, Stream>) && std::constructible_from<T, std::ranges::range_reference_t<R>>
@@ -51,7 +51,7 @@ namespace ggm {
             return out;
         }
 
-        InlineVector<T> toInlineVector() {
+        ArrayList<T> toInlineVector() {
             return std::move(mData);
         }
 

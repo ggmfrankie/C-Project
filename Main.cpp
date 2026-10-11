@@ -11,14 +11,14 @@
 #include "GUIEngine/Utils/DataStructures/String/CStr.h"
 #include "Utils/Test.h"
 
-#if 0
+#if 1
 int main() {
     Test_run();
     try {
         JPH::RegisterDefaultAllocator();
-        Game::BaseGame game {};
-        Game2D::Game2D game2 {};
-        GameEngine& gameEngine = GameEngine::New(game);
+        ggm::BaseGame game {};
+        ggm::Game2D game2 {};
+        auto& gameEngine = ggm::GameEngine::New(game);
         gameEngine.init();
         gameEngine.loop();
         return 0;

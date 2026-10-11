@@ -9,74 +9,75 @@
 #include "GuiInterface.h"
 #include "Games/IGame.hpp"
 
-GameEngine* GameEngine::engineInstance = nullptr;
+namespace ggm {
+    GameEngine* GameEngine::mEngineInstance = nullptr;
 
-GameEngine::GameEngine(Game::IGame& game) :
-    game(game),
-    screen("My Window", 800, 600)
-{}
+    GameEngine::GameEngine(IGame& game) :
+        mGame(game),
+        mScreen("My Window", 800, 600)
+    {}
 
-void GameEngine::loop() {
-    double lastFrameTime = glfwGetTime();
-    while(!glfwWindowShouldClose(screen.getWindowHandle()))
-    {
-        const double frameStart = glfwGetTime();
-        const double delta = frameStart - lastFrameTime;
+    void GameEngine::loop() {
+        double lastFrameTime = glfwGetTime();
+        while (!glfwWindowShouldClose(mScreen.getWindowHandle())) {
+            const double frameStart = glfwGetTime();
+            const double delta = frameStart - lastFrameTime;
 
-        glfwPollEvents();
-        processTasks();
+            glfwPollEvents();
+            processTasks();
 
-        game.onUpdate(delta);
-        screen.update(delta);
+            mGame.onUpdate(delta);
+            mScreen.update(delta);
 
-        screen.render();
-        screen.endFrame();
-        lastFrameTime = frameStart;
-    }
-    glfwTerminate();
-}
-
-void GameEngine::init() {
-    JPH::Factory::sInstance = new JPH::Factory();
-    JPH::RegisterTypes();
-    game.preInit({.input = screen.getInput(), .screen = screen, .commandRegistry = commandRegistry});
-
-    try {
-        screen.init();
-    } catch (Render::Screen::GlException e) {
-        std::cerr << e.what();
-        return;
+            mScreen.render();
+            mScreen.endFrame();
+            lastFrameTime = frameStart;
+        }
+        glfwTerminate();
     }
 
-    game.postInit();
-}
+    void GameEngine::init() {
+        JPH::Factory::sInstance = new JPH::Factory();
+        JPH::RegisterTypes();
+        mGame.preInit({.input = &mScreen.getInput(), .screen = &mScreen, .commandRegistry = &mCommandRegistry});
 
-void GameEngine::pushTask(const Engine::Task& t) {
-    tasks.push_back(t);
-}
+        try {
+            mScreen.init();
+        } catch (Screen::GlException e) {
+            std::cerr << e.what();
+            return;
+        }
 
-void GameEngine::processTasks() {
-    while (!tasks.empty()) {
-        auto t = tasks.front();
-        tasks.pop_front();
-        t.execute();
+        mGame.postInit();
     }
-}
 
-Render::Screen& GameEngine::getScreen() {
-    return screen;
-}
+    void GameEngine::pushTask(const Task& t) {
+        mTasks.push_back(t);
+    }
 
-Engine::CommandRegistry& GameEngine::getCommandRegistry() {
-    return commandRegistry;
-}
+    void GameEngine::processTasks() {
+        while (!mTasks.empty()) {
+            auto t = mTasks.front();
+            mTasks.pop_front();
+            t.execute();
+        }
+    }
 
-GameEngine& GameEngine::New(Game::IGame& game) {
-    engineInstance = new GameEngine(game);
-    return *engineInstance;
-}
+    Screen& GameEngine::getScreen() {
+        return mScreen;
+    }
 
-GameEngine& GameEngine::Get() {
-    assert(engineInstance != nullptr);
-    return *engineInstance;
+    CommandRegistry& GameEngine::getCommandRegistry() {
+        return mCommandRegistry;
+    }
+
+    GameEngine& GameEngine::New(IGame& game) {
+        mEngineInstance = new GameEngine(game);
+        return *mEngineInstance;
+    }
+
+    GameEngine& GameEngine::Get() {
+        assert(mEngineInstance != nullptr);
+        return *mEngineInstance;
+    }
 }

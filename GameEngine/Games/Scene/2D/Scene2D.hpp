@@ -7,18 +7,18 @@
 #include "LayerStack.hpp"
 #include "Engine/Core/PhysixBox2D/PhysicsSystem.hpp"
 #include "Games/Scene/IScene.hpp"
-#include "Render/Objects/2D/GameObject.hpp"
-#include "Render/Objects/2D/Render/Renderer.hpp"
+#include "Render/Objects/2D/GameObject2D.hpp"
+#include "Render/Objects/2D/Render/Renderer2D.hpp"
 #include "Render/Transformation/Camera.hpp"
 
 
-namespace Game2D {
-    class Scene2D final : public Game::IScene {
-        Render::Camera mCamera{};
+namespace ggm {
+    class Scene2D final : public IScene {
+        Camera mCamera{};
         PhysixBox::PhysicsSystem mPhysicsSystem{};
-        Renderer mRenderer{};
+        Renderer2D mRenderer{};
 
-        ggm::SparseSet<GameObject> mObjects{16};
+        SparseSet<GameObject2D> mObjects{16};
         LayerStack mLayerStack;
 
     public:
@@ -31,9 +31,9 @@ namespace Game2D {
         void init() override;
         void render(int width, int height) override;
         void update(float dt) override;
-        Render::Camera & getCamera() override;
+        Camera& getCamera() override;
 
-        ggm::u64 addObject(const ggm::Vector3f& color, const PhysicsFactory2D::PhysicsSettings& settings);
+        u64 addObject(const Vector3f& color, const PhysicsFactory2D::PhysicsSettings& settings);
         void addLayer(std::unique_ptr<ILayer> layer);
     };
 }

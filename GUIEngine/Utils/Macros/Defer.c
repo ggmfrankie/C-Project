@@ -21,6 +21,6 @@ void defer_arrDelete(void *a) {
     arrFree(*(void**)a);
 }
 
-void defer_CHashTableFree(void *t) {
+void defer_CHashTable_free(void *t) {
     CHashTable_free(*(void**)t);
 }

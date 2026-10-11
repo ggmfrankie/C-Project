@@ -9,7 +9,7 @@
 #include "Engine/CommandRegistry.hpp"
 #include "../Scene/3D/Scene3D.hpp"
 #include "Render/Screen.hpp"
-#include "Render/Objects/3D/Physics/PhysicsFactory.hpp"
+#include "Render/Objects/3D/Physics/PhysicsFactory3D.hpp"
 #include "Render/Transformation/Camera.hpp"
 #include "Math/Vector.hpp"
 #include "_Projects_/Chess/ChessGame.h"
@@ -20,7 +20,7 @@ void toggle(T& x) {
     x = !x;
 }
 
-namespace Game {
+namespace ggm {
     BaseGame::BaseGame() = default;
 
     BaseGame::~BaseGame() = default;
@@ -28,9 +28,9 @@ namespace Game {
     void BaseGame::preInit(EngineContext &&e) {
 
         mCamera = &mScene.getCamera();
-        mCommandRegistry = &e.commandRegistry;
-        mInput = &e.input;
-        mScreen = &e.screen;
+        mCommandRegistry = e.commandRegistry;
+        mInput = e.input;
+        mScreen = e.screen;
 
         std::mt19937 rng(static_cast<unsigned int>(
             std::chrono::steady_clock::now().time_since_epoch().count()
@@ -47,30 +47,30 @@ namespace Game {
         std::uniform_real_distribution size(0.5f, 5.0f);
 
         for (int i = 0; i < 200; i++) {
-            ggm::Vector3f pos(posX(rng), posY(rng), posZ(rng));
+            Vector3f pos(posX(rng), posY(rng), posZ(rng));
 
-            ggm::Vector3f rot(rotPitch(rng), rotYaw(rng), rotRoll(rng));
+            Vector3f rot(rotPitch(rng), rotYaw(rng), rotRoll(rng));
 
             const float scale = size(rng);
             mScene.addObject(
                 "grass_block/grass_block.obj", scale,
-                Obj3D::PhysicsFactory::newBox(scale,scale,scale, pos)
+                PhysicsFactory::newBox(scale,scale,scale, pos)
             )
             .rotateToDeg(rot);
         }
 
         mScene.addObject(
             "ground_plane/ground_plane.obj", 1.0f,
-            Obj3D::PhysicsFactory::newBox(1000,0,1000, {0,-32, -20}, JPH::EMotionType::Static)
+            PhysicsFactory::newBox(1000,0,1000, {0,-32, -20}, JPH::EMotionType::Static)
         );
 
         mScreen->attachScene(&mScene);
 
-        //mPlayer = std::make_unique<Player>(ggm::Vector3f{0,0,0}, physics->getPhysicsSystem());
+        //mPlayer = std::make_unique<Player>(Vector3f{0,0,0}, physics->getPhysicsSystem());
         //mPlayer->init();
 
         mCommandRegistry->registerCommand<
-            Engine::Arg<std::string>
+            Arg<std::string>
         >(
             "say",
             [](const std::string &a) {
@@ -79,9 +79,9 @@ namespace Game {
         );
 
         mCommandRegistry->registerCommand<
-            Engine::Arg<float>,
-            Engine::Arg<float>,
-            Engine::Arg<float>
+            Arg<float>,
+            Arg<float>,
+            Arg<float>
         >(
             "tp",
             [this](float a, float b, float c) {
@@ -90,7 +90,7 @@ namespace Game {
         );
 
         mCommandRegistry->registerCommand<
-            Engine::Arg<bool>
+            Arg<bool>
         >(
             "debug",
             [this](bool b) {
@@ -106,7 +106,7 @@ namespace Game {
         );
 
         mCommandRegistry->registerCommand<
-            Engine::Arg<bool>
+            Arg<bool>
         >(
             "vsync",
             [this](bool b) {
@@ -116,7 +116,7 @@ namespace Game {
         );
 
         mCommandRegistry->registerCommand<
-            Engine::Arg<float>
+            Arg<float>
         >(
             "movespeed",
             [this](float f) {
@@ -131,7 +131,7 @@ namespace Game {
     }
 
     void BaseGame::onUpdate(double deltaTime) {
-        ggm::Vector3f cameraMovement{};
+        Vector3f cameraMovement{};
 
         if (mInput->isKeyDown(GLFW_KEY_W)) cameraMovement.z = 1;
         else if (mInput->isKeyDown(GLFW_KEY_S)) cameraMovement.z = -1;
@@ -148,7 +148,7 @@ namespace Game {
             toggleCursorMode(mScreen->getWindowHandle(), guiMode);
         }
 
-        const ggm::Vector2f camRot = mInput->getDisplaceVec();
+        const Vector2f camRot = mInput->getDisplaceVec();
 
         if (!guiMode) {
             mCamera->moveBy(cameraMovement.x * CAMERA_POS_STEP, cameraMovement.y * CAMERA_POS_STEP, cameraMovement.z * CAMERA_POS_STEP);

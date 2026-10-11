@@ -8,7 +8,7 @@
 #include <unordered_map>
 #include <charconv>
 
-#include "../Render/Mesh.hpp"
+#include "../Render/Mesh3D.hpp"
 #include "Utils/DataStorage/LazyStream.hpp"
 
 using std::string;
@@ -18,7 +18,7 @@ using std::cout;
 namespace fs = std::filesystem;
 
 
-namespace Obj3D::OBJLoader {
+namespace ggm::OBJLoader {
     OBJObject::OBJObject(const fs::path& fileName) :
         mFolderPath(fs::current_path().parent_path() / "Resources" / "Objects" / fileName)
     {}
@@ -44,7 +44,7 @@ namespace Obj3D::OBJLoader {
 
         loadMeshData(lines);
         const string textureName = loadMaterial(mFolderPath.parent_path(), mMaterialLib);
-        mTexture = Texture{mFolderPath.parent_path() / textureName};
+        mTexture = Texture3D{mFolderPath.parent_path() / textureName};
     }
 
     void OBJObject::loadMeshData(const Lines& lines) {
@@ -142,7 +142,7 @@ namespace Obj3D::OBJLoader {
     }
 
     /// @brief Extracts the Mesh object
-    [[nodiscard]] Mesh
+    [[nodiscard]] Mesh3D
     OBJObject::getMesh() {
         return {
           std::move(mGlVertices), 

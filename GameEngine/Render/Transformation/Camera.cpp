@@ -6,14 +6,14 @@
 
 #include "../../Utils/StringUtils.hpp"
 
-namespace Render {
+namespace ggm {
     void Camera::lookAt() {
 
     }
 
     void Camera::moveBy(const float offsetX, const float offsetY, const float offsetZ) {
 
-        const float yawRad = ggm::toRad(m_rotation.z);
+        const float yawRad = ggm::toRad(mRotation.z);
 
         // Forward (XZ) consistent with view R = Ry(-yaw) * Rx(-pitch): forward is -Z at yaw=0
         const float fx =  std::sin(yawRad);
@@ -24,26 +24,26 @@ namespace Render {
         const float rz =  std::sin(yawRad);
 
         // Apply movement in camera-aligned horizontal axes
-        m_pos.x += rx * offsetX + fx * offsetZ;
-        m_pos.z += rz * offsetX + fz * offsetZ;
-        m_pos.y += offsetY;
+        mPos.x += rx * offsetX + fx * offsetZ;
+        mPos.z += rz * offsetX + fz * offsetZ;
+        mPos.y += offsetY;
 
     }
 
     void Camera::rotateBy(const float dPitch, const float dRoll, const float dYaw) {
-        m_rotation.x += dPitch;
-        m_rotation.y += dRoll;
-        m_rotation.z += dYaw;
+        mRotation.x += dPitch;
+        mRotation.y += dRoll;
+        mRotation.z += dYaw;
     }
 
     ggm::Matrix4f Camera::getViewMatrix() const {
         using namespace ggm;
 
-        const float pitchDeg = m_rotation.x;
-        const float yawDeg   = m_rotation.z;
+        const float pitchDeg = mRotation.x;
+        const float yawDeg   = mRotation.z;
 
         // View is inverse rotation, hence the negatives:
         const Matrix4f R = Matrix4f::RotationX(-pitchDeg) * Matrix4f::RotationY(-yawDeg);
-        return R * Matrix4f::Translation(-m_pos);
+        return R * Matrix4f::Translation(-mPos);
     }
 } // Render

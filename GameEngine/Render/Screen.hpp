@@ -8,11 +8,11 @@
 
 #include "Engine/IO/Input.hpp"
 
-namespace Game {
+namespace ggm {
     class IScene;
 }
 
-namespace Render {
+namespace ggm {
     class Screen {
     public:
         Screen(std::string windowName, int width, int height);
@@ -21,7 +21,7 @@ namespace Render {
 
         void init();
         void render() const noexcept;
-        void attachScene(Game::IScene* scene);
+        void attachScene(ggm::IScene* scene);
 
         [[nodiscard]] int getWidth() const;
         [[nodiscard]] int getHeight() const;
@@ -32,7 +32,7 @@ namespace Render {
 
         void endFrame();
 
-        [[nodiscard]] Game::IScene& getScene() const;
+        [[nodiscard]] ggm::IScene& getScene() const;
 
         class GlException: public std::runtime_error {
         public:
@@ -46,7 +46,7 @@ namespace Render {
         int width, height;
         std::string name;
 
-        Game::IScene* mScene;
+        ggm::IScene* mScene;
         Input mInput;
     };
 }

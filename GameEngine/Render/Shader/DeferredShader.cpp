@@ -4,7 +4,7 @@
 
 #include "DeferredShader.hpp"
 
-namespace Render {
+namespace ggm {
     DeferredShader::DeferredShader(const std::string &fileVert, const std::string &fileFrag) : Shader(fileVert, fileFrag) {
 
     }

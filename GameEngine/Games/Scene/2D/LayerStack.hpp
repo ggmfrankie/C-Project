@@ -7,15 +7,15 @@
 #include <memory>
 
 #include "ILayer.hpp"
-#include "Utils/DataStorage/InlineVector.hpp"
+#include "Utils/DataStorage/ArrayList.hpp"
 
-namespace Game2D {
+namespace ggm {
 
 class LayerStack {
-    ggm::SparseSet<GameObject>& mObjects;
-    ggm::InlineVector<std::unique_ptr<ILayer>, 4> mLayer;
+    ggm::SparseSet<GameObject2D>& mObjects;
+    ggm::ArrayList<std::unique_ptr<ILayer>, 4> mLayer;
 public:
-    explicit LayerStack(ggm::SparseSet<GameObject>& objects);
+    explicit LayerStack(ggm::SparseSet<GameObject2D>& objects);
     void pushLayer(std::unique_ptr<ILayer> layer);
 
     void updateAll(float dt);

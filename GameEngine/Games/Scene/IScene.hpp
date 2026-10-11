@@ -4,11 +4,11 @@
 
 #pragma once
 #include "../EngineDefines.hpp"
-namespace Render {
+namespace ggm {
     class Camera;
 }
 
-namespace Game {
+namespace ggm {
     class IScene {
     public:
         virtual void init() = 0;
@@ -16,7 +16,7 @@ namespace Game {
         virtual void render(int width, int height) = 0;
         virtual void update(float dt) = 0;
 
-        virtual Render::Camera& getCamera() = 0;
+        virtual ggm::Camera& getCamera() = 0;
 
         virtual ~IScene() = default;
     };

@@ -12,10 +12,10 @@
 #include "Jolt/Physics/Collision/Shape/Shape.h"
 #include <Jolt/Physics/Collision/Shape/CapsuleShape.h>
 
-namespace Game {
+namespace ggm {
 
-    Obj3D::RenderObject3D createPlayerRenderObject(){
-        return Obj3D::RenderObject3D((std::filesystem::path("grass_block") / "grass_block.obj").generic_string());
+    ggm::RenderObject3D createPlayerRenderObject(){
+        return ggm::RenderObject3D((std::filesystem::path("grass_block") / "grass_block.obj").generic_string());
     }
 
     Player::Player(const ggm::Vector3f& pos, JPH::PhysicsSystem& system) :

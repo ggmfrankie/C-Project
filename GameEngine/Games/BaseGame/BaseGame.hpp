@@ -13,7 +13,7 @@
 struct GLFWwindow;
 
 
-namespace Game {
+namespace ggm {
     class Scene3D;
     class Player;
 
@@ -34,10 +34,10 @@ namespace Game {
         static nlohmann::json makeMove(int row, int col);
 
     private:
-        Render::Camera* mCamera = nullptr;
-        Render::Input* mInput = nullptr;
-        Render::Screen* mScreen = nullptr;
-        Engine::CommandRegistry* mCommandRegistry = nullptr;
+        ggm::Camera* mCamera = nullptr;
+        ggm::Input* mInput = nullptr;
+        ggm::Screen* mScreen = nullptr;
+        ggm::CommandRegistry* mCommandRegistry = nullptr;
         
         mcp::Server mMcpServer {"chessServer"};
 

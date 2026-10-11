@@ -7,7 +7,7 @@
 
 #include "../../../GUIEngine/GuiInterface.h"
 
-namespace Render {
+namespace ggm {
     void Input::init(GLFWwindow* window) {
         glfwSetWindowUserPointer(window, this);
         glfwSetKeyCallback(window, keyCallback);

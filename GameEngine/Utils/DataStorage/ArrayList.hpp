@@ -15,9 +15,9 @@
 
 namespace ggm {
     template <typename T, u64 InlineCapacity = 0>
-    class InlineVector {
+    class ArrayList {
     public:
-        explicit InlineVector(u64 capacity = InlineCapacity) noexcept {
+        explicit ArrayList(u64 capacity = InlineCapacity) noexcept {
             if constexpr (InlineCapacity == 0) {
                 mData = static_cast<T *>(operator new(capacity * sizeof(T)));
                 this->mCapacity = capacity;
@@ -36,7 +36,7 @@ namespace ggm {
             mSize = 0;
         }
 
-        InlineVector(InlineVector&& other) noexcept {
+        ArrayList(ArrayList&& other) noexcept {
             if constexpr (InlineCapacity == 0) {
                 mData = other.mData;
                 mSize = other.mSize;
@@ -67,7 +67,7 @@ namespace ggm {
             }
         }
 
-        InlineVector(const InlineVector& other) noexcept {
+        ArrayList(const ArrayList& other) noexcept {
             if constexpr (InlineCapacity == 0) {
                 mData = static_cast<T*>(operator new(other.mCapacity * sizeof(T)));
                 for (u64 i = 0; i < other.mSize; ++i) {
@@ -91,7 +91,7 @@ namespace ggm {
             }
         }
 
-        ~InlineVector() noexcept {
+        ~ArrayList() noexcept {
             if constexpr (InlineCapacity == 0) {
                 operator delete(mData);
             } else {
@@ -101,7 +101,7 @@ namespace ggm {
             }
         }
 
-        InlineVector& operator=(InlineVector&& other) noexcept {
+        ArrayList& operator=(ArrayList&& other) noexcept {
             if constexpr (InlineCapacity == 0) {
                 operator delete(mData);
                 mData = other.mData;

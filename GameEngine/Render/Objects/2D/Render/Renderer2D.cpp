@@ -2,18 +2,18 @@
 // Created by Stefan on 29.03.2026.
 //
 
-#include "Renderer.hpp"
-#include "Render/Objects/2D/Render/RenderObject.hpp"
+#include "Renderer2D.hpp"
+#include "Render/Objects/2D/Render/RenderObject2D.hpp"
 
-namespace Game2D {
-    Renderer::Renderer() :
+namespace ggm {
+    Renderer2D::Renderer2D() :
         mShader("2D/Shader2D.vert", "2D/Shader2D.frag"),
         mObjects(64)
     {}
 
-    Renderer::~Renderer() = default;
+    Renderer2D::~Renderer2D() = default;
 
-    void Renderer::init(Render::Camera* camera) {
+    void Renderer2D::init(Camera* camera) {
         mShader.compileAndLink();
         mCamera = camera;
 
@@ -22,7 +22,7 @@ namespace Game2D {
         }
     }
 
-    void Renderer::render(int width, int height) {
+    void Renderer2D::render(int width, int height) {
         glDisable(GL_DEPTH_TEST);
         mShader.bind();
         mShader.setUniform("screenWidth", static_cast<float>(width));

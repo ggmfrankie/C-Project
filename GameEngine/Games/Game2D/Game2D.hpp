@@ -7,18 +7,18 @@
 #include "Games/IGame.hpp"
 #include "Games/Scene/2D/Scene2D.hpp"
 
-namespace Game2D {
-    class Game2D final : public Game::IGame{
+namespace ggm {
+    class Game2D : public IGame{
         Scene2D mScene{};
 
-        Render::Camera* mCamera = nullptr;
-        Render::Input* mInput = nullptr;
-        Render::Screen* mScreen = nullptr;
-        Engine::CommandRegistry* mCommandRegistry = nullptr;
+        Camera* mCamera = nullptr;
+        Input* mInput = nullptr;
+        Screen* mScreen = nullptr;
+        ggm::CommandRegistry* mCommandRegistry = nullptr;
 
     public:
         /// @brief Use this to create Objects. OpenGL is NOT initialized here
-        void preInit(Game::EngineContext &&e) override;
+        void preInit(EngineContext &&e) override;
 
         void postInit() override;
 

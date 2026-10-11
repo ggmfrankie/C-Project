@@ -4,5 +4,5 @@
 
 #include "PointLight.hpp"
 
-namespace Render {
+namespace ggm {
 } // Render

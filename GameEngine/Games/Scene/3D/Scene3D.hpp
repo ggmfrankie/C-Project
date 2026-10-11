@@ -5,30 +5,30 @@
 #pragma once
 
 #include "../IScene.hpp"
-#include "Render/Objects/3D/GameObject.hpp"
+#include "Render/Objects/3D/GameObject3D.hpp"
 #include "Render/Objects/3D/Render/Renderer3D.hpp"
 #include "Render/Transformation/Camera.hpp"
-#include "Render/Objects/3D/Physics/PhysicsFactory.hpp"
+#include "Render/Objects/3D/Physics/PhysicsFactory3D.hpp"
 #include "Render/Objects/3D/Physics/PhysicsHandler3D.hpp"
 
-namespace Game {
+namespace ggm {
     class Scene3D final : public IScene {
-        ggm::InlineVector<Obj3D::GameObject, 64> mGameObjects{};
+        ggm::ArrayList<ggm::GameObject3D, 64> mGameObjects{};
 
         PhysicsHandler3D mPhysicsHandler{};
         Renderer3D mRenderer{};
 
-        Render::Camera mCamera{};
+        ggm::Camera mCamera{};
 
     public:
         Scene3D();
-        Obj3D::GameObject& addObject(const std::filesystem::path& objFile, float scale, const Obj3D::PhysicsSettings &settings);
+        ggm::GameObject3D& addObject(const std::filesystem::path& objFile, float scale, const ggm::PhysicsSettings &settings);
 
         void init() override;
 
         void render(int width, int height) override;
         void update(float dt) override;
 
-        Render::Camera& getCamera() override;
+        ggm::Camera& getCamera() override;
     };
 } // Game

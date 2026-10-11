@@ -1,13 +1,12 @@
 //
 // Created by ertls on 17.02.2026.
 //
+#pragma once
 
-#ifndef MIXEDPROJECT_CAMERA_H
-#define MIXEDPROJECT_CAMERA_H
-#include "../../Utils/Math/Matrix.hpp"
-#include "../../Utils/Math/Vector.hpp"
+#include "Utils/Math/Matrix.hpp"
+#include "Utils/Math/Vector.hpp"
 
-namespace Render {
+namespace ggm {
     class Camera {
     public:
         Camera() = default;
@@ -19,22 +18,18 @@ namespace Render {
 
         void rotateBy(float dPitch, float dRoll, float dYaw);
 
-        [[nodiscard]] float getFOV() const { return m_FOV;}
-        [[nodiscard]] float* getFOVptr() { return &m_FOV;}
+        [[nodiscard]] float getFOV() const { return mFOV;}
+        [[nodiscard]] float* getFOVptr() { return &mFOV;}
 
-        void setFOV(const float FOV) { m_FOV = FOV; }
-        void setPos(const ggm::Vector3f v){ m_pos = v; }
+        void setFOV(const float FOV) { mFOV = FOV; }
+        void setPos(const Vector3f v){ mPos = v; }
 
-        [[nodiscard]] ggm::Matrix4f getViewMatrix() const;
-
-        //void movePosition(float x, float y, float z);
+        [[nodiscard]] Matrix4f getViewMatrix() const;
 
     private:
-        ggm::Vector3f m_pos{};
-        ggm::Vector3f m_rotation{};
+        Vector3f mPos{};
+        Vector3f mRotation{};
 
-        float m_FOV = 90.0f;
+        float mFOV = 90.0f;
     };
-} // Render
-
-#endif //MIXEDPROJECT_CAMERA_H
+}

@@ -101,26 +101,31 @@ add_executable(C-Project
         EngineDefines.hpp
         GameEngine/Games/Game2D/Game2DGui.c
         GameEngine/Games/Game2D/Game2DGui.h
-        GameEngine/Render/Objects/2D/Physics/PhysicsFactory.cpp
-        GameEngine/Render/Objects/2D/Physics/PhysicsObjectRef.cpp
-        GameEngine/Render/Objects/2D/Render/DynamicMesh.cpp
-        GameEngine/Render/Objects/2D/Render/Renderer.cpp
-        GameEngine/Render/Objects/2D/Render/RenderObject.cpp
-        GameEngine/Render/Objects/2D/GameObject.cpp
+        GameEngine/Render/Objects/2D/Physics/PhysicsFactory2D.cpp
+        GameEngine/Render/Objects/2D/Physics/PhysicsObjectRef2D.cpp
+        GameEngine/Render/Objects/2D/Render/DynamicMesh2D.cpp
+        GameEngine/Render/Objects/2D/Render/Renderer2D.cpp
+        GameEngine/Render/Objects/2D/Render/RenderObject2D.cpp
+        GameEngine/Render/Objects/2D/GameObject2D.cpp
         GameEngine/Render/Objects/3D/Loader/OBJLoader.cpp
-        GameEngine/Render/Objects/3D/Physics/PhysicsFactory.cpp
+        GameEngine/Render/Objects/3D/Physics/PhysicsFactory3D.cpp
         GameEngine/Render/Objects/3D/Physics/PhysicsHandler3D.cpp
-        GameEngine/Render/Objects/3D/Physics/PhysicsObjectRef.cpp
-        GameEngine/Render/Objects/3D/Render/Material.cpp
-        GameEngine/Render/Objects/3D/Render/Mesh.cpp
+        GameEngine/Render/Objects/3D/Physics/PhysicsObjectRef3D.cpp
+        GameEngine/Render/Objects/3D/Render/Mesh3D.cpp
         GameEngine/Render/Objects/3D/Render/Renderer3D.cpp
         GameEngine/Render/Objects/3D/Render/RenderObject3D.cpp
-        GameEngine/Render/Objects/3D/Render/Texture.cpp
-        GameEngine/Render/Objects/3D/GameObject.cpp
+        GameEngine/Render/Objects/3D/Render/Texture3D.cpp
+        GameEngine/Render/Objects/3D/GameObject3D.cpp
         GameEngine/Utils/Async/Coroutine.cpp
         GameEngine/Utils/Async/Coroutine.hpp
         GameEngine/Utils/Math/Math.hpp
         OtherProjects/C/Extern/CVector.h
+        GameEngine/_Projects_/ggmTanks/TankGame.cpp
+        GameEngine/_Projects_/ggmTanks/TankGame.hpp
+        GameEngine/Render/Objects/ECS/Object.cpp
+        GameEngine/Render/Objects/ECS/Object.hpp
+        GameEngine/Utils/DataStorage/HashMap.cpp
+        GameEngine/Utils/DataStorage/HashMap.hpp
 )
 
 target_compile_definitions(C-Project PUBLIC JPH_ENABLE_ASSERTS)

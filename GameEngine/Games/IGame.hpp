@@ -5,22 +5,22 @@
 #pragma once
 #include "../EngineDefines.hpp"
 
-namespace Engine {
+namespace ggm {
     class CommandRegistry;
 }
 
-namespace Render {
+namespace ggm {
     class Camera;
     class Input;
     class Screen;
 }
 
-namespace Game {
+namespace ggm {
 
     struct EngineContext {
-        Render::Input& input;
-        Render::Screen& screen;
-        Engine::CommandRegistry& commandRegistry;
+        Input* input;
+        Screen* screen;
+        CommandRegistry* commandRegistry;
     };
 
     class IGame {
