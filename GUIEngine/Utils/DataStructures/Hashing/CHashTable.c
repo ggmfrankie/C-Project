@@ -16,6 +16,7 @@
 
 #define CHashTable_Seed 342341431UL
 
+[[maybe_unused]]
 static void CHashTable_printHeader(const CHashTable_Header* header) {
     printf("Header:\n  {data = %p; capacity = %llu;} table\n {capacity = %llu;} data\n size = %llu\n", header->table.data, header->table.capacity, header->data.capacity, header->size);
 }
@@ -48,6 +49,7 @@ uint32_t CHashTable_stringHash(const byte* key, size_t) {
 }
 
 void _CHashTable_new(void* table[], size_t capacity, size_t typeSize, size_t keySize, size_t keyOffset, CHashTable_keyComparator keyComparator, CHashTable_keyHash keyHash) {
+    // ReSharper disable CppDFAMemoryLeak
     CHashTable_Header* header = malloc(sizeof(CHashTable_Header) + typeSize * capacity);
     assert(header != nullptr);
 
@@ -69,6 +71,7 @@ void _CHashTable_new(void* table[], size_t capacity, size_t typeSize, size_t key
     header->key.offset = keyOffset;
 
     *table = (void*) (header+1);
+    // ReSharper enable CppDFAMemoryLeak
 }
 
 static byte* CHashTable_getDataSlot(void* hashTable, size_t index) {
