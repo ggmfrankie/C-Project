@@ -45,7 +45,7 @@ add_executable(C-Project
         GameEngine/Utils/StringUtils.cpp
         GameEngine/Utils/StringUtils.hpp
         GameEngine/Utils/Math/Quaternion.hpp
-        GameEngine/Utils/DataStorage/InlineVector.hpp
+        GameEngine/Utils/DataStorage/ArrayList.hpp
         GameEngine/Utils/ggmdef.hpp
         GameEngine/Games/IGame.hpp
         GameEngine/Engine/IO/Input.cpp
@@ -126,6 +126,8 @@ add_executable(C-Project
         GameEngine/Render/Objects/ECS/Object.hpp
         GameEngine/Utils/DataStorage/HashMap.cpp
         GameEngine/Utils/DataStorage/HashMap.hpp
+        GameEngine/Utils/Test.cpp
+        GameEngine/Utils/Test.hpp
 )
 
 target_compile_definitions(C-Project PUBLIC JPH_ENABLE_ASSERTS)

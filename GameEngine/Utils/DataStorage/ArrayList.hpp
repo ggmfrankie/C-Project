@@ -36,6 +36,16 @@ namespace ggm {
             mSize = 0;
         }
 
+        ArrayList(u64 capacity, const T& value) noexcept :
+            ArrayList(capacity)
+        {
+            mSize = capacity;
+
+            for (u64 i = 0; i < capacity; ++i) {
+                std::construct_at(mData + i, value);
+            }
+        }
+
         ArrayList(ArrayList&& other) noexcept {
             if constexpr (InlineCapacity == 0) {
                 mData = other.mData;
@@ -171,6 +181,14 @@ namespace ggm {
             grow(capacity);
         }
 
+        void growTo(u64 capacity, const T& value) {
+            growTo(capacity);
+            for (u64 i = mSize; i < capacity; ++i) {
+                std::construct_at(mData + i, value);
+            }
+            mSize = capacity;
+        }
+
         T& operator[](u64 index) noexcept {
             assert(index < mCapacity);
             return mData[index];
@@ -207,7 +225,11 @@ namespace ggm {
             operator delete(old);
         }
 
-        const T* data() const noexcept {
+        const T* cdata() const noexcept {
+            return mData;
+        }
+
+        T* data() const noexcept {
             return mData;
         }
 
@@ -230,7 +252,7 @@ namespace ggm {
         u64 mCapacity = 0;
         alignas(T) std::byte _inlineRaw_[sizeof(T) * InlineCapacity]{};
 
-        void grow(u64 capacity) {
+        void grow(u64 capacity) noexcept {
             T* oldData = mData;
             mCapacity = capacity;
             mData = static_cast<T *>(operator new(mCapacity * sizeof(T)));
@@ -239,10 +261,15 @@ namespace ggm {
                 std::construct_at(&mData[i], std::move(oldData[i]));
                 std::destroy_at(&oldData[i]);
             }
-            if (mIsHeap) {
+
+            if constexpr (InlineCapacity > 0) {
+                if (mIsHeap) {
+                    operator delete(oldData);
+                }
+                mIsHeap = true;
+            } else {
                 operator delete(oldData);
             }
-            mIsHeap = true;
         }
 
         T* inlinePtr() noexcept {
@@ -252,32 +279,32 @@ namespace ggm {
 
     public:
         using Iterator = T*;
-        using const_iterator = const T*;
+        using CIterator = const T*;
 
         Iterator begin() noexcept {return mData;}
         Iterator end() noexcept {return mData + mSize;}
 
-        const_iterator begin() const noexcept {return mData;}
-        const_iterator end() const noexcept {return mData + mSize;}
+        CIterator begin() const noexcept {return mData;}
+        CIterator end() const noexcept {return mData + mSize;}
 
-        const_iterator cbegin() noexcept {return mData;}
-        const_iterator cend() noexcept {return mData + mSize;}
+        CIterator cbegin() noexcept {return mData;}
+        CIterator cend() noexcept {return mData + mSize;}
 
-        using reverse_iterator = std::reverse_iterator<Iterator>;
-        using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+        using RIterator = std::reverse_iterator<Iterator>;
+        using CRIterator = std::reverse_iterator<CIterator>;
 
-        reverse_iterator rbegin() noexcept { return reverse_iterator(end()); }
-        reverse_iterator rend()   noexcept { return reverse_iterator(begin()); }
+        RIterator rbegin() noexcept { return RIterator(end()); }
+        RIterator rend()   noexcept { return RIterator(begin()); }
 
-        const_reverse_iterator rbegin() const noexcept { return const_reverse_iterator(end()); }
-        const_reverse_iterator rend()   const noexcept { return const_reverse_iterator(begin()); }
+        CRIterator rbegin() const noexcept { return CRIterator(end()); }
+        CRIterator rend()   const noexcept { return CRIterator(begin()); }
 
-        const_reverse_iterator crbegin() const noexcept { return const_reverse_iterator(end()); }
-        const_reverse_iterator crend()   const noexcept { return const_reverse_iterator(begin()); }
+        CRIterator crbegin() const noexcept { return CRIterator(end()); }
+        CRIterator crend()   const noexcept { return CRIterator(begin()); }
 
         Iterator erase_fast(Iterator first, Iterator last) {
             if (first == last) return first;
-            auto newEnd = end()- (last - first);
+            auto newEnd = end() - (last - first);
 
             std::move(newEnd, end(), first);
 

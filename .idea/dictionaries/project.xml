@@ -2,10 +2,15 @@
   <dictionary name="project">
     <words>
       <w>Filt</w>
+      <w>cbegin</w>
+      <w>cend</w>
       <w>copyn</w>
+      <w>crbegin</w>
+      <w>crend</w>
       <w>cstrb</w>
       <w>ertls</w>
       <w>ndices</w>
+      <w>rbegin</w>
       <w>ssbo</w>
       <w>vbos</w>
       <w>verts</w>
