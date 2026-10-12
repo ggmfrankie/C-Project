@@ -39,14 +39,12 @@ namespace ggm {
             virtual ~BaseArcheType() = default;
         };
 
+        template<typename... UsedComponents>
         struct Archetype : BaseArcheType {
-            std::vector<Component> components;
-            std::array<u16, sizeof...(Components)> mapping;
+            std::tuple<std::vector<UsedComponents>...> components;
 
             Archetype() {
-                (components.emplace_back(
-                    std::in_place_type<std::vector<UsedComponents>>
-                ),...);
+
             }
         };
 
