@@ -19,13 +19,14 @@ namespace ggm {
         std::equality_comparable<Key>
     class HashMap {
         struct Object {
-            Key key;
+            const Key key;
             Value value;
         };
 
         ArrayList<i64> mHashTable;
         ArrayList<Object> mData;
-        Hash mHash {};
+
+        [[no_unique_address]] Hash mHash {};
 
         std::size_t mSize = 0;
 
@@ -81,17 +82,109 @@ namespace ggm {
 
         Value* operator[](const Key& key) {
             const auto hashTableSlot = getHashTableSlot(key);
-
             return hashTableSlot
                 ? &mData[*hashTableSlot].value
                 : nullptr;
         }
 
-        using Iterator = decltype(mData)::Iterator;
+        void remove(const Key& key) {
+            auto slot = getHashTableSlot(key);
+            if (slot == nullptr || *slot == EMPTY_SLOT) return;
 
-        Iterator begin() noexcept {return mData.begin();}
-        Iterator end() noexcept {return mData.end();}
+            const ssize_t index = *slot;
 
+            const auto start = mHashTable.begin();
+            const auto end = mHashTable.end();
+
+            auto probeStart = slot + 1;
+            if (probeStart == end) probeStart = start;
+
+            auto probe = probeStart;
+
+            size_t blockSize = 0;
+
+            while (*probe != EMPTY_SLOT) {
+                ++blockSize;
+                ++probe;
+                if (probe == end) probe = start;
+            }
+
+            const auto probeEnd = probe;
+            probe = probeStart;
+
+            size_t rehashStack[blockSize];
+            size_t rehashStackSize = 0;
+
+            while (probe != probeEnd) {
+                rehashStack[rehashStackSize++] = *probe;
+                *probe = EMPTY_SLOT;
+
+                ++probe;
+                if (probe == end) probe = start;
+            }
+
+            for (size_t i = 0; i < rehashStackSize; ++i) {
+                const size_t dataIndex = rehashStack[i];
+                auto foundSlot = getHashTableSlot(mData[i]);
+
+                *foundSlot = dataIndex;
+            }
+
+            mData.remove(index);
+        }
+
+        struct Iterator {
+            using iterator_category = std::contiguous_iterator_tag;
+            using difference_type   = std::ptrdiff_t;
+
+            using value_type = Object;
+            using pointer    = Object*;
+            using reference  = Object&;
+
+            Iterator(const pointer data) : data(data) {}
+
+            reference operator*() {
+                return *data;
+            }
+
+            pointer operator->() {
+                return data;
+            }
+
+            reference operator[](size_t index) {
+                return data[index];
+            }
+
+            Iterator& operator++() {
+                ++data;
+                return *this;
+            }
+
+            Iterator operator++(int) {
+                Iterator temp = *this;
+                ++data;
+                return temp;
+            }
+
+            Iterator& operator--() {
+                --data;
+                return *this;
+            }
+
+            Iterator operator--(int) {
+                Iterator temp = *this;
+                --data;
+                return temp;
+            }
+
+            auto operator<=>(const Iterator&) const = default;
+
+        private:
+             Object* data;
+        };
+
+        Iterator begin() noexcept {return {mData.begin()};}
+        Iterator end() noexcept {return {mData.end()};}
     };
 
 } // ggm

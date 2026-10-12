@@ -122,12 +122,16 @@ add_executable(C-Project
         OtherProjects/C/Extern/CVector.h
         GameEngine/_Projects_/ggmTanks/TankGame.cpp
         GameEngine/_Projects_/ggmTanks/TankGame.hpp
-        GameEngine/Render/Objects/ECS/Object.cpp
-        GameEngine/Render/Objects/ECS/Object.hpp
+        GameEngine/Render/Objects/EntityComponentSystem/Object.cpp
+        GameEngine/Render/Objects/EntityComponentSystem/Object.hpp
         GameEngine/Utils/DataStorage/HashMap.cpp
         GameEngine/Utils/DataStorage/HashMap.hpp
         GameEngine/Utils/Test.cpp
         GameEngine/Utils/Test.hpp
+        GameEngine/Render/Objects/EntityComponentSystem/Systems/RenderSystem2D.cpp
+        GameEngine/Render/Objects/EntityComponentSystem/Systems/RenderSystem2D.hpp
+        GameEngine/Render/Objects/EntityComponentSystem/ComponentRegistry.cpp
+        GameEngine/Render/Objects/EntityComponentSystem/ComponentRegistry.hpp
 )
 
 target_compile_definitions(C-Project PUBLIC JPH_ENABLE_ASSERTS)

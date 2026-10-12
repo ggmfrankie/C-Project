@@ -1,0 +1,41 @@
+%! Author = Stefan
+%! Date = 12.10.2026
+
+\documentclass[a4paper, 11pt]{article}
+
+\usepackage[ngerman]{babel}
+\usepackage[margin=2.5cm]{geometry}
+
+\title{Implementierungsanleitung TwoSum}
+\author{Stefan Ertl}
+\date{}
+
+\begin{document}
+
+    \maketitle
+
+    \section{Ziehle dieses Algorithmus}
+    Diese Implementation hat zum Ziel möglichst intuitiv und simpel zu sein.
+
+% Text
+
+    \section{Implementierung des Algorithmus}
+    Der Algorithmus erhält als Übergabeparameter zwei Arrays: \textit{Numbers} und \textit{Targets}.\\\\
+    Als Erstes werden alle möglichen Summen der Zahlen in \textit{Numbers} gebildet und in einem Array \textit{Sums} zwischengespeichert.\\\\
+    Anschließend wird jede Zahl in \textit{Targets} in \textit{Sums} gesucht; ist diese vorhanden, so kann diese in die Ergebnisliste eingetragen werden.
+% Text
+
+    \section{Weitere Optimierungen}
+
+
+% Text
+
+    \section{Laufzeit}
+    Für alle n Zahlen in \textit{Numbers} werden erneut alle n Zahlen in \textit{Numbers} durchlaufen. Zusätzlich muss für die Suche für alle m Zahlen in \textit{Targets} alle \(n^2\) Zahlen in \textit{Sums} durchsuchen.\\\\
+    Zusammen: \[
+                  \mathcal{O}\left(n^2 + m \cdot n^2\right)
+    \]
+
+% Text
+
+\end{document}

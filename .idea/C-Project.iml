@@ -58,6 +58,26 @@
       <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Cpp/McpServer/cmake-build-debug/Dependencies/beast/CMakeFiles" />
       <excludeFolder url="file://$MODULE_DIR$/cmake-build-debug-mingw-gcc" />
       <excludeFolder url="file://$MODULE_DIR$/build" />
+      <excludeFolder url="file://$MODULE_DIR$/.idea/libraries" />
+      <excludeFolder url="file://$MODULE_DIR$/.zig-cache" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Cpp/InfraCamera/cmake-build-debug-mysys/.cmake" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Cpp/InfraCamera/cmake-build-debug-mysys/C" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Cpp/InfraCamera/cmake-build-debug-mysys/CMakeFiles" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Cpp/InfraCamera/cmake-build-debug-mysys/Dependencies" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Cpp/InfraCamera/cmake-build-release-mysys/.cmake" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Cpp/InfraCamera/cmake-build-release-mysys/C" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Cpp/InfraCamera/cmake-build-release-mysys/CMakeFiles" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Cpp/InfraCamera/cmake-build-release-mysys/Dependencies" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Cpp/ModulesTest/cmake-build-debug-mysys/.cmake" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Cpp/ModulesTest/cmake-build-debug-mysys/C" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Cpp/ModulesTest/cmake-build-debug-mysys/CMakeFiles" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Cpp/ModulesTest/cmake-build-debug-mysys/Testing" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Cpp/ModulesTest/cmake-build-release-mysys/.cmake" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Cpp/ModulesTest/cmake-build-release-mysys/C" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Cpp/ModulesTest/cmake-build-release-mysys/CMakeFiles" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Java/Chess/out" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Java/Parser/out" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Java/RenderEngine/out" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.14 (C-Project) (2)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />

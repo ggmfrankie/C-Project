@@ -1,0 +1,40 @@
+\documentclass[a4paper, 11pt]{article}
+
+\usepackage[ngerman]{babel}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsopn}
+
+\title{Implementierungsanleitung}
+\author{}
+\date{}
+
+\begin{document}
+
+    \maketitle
+
+    \section{Ziehle dieses Algorithmus}
+    Diese Implementation soll mit möglichst wenig Speicher auskommen, aber trotzdem eine gute Laufzeit haben.
+
+% Text
+
+    \section{Implementierung des Algorithmus}
+    Der Algorithmus erhält als Übergabeparameter zwei Arrays: \textit{Numbers} und \textit{Targets}.\\\\
+    Zunächst muss der \textit{Numbers} Array sortiert werden, dies wird für die spätere Binärsuche benötigt: Hier bieten sich Suchalgorithmen wie Quicksort o. Ä an.\\\\
+    Nun beginnt der Hauptteil des Algorithmus: Für jede Zahl \textit{target} in \textit{Targets} wird nun folgendermaßen vorgegangen: Für jede Zahl \textit{number} in \textit{Numbers} wird die Differenz \textit{target} - \textit{number} gebildet und zwischengespeichert.\\
+    Um jetzt herauszufinden, ob die Zielzahl \textit{target} aus zwei Zahlen in \textit{Numbers} gebildet werden kann, muss man schauen, ob sich diese Differenz in \textit{Numbers} befindet. Hierzu bietet sich die Binärsuche an, die die gesuchte Zahl (falls vorhanden) in \textit{Numbers} findet.
+% Text
+
+    \section{Weitere Optimierungen}
+
+
+% Text
+
+    \section{Laufzeit}
+    Für alle n Zahlen in \textit{Targets} durchlaufen wir alle m Zahlen in \textit{Numbers}. Für jede Zahl m muss nun final das Gegenstück in \textit{Numbers} gesucht werden, was mit der Binärsuche eine Laufzeit von log(m) hat.\\\\
+    Zusammen: \[
+                  \mathcal{O}\left(n \cdot m \cdot \log(m)\right)
+    \]
+
+% Text
+
+\end{document}

@@ -35,7 +35,7 @@ static int* binarySearch(int* start, int* pivotPtr, int* end, int value) {
     }
 }
 
-int* SumTwo_calculate(int* aNums, int* aTargets) {
+int* SumTwo_calculate1(int* aNums, int* aTargets) {
     int* aOut = {};
     assert(aNums && aTargets);
     const int len = arrLen(aNums);
@@ -61,6 +61,23 @@ int* SumTwo_calculate(int* aNums, int* aTargets) {
     return aOut;
 }
 
+int* SumTwo_calculate2(int* aNums, int* aTargets) {
+    defer(defer_arrDelete) int* allSums = {};
+
+    for (int i = 0; i < arrLen(aNums); ++i) {
+        for (int j = i; j < arrLen(aNums); ++j) {
+            arrPush(allSums, aNums[i] + aNums[j]);
+        }
+    }
+
+    int* out = {};
+    for arrEach(t, aTargets) {
+        if (CArrayList_findIf(result, allSums, ({*result == *t;}))) arrPush(out, *t);
+    }
+
+    return out;
+}
+
 void SumTwo_test() {
 
 
@@ -76,7 +93,7 @@ void SumTwo_test() {
     }
 
     const uint64_t startTime = Time_nowNs();
-    defer(defer_arrDelete) int* out = SumTwo_calculate(aNums, aTargets);
+    defer(defer_arrDelete) int* out = SumTwo_calculate1(aNums, aTargets);
 
     printf("Matches = %llu\nTime elapsed: %llu ms\n", arrLen(out), (Time_nowNs()-startTime) / 1000000);
 }

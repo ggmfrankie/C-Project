@@ -302,7 +302,7 @@ namespace ggm {
         CRIterator crbegin() const noexcept { return CRIterator(end()); }
         CRIterator crend()   const noexcept { return CRIterator(begin()); }
 
-        Iterator erase_fast(Iterator first, Iterator last) {
+        Iterator remove(Iterator first, Iterator last) {
             if (first == last) return first;
             auto newEnd = end() - (last - first);
 
@@ -316,7 +316,7 @@ namespace ggm {
             return first;
         }
 
-        Iterator erase_fast(Iterator pos) {
+        Iterator remove(Iterator pos) {
             auto last = end()-1;
 
             if (pos == last) {

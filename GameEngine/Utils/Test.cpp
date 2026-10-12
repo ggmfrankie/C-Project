@@ -15,15 +15,20 @@ namespace Testing {
 
         map.insert("hassan", 54);
 
-        int value = *map["hassan"];
+        int v = *map["hassan"];
 
-        assert(value == 54);
+        assert(v == 54);
 
         map.insert("kek", 545);
 
-        for (const auto& object : map) {
-
+        for (const auto& [key, value] : map) {
+            (void)value;
         }
+
+        for (auto it = map.begin(); it != map.end(); ++it) {
+        }
+
+        map.remove("kek");
     }
 
     void runTests() {

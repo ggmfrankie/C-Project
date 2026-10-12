@@ -13,7 +13,7 @@
 
 
 namespace ggm {
-    void Game2D::preInit(ggm::EngineContext &&e) {
+    void Game2D::preInit(EngineContext &&e) {
         mCamera = &mScene.getCamera();
         mCommandRegistry = e.commandRegistry;
         mInput = e.input;
@@ -26,7 +26,7 @@ namespace ggm {
         mScene.addObject({.2, 1.0, .3}, PhysicsFactory2D::newQuad(100, 100, {800, 500}, 50.0_deg));
         mScene.addObject({.6, 1.0, .6}, PhysicsFactory2D::newSoftBall(12, 40, {600, 300}));
 
-        mScene.addLayer(std::unique_ptr<ILayer>(new DebugLayer()));
+        mScene.addLayer(std::make_unique<DebugLayer>());
 
         mScreen->attachScene(&mScene);
     }
