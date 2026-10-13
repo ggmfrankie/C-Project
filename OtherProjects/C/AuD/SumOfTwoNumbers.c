@@ -79,8 +79,6 @@ int* SumTwo_calculate2(int* aNums, int* aTargets) {
 }
 
 void SumTwo_test() {
-
-
     defer(defer_arrDelete) int* aNums = {};
     defer(defer_arrDelete) int* aTargets = {};
 

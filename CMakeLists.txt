@@ -123,7 +123,7 @@ add_executable(C-Project
         GameEngine/_Projects_/ggmTanks/TankGame.cpp
         GameEngine/_Projects_/ggmTanks/TankGame.hpp
         GameEngine/Render/Objects/EntityComponentSystem/Object.cpp
-        GameEngine/Render/Objects/EntityComponentSystem/Object.hpp
+        GameEngine/Render/Objects/EntityComponentSystem/Entity.hpp
         GameEngine/Utils/DataStorage/HashMap.cpp
         GameEngine/Utils/DataStorage/HashMap.hpp
         GameEngine/Utils/Test.cpp
