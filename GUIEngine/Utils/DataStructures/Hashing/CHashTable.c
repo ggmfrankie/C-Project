@@ -198,6 +198,7 @@ void _CHashTable_remove(void* table[], const byte* keyData) {
     if (slot == nullptr || *slot == -1) return;
 
     const ssize_t index = *slot;
+    *slot = -1;
     //--------------------------------------------------------------------------------//
     // Handle possible probe inserted elements
     {

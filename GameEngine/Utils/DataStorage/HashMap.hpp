@@ -19,7 +19,7 @@ namespace ggm {
         std::equality_comparable<Key>
     class HashMap {
         struct Object {
-            const Key key;
+            Key key;
             Value value;
         };
 
@@ -28,21 +28,37 @@ namespace ggm {
 
         [[no_unique_address]] Hash mHash {};
 
-        std::size_t mSize = 0;
-
         static constexpr i64 EMPTY_SLOT = -1;
         static constexpr int HASH_TABLE_FACTOR = 4;
 
         auto getHashTableSlot(const Key& key) {
             const size_t index = mHash(key) % mHashTable.capacity();
 
-            auto it = mHashTable.begin() + index;
-            while (*it != -1) {
+            const auto begin = mHashTable.begin();
+            auto end = begin + mHashTable.capacity();
+
+            auto it = begin + index;
+
+            while (*it != EMPTY_SLOT) {
                 if (mData[*it].key == key) return it;
                 ++it;
-                if (it == mHashTable.end()) it = mHashTable.begin();
+                if (it == end) it = begin;
             }
-            return mHashTable.end();
+            return end;
+        }
+
+        auto getEmptyHashTableSlot(const Key& key) {
+            const size_t index = mHash(key) % mHashTable.capacity();
+
+            const auto begin = mHashTable.begin();
+            const auto end = begin + mHashTable.capacity();
+
+            auto it = begin + index;
+            while (*it != EMPTY_SLOT) {
+                ++it;
+                if (it == end) it = begin;
+            }
+            return it;
         }
 
         void rehash() {
@@ -50,7 +66,7 @@ namespace ggm {
             for (u64 i = 0; i < mData.size(); ++i) {
                 auto&[key, value] = mData[i];
 
-                if (const auto hashIndex = getHashTableSlot(key);
+                if (const auto hashIndex = getEmptyHashTableSlot(key);
                     hashIndex != mHashTable.end()) {
                     *hashIndex = i;
                 } else {
@@ -66,35 +82,40 @@ namespace ggm {
 
     public:
         explicit HashMap(const u64 capacity = 16) noexcept :
-            mHashTable(capacity, -1),
-            mData(capacity * HASH_TABLE_FACTOR)
+            mHashTable(capacity * HASH_TABLE_FACTOR, EMPTY_SLOT),
+            mData(capacity)
         {}
 
         void insert(const Key& key, const Value& value) {
             // Check if hashtable needs resize
-            if (static_cast<float>(mSize) / mHashTable.capacity() > 0.75) resizeHashTable(mHashTable.capacity());
+            if (static_cast<float>(mData.size()) / mHashTable.capacity() > 0.75) resizeHashTable(mHashTable.capacity() * 2);
 
             u64 index = mData.size();
             mData.push(key, value);
 
-            *getHashTableSlot(key) = index;
+            *getEmptyHashTableSlot(key) = index;
         }
 
         Value* operator[](const Key& key) {
             const auto hashTableSlot = getHashTableSlot(key);
-            return hashTableSlot
+            return (hashTableSlot != mHashTable.end())
                 ? &mData[*hashTableSlot].value
                 : nullptr;
         }
 
         void remove(const Key& key) {
             auto slot = getHashTableSlot(key);
-            if (slot == nullptr || *slot == EMPTY_SLOT) return;
-
-            const ssize_t index = *slot;
 
             const auto start = mHashTable.begin();
             const auto end = mHashTable.end();
+
+            if (slot == end) return;
+
+            const ssize_t index = *slot;
+            *slot = EMPTY_SLOT;
+
+            assert(end == mHashTable.begin() + mHashTable.capacity());
+            assert(end > slot);
 
             auto probeStart = slot + 1;
             if (probeStart == end) probeStart = start;
@@ -125,16 +146,28 @@ namespace ggm {
 
             for (size_t i = 0; i < rehashStackSize; ++i) {
                 const size_t dataIndex = rehashStack[i];
-                auto foundSlot = getHashTableSlot(mData[i]);
+                auto foundSlot = getEmptyHashTableSlot(mData[dataIndex].key);
 
                 *foundSlot = dataIndex;
             }
 
-            mData.remove(index);
+            auto pos = mData.begin() + index;
+
+            mData.remove(pos);
+
+            if (mData.end() - pos > 1) {
+                const Key& lastKey = mData[index].key;
+                *getHashTableSlot(lastKey) = index;
+            }
+        }
+
+        size_t size() {
+            return mData.size();
         }
 
         struct Iterator {
-            using iterator_category = std::contiguous_iterator_tag;
+            // will fix
+            using iterator_category = std::random_access_iterator_tag;
             using difference_type   = std::ptrdiff_t;
 
             using value_type = Object;

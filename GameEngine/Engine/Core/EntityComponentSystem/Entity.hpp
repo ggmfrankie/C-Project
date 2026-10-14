@@ -4,7 +4,6 @@
 
 #pragma once
 #include <functional>
-#include "ComponentRegistry.hpp"
 #include "ggmdef.hpp"
 
 namespace ggm {

@@ -4,7 +4,6 @@
 
 #include "RenderObject3D.hpp"
 #include <algorithm>
-#include <execution>
 
 #include "../Loader/OBJLoader.hpp"
 

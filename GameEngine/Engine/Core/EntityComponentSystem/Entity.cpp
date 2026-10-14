@@ -2,13 +2,16 @@
 // Created by Stefan on 11.10.2026.
 //
 
-#include "Object.hpp"
+#include "Entity.hpp"
 
 namespace ggm {
-    Object::Object() {
+    Entity::Entity() :
+        mGeneration(0),
+        mArchetypeId(0)
+    {
         static u64 generator = 0;
         mId = generator++;
     }
 
-    Object::~Object() {}
+    Entity::~Entity() {}
 } // ggm

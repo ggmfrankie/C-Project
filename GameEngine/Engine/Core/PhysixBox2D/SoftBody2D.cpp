@@ -4,7 +4,6 @@
 
 #include "SoftBody2D.hpp"
 #include <algorithm>
-#include <execution>
 
 
 namespace PhysixBox {

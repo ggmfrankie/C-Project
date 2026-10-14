@@ -30,7 +30,6 @@ static int f(int x) {
 #include <thread>
 #include <chrono>
 #include <vector>
-#include <execution>
 #include <print>
 
 inline void streamTest() {

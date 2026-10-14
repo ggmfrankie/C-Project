@@ -11,6 +11,9 @@
 #include "Utils/Math/Vector.h"
 
 namespace ggm {
+    template<typename T, typename... Ts>
+        concept ContainsType = (std::is_same_v<T, Ts> || ...);
+
     template<typename... Components>
     class ComponentRegistry {
         using Component = std::variant<std::vector<Components>...>;
@@ -38,6 +41,7 @@ namespace ggm {
             }
 
             template<typename... UsedComponents, std::size_t... Ids>
+            requires (ContainsType<UsedComponents, Components...> && ...)
             static void setMappings(TypeMapping& mapping, std::index_sequence<Ids...>) {
                 (setMapping<UsedComponents>(mapping, Ids), ...);
             }
@@ -61,16 +65,21 @@ namespace ggm {
                 std::ranges::fill(mMappings, EMPTY_MAPPING);
             }
 
-        public:
-            [[nodiscard]] auto& getMappings() const {
+            [[nodiscard]] TypeMapping& getMappings() {
                 return mMappings;
             }
 
-            [[nodiscard]] auto& getComponents() const {
+            [[nodiscard]] std::vector<Component>& getComponents() {
                 return mComponents;
             }
 
+        public:
+            [[nodiscard]] size_t getEntityCount() {
+                return mEntities.size();
+            }
+
             template<typename... UsedComponents>
+            requires (ContainsType<UsedComponents, Components...> && ...)
             static Archetype New() {
                 Archetype out {};
                 auto& components = out.getComponents();
@@ -86,7 +95,13 @@ namespace ggm {
                 return out;
             }
 
+            template<typename UsedComponent>
+            std::vector<UsedComponent>& getComponentVector() {
+                return std::get<std::vector<std::remove_cvref_t<UsedComponent>>>(mComponents[mMappings[componentId<std::remove_cvref_t<UsedComponent>>()]]);
+            }
+
             template<typename... UsedComponents>
+            requires (ContainsType<UsedComponents, Components...> && ...)
             bool has() const {
                 constexpr std::array ids {
                     componentId<UsedComponents>()...
@@ -95,8 +110,12 @@ namespace ggm {
             }
 
             template<typename... UsedComponents>
+            requires (ContainsType<UsedComponents, Components...> && ...)
             void add(Entity& entity, UsedComponents&&... args) {
-                mEntities.insert(entity.mId, 43);
+                mEntities.insert(entity.mId, entity.mId);
+
+                (getComponentVector<UsedComponents>().push_back(
+                    std::forward<UsedComponents>(args)), ...);
             }
 
             ~Archetype() = default;
@@ -107,32 +126,40 @@ namespace ggm {
 
     public:
         template<typename... UsedComponents>
-        ComponentRegistry& add(Entity entity, UsedComponents... args) {
-            // Use static initialization to create a new archetype and use old one if archetype already exists
+        requires (ContainsType<UsedComponents, Components...> && ...)
+        void createEntity(Entity entity, UsedComponents&&... args) {
+            // Use static initialization to create a new archetype or use old one if archetype already exists
             static int index = -1;
-            if (index == -1) index = [this]{mArchetypes.push_back(Archetype::template New<UsedComponents...>()); return mArchetypes.size()-1;}();
+            if (index == -1) index = [this]{mArchetypes.push_back(Archetype::template New<std::remove_cvref_t<UsedComponents>...>()); return mArchetypes.size()-1;}();
 
             mArchetypes[index].add(entity, std::forward<UsedComponents>(args)...);
         }
+
+        template<typename... UsedComponents>
+        requires (ContainsType<UsedComponents, Components...> && ...)
+        auto& getArchetypes() {
+            using ComponentBatch = std::tuple<std::size_t, std::vector<UsedComponents>&...>;
+
+            static std::vector<int> indices {};
+            static std::vector<ComponentBatch> batches {};
+            if (indices.empty()) {
+                for (size_t i = 0; i < mArchetypes.size(); ++i) {
+                    if (mArchetypes[i].template has<UsedComponents...>()) indices.push_back(i);
+                }
+            }
+
+            batches.clear();
+
+            for (int index : indices) {
+                Archetype& archetype = mArchetypes[index];
+
+                batches.emplace_back(
+                    archetype.getEntityCount(),
+                    archetype.template getComponentVector<UsedComponents>()...
+                );
+            }
+
+            return batches;
+        }
     };
-
-    static void test() {
-        struct Sprite {
-            Vec2f dims;
-        };
-
-        struct Position: Vec2f {
-            using Vec2f::Vec2f;
-        };
-
-        struct Velocity: Vec2f {
-            using Vec2f::Vec2f;
-        };
-
-        struct Health {
-            int amount;
-        };
-
-        ComponentRegistry<Sprite, Position, Velocity, Health> registry {};
-    }
 } // ggm

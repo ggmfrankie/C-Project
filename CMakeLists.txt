@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 4.0)
 project(C-Project LANGUAGES C CXX)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Og -g -pthread")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Og -g -pthread")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -g -pthread")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -g -pthread")
 
 set(CMAKE_C_STANDARD 23)
 set(CMAKE_C_STANDARD_REQUIRED ON)
@@ -122,16 +122,21 @@ add_executable(C-Project
         OtherProjects/C/Extern/CVector.h
         GameEngine/_Projects_/ggmTanks/TankGame.cpp
         GameEngine/_Projects_/ggmTanks/TankGame.hpp
-        GameEngine/Render/Objects/EntityComponentSystem/Object.cpp
-        GameEngine/Render/Objects/EntityComponentSystem/Entity.hpp
         GameEngine/Utils/DataStorage/HashMap.cpp
         GameEngine/Utils/DataStorage/HashMap.hpp
         GameEngine/Utils/Test.cpp
         GameEngine/Utils/Test.hpp
-        GameEngine/Render/Objects/EntityComponentSystem/Systems/RenderSystem2D.cpp
-        GameEngine/Render/Objects/EntityComponentSystem/Systems/RenderSystem2D.hpp
-        GameEngine/Render/Objects/EntityComponentSystem/ComponentRegistry.cpp
-        GameEngine/Render/Objects/EntityComponentSystem/ComponentRegistry.hpp
+        GameEngine/Engine/Core/EntityComponentSystem/Systems/Render/SpriteRenderer.cpp
+        GameEngine/Engine/Core/EntityComponentSystem/Systems/Render/SpriteRenderer.hpp
+        GameEngine/Engine/Core/EntityComponentSystem/ComponentRegistry.hpp
+        GameEngine/Engine/Core/EntityComponentSystem/Entity.hpp
+        GameEngine/Engine/Core/EntityComponentSystem/Entity.cpp
+        GameEngine/Engine/Core/EntityComponentSystem/Systems/Render/SpriteLoader.cpp
+        GameEngine/Engine/Core/EntityComponentSystem/Systems/Render/SpriteLoader.hpp
+        GameEngine/Engine/Core/EntityComponentSystem/Components/Sprite.hpp
+        GameEngine/Engine/Core/EntityComponentSystem/Components/SpriteLocation.hpp
+        GameEngine/Engine/Core/EntityComponentSystem/ECSTest.cpp
+        GameEngine/Engine/Core/EntityComponentSystem/ECSTest.hpp
 )
 
 target_compile_definitions(C-Project PUBLIC JPH_ENABLE_ASSERTS)
@@ -185,7 +190,5 @@ if (UNIX)
             Jolt
             OpenGL::OpenGL
             McpServerLib
-            #TBB::tbb
-            #RustGame
     )
 endif (UNIX)

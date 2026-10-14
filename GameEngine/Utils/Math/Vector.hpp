@@ -160,11 +160,6 @@ namespace ggm {
     };
 
     struct Vector2f {
-        constexpr Vector2f() = default;
-        constexpr Vector2f(const float x, const float y) {
-            this->x = x;
-            this->y = y;
-        }
         float x = 0;
         float y = 0;
 
