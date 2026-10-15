@@ -96,6 +96,10 @@ namespace ggm {
             *getEmptyHashTableSlot(key) = index;
         }
 
+        bool contains(const Key& key) {
+            return getHashTableSlot(key) != mHashTable.end();
+        }
+
         Value* operator[](const Key& key) {
             const auto hashTableSlot = getHashTableSlot(key);
             return (hashTableSlot != mHashTable.end())

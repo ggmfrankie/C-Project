@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include <optional>
 #include <span>
 #include <variant>
 
@@ -19,10 +20,24 @@ namespace ggm {
         using Component = std::variant<std::vector<Components>...>;
         using ComponentId = i16;
 
-        using TypeMapping = std::array<ComponentId, sizeof...(Components)>;
+        struct TypeMapping {
+            std::array<ComponentId, sizeof...(Components)> mappings;
+
+            ComponentId& operator[](size_t index) {
+                return mappings[index];
+            }
+
+            const ComponentId& operator[](size_t index) const {
+                return mappings[index];
+            }
+
+            bool operator==(const TypeMapping& other) const {
+                return other.mappings == mappings;
+            }
+        };
 
         template<typename T>
-            static consteval ComponentId componentId() {
+        static consteval ComponentId componentId() {
             constexpr bool matches[] = {
                 std::is_same_v<T, Components>...
             };
@@ -33,6 +48,7 @@ namespace ggm {
 
             throw "Component not found";
         }
+
     public:
         class Archetype  {
             template<typename T>
@@ -46,7 +62,11 @@ namespace ggm {
                 (setMapping<UsedComponents>(mapping, Ids), ...);
             }
 
-            bool has(std::span<const ComponentId> ids) const  {
+            std::span<const ComponentId> getComponents() const {
+
+            }
+
+            bool has(std::span<const ComponentId> ids) const {
                 for (auto id : ids) {
                     if (mMappings[id] == EMPTY_MAPPING) return false;
                 }
@@ -62,7 +82,7 @@ namespace ggm {
             static constexpr i16 EMPTY_MAPPING = -1;
 
             Archetype() {
-                std::ranges::fill(mMappings, EMPTY_MAPPING);
+                std::ranges::fill(mMappings.mappings, EMPTY_MAPPING);
             }
 
             [[nodiscard]] TypeMapping& getMappings() {
@@ -111,11 +131,22 @@ namespace ggm {
 
             template<typename... UsedComponents>
             requires (ContainsType<UsedComponents, Components...> && ...)
-            void add(Entity& entity, UsedComponents&&... args) {
+            void add(Entity entity, UsedComponents&&... args) {
                 mEntities.insert(entity.mId, entity.mId);
 
                 (getComponentVector<UsedComponents>().push_back(
                     std::forward<UsedComponents>(args)), ...);
+            }
+
+            bool contains(const Entity& entity) {
+                return mEntities.contains(entity.mId);
+            }
+
+            std::optional<size_t> getIndex(const Entity& entity) {
+                if (size_t* index = mEntities[entity.mId]) {
+                    return *index;
+                }
+                return std::nullopt;
             }
 
             ~Archetype() = default;
@@ -130,9 +161,35 @@ namespace ggm {
         void createEntity(Entity entity, UsedComponents&&... args) {
             // Use static initialization to create a new archetype or use old one if archetype already exists
             static int index = -1;
-            if (index == -1) index = [this]{mArchetypes.push_back(Archetype::template New<std::remove_cvref_t<UsedComponents>...>()); return mArchetypes.size()-1;}();
+            if (index == -1) {
+                mArchetypes.push_back(Archetype::template New<std::remove_cvref_t<UsedComponents>...>());
+                index = mArchetypes.size()-1;
+            }
 
             mArchetypes[index].add(entity, std::forward<UsedComponents>(args)...);
+        }
+
+        template<typename... RemovedComponents, typename... AddedComponents>
+        requires (ContainsType<AddedComponents, Components...> && ...)
+        void changeComponents(const Entity& entity, AddedComponents&&... components) {
+            Archetype* sourceArchetype {};
+            Archetype* destinationArchetype {};
+            ssize_t index = -1;
+
+            for (auto& a : mArchetypes) {
+                auto elementIndex = a.getIndex(entity);
+                if (elementIndex) {
+                    sourceArchetype = &a;
+                    index = *elementIndex;
+                    break;
+                }
+            }
+
+            for (auto& a : mArchetypes) {
+
+            }
+
+
         }
 
         template<typename... UsedComponents>
