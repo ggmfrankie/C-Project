@@ -137,6 +137,8 @@ add_executable(C-Project
         GameEngine/Engine/Core/EntityComponentSystem/Components/SpriteLocation.hpp
         GameEngine/Engine/Core/EntityComponentSystem/ECSTest.cpp
         GameEngine/Engine/Core/EntityComponentSystem/ECSTest.hpp
+        GameEngine/Engine/Core/EntityComponentSystem/Components/Position.hpp
+        GameEngine/Engine/Core/EntityComponentSystem/Core/RenderContext.hpp
 )
 
 target_compile_definitions(C-Project PUBLIC JPH_ENABLE_ASSERTS)

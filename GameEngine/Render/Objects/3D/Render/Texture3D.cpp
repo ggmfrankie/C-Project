@@ -13,7 +13,7 @@
 namespace ggm {
     namespace fs = std::filesystem;
 
-    const std::filesystem::path Texture3D::defaultPath{fs::current_path().parent_path()/"Resources"/"Textures"};
+    const std::filesystem::path Texture3D::defaultPath {fs::current_path().parent_path()/"Resources"/"Textures"};
 
     Texture3D::Texture3D(const std::filesystem::path& file):
         mPath(file)

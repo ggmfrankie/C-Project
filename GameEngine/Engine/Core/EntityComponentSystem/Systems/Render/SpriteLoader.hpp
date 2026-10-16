@@ -6,16 +6,28 @@
 #include <iostream>
 
 #include "Engine/Core/EntityComponentSystem/ComponentRegistry.hpp"
+#include "Engine/Core/EntityComponentSystem/Components/Sprite.hpp"
 #include "Engine/Core/EntityComponentSystem/Components/SpriteLocation.hpp"
 
 namespace ggm::SpriteLoader {
+
+    Sprite loadSprite(const SpriteLocation& location);
+
     template<typename... Components>
-    requires ContainsType<SpriteLocation, Components...>
+    requires ContainsType<SpriteLocation, Components...> && ContainsType<Sprite, Components...>
     void load(ComponentRegistry<Components...>& registry) {
-        for (auto&[count, sprites] : registry.template getArchetypes<SpriteLocation>()) {
+        std::vector<std::pair<Entity, Sprite>> entitiesBuffer {};
+        for (auto&[count, entities, spriteLocations] : registry.template getArchetypes<SpriteLocation>()) {
             for (int i = 0; i < count; ++i) {
-                std::cout << sprites[i].path << "\n";
+                entitiesBuffer.emplace_back(
+                    entities[i],
+                    loadSprite(spriteLocations[i])
+                );
             }
+        }
+
+        for (auto&[entity, sprite] : entitiesBuffer) {
+            registry.changeComponents(entity, TypeList<SpriteLocation>{}, std::move(sprite));
         }
     }
 }

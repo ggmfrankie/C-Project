@@ -3,9 +3,20 @@
 //
 
 #pragma once
-#include "DataStorage/HashMap.hpp"
+#include "Engine/Core/EntityComponentSystem/ComponentRegistry.hpp"
+#include "Engine/Core/EntityComponentSystem/Components/Position.hpp"
+#include "Engine/Core/EntityComponentSystem/Components/Sprite.hpp"
+#include "Engine/Core/EntityComponentSystem/Core/RenderContext.hpp"
 
 namespace ggm::SpriteRenderer {
+    void drawSprites(const RenderContext& context, const std::vector<Sprite>& sprites, const std::vector<Position>& positions);
 
+    template<typename... Components>
+    requires ContainsType<Position, Components...> && ContainsType<Sprite, Components...>
+    void draw(ComponentRegistry<Components...>& registry) {
+        for (auto&[count, entities, sprites, positions] : registry.template getArchetypes<Sprite, Position>()) {
+            drawSprite(sprites, positions);
+        }
+    }
 }
 

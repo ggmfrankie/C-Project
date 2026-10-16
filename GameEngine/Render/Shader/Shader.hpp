@@ -35,17 +35,13 @@ namespace ggm {
     std::ostream& operator<<(std::ostream& lhs, UniformType rhs);
 
     class Shader {
-    public:
-        explicit Shader(std::filesystem::path&& fileVert, std::filesystem::path&& fileFrag);
-
         [[nodiscard]] GLuint createVertexShader(const std::string &shaderSource) const;
-
         static std::string readShaderFile(const std::filesystem::path& fileName);
-
         [[nodiscard]] GLuint createFragmentShader(const std::string &shaderSource) const;
 
         GLuint createShader(const GLchar *code, int shaderType) const;
-
+    public:
+        explicit Shader(std::filesystem::path&& fileVert, std::filesystem::path&& fileFrag);
         void bind() const;
         void unbind() const;
 

@@ -5,20 +5,16 @@
 #include "ECSTest.hpp"
 
 #include "ComponentRegistry.hpp"
+#include "Components/Position.hpp"
 #include "Components/SpriteLocation.hpp"
 #include "Math/Vector.hpp"
 #include "Systems/Render/SpriteLoader.hpp"
 
 namespace ggm::ECSTest {
     void run() {
-        struct Sprite {
-            Vec2f dims;
-        };
-
-        struct Position : Vector2f {
-        };
 
         struct Velocity : Vector2f {
+
         };
 
         struct Health {
@@ -30,9 +26,9 @@ namespace ggm::ECSTest {
         registry.createEntity({}, Health{.amount = 100}, Velocity{});
         registry.createEntity({}, Health{.amount = 100}, Velocity{});
         registry.createEntity({}, Health{.amount = 100}, Velocity{}, Position{1, 2});
-        registry.createEntity({}, SpriteLocation{"path1"});
+        //registry.createEntity({}, SpriteLocation{"ERROR.png"});
 
-        for (auto&[count, velocities, healths] : registry.getArchetypes<Velocity, Health>()) {
+        for (auto&[count, entities, velocities, healths] : registry.getArchetypes<Velocity, Health>()) {
             puts("hello");
         }
 

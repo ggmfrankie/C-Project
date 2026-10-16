@@ -6,7 +6,7 @@
 
 namespace ggm {
     Logger& Logger::Get() {
-        static Logger logger;
+        static Logger logger {};
 
         return logger;
     }

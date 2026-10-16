@@ -6,6 +6,7 @@
 #include "ArrayList.hpp"
 #include <concepts>
 #include <functional>
+#include <optional>
 
 namespace ggm {
     template<typename Key, typename Hash>
@@ -100,11 +101,19 @@ namespace ggm {
             return getHashTableSlot(key) != mHashTable.end();
         }
 
-        Value* operator[](const Key& key) {
+        Value* get(const Key& key) {
             const auto hashTableSlot = getHashTableSlot(key);
             return (hashTableSlot != mHashTable.end())
                 ? &mData[*hashTableSlot].value
                 : nullptr;
+        }
+
+        Value* operator[](const Key& key) {
+            return get(key);
+        }
+
+        auto find(const Value& value) {
+            return std::ranges::find(mData, value, &Object::value);
         }
 
         void remove(const Key& key) {
