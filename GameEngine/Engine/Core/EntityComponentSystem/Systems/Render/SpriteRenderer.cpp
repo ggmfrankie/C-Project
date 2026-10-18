@@ -4,14 +4,17 @@
 
 #include "SpriteRenderer.hpp"
 
+#include <ranges>
+
+#include "Engine/Core/EntityComponentSystem/Core/RenderContext.hpp"
 #include "Render/Shader/Shader.hpp"
 
 namespace ggm::SpriteRenderer {
     static Shader& getSpriteShader() {
         static Shader shader = []{
             Shader out {
-                "2D/Shader2D.vert",
-                "2D/Shader2D.frag"
+                "2D/SpriteShader.vert",
+                "2D/SpriteShader.frag"
             };
 
             out.compileAndLink();
@@ -21,16 +24,22 @@ namespace ggm::SpriteRenderer {
         return shader;
     }
 
-    void drawSprites(const std::vector<Sprite>& sprites, const std::vector<Position>& positions) {
-        const Shader& shader = getSpriteShader();
+    void drawSprites(const RenderContext& context, const std::vector<Sprite>& sprites, const std::vector<Transformation>& transformations) {
+        Shader& shader = getSpriteShader();
         shader.bind();
 
-        for (const auto& [texture, quad] : sprites) {
-            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, texture.mTextureId);
+        shader.setUniform("screenWidth", static_cast<float>(context.width));
+        shader.setUniform("screenHeight", static_cast<float>(context.height));
 
-            glBindVertexArray(quad.VAO);
-            glDrawElements(GL_TRIANGLES, quad.indexCount, GL_UNSIGNED_INT, nullptr);
+        for (const auto& [sprite, transformation] : std::views::zip(sprites, transformations)) {
+            shader.setUniform("screenPos", transformation.position);
+            shader.setUniform("screenDims", transformation.dimensions);
+
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, sprite.texture.mTextureId);
+
+            glBindVertexArray(sprite.quad.VAO);
+            glDrawElements(GL_TRIANGLES, sprite.quad.indexCount, GL_UNSIGNED_INT, nullptr);
             glBindVertexArray(0);
         }
 

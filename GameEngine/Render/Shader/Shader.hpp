@@ -67,10 +67,11 @@ namespace ggm {
             return hash;
         }
 
-        /// @brief Sets the specified uniform to the value.
-        /// Extracts uniform location once and caches it inside a static variable. Each invocation generates a unique instance.
-        /// Does typechecking once and throws an error if types don't match.
-        /// Uses the current file to generate a unique key to force unique functions per translation unit
+        /** @brief Sets the specified uniform to the value.
+         *  Extracts uniform location once and caches it inside a static variable. Each invocation generates a unique instance.
+         *  Does typechecking once and throws an error if types don't match.
+         *  Uses the current file to generate a unique key to force unique functions per translation unit
+         */
 
 #define setUniform(Name, Value) setUniform_T<ggm::Shader::ConstStr{Name}, ggm::Shader::fnv1a(__FILE__)>(Value)
 
@@ -100,27 +101,27 @@ namespace ggm {
                 static bool _ = typeCheck(u.type, Bool);
                 glUniform1i(u.location, value ? 1 : 0);
 
-            } else if constexpr (std::is_same_v<V, ggm::Vector2f>) {
+            } else if constexpr (std::is_same_v<V, Vector2f>) {
 
                 static bool _ = typeCheck(u.type, Vec2);
                 glUniform2f(u.location, value.x, value.y);
 
-            } else if constexpr (std::is_same_v<V, ggm::Vector3f>) {
+            } else if constexpr (std::is_same_v<V, Vector3f>) {
 
                 static bool _ = typeCheck(u.type, Vec3);
                 glUniform3f(u.location, value.x, value.y, value.z);
 
-            } else if constexpr (std::is_same_v<V, ggm::Vector4f>) {
+            } else if constexpr (std::is_same_v<V, Vector4f>) {
 
                 static bool _ = typeCheck(u.type, Vec4);
                 static_assert(false, "Unsupported uniform type");
 
-            } else if constexpr (std::is_same_v<V, ggm::Matrix3f>) {
+            } else if constexpr (std::is_same_v<V, Matrix3f>) {
 
                 static bool _ = typeCheck(u.type, Mat3);
                 static_assert(false, "Unsupported uniform type");
 
-            } else if constexpr (std::is_same_v<V, ggm::Matrix4f>) {
+            } else if constexpr (std::is_same_v<V, Matrix4f>) {
 
                 static bool _ = typeCheck(u.type, Mat4);
                 glUniformMatrix4fv(u.location,1, false, value.getDataPtr());

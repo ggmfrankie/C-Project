@@ -36,7 +36,7 @@ extern "C" void Engine_changeFOV(void* FOV) {
     float fovValue = *static_cast<float*>(FOV);
     ggm::GameEngine::Get().pushTask(
         ggm::Task( [fovValue] {
-                ggm::GameEngine::Get().getScreen().getScene().getCamera().setFOV(fovValue);
+                dynamic_cast<ggm::Scene3D&>(ggm::GameEngine::Get().getScreen().getScene()).getCamera().setFOV(fovValue);
                 auto* payload = new float(fovValue);
                 gui_pushUpdate(update_setFovHighlight, payload);
             }

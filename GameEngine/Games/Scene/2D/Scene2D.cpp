@@ -13,7 +13,7 @@ namespace ggm {
     {}
 
     void Scene2D::init() {
-        mRenderer.init(&mCamera);
+        mRenderer.init();
         mLayerStack.initAll();
     }
 
@@ -29,10 +29,6 @@ namespace ggm {
             obj.update();
         }
         mLayerStack.updateAll(dt);
-    }
-
-    Camera& Scene2D::getCamera() {
-        return mCamera;
     }
 
     u64 Scene2D::addObject(const Vector3f &color, const PhysicsFactory2D::PhysicsSettings &settings) {

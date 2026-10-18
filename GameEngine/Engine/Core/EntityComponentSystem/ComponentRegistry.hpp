@@ -9,9 +9,11 @@
 #include <optional>
 #include <span>
 #include <variant>
+#include <format>
 
 #include "Entity.hpp"
 #include "DataStorage/HashMap.hpp"
+#include "Engine/Debug/Logger.hpp"
 
 namespace ggm {
     template<typename T, typename... Ts>
@@ -26,61 +28,48 @@ namespace ggm {
         using ComponentVec = std::variant<std::vector<Components>...>;
         using ComponentId = i16;
 
-        struct TypeMapping {
-            std::array<ComponentId, sizeof...(Components)> mappings;
-
-            ComponentId& operator[](size_t index) {
-                return mappings[index];
-            }
-
-            const ComponentId& operator[](size_t index) const {
-                return mappings[index];
-            }
-
-            bool operator==(const TypeMapping& other) const {
-                return other.mappings == mappings;
-            }
-
-            size_t size() {
-                return mappings.size();
-            }
-        };
+        using TypeMapping = std::array<ComponentId, sizeof...(Components)>;
 
         struct TypeSignature {
-            std::bitset<sizeof...(Components)> signature;
+            std::bitset<sizeof...(Components)> bits;
 
             template<typename... RemovedComponents>
             requires (ContainsType<RemovedComponents, Components...> && ...)
             TypeSignature removeTypes() {
-                ((signature[componentId<RemovedComponents>()] = false), ...);
+                ((bits.set(componentId<RemovedComponents>(), false)), ...);
                 return *this;
             }
 
             template<typename... AddedComponents>
             requires (ContainsType<AddedComponents, Components...> && ...)
             TypeSignature addTypes() {
-                ((signature[componentId<AddedComponents>()] = true), ...);
+                ((bits.set(componentId<AddedComponents>(), true)), ...);
                 return *this;
             }
 
             bool operator==(const TypeSignature& other) const {
-                return other.signature == signature;
+                return other.bits == bits;
             }
 
             size_t size() const {
-                return signature.size();
+                return bits.size();
             }
 
             TypeSignature operator&(const TypeSignature& other) {
-                return {other.signature & signature};
+                return {other.bits & bits};
             }
 
             bool operator[](size_t index) const {
-                return signature[index];
+                return bits[index];
             }
 
             void set(size_t index, bool value) {
-                signature.set(index, value);
+                bits.set(index, value);
+            }
+
+            friend std::ostream& operator<<(std::ostream& os, const TypeSignature& ts) {
+                os << ts.bits;
+                return os;
             }
         };
 
@@ -138,11 +127,10 @@ namespace ggm {
 
             HashMap<decltype(Entity::mId), size_t> mEntityMappings;
 
-
             static constexpr i16 EMPTY_MAPPING = -1;
 
             Archetype() {
-                std::ranges::fill(mMappings.mappings, EMPTY_MAPPING);
+                std::ranges::fill(mMappings, EMPTY_MAPPING);
             }
 
             [[nodiscard]] TypeMapping& getMappings() {
@@ -233,7 +221,7 @@ namespace ggm {
             template<typename... UsedComponents>
             requires (ContainsType<UsedComponents, Components...> && ...)
             void add(Entity&& entity, UsedComponents&&... args) {
-                mEntityMappings.insert(entity.mId, entity.mId);
+                mEntityMappings.insert(entity.mId, mEntities.size());
                 mEntities.push_back(std::move(entity));
 
                 (getComponentVector<UsedComponents>().push_back(
@@ -286,13 +274,17 @@ namespace ggm {
 
             // Calculate the required new Archetype signature
             TypeSignature present = sourceArchetype.getSignature();
+            Logger::debug({"Present: {}", present.bits});
             TypeSignature required = present.template removeTypes<std::remove_cvref_t<RemovedComponents>...>().template addTypes<std::remove_cvref_t<AddedComponents>...>();
+            Logger::debug({"Required: {}", required.bits});
             TypeSignature canBeTransferred = present & required;
+            Logger::debug({"Can be transferred: {}", canBeTransferred.bits});
 
             // Search existing Archetypes
             for (auto& a : mArchetypes) {
                 if (a.hasTypeSignature(required)) {
                     destinationArchetype = &a;
+                    Logger::debug({"Existing destination Archetype found"});
                     break;
                 }
             }
@@ -301,6 +293,7 @@ namespace ggm {
             if (destinationArchetype == nullptr) {
                 mArchetypes.push_back(Archetype::New(required));
                 destinationArchetype = &mArchetypes.back();
+                Logger::debug({"New destination Archetype created"});
             }
 
             assert(destinationArchetype != nullptr);
@@ -308,7 +301,13 @@ namespace ggm {
             for (int i = 0; i < required.size(); ++i) {
                 if (!required[i]) continue;
                 if (canBeTransferred[i]) {
+                    Logger::debug({"Transferring old component"});
                     std::visit([&]<typename Type>(Type& sourceVector) {
+                        Logger::debug({
+                            "index={}, source size={}",
+                            index,
+                            sourceVector.size()
+                        });
                         using Vector = std::remove_cvref_t<Type>;
                         using T = Vector::value_type;
 
@@ -323,6 +322,7 @@ namespace ggm {
                         std::move(sourceArchetype.getEntities()[index])
                     );
                 } else {
+                    Logger::debug({"Adding new Component"});
                     (
                         [&] {
                             using T = std::remove_cvref_t<AddedComponents>;
@@ -347,11 +347,11 @@ namespace ggm {
                     }
                     sourceVector.pop_back();
                 }, sourceArchetype.getComponentVector(i));
-
-                std::vector<Entity>& sourceEntities = sourceArchetype.getEntities();
-                if (const size_t lastIndex = sourceEntities.size()-1; index != lastIndex) sourceEntities[index] = std::move(sourceEntities.back());
-                sourceEntities.pop_back();
             }
+
+            std::vector<Entity>& sourceEntities = sourceArchetype.getEntities();
+            if (const size_t lastIndex = sourceEntities.size()-1; index != lastIndex) sourceEntities[index] = std::move(sourceEntities.back());
+            sourceEntities.pop_back();
         }
 
         template<typename... RemovedComponents, typename... AddedComponents>
@@ -395,3 +395,10 @@ namespace ggm {
         }
     };
 } // ggm
+
+template<std::size_t N>
+struct std::formatter<std::bitset<N>> : std::formatter<std::string_view> {
+    auto format(const std::bitset<N>& bits, std::format_context& ctx) const {
+        return std::format_to(ctx.out(), "{}", bits.to_string());
+    }
+};

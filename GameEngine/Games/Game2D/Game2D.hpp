@@ -11,7 +11,6 @@ namespace ggm {
     class Game2D : public IGame{
         Scene2D mScene{};
 
-        Camera* mCamera = nullptr;
         Input* mInput = nullptr;
         Screen* mScreen = nullptr;
         CommandRegistry* mCommandRegistry = nullptr;

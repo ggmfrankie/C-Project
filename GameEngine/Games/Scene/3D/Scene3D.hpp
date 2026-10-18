@@ -13,22 +13,22 @@
 
 namespace ggm {
     class Scene3D final : public IScene {
-        ggm::ArrayList<ggm::GameObject3D, 64> mGameObjects{};
+        ArrayList<GameObject3D, 64> mGameObjects{};
 
         PhysicsHandler3D mPhysicsHandler{};
         Renderer3D mRenderer{};
 
-        ggm::Camera mCamera{};
+        Camera mCamera{};
 
     public:
         Scene3D();
-        ggm::GameObject3D& addObject(const std::filesystem::path& objFile, float scale, const ggm::PhysicsSettings &settings);
+        GameObject3D& addObject(const std::filesystem::path& objFile, float scale, const ggm::PhysicsSettings &settings);
 
         void init() override;
 
         void render(int width, int height) override;
         void update(float dt) override;
 
-        ggm::Camera& getCamera() override;
+        Camera& getCamera();
     };
 } // Game

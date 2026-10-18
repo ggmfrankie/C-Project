@@ -4,9 +4,6 @@
 
 #pragma once
 #include "../EngineDefines.hpp"
-namespace ggm {
-    class Camera;
-}
 
 namespace ggm {
     class IScene {
@@ -15,8 +12,6 @@ namespace ggm {
 
         virtual void render(int width, int height) = 0;
         virtual void update(float dt) = 0;
-
-        virtual Camera& getCamera() = 0;
 
         virtual ~IScene() = default;
     };

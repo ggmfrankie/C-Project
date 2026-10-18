@@ -12,13 +12,13 @@ namespace ggm::SpriteLoader {
     namespace fs = std::filesystem;
 
     Sprite::Texture loadTexture(const std::filesystem::path& path);
-    Sprite::Quad loadQuad(float width, float height);
+    Sprite::Quad loadNormalizedQuad();
 
     const fs::path DEFAULT_PATH {fs::current_path().parent_path()/"Resources"/"Textures"};
 
     Sprite loadSprite(const SpriteLocation& location) {
         const Sprite::Texture texture = loadTexture(location.path);
-        const Sprite::Quad quad = loadQuad(texture.height, texture.height);
+        static const Sprite::Quad quad = loadNormalizedQuad();
 
         return {texture, quad};
     }
@@ -68,14 +68,14 @@ namespace ggm::SpriteLoader {
         return out;
     }
 
-    Sprite::Quad loadQuad(float width, float height) {
+    Sprite::Quad loadNormalizedQuad() {
         Sprite::Quad out {};
 
-        const std::array vertices {
+        constexpr std::array vertices {
             Vector2f{0,0},
-            Vector2f{0, height},
-            Vector2f{width, height},
-            Vector2f{width, 0}
+            Vector2f{0, 1},
+            Vector2f{1, 1},
+            Vector2f{1, 0}
         };
 
         constexpr std::array uvs {
@@ -96,11 +96,11 @@ namespace ggm::SpriteLoader {
 
         glBindBuffer(GL_ARRAY_BUFFER, out.vertexVBO);
         glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices.size() * 2, vertices.data(), GL_STATIC_DRAW);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
 
         glBindBuffer(GL_ARRAY_BUFFER, out.textureVBO);
         glBufferData(GL_ARRAY_BUFFER, sizeof(float) * uvs.size() * 2, uvs.data(), GL_STATIC_DRAW);
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
 
         glGenBuffers(1, &out.EBO);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, out.EBO);

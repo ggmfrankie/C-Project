@@ -4,9 +4,9 @@
 
 #pragma once
 #include "Engine/Core/EntityComponentSystem/ComponentRegistry.hpp"
-#include "Engine/Core/EntityComponentSystem/Components/Position.hpp"
 #include "Engine/Core/EntityComponentSystem/Components/Sprite.hpp"
 #include "Engine/Core/EntityComponentSystem/Components/SpriteLocation.hpp"
+#include "Engine/Core/EntityComponentSystem/Components/Transformation.hpp"
 #include "Games/Scene/IScene.hpp"
 
 namespace ggm {
@@ -14,16 +14,13 @@ namespace ggm {
         ComponentRegistry<
             Sprite,
             SpriteLocation,
-            Position
+            Transformation
         > mComponentRegistry {};
 
     public:
         void init() override;
 
         void render(int width, int height) override;
-
         void update(float dt) override;
-
-        Camera& getCamera() override;
     };
 } // ggm

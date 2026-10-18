@@ -14,7 +14,6 @@
 
 namespace ggm {
     void Game2D::preInit(EngineContext &&e) {
-        mCamera = &mScene.getCamera();
         mCommandRegistry = e.commandRegistry;
         mInput = e.input;
         mScreen = e.screen;

@@ -5,6 +5,7 @@
 #pragma once
 namespace ggm {
     struct RenderContext {
-
+        int width = 0;
+        int height = 0;
     };
 }

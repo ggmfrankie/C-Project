@@ -14,7 +14,6 @@
 
 namespace ggm {
     class Scene2D final : public IScene {
-        Camera mCamera{};
         PhysixBox::PhysicsSystem mPhysicsSystem{};
         Renderer2D mRenderer{};
 
@@ -31,7 +30,6 @@ namespace ggm {
         void init() override;
         void render(int width, int height) override;
         void update(float dt) override;
-        Camera& getCamera() override;
 
         u64 addObject(const Vector3f& color, const PhysicsFactory2D::PhysicsSettings& settings);
         void addLayer(std::unique_ptr<ILayer> layer);

@@ -4,17 +4,22 @@
 
 #pragma once
 #include "Engine/Core/EntityComponentSystem/ComponentRegistry.hpp"
-#include "Engine/Core/EntityComponentSystem/Components/Position.hpp"
 #include "Engine/Core/EntityComponentSystem/Components/Sprite.hpp"
+#include "Engine/Core/EntityComponentSystem/Components/Transformation.hpp"
+
+
+namespace ggm {
+    struct RenderContext;
+}
 
 namespace ggm::SpriteRenderer {
-    void drawSprites(const std::vector<Sprite>& sprites, const std::vector<Position>& positions);
+    void drawSprites(const RenderContext& context, const std::vector<Sprite>& sprites, const std::vector<Transformation>& transformations);
 
     template<typename... Components>
-    requires ContainsType<Position, Components...> && ContainsType<Sprite, Components...>
-    void draw(ComponentRegistry<Components...>& registry) {
-        for (auto&[count, entities, sprites, positions] : registry.template getArchetypes<Sprite, Position>()) {
-            drawSprites(sprites, positions);
+    requires ContainsType<Sprite, Components...> && ContainsType<Transformation, Components...>
+    void draw(ComponentRegistry<Components...>& registry, const RenderContext& context) {
+        for (auto&[count, entities, sprites, transformations] : registry.template getArchetypes<Sprite, Transformation>()) {
+            drawSprites(context, sprites, transformations);
         }
     }
 }

@@ -14,15 +14,13 @@ namespace ggm {
 
     class Renderer2D {
         Shader mShader;
-        Camera* mCamera = nullptr;
-
         SparseSet<RenderObject2D> mObjects;
 
     public:
         Renderer2D();
         ~Renderer2D();
 
-        void init(Camera* camera);
+        void init();
         void render(int width, int height);
 
         template<typename... Args>

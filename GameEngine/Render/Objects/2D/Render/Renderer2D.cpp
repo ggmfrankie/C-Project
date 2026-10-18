@@ -13,9 +13,8 @@ namespace ggm {
 
     Renderer2D::~Renderer2D() = default;
 
-    void Renderer2D::init(Camera* camera) {
+    void Renderer2D::init() {
         mShader.compileAndLink();
-        mCamera = camera;
 
         for (auto& obj: mObjects) {
             obj.init();
