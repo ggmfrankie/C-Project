@@ -15,7 +15,7 @@ namespace ggm {
 
     Renderer3D::~Renderer3D() = default;
 
-    void Renderer3D::init(ggm::Camera* camera) {
+    void Renderer3D::init(Camera* camera) {
         mShader.compileAndLink();
         mCamera = camera;
 
@@ -26,10 +26,10 @@ namespace ggm {
 
     void Renderer3D::render(const int width, const int height) {
         glEnable(GL_DEPTH_TEST);
-        glDisable(GL_CULL_FACE);
+        //glDisable(GL_CULL_FACE);
         mShader.bind();
         mShader.setUniform("projectionMatrix",
-                              ggm::Matrix4f::Perspective(
+                             Matrix4f::Perspective(
                                   mCamera->getFOV(),
                                   static_cast<float>(width) / static_cast<float>(height),
                                   0.01f,
@@ -37,11 +37,11 @@ namespace ggm {
                                   )
                              );
 
-        const ggm::Matrix4f view = mCamera->getViewMatrix();
+        const Matrix4f view = mCamera->getViewMatrix();
 
         for (auto& obj : mObjects) {
-            const ggm::Matrix4f& model = obj.getModelMatrix();
-            const ggm::Matrix4f modelView = view * model;
+            const Matrix4f& model = obj.getModelMatrix();
+            const Matrix4f modelView = view * model;
 
             mShader.setUniform("modelViewMatrix", modelView);
 

@@ -119,6 +119,7 @@ void Mesh_generateRoundedCorner(const Element* element, GuiVertex* aVertices[], 
         2*r90,
         TRIANGLES
     );
+
     Mesh_connectFans(&tl, &tr, aIndices);
     Mesh_connectFans(&tr, &br, aIndices);
     Mesh_connectFans(&br, &bl, aIndices);

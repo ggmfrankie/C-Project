@@ -3,14 +3,13 @@
 //
 
 #pragma once
-#include <iostream>
 
 #include "Engine/Core/EntityComponentSystem/ComponentRegistry.hpp"
 #include "Engine/Core/EntityComponentSystem/Components/Sprite.hpp"
 #include "Engine/Core/EntityComponentSystem/Components/SpriteLocation.hpp"
 
-namespace ggm::SpriteLoader {
 
+namespace ggm::SpriteLoader {
     Sprite loadSprite(const SpriteLocation& location);
 
     template<typename... Components>

@@ -16,8 +16,8 @@ namespace ggm {
         virtual void render(int width, int height) = 0;
         virtual void update(float dt) = 0;
 
-        virtual ggm::Camera& getCamera() = 0;
+        virtual Camera& getCamera() = 0;
 
         virtual ~IScene() = default;
     };
-} // Game
+}

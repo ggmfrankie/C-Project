@@ -105,7 +105,7 @@ void gui_init(GLFWwindow* window, const int width, const int height, void (*gene
     Render_init(&gGuiState);
 
     Log_info("Generating GUI");
-    generateGUI(Element_get(gGuiState.guiRoot));
+    if (generateGUI) generateGUI(Element_get(gGuiState.guiRoot));
 
     Texture_loadAtlas(&gGuiState.texAtlas);
 

@@ -14,16 +14,16 @@
 
 namespace ggm {
     Screen::Screen(std::string windowName, const int width, const int height) :
-        name(std::move(windowName)),
+        mName(std::move(windowName)),
         mScene(nullptr)
     {
-        this->width = width;
-        this->height = height;
-        windowHandle = nullptr;
+        mWidth = width;
+        mHeight = height;
+        mWindowHandle = nullptr;
     }
 
     Screen::~Screen() {
-        glfwDestroyWindow(windowHandle);
+        glfwDestroyWindow(mWindowHandle);
         glfwTerminate();
     }
 
@@ -38,47 +38,48 @@ namespace ggm {
         glfwWindowHint(GLFW_SAMPLES, 4);
         glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 
-        windowHandle = glfwCreateWindow(width, height, name.c_str(), nullptr, nullptr);
-        if (!windowHandle) {
+        mWindowHandle = glfwCreateWindow(mWidth, mHeight, mName.c_str(), nullptr, nullptr);
+        if (!mWindowHandle) {
             glfwTerminate();
             throw GlException{"Failed to open GLFW window"};
         }
 
-        glfwMakeContextCurrent(windowHandle);
-        glfwSetWindowUserPointer(windowHandle, this);
+        glfwMakeContextCurrent(mWindowHandle);
+        glfwSetWindowUserPointer(mWindowHandle, this);
 
         if (!gladLoadGL(glfwGetProcAddress)) {
-            glfwDestroyWindow(windowHandle);
+            glfwDestroyWindow(mWindowHandle);
             glfwTerminate();
             throw GlException{"Failed to load OpenGL"};
         }
-        glViewport(0, 0, width, height);
+        glViewport(0, 0, mWidth, mHeight);
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         glEnable(GL_DEPTH_TEST);
         glfwSwapInterval(1);
 
-        glfwSetFramebufferSizeCallback(windowHandle, framebufferSizeCallback);
-        glfwSetWindowRefreshCallback(windowHandle, gui_refreshCallback);
+        glfwSetFramebufferSizeCallback(mWindowHandle, framebufferSizeCallback);
+        glfwSetWindowRefreshCallback(mWindowHandle, gui_refreshCallback);
 
-        mInput.init(windowHandle);
+        mInput.init(mWindowHandle);
+        assert(mScene);
         mScene->init();
     }
 
     void Screen::render() const noexcept {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         assert(mScene != nullptr);
-        mScene->render(width, height);
-        glfwSwapBuffers(windowHandle);
+        mScene->render(mWidth, mHeight);
+        glfwSwapBuffers(mWindowHandle);
     }
 
     //! @brief Attaches a scene to the Screen to be rendered and processed
-    void Screen::attachScene(ggm::IScene *scene) {
+    void Screen::attachScene(IScene *scene) {
         assert(scene != nullptr);
         mScene = scene;
     }
 
     GLFWwindow* Screen::getWindowHandle() const {
-        return windowHandle;
+        return mWindowHandle;
     }
 
     Input& Screen::getInput() {
@@ -89,24 +90,24 @@ namespace ggm {
         mInput.endFrame();
     }
 
-    ggm::IScene& Screen::getScene() const {
+    IScene& Screen::getScene() const {
         return *mScene;
     }
 
     void Screen::framebufferSizeCallback(GLFWwindow* window, const int width, const int height) noexcept {
         const auto screen =  static_cast<Screen *>(glfwGetWindowUserPointer(window));
-        screen->width = width;
-        screen->height = height;
+        screen->mWidth = width;
+        screen->mHeight = height;
         glViewport(0, 0, width, height);
         gui_resizeCallback(window, width, height);
     }
 
     int Screen::getWidth() const {
-        return width;
+        return mWidth;
     }
 
     int Screen::getHeight() const {
-        return height;
+        return mHeight;
     }
 
     void Screen::update(const float dt) const noexcept{

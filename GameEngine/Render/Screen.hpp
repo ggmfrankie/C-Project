@@ -42,9 +42,9 @@ namespace ggm {
     private:
         static void framebufferSizeCallback(GLFWwindow *window, int width, int height) noexcept;
 
-        GLFWwindow* windowHandle;
-        int width, height;
-        std::string name;
+        GLFWwindow* mWindowHandle;
+        int mWidth, mHeight;
+        std::string mName;
 
         ggm::IScene* mScene;
         Input mInput;

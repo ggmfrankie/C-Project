@@ -21,9 +21,18 @@ namespace ggm::SpriteRenderer {
         return shader;
     }
 
-    void drawSprites(const RenderContext& context, const std::vector<Sprite>& sprites, const std::vector<Position>& positions) {
+    void drawSprites(const std::vector<Sprite>& sprites, const std::vector<Position>& positions) {
         const Shader& shader = getSpriteShader();
         shader.bind();
+
+        for (const auto& [texture, quad] : sprites) {
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, texture.mTextureId);
+
+            glBindVertexArray(quad.VAO);
+            glDrawElements(GL_TRIANGLES, quad.indexCount, GL_UNSIGNED_INT, nullptr);
+            glBindVertexArray(0);
+        }
 
         shader.unbind();
     }

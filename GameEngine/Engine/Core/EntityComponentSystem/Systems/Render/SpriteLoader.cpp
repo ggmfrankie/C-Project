@@ -5,22 +5,38 @@
 #include "SpriteLoader.hpp"
 
 #include "GLFW/glfw3.h"
+#include "Math/Vector.hpp"
 #include "stb/stb_image.h"
 
 namespace ggm::SpriteLoader {
     namespace fs = std::filesystem;
 
+    Sprite::Texture loadTexture(const std::filesystem::path& path);
+    Sprite::Quad loadQuad(float width, float height);
+
     const fs::path DEFAULT_PATH {fs::current_path().parent_path()/"Resources"/"Textures"};
 
     Sprite loadSprite(const SpriteLocation& location) {
-        Sprite out {};
+        const Sprite::Texture texture = loadTexture(location.path);
+        const Sprite::Quad quad = loadQuad(texture.height, texture.height);
 
-        int width, height, channels;
+        return {texture, quad};
+    }
+
+    Sprite::Texture loadTexture(const fs::path& path) {
+        Sprite::Texture out;
+
+        int channels;
 
         stbi_set_flip_vertically_on_load(true);
 
-        const fs::path fullPath = DEFAULT_PATH / location.path;
-        stbi_uc *pixels = stbi_load(fullPath.string().c_str(), &width, &height, &channels, 0);
+        const fs::path fullPath = DEFAULT_PATH / path;
+        stbi_uc *pixels = stbi_load(
+            fullPath.string().c_str(),
+            &out.width, &out.height,
+            &channels,
+            0
+        );
 
         stbi_set_flip_vertically_on_load(false);
 
@@ -37,7 +53,7 @@ namespace ggm::SpriteLoader {
 
         glTexImage2D(GL_TEXTURE_2D, 0,
                      (channels == 4) ? GL_RGBA : GL_RGB,
-                     width, height, 0,
+                     out.width, out.height, 0,
                      (channels == 4) ? GL_RGBA : GL_RGB,
                      GL_UNSIGNED_BYTE, pixels);
 
@@ -48,6 +64,52 @@ namespace ggm::SpriteLoader {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         stbi_image_free(pixels);
+
+        return out;
+    }
+
+    Sprite::Quad loadQuad(float width, float height) {
+        Sprite::Quad out {};
+
+        const std::array vertices {
+            Vector2f{0,0},
+            Vector2f{0, height},
+            Vector2f{width, height},
+            Vector2f{width, 0}
+        };
+
+        constexpr std::array uvs {
+            Vector2f{0,0},
+            Vector2f{0, 1},
+            Vector2f{1, 1},
+            Vector2f{1, 0}
+        };
+
+        constexpr std::array indices {
+            0, 1, 2, 0, 2, 3
+        };
+
+        glGenVertexArrays(1, &out.VAO);
+        glBindVertexArray(out.VAO);
+        glGenBuffers(1, &out.vertexVBO);
+        glGenBuffers(1, &out.textureVBO);
+
+        glBindBuffer(GL_ARRAY_BUFFER, out.vertexVBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices.size() * 2, vertices.data(), GL_STATIC_DRAW);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+        glBindBuffer(GL_ARRAY_BUFFER, out.textureVBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * uvs.size() * 2, uvs.data(), GL_STATIC_DRAW);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+        glGenBuffers(1, &out.EBO);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, out.EBO);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * indices.size(), indices.data(), GL_STATIC_DRAW);
+
+        out.indexCount = indices.size();
+
+        glEnableVertexAttribArray(0);
+        glEnableVertexAttribArray(1);
 
         return out;
     }

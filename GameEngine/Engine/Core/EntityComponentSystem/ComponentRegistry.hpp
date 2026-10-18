@@ -5,6 +5,7 @@
 #pragma once
 #include <bitset>
 #include <deque>
+#include <iostream>
 #include <optional>
 #include <span>
 #include <variant>
@@ -39,6 +40,10 @@ namespace ggm {
             bool operator==(const TypeMapping& other) const {
                 return other.mappings == mappings;
             }
+
+            size_t size() {
+                return mappings.size();
+            }
         };
 
         struct TypeSignature {
@@ -72,6 +77,10 @@ namespace ggm {
 
             bool operator[](size_t index) const {
                 return signature[index];
+            }
+
+            void set(size_t index, bool value) {
+                signature.set(index, value);
             }
         };
 
@@ -114,6 +123,12 @@ namespace ggm {
                     if (mMappings[id] == EMPTY_MAPPING) return false;
                 }
                 return true;
+            }
+
+            void updateSignature() {
+                for (int i = 0; i < mMappings.size(); ++i) {
+                    mSignature.set(i, mMappings[i] != EMPTY_MAPPING);
+                }
             }
 
             TypeMapping mMappings;
@@ -169,6 +184,8 @@ namespace ggm {
 
                 // Adjust the mappings
                 setMappings<UsedComponents...>(out.getMappings(), std::index_sequence_for<UsedComponents...>{});
+
+                out.updateSignature();
                 return out;
             }
 
@@ -189,7 +206,9 @@ namespace ggm {
                     );
                 }(std::index_sequence_for<Components...>{});
 
+                // Make this a member
                 setMappings(out.getMappings(), signature);
+                out.updateSignature();
                 return out;
             }
 
@@ -215,6 +234,7 @@ namespace ggm {
             requires (ContainsType<UsedComponents, Components...> && ...)
             void add(Entity&& entity, UsedComponents&&... args) {
                 mEntityMappings.insert(entity.mId, entity.mId);
+                mEntities.push_back(std::move(entity));
 
                 (getComponentVector<UsedComponents>().push_back(
                     std::forward<UsedComponents>(args)), ...);
@@ -267,7 +287,6 @@ namespace ggm {
             // Calculate the required new Archetype signature
             TypeSignature present = sourceArchetype.getSignature();
             TypeSignature required = present.template removeTypes<std::remove_cvref_t<RemovedComponents>...>().template addTypes<std::remove_cvref_t<AddedComponents>...>();
-
             TypeSignature canBeTransferred = present & required;
 
             // Search existing Archetypes

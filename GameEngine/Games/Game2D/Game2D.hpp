@@ -14,7 +14,7 @@ namespace ggm {
         Camera* mCamera = nullptr;
         Input* mInput = nullptr;
         Screen* mScreen = nullptr;
-        ggm::CommandRegistry* mCommandRegistry = nullptr;
+        CommandRegistry* mCommandRegistry = nullptr;
 
     public:
         /// @brief Use this to create Objects. OpenGL is NOT initialized here

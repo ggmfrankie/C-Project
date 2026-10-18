@@ -3,19 +3,21 @@
 //
 
 #pragma once
+#include "BattleScene.hpp"
 #include "Games/IGame.hpp"
-#include "Games/Scene/2D/Scene2D.hpp"
 #include "Test/Java.hpp"
 
 namespace ggmTanks {
     class TankGame : public ggm::IGame {
-        ggm::Scene2D mScene {};
+        ggm::BattleScene mScene {};
         ggm::EngineContext mContext {};
 
+        ggm::Input* mInput = nullptr;
+        ggm::Screen* mScreen = nullptr;
+    public:
         TankGame();
         ~TankGame() override;
 
-    public:
         void preInit(ggm::EngineContext &&e) override;
         void postInit() override;
 
