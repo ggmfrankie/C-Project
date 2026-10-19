@@ -140,7 +140,6 @@ add_executable(C-Project
         GameEngine/Engine/Core/EntityComponentSystem/Core/RenderContext.hpp
         GameEngine/_Projects_/ggmTanks/BattleScene.cpp
         GameEngine/Engine/Core/EntityComponentSystem/Components/Transformation.hpp
-        GameEngine/Engine/Core/EntityComponentSystem/Components/SpriteDimensions.hpp
 )
 
 target_compile_definitions(C-Project PUBLIC JPH_ENABLE_ASSERTS)
