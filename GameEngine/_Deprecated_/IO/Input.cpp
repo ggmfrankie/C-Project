@@ -18,7 +18,7 @@ namespace ggm {
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     }
 
-    ggm::Vector2f Input::getMousePos() const {
+    Vector2f Input::getMousePos() const {
         return mCurrMousePos;
     }
 
@@ -51,8 +51,8 @@ namespace ggm {
 
     void Input::setMousePos(const float x, const float y) {
 
-        float xOffset = x - mCurrMousePos.x;
-        float yOffset = y - mCurrMousePos.y;
+        const float xOffset = x - mCurrMousePos.x;
+        const float yOffset = y - mCurrMousePos.y;
 
         mCurrMousePos = {x, y};
 
@@ -99,7 +99,7 @@ namespace ggm {
         return mKeysReleased[key];
     }
 
-    ggm::Vector2f Input::getDisplaceVec() {
+    Vector2f Input::getDisplaceVec() {
         const auto vec = mDisplaceVec;
         mDisplaceVec = {};
         return vec;

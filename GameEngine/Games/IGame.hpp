@@ -11,14 +11,12 @@ namespace ggm {
 
 namespace ggm {
     class Camera;
-    class Input;
     class Screen;
 }
 
 namespace ggm {
 
     struct EngineContext {
-        Input* input;
         Screen* screen;
         CommandRegistry* commandRegistry;
     };

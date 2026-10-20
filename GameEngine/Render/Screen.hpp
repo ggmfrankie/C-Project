@@ -3,10 +3,11 @@
 //
 
 #pragma once
+#include <stdexcept>
+
 #include "../EngineDefines.hpp"
 #include <string>
-
-#include "Engine/IO/Input.hpp"
+#include "GuiTypes.h"
 
 namespace ggm {
     class IScene;
@@ -21,18 +22,15 @@ namespace ggm {
 
         void init();
         void render() const noexcept;
-        void attachScene(ggm::IScene* scene);
+        void attachScene(IScene* scene);
 
         [[nodiscard]] int getWidth() const;
         [[nodiscard]] int getHeight() const;
 
         void update(float dt) const noexcept;
         [[nodiscard]] GLFWwindow *getWindowHandle() const;
-        Input &getInput();
 
-        void endFrame();
-
-        [[nodiscard]] ggm::IScene& getScene() const;
+        [[nodiscard]] IScene& getScene() const;
 
         class GlException: public std::runtime_error {
         public:
@@ -46,7 +44,6 @@ namespace ggm {
         int mWidth, mHeight;
         std::string mName;
 
-        ggm::IScene* mScene;
-        Input mInput;
+        IScene* mScene;
     };
 }

@@ -11,12 +11,12 @@
 
 namespace ggm {
     class Player {
-        ggm::RenderObject3D mRenderObj;
-        ggm::Vector3f mPos{};
+        RenderObject3D mRenderObj;
+        Vector3f mPos{};
 
         JPH::Ref<JPH::Character> mCharacter;
     public:
-        Player(const ggm::Vector3f &pos, JPH::PhysicsSystem &system);
+        Player(const Vector3f &pos, JPH::PhysicsSystem &system);
 
         Player(Player &&other) noexcept;
 

@@ -11,6 +11,8 @@
 
 #include "../../GUIEngine/GuiInterface.h"
 #include "../Games/Scene/3D/Scene3D.hpp"
+#include "Engine/Core/EntityComponentSystem/Systems/IO/InputHandler.hpp"
+#include "GLFW/glfw3.h"
 
 namespace ggm {
     Screen::Screen(std::string windowName, const int width, const int height) :
@@ -52,6 +54,7 @@ namespace ggm {
             glfwTerminate();
             throw GlException{"Failed to load OpenGL"};
         }
+
         glViewport(0, 0, mWidth, mHeight);
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         glEnable(GL_DEPTH_TEST);
@@ -60,7 +63,8 @@ namespace ggm {
         glfwSetFramebufferSizeCallback(mWindowHandle, framebufferSizeCallback);
         glfwSetWindowRefreshCallback(mWindowHandle, gui_refreshCallback);
 
-        mInput.init(mWindowHandle);
+        InputHandler::init(mWindowHandle);
+
         assert(mScene);
         mScene->init();
     }
@@ -72,7 +76,10 @@ namespace ggm {
         glfwSwapBuffers(mWindowHandle);
     }
 
-    //! @brief Attaches a scene to the Screen to be rendered and processed
+    /**
+     * @brief Attaches a scene to the Screen to be rendered and processed
+     * @param scene The scene that should be processed
+     */
     void Screen::attachScene(IScene *scene) {
         assert(scene != nullptr);
         mScene = scene;
@@ -80,14 +87,6 @@ namespace ggm {
 
     GLFWwindow* Screen::getWindowHandle() const {
         return mWindowHandle;
-    }
-
-    Input& Screen::getInput() {
-        return mInput;
-    }
-
-    void Screen::endFrame() {
-        mInput.endFrame();
     }
 
     IScene& Screen::getScene() const {
@@ -110,7 +109,7 @@ namespace ggm {
         return mHeight;
     }
 
-    void Screen::update(const float dt) const noexcept{
+    void Screen::update(const float dt) const noexcept {
         assert(mScene != nullptr);
         mScene->update(dt);
     }

@@ -48,8 +48,6 @@ add_executable(C-Project
         GameEngine/Utils/DataStorage/ArrayList.hpp
         GameEngine/Utils/ggmdef.hpp
         GameEngine/Games/IGame.hpp
-        GameEngine/Engine/IO/Input.cpp
-        GameEngine/Engine/IO/Input.hpp
         GameEngine/Games/BaseGame/BaseGame.cpp
         GameEngine/Games/BaseGame/BaseGame.hpp
         GameEngine/Games/BaseGame/GameGui.h
@@ -140,6 +138,14 @@ add_executable(C-Project
         GameEngine/Engine/Core/EntityComponentSystem/Core/RenderContext.hpp
         GameEngine/_Projects_/ggmTanks/BattleScene.cpp
         GameEngine/Engine/Core/EntityComponentSystem/Components/Transformation.hpp
+        GameEngine/Engine/Core/EntityComponentSystem/Systems/IO/InputHandler.cpp
+        GameEngine/Engine/Core/EntityComponentSystem/Systems/IO/InputHandler.hpp
+        GameEngine/Engine/Core/EntityComponentSystem/Components/KeyPressEvent.hpp
+        GameEngine/Engine/Core/EntityComponentSystem/Components/KeyReleaseEvent.hpp
+        GameEngine/Engine/Core/EntityComponentSystem/Systems/Physics/PlayerController.cpp
+        GameEngine/Engine/Core/EntityComponentSystem/Systems/Physics/PlayerController.hpp
+        GameEngine/_Projects_/ggmTanks/Terrain/TerrainHandler.cpp
+        GameEngine/_Projects_/ggmTanks/Terrain/TerrainHandler.hpp
 )
 
 target_compile_definitions(C-Project PUBLIC JPH_ENABLE_ASSERTS)

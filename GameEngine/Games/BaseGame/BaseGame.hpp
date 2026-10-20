@@ -34,10 +34,9 @@ namespace ggm {
         static nlohmann::json makeMove(int row, int col);
 
     private:
-        ggm::Camera* mCamera = nullptr;
-        ggm::Input* mInput = nullptr;
-        ggm::Screen* mScreen = nullptr;
-        ggm::CommandRegistry* mCommandRegistry = nullptr;
+        Camera* mCamera = nullptr;
+        Screen* mScreen = nullptr;
+        CommandRegistry* mCommandRegistry = nullptr;
         
         mcp::Server mMcpServer {"chessServer"};
 

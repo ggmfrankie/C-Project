@@ -3,19 +3,13 @@
 //
 
 #pragma once
+#include "Registry.hpp"
 #include "Engine/Core/EntityComponentSystem/ComponentRegistry.hpp"
-#include "Engine/Core/EntityComponentSystem/Components/Sprite.hpp"
-#include "Engine/Core/EntityComponentSystem/Components/SpriteLocation.hpp"
-#include "Engine/Core/EntityComponentSystem/Components/Transformation.hpp"
 #include "Games/Scene/IScene.hpp"
 
-namespace ggm {
-    class BattleScene : public IScene {
-        ComponentRegistry<
-            Sprite,
-            SpriteLocation,
-            Transformation
-        > mComponentRegistry {};
+namespace ggmTanks {
+    class BattleScene : public ggm::IScene {
+        Registry mComponentRegistry {};
 
     public:
         void init() override;

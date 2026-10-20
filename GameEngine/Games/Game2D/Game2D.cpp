@@ -8,6 +8,7 @@
 #include "DebugLayer.hpp"
 #include "Game2DGui.h"
 #include "GuiInterface.h"
+#include "GLFW/glfw3.h"
 #include "Render/Screen.hpp"
 #include "Render/Objects/2D/Physics/PhysicsFactory2D.hpp"
 
@@ -15,7 +16,6 @@
 namespace ggm {
     void Game2D::preInit(EngineContext &&e) {
         mCommandRegistry = e.commandRegistry;
-        mInput = e.input;
         mScreen = e.screen;
 
         mScene.addObject({.2, .4, .6}, PhysicsFactory2D::newQuad(100, 100, {200, 100}));
@@ -32,7 +32,6 @@ namespace ggm {
 
     void Game2D::postInit() {
         gui_init(mScreen->getWindowHandle(), mScreen->getWidth(), mScreen->getHeight(), generateGame2DGui);
-        glfwSetInputMode(mScreen->getWindowHandle(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
     }
 
     void Game2D::onShutdown() {}

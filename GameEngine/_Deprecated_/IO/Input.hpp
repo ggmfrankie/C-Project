@@ -13,9 +13,9 @@ namespace ggm {
     class Input {
         static constexpr int KEY_COUNT = 348;
 
-        ggm::Vector2f m_prevMousePos{};
-        ggm::Vector2f mCurrMousePos{};
-        ggm::Vector2f mDisplaceVec{};
+        Vector2f m_prevMousePos{};
+        Vector2f mCurrMousePos{};
+        Vector2f mDisplaceVec{};
 
         bool mInWindow = false;
 
@@ -48,14 +48,14 @@ namespace ggm {
 
     public:
         void init(GLFWwindow *window);
-        ggm::Vector2f getMousePos() const;
+        Vector2f getMousePos() const;
         [[nodiscard]] bool isKeyDown(int key) const;
 
         [[nodiscard]] bool wasKeyPressed(int key) const;
 
         [[nodiscard]] bool wasKeyReleased(int key) const;
 
-        [[nodiscard]] ggm::Vector2f getDisplaceVec();
+        [[nodiscard]] Vector2f getDisplaceVec();
 
         void endFrame();
     };

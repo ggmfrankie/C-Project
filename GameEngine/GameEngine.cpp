@@ -6,15 +6,15 @@
 #include "Jolt/Core/Factory.h"
 
 #include "GameEngine.hpp"
-#include "GuiInterface.h"
 #include "Games/IGame.hpp"
+#include "GLFW/glfw3.h"
 
 namespace ggm {
     GameEngine* GameEngine::mEngineInstance = nullptr;
 
     GameEngine::GameEngine(IGame& game) :
         mGame(game),
-        mScreen("My Window", 800, 600)
+        mScreen("My Window", 1020, 800)
     {}
 
     void GameEngine::loop() {
@@ -30,7 +30,6 @@ namespace ggm {
             mScreen.update(delta);
 
             mScreen.render();
-            mScreen.endFrame();
             lastFrameTime = frameStart;
         }
         glfwTerminate();
@@ -39,7 +38,7 @@ namespace ggm {
     void GameEngine::init() {
         JPH::Factory::sInstance = new JPH::Factory();
         JPH::RegisterTypes();
-        mGame.preInit({.input = &mScreen.getInput(), .screen = &mScreen, .commandRegistry = &mCommandRegistry});
+        mGame.preInit({.screen = &mScreen, .commandRegistry = &mCommandRegistry});
 
         try {
             mScreen.init();

@@ -9,11 +9,8 @@
 
 namespace ggmTanks {
     class TankGame : public ggm::IGame {
-        ggm::BattleScene mScene {};
+        BattleScene mScene {};
         ggm::EngineContext mContext {};
-
-        ggm::Input* mInput = nullptr;
-        ggm::Screen* mScreen = nullptr;
     public:
         TankGame();
         ~TankGame() override;

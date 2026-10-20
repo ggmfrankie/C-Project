@@ -5,6 +5,7 @@
 #include "TankGame.hpp"
 
 #include "GuiInterface.h"
+#include "GLFW/glfw3.h"
 #include "Render/Screen.hpp"
 
 namespace ggmTanks {
@@ -17,15 +18,14 @@ namespace ggmTanks {
     }
 
     void TankGame::preInit(ggm::EngineContext&& e) {
-        mInput = e.input;
-        mScreen = e.screen;
+        mContext = e;
 
-        mScreen->attachScene(&mScene);
+        e.screen->attachScene(&mScene);
     }
 
     void TankGame::postInit() {
-        gui_init(mScreen->getWindowHandle(), mScreen->getWidth(), mScreen->getHeight(), nullptr);
-        glfwSetInputMode(mScreen->getWindowHandle(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        gui_init(mContext.screen->getWindowHandle(), mContext.screen->getWidth(), mContext.screen->getHeight(), nullptr);
+        //glfwSetInputMode(mContext.screen->getWindowHandle(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
     }
 
     void TankGame::onUpdate(double deltaTime) {
