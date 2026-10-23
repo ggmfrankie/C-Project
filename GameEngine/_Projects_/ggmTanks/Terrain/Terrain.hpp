@@ -8,9 +8,12 @@
 
 #include "ggmdef.hpp"
 #include "Math/Vector.hpp"
+#include "_Projects_/ggmTanks/Registry.hpp"
 
 namespace ggmTanks {
-    class TerrainHandler {
+    class Terrain {
+        using TerrainOutline = std::vector<ggm::Vector2f>;
+
         static constexpr int WIDTH  = 64;
         static constexpr int HEIGHT = 32;
 
@@ -19,9 +22,14 @@ namespace ggmTanks {
         ggm::u32 mWidth  = 0;
         ggm::u32 mHeight = 0;
 
-    public:
-        using TerrainOutline = std::vector<ggm::Vector2f>;
+        ggm::Entity mMeshEntity;
+        bool mMeshDirty;
 
-        explicit TerrainHandler(const TerrainOutline& outline);
+        ggm::Mesh2D reloadMesh();
+
+    public:
+        explicit Terrain(const std::span<const ggm::Vector2f>& outline);
+
+        void update(Registry& registry);
     };
 } // ggmTanks

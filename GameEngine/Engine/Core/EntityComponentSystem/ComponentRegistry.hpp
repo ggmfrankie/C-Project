@@ -228,6 +228,27 @@ namespace ggm {
                     std::forward<UsedComponents>(args)), ...);
             }
 
+            void remove(const Entity& e) {
+                size_t index = getIndex(e);
+
+                // Delete all components
+                for (auto& component : mComponents) {
+                    std::visit([&]<typename Type>(Type& sourceVector) {
+                        if (const size_t lastIndex = sourceVector.size()-1; index != lastIndex) {
+                            sourceVector[index] = std::move(sourceVector.back());
+                            mEntityMappings.find(lastIndex)->value = index;
+                        }
+                        sourceVector.pop_back();
+                    }, component);
+                }
+
+                // Delete the entity itself
+                if (const size_t lastIndex = mEntities.size()-1; index != lastIndex) mEntities[index] = std::move(mEntities.back());
+                mEntities.pop_back();
+
+                mEntityMappings.remove(e.mId);
+            }
+
             bool contains(const Entity& entity) {
                 return mEntityMappings.contains(entity.mId);
             }
@@ -249,6 +270,14 @@ namespace ggm {
     private:
         std::deque<Archetype> mArchetypes;
 
+        Archetype& getArchetype(const Entity& entity) {
+            for (auto& a : mArchetypes) {
+                if (a.contains(entity)) return a;
+            }
+            Logger::error({"Entity not found"});
+            return {};
+        }
+
     public:
         template<typename... UsedComponents>
         requires (ContainsType<UsedComponents, Components...> && ...)
@@ -261,6 +290,12 @@ namespace ggm {
             }
 
             mArchetypes[index].add(std::move(entity), std::forward<UsedComponents>(args)...);
+        }
+
+        void deleteEntity(const Entity& entity) {
+            Archetype& archetype = getArchetype(entity);
+
+            archetype.remove(entity);
         }
 
         template<typename... RemovedComponents, typename... AddedComponents>

@@ -9,6 +9,8 @@
 #include "Render/Objects/2D/Physics/PhysicsFactory2D.hpp"
 
 namespace PhysixBox {
+  using namespace ggm;
+  using vec2 = Vector2f;
 
 void PhysicsSystem::update(int steps, float dt) {
   for (int ii = 0; ii < steps; ii++) {
@@ -44,7 +46,6 @@ void PhysicsSystem::update(int steps, float dt) {
 }
 
 void PhysicsSystem::checkIntersection(SoftBody2D &a, SoftBody2D &b) {
-  using vec2 = ggm::Vector2f;
   for (auto &point : b.getPoints()) {
     if (auto &p = point.pos; isInsideV2(a, p)) {
       Collision c = getCollision(a, p);
@@ -61,9 +62,6 @@ void PhysicsSystem::checkIntersection(SoftBody2D &a, SoftBody2D &b) {
 }
 
 void PhysicsSystem::resolveCollision(const Collision &c, PointMass &p) {
-
-  using vec2 = ggm::Vector2f;
-
   const float invA = 1.0f / c.a->mass;
   const float invB = 1.0f / c.b->mass;
   const float invP = 1.0f / p.mass;
@@ -83,10 +81,7 @@ void PhysicsSystem::resolveCollision(const Collision &c, PointMass &p) {
   p.vel += correction * (invP / invSum) * 100;
 }
 
-bool PhysicsSystem::isInsideV2(const SoftBody2D &a,
-                               const ggm::Vector2f &point) {
-  using namespace ggm;
-  using vec2 = Vector2f;
+bool PhysicsSystem::isInsideV2(const SoftBody2D &a, const Vector2f &point) {
 
   const auto &points = a.getPoints();
   const u64 length = points.size();
@@ -96,20 +91,17 @@ bool PhysicsSystem::isInsideV2(const SoftBody2D &a,
     const vec2 p0 = points[i].pos;
     const vec2 p1 = points[(i + 1) % length].pos;
 
-    if (const bool yCheck = (p0.y > point.y) != (p1.y > point.y); !yCheck)
-      continue;
-    if (const float xIntersect =
-            (p1.x - p0.x) * (point.y - p0.y) / (p1.y - p0.y) + p0.x;
+    if (const bool yCheck = (p0.y > point.y) != (p1.y > point.y);
+        !yCheck)
+        continue;
+    if (const float xIntersect = (p1.x - p0.x) * (point.y - p0.y) / (p1.y - p0.y) + p0.x;
         point.x < xIntersect)
-      inside = !inside;
+        inside = !inside;
   }
   return inside;
 }
 
-bool PhysicsSystem::isInside(SoftBody2D &a, const ggm::Vector2f &point) {
-  using namespace ggm;
-  using vec2 = Vector2f;
-
+bool PhysicsSystem::isInside(SoftBody2D &a, const Vector2f &point) {
   auto &points = a.getPoints();
   const u64 length = points.size();
   int intersections = 0;
@@ -145,11 +137,7 @@ bool PhysicsSystem::isInside(SoftBody2D &a, const ggm::Vector2f &point) {
   return intersections % 2;
 }
 
-PhysicsSystem::Collision PhysicsSystem::getCollision(SoftBody2D &body,
-                                                     const ggm::Vector2f &p) {
-  using namespace ggm;
-  using vec2 = Vector2f;
-
+PhysicsSystem::Collision PhysicsSystem::getCollision(SoftBody2D &body, const Vector2f &p) {
   Collision result{};
   float minDistSq = std::numeric_limits<float>::max();
 
@@ -194,7 +182,7 @@ PhysicsSystem::Collision PhysicsSystem::getCollision(SoftBody2D &body,
   return result;
 }
 
-ggm::PhysicsObjectRef2D PhysicsSystem::addBody(const ggm::PhysicsFactory2D::PhysicsSettings &settings) {
+PhysicsObjectRef2D PhysicsSystem::addBody(const PhysicsFactory2D::PhysicsSettings &settings) {
   const auto id = mBodies.push();
   auto &body = mBodies.get(id);
 
@@ -214,4 +202,4 @@ ggm::PhysicsObjectRef2D PhysicsSystem::addBody(const ggm::PhysicsFactory2D::Phys
   return {id, mBodies};
 }
 
-} // namespace PhysixBox
+}

@@ -131,7 +131,7 @@ add_executable(C-Project
         GameEngine/Engine/Core/EntityComponentSystem/Entity.cpp
         GameEngine/Engine/Core/EntityComponentSystem/Systems/Render/SpriteLoader.cpp
         GameEngine/Engine/Core/EntityComponentSystem/Systems/Render/SpriteLoader.hpp
-        GameEngine/Engine/Core/EntityComponentSystem/Components/Sprite.hpp
+        GameEngine/Engine/Core/EntityComponentSystem/Components/Render/Sprite.hpp
         GameEngine/Engine/Core/EntityComponentSystem/Components/SpriteLocation.hpp
         GameEngine/Engine/Core/EntityComponentSystem/ECSTest.cpp
         GameEngine/Engine/Core/EntityComponentSystem/ECSTest.hpp
@@ -144,8 +144,15 @@ add_executable(C-Project
         GameEngine/Engine/Core/EntityComponentSystem/Components/KeyReleaseEvent.hpp
         GameEngine/Engine/Core/EntityComponentSystem/Systems/Physics/PlayerController.cpp
         GameEngine/Engine/Core/EntityComponentSystem/Systems/Physics/PlayerController.hpp
-        GameEngine/_Projects_/ggmTanks/Terrain/TerrainHandler.cpp
-        GameEngine/_Projects_/ggmTanks/Terrain/TerrainHandler.hpp
+        GameEngine/_Projects_/ggmTanks/Terrain/Terrain.cpp
+        GameEngine/_Projects_/ggmTanks/Terrain/Terrain.hpp
+        GUIEngine/Utils/Math/Math.cpp
+        GUIEngine/Utils/Math/Math.hpp
+        GameEngine/Engine/Core/EntityComponentSystem/Systems/Render/MeshRenderer2D.cpp
+        GameEngine/Engine/Core/EntityComponentSystem/Systems/Render/MeshRenderer2D.hpp
+        GameEngine/Engine/Core/EntityComponentSystem/Components/Render/Texture.hpp
+        GameEngine/Engine/Debug/Assert.cpp
+        GameEngine/Engine/Debug/Assert.hpp
 )
 
 target_compile_definitions(C-Project PUBLIC JPH_ENABLE_ASSERTS)

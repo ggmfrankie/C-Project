@@ -4,7 +4,7 @@
 
 #pragma once
 #include "Engine/Core/EntityComponentSystem/ComponentRegistry.hpp"
-#include "Engine/Core/EntityComponentSystem/Components/Sprite.hpp"
+#include "../../Components/Render/Sprite.hpp"
 #include "Engine/Core/EntityComponentSystem/Components/Transformation.hpp"
 
 

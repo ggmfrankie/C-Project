@@ -4,6 +4,7 @@
 
 #include "SpriteLoader.hpp"
 
+#include "Engine/Debug/ASSERT.hpp"
 #include "GLFW/glfw3.h"
 #include "Math/Vector.hpp"
 #include "stb/stb_image.h"
@@ -12,12 +13,19 @@ namespace ggm::SpriteLoader {
     namespace fs = std::filesystem;
 
     Sprite::Texture loadTexture(const std::filesystem::path& path);
+    Sprite::Texture loadDefaultTexture();
     Sprite::Quad loadNormalizedQuad();
 
     const fs::path DEFAULT_PATH {fs::current_path().parent_path()/"Resources"/"Textures"};
 
     Sprite loadSprite(const SpriteLocation& location) {
-        const Sprite::Texture texture = loadTexture(location.path);
+        Sprite::Texture texture;
+        try {
+            texture = loadTexture(location.path);
+        } catch (std::exception& e) {
+            texture = loadDefaultTexture();
+        }
+
         static const Sprite::Quad quad = loadNormalizedQuad();
 
         return {texture, quad};
@@ -46,7 +54,7 @@ namespace ggm::SpriteLoader {
             throw std::runtime_error{error.str()};
         }
 
-        assert(gladLoadGL(glfwGetProcAddress) != 0);
+        ASSERT::openGlLoaded();
 
         glGenTextures(1, &out.mTextureId);
         glBindTexture(GL_TEXTURE_2D, out.mTextureId);

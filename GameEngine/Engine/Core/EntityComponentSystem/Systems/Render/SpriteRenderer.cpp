@@ -10,7 +10,7 @@
 #include "Render/Shader/Shader.hpp"
 
 namespace ggm::SpriteRenderer {
-    static Shader& getSpriteShader() {
+    static Shader& getShader() {
         static Shader shader = []{
             Shader out {
                 "2D/SpriteShader.vert",
@@ -25,7 +25,7 @@ namespace ggm::SpriteRenderer {
     }
 
     void drawSprites(const RenderContext& context, const std::vector<Sprite>& sprites, const std::vector<Transformation>& transformations) {
-        Shader& shader = getSpriteShader();
+        Shader& shader = getShader();
         shader.bind();
 
         shader.setUniform("screenWidth", static_cast<float>(context.width));
