@@ -4,7 +4,7 @@
 
 #pragma once
 #ifndef __cplusplus
-#include "GuiDefines.h"
+#include "../../../GUIEngine/GuiDefines.h"
 #include "Macros.h"
 #define repeat_for(num, ...)\
     for(int __i = 0; __i < (num); __i++){\

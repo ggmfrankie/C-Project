@@ -2,7 +2,7 @@
 // Created by ggmfrankie on 10/8/26.
 //
 
-#include "SumOfTwoNumbers.h"
+#include "../SumOfTwoNumbers.h"
 #include "Utils/DataStructures/CArrayList.h"
 #include "Utils/Macros/Defer.h"
 #include "Utils/Os/Time.h"

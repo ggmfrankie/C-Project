@@ -4,11 +4,11 @@
 
 #pragma once
 #include <stdio.h>
-#include "Utils/Macros/Utils.h"
+#include "../Macros/Utils.h"
 
-#define ERROR_(fms, ...) do {fprintf(stderr, "[ERROR] File: "__FILE__":%i\n"fms"\n", __LINE__, ##__VA_ARGS__); abort();} while(0)
+#define ERROR_(fms, ...) do {fprintf(stderr, "[ERROR] File: "__FILE__":%i\n"fms"\n", __LINE__, ##__VA_ARGS__); exit(23);} while(0)
 #define WARNING_(fms, ...) do {fprintf(stderr, "[WARNING] File: "__FILE__":%i\n"fms"\n", __LINE__, ##__VA_ARGS__);} while(0)
-#define TODO_(fms, ...) fprintf(stderr, "[TODO] File: "__FILE__":%i\n"fms"\n", __LINE__, ##__VA_ARGS__)
+#define TODO_(fms, ...) do {fprintf(stderr, "[TODO] File: "__FILE__":%i\n"fms"\n", __LINE__, ##__VA_ARGS__); exit(21);} while(0)
 #define INFO_(fms, ...) fprintf(stdout, "[INFO]: "fms"\n", ##__VA_ARGS__)
 
 #define LOG_NONE 0
@@ -20,8 +20,8 @@
 
 #define LOG_OUTPUT_STREAM stdout
 
-void _Log_log(int indent, const char* level, const char* file, const char* fmt, ...);
+void _Log_log(const char* level, const char* file, const char* fmt, ...);
 
-#define Log_info(fmt, ...)  if(LOG_LEVEL >= LOG_INFO)  _Log_log(0, "INFO",  __FILE_NAME__ ":" STRINGIFY(__LINE__), fmt, ##__VA_ARGS__)
-#define Log_debug(fmt, ...) if(LOG_LEVEL >= LOG_DEBUG) _Log_log(4, "DEBUG", __FILE_NAME__ ":" STRINGIFY(__LINE__), fmt, ##__VA_ARGS__)
-#define Log_trace(fmt, ...) if(LOG_LEVEL >= LOG_TRACE) _Log_log(4, "TRACE", __FILE_NAME__ ":" STRINGIFY(__LINE__), fmt, ##__VA_ARGS__)
+#define Log_info(fmt, ...)  if(LOG_LEVEL >= LOG_INFO)  _Log_log("INFO",  __FILE_NAME__ ":" STRINGIFY(__LINE__), fmt, ##__VA_ARGS__)
+#define Log_debug(fmt, ...) if(LOG_LEVEL >= LOG_DEBUG) _Log_log("DEBUG", __FILE_NAME__ ":" STRINGIFY(__LINE__), fmt, ##__VA_ARGS__)
+#define Log_trace(fmt, ...) if(LOG_LEVEL >= LOG_TRACE) _Log_log("TRACE", __FILE_NAME__ ":" STRINGIFY(__LINE__), fmt, ##__VA_ARGS__)

@@ -4,7 +4,7 @@
 
 #include "GuiInterface.h"
 #include "../GameEngine/Games/BaseGame/GameGui.h"
-#include "OtherProjects/C/AuD/SumOfTwoNumbers.h"
+#include "../OtherProjects/C/AuD/Aufgabe 1/SumOfTwoNumbers.h"
 #include "Utils/Test.h"
 #include "Utils/DataStructures/Hashing/CHashTable.h"
 #include "Utils/Json/CJson.h"

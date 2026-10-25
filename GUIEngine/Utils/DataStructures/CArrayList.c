@@ -2,12 +2,13 @@
 // Created by ertls on 28.08.2026.
 //
 
+// ReSharper disable CppDFAMemoryLeak
 #include "CArrayList.h"
 
 #include <string.h>
 
-#include "Utils/Typedef.h"
-#include "Utils/Macros/Utils.h"
+#include "../Typedef.h"
+#include "../Macros/Utils.h"
 
 void _CArrayList_new(void** array, size_t typeSize, size_t capacity) {
     if(*array != nullptr) return;
@@ -62,10 +63,5 @@ void _CArrayList_growIfNeededImpl(void **array, size_t typeSize) {
 }
 
 void _CArrayList_sort(void* array[], size_t typeSize) {
-
-}
-
-static void CArrayList_test() {
-    int* array = {};
-
+    TODO_("Sorting");
 }
