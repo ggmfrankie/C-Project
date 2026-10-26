@@ -172,8 +172,9 @@ namespace ggm {
             return mData[0];
         }
 
-        T& back() {
-            return mData[mSize-1];
+        template<typename Self>
+        auto& back(this Self&& self) {
+            return self.mData[self.mSize - 1];
         }
 
         void growTo(u64 capacity) {

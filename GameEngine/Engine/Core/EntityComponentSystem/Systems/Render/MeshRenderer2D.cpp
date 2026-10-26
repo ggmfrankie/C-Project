@@ -27,8 +27,9 @@ namespace ggm::MeshRenderer2D {
 
     void drawMeshes(
         const RenderContext& context,
-        const std::vector<Mesh2D>& meshes,
-        const std::vector<Texture>& textures, const std::vector<Transformation>& transformations
+        const std::span<const Mesh2D> meshes,
+        const std::span<const Texture> textures,
+        const std::span<const Transformation> transformations
     ) {
         Shader& shader = getShader();
         shader.bind();

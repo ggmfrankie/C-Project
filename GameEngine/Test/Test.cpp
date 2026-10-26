@@ -48,33 +48,6 @@ namespace {
                 return &p;
             }
         };
-
-        struct Evil {
-            const char* operator->*(int i) const && {
-                return "hello world";
-            }
-
-            Evil operator->*(const std::string& anweisung) const {
-                if (anweisung == "copy") return *this;
-                return {};
-            }
-
-            const Evil& operator->*(const std::string& anweisung) && {
-                if (anweisung == "Copy") return *this;
-                return {};
-            }
-        };
-
-
-
-        Evil e;
-        const char* c = std::move(e)->*2;
-
-        auto dsfaf = e->*"copy";
-
-        auto* asdf = &(pthread_create_wrapper(reinterpret_cast<void*>(&e)), Int{2});
-
-        auto dsasdf = std::move(e)->*"Copy";
     }
 
 

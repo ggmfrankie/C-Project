@@ -11,7 +11,12 @@
 
 namespace ggm::MeshRenderer2D {
 
-    void drawMeshes(const RenderContext& context, const std::vector<Mesh2D>& meshes, const std::vector<Texture>& textures, const std::vector<Transformation>& transformations);
+    void drawMeshes(
+        const RenderContext& context,
+        std::span<const Mesh2D> meshes,
+        std::span<const Texture> textures,
+        std::span<const Transformation> transformations
+    );
 
     template<typename... Components>
     requires ContainsType<Mesh2D, Components...> && ContainsType<Transformation, Components...> && ContainsType<Texture, Components...>

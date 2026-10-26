@@ -16,7 +16,9 @@ namespace ggm {
         int indexCount = 0;
 
         Mesh2D(const Mesh2D& other) = delete;
+
         Mesh2D(Mesh2D&& other) noexcept = default;
+        Mesh2D& operator=(Mesh2D&& other) noexcept = default;
 
         ~Mesh2D() {
             if (VAO) glDeleteVertexArrays(1, &VAO);

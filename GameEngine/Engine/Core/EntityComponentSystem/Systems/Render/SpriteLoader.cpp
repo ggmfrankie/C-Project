@@ -76,6 +76,10 @@ namespace ggm::SpriteLoader {
         return out;
     }
 
+    Sprite::Texture loadDefaultTexture() {
+        Logger::error({"NYI"});
+    }
+
     Sprite::Quad loadNormalizedQuad() {
         Sprite::Quad out {};
 

@@ -158,6 +158,12 @@ namespace ggm {
                 return mEntities;
             }
 
+            Archetype(const Archetype&) = delete;
+            Archetype& operator=(const Archetype&) = delete;
+
+            Archetype(Archetype&&) noexcept = default;
+            Archetype& operator=(Archetype&&) noexcept = default;
+
             template<typename... UsedComponents>
             requires (ContainsType<UsedComponents, Components...> && ...)
             static Archetype New() {
@@ -167,11 +173,11 @@ namespace ggm {
 
                 // Add all the needed vectors that are required for this archetype
                 (components.emplace_back(
-                    std::in_place_type<std::vector<UsedComponents>>
+                    std::in_place_type<std::vector<std::remove_cvref_t<UsedComponents>>>
                 ), ...);
 
                 // Adjust the mappings
-                setMappings<UsedComponents...>(out.getMappings(), std::index_sequence_for<UsedComponents...>{});
+                setMappings<std::remove_cvref_t<UsedComponents>...>(out.getMappings(), std::index_sequence_for<UsedComponents...>{});
 
                 out.updateSignature();
                 return out;
@@ -219,12 +225,12 @@ namespace ggm {
             }
 
             template<typename... UsedComponents>
-            requires (ContainsType<UsedComponents, Components...> && ...)
+            requires (ContainsType<std::remove_cvref_t<UsedComponents>, Components...> && ...)
             void add(Entity&& entity, UsedComponents&&... args) {
                 mEntityMappings.insert(entity.mId, mEntities.size());
                 mEntities.push_back(std::move(entity));
 
-                (getComponentVector<UsedComponents>().push_back(
+                (getComponentVector<std::remove_cvref_t<UsedComponents>>().emplace_back(
                     std::forward<UsedComponents>(args)), ...);
             }
 
@@ -358,18 +364,26 @@ namespace ggm {
                     );
                 } else {
                     Logger::debug({"Adding new Component"});
-                    (
-                        [&] {
-                            using T = std::remove_cvref_t<AddedComponents>;
+                    auto addedTuple = std::forward_as_tuple(
+                        std::forward<AddedComponents>(added)...
+                    );
+
+                    [&]<std::size_t... Is>(std::index_sequence<Is...>) {
+                        (
+                        [&]<std::size_t I>() {
+                            using T = std::remove_cvref_t<
+                                std::tuple_element_t<I, decltype(addedTuple)>
+                            >;
 
                             if (componentId<T>() != i) return false;
 
                             auto& destinationVector = destinationArchetype->template getComponentVector<T>();
-                            destinationVector.emplace_back(added);
+                            destinationVector.emplace_back(std::get<Is>(std::move(addedTuple)));
 
                             return true;
-                        }() || ...
-                    );
+                        }.template operator()<Is>() || ...
+                        );
+                    }(std::index_sequence_for<AddedComponents...>{});
                 }
             }
 

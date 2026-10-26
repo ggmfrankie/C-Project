@@ -26,7 +26,7 @@ namespace ggm {
         return mGameObjects.back();
     }
 
-    ggm::Camera& Scene3D::getCamera() {
+    Camera& Scene3D::getCamera() {
         return mCamera;
     }
 
