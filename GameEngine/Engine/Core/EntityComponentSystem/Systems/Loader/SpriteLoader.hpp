@@ -19,8 +19,8 @@ namespace ggm::SpriteLoader {
         for (auto&[count, entities, spriteLocations] : registry.template getArchetypes<SpriteLocation>()) {
             for (int i = 0; i < count; ++i) {
                 entitiesBuffer.emplace_back(
-                    entities[i],
-                    loadSprite(spriteLocations[i])
+                    entities.at(i),
+                    loadSprite(spriteLocations.at(i))
                 );
             }
         }

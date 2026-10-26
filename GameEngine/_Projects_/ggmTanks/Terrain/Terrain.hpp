@@ -7,29 +7,29 @@
 #include <vector>
 
 #include "ggmdef.hpp"
+#include "Engine/Core/EntityComponentSystem/Components/Render/MeshData2D.hpp"
 #include "Math/Vector.hpp"
 #include "_Projects_/ggmTanks/Registry.hpp"
 
 namespace ggmTanks {
     class Terrain {
-        using TerrainOutline = std::vector<ggm::Vector2f>;
-
         static constexpr int WIDTH  = 64;
         static constexpr int HEIGHT = 32;
 
-        std::array<float, WIDTH*HEIGHT> mDensityField {};
+        std::vector<ggm::Vector2f> mHeightmap;
 
-        ggm::u32 mWidth  = 0;
-        ggm::u32 mHeight = 0;
+        ggm::u32 mDepth  = 0;
 
-        ggm::Entity mMeshEntity;
+        ggm::Entity mMeshEntity {};
         bool mMeshDirty;
 
-        ggm::Mesh2D reloadMesh();
+        ggm::MeshData2D reloadMesh();
 
     public:
-        explicit Terrain(const std::span<const ggm::Vector2f>& outline);
+        explicit Terrain(std::vector<ggm::Vector2f>&& heightmap);
+        Terrain(int width, int depth);
 
+        void registerMesh(Registry& registry);
         void update(Registry& registry);
     };
 } // ggmTanks

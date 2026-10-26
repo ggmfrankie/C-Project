@@ -9,6 +9,7 @@
 #include "Engine/Core/EntityComponentSystem/Components/SpriteLocation.hpp"
 #include "Engine/Core/EntityComponentSystem/Components/Transformation.hpp"
 #include "Engine/Core/EntityComponentSystem/Components/Render/Mesh2D.hpp"
+#include "Engine/Core/EntityComponentSystem/Components/Render/MeshData2D.hpp"
 #include "Engine/Core/EntityComponentSystem/Components/Render/Texture.hpp"
 
 
@@ -19,6 +20,7 @@ namespace ggmTanks {
         ggm::Transformation,
         ggm::PlayerControlled,
         ggm::Mesh2D,
-        ggm::Texture
+        ggm::Texture,
+        ggm::MeshData2D
     >;
 }

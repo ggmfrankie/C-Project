@@ -226,7 +226,7 @@ namespace ggm {
 
             template<typename... UsedComponents>
             requires (ContainsType<std::remove_cvref_t<UsedComponents>, Components...> && ...)
-            void add(Entity&& entity, UsedComponents&&... args) {
+            void add(Entity entity, UsedComponents&&... args) {
                 mEntityMappings.insert(entity.mId, mEntities.size());
                 mEntities.push_back(std::move(entity));
 
@@ -287,7 +287,7 @@ namespace ggm {
     public:
         template<typename... UsedComponents>
         requires (ContainsType<UsedComponents, Components...> && ...)
-        void createEntity(Entity&& entity, UsedComponents&&... args) {
+        void createEntity(Entity entity, UsedComponents&&... args) {
             // Use static initialization to create a new archetype or use old one if archetype already exists
             static int index = -1;
             if (index == -1) {
@@ -295,10 +295,10 @@ namespace ggm {
                 index = mArchetypes.size()-1;
             }
 
-            mArchetypes[index].add(std::move(entity), std::forward<UsedComponents>(args)...);
+            mArchetypes[index].add(entity, std::forward<UsedComponents>(args)...);
         }
 
-        void deleteEntity(const Entity& entity) {
+        void deleteEntity(Entity entity) {
             Archetype& archetype = getArchetype(entity);
 
             archetype.remove(entity);
@@ -306,7 +306,7 @@ namespace ggm {
 
         template<typename... RemovedComponents, typename... AddedComponents>
         requires (ContainsType<RemovedComponents, Components...> && ...) &&  (ContainsType<AddedComponents, Components...> && ...)
-        void changeComponents(const Entity& entity, Archetype& sourceArchetype, TypeList<RemovedComponents...> removed, AddedComponents&&... added) {
+        void changeComponents(Entity entity, Archetype& sourceArchetype, TypeList<RemovedComponents...> removed, AddedComponents&&... added) {
             Archetype* destinationArchetype {};
 
             auto it = sourceArchetype.getIndex(entity);
@@ -405,7 +405,7 @@ namespace ggm {
 
         template<typename... RemovedComponents, typename... AddedComponents>
         requires (ContainsType<RemovedComponents, Components...> && ...) &&  (ContainsType<AddedComponents, Components...> && ...)
-        void changeComponents(const Entity& entity, TypeList<RemovedComponents...> removed, AddedComponents&&... added) {
+        void changeComponents(Entity entity, TypeList<RemovedComponents...> removed, AddedComponents&&... added) {
             // Find the Archetype the entity is inside
             for (auto& a : mArchetypes) {
                 if (a.contains(entity)) {

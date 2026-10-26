@@ -6,11 +6,16 @@
 #include "Engine/Core/EntityComponentSystem/Core/RenderContext.hpp"
 #include "Engine/Core/EntityComponentSystem/Systems/Physics/PlayerController.hpp"
 #include "Engine/Core/EntityComponentSystem/Systems/Render/MeshRenderer2D.hpp"
-#include "Engine/Core/EntityComponentSystem/Systems/Render/SpriteLoader.hpp"
+#include "../../Engine/Core/EntityComponentSystem/Systems/Loader/SpriteLoader.hpp"
+#include "Engine/Core/EntityComponentSystem/Systems/Loader/MeshLoader2D.hpp"
 #include "Engine/Core/EntityComponentSystem/Systems/Render/SpriteRenderer.hpp"
 
 namespace ggmTanks {
     using namespace ggm;
+    BattleScene::BattleScene() :
+        mTerrain(400, 200)
+    {}
+
     void BattleScene::init() {
         mComponentRegistry.createEntity({}, SpriteLocation{"ERROR.png"}, Transformation{{100, 100}, {40, 20}});
         mComponentRegistry.createEntity({},
@@ -19,6 +24,9 @@ namespace ggmTanks {
             PlayerControlled{}
         );
 
+        mTerrain.registerMesh(mComponentRegistry);
+
+        MeshLoader2D::load(mComponentRegistry);
         SpriteLoader::load(mComponentRegistry);
     }
 
@@ -30,6 +38,7 @@ namespace ggmTanks {
     }
 
     void BattleScene::update(float dt) {
+        mTerrain.update(mComponentRegistry);
         PlayerController::move(mComponentRegistry);
     }
 }

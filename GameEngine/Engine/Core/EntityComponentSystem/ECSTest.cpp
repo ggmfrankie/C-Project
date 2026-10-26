@@ -7,7 +7,7 @@
 #include "ComponentRegistry.hpp"
 #include "Components/SpriteLocation.hpp"
 #include "Math/Vector.hpp"
-#include "Systems/Render/SpriteLoader.hpp"
+#include "Systems/Loader/SpriteLoader.hpp"
 
 namespace ggm::ECSTest {
     void run() {

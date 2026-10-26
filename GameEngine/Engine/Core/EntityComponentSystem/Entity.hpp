@@ -8,9 +8,7 @@
 
 namespace ggm {
     struct Entity {
-        u32 mId;
-        u32 mGeneration;
-        u32 mArchetypeId;
+        u32 mId = -1;
 
         Entity();
         ~Entity();

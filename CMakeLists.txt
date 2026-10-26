@@ -129,8 +129,8 @@ add_executable(C-Project
         GameEngine/Engine/Core/EntityComponentSystem/ComponentRegistry.hpp
         GameEngine/Engine/Core/EntityComponentSystem/Entity.hpp
         GameEngine/Engine/Core/EntityComponentSystem/Entity.cpp
-        GameEngine/Engine/Core/EntityComponentSystem/Systems/Render/SpriteLoader.cpp
-        GameEngine/Engine/Core/EntityComponentSystem/Systems/Render/SpriteLoader.hpp
+        GameEngine/Engine/Core/EntityComponentSystem/Systems/Loader/SpriteLoader.cpp
+        GameEngine/Engine/Core/EntityComponentSystem/Systems/Loader/SpriteLoader.hpp
         GameEngine/Engine/Core/EntityComponentSystem/Components/Render/Sprite.hpp
         GameEngine/Engine/Core/EntityComponentSystem/Components/SpriteLocation.hpp
         GameEngine/Engine/Core/EntityComponentSystem/ECSTest.cpp
@@ -153,6 +153,9 @@ add_executable(C-Project
         GameEngine/Engine/Core/EntityComponentSystem/Components/Render/Texture.hpp
         GameEngine/Engine/Debug/Assert.cpp
         GameEngine/Engine/Debug/Assert.hpp
+        GameEngine/Engine/Core/EntityComponentSystem/Components/Render/MeshData2D.hpp
+        GameEngine/Engine/Core/EntityComponentSystem/Systems/Loader/MeshLoader2D.cpp
+        GameEngine/Engine/Core/EntityComponentSystem/Systems/Loader/MeshLoader2D.hpp
 )
 
 target_compile_definitions(C-Project PUBLIC JPH_ENABLE_ASSERTS)
