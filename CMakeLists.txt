@@ -151,8 +151,8 @@ add_executable(C-Project
         GameEngine/Engine/Core/EntityComponentSystem/Systems/Render/MeshRenderer2D.cpp
         GameEngine/Engine/Core/EntityComponentSystem/Systems/Render/MeshRenderer2D.hpp
         GameEngine/Engine/Core/EntityComponentSystem/Components/Render/Texture.hpp
-        GameEngine/Engine/Debug/Assert.cpp
-        GameEngine/Engine/Debug/Assert.hpp
+        GameEngine/Engine/Debug/ASSERT.cpp
+        GameEngine/Engine/Debug/ASSERT.hpp
         GameEngine/Engine/Core/EntityComponentSystem/Components/Render/MeshData2D.hpp
         GameEngine/Engine/Core/EntityComponentSystem/Systems/Loader/MeshLoader2D.cpp
         GameEngine/Engine/Core/EntityComponentSystem/Systems/Loader/MeshLoader2D.hpp

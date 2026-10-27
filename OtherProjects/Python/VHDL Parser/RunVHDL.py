@@ -80,7 +80,6 @@ def parseEntity(lines: list[str], start: int) -> Entity:
 
     while i < len(lines):
         line = lines[i].strip()
-
         if line.startswith("end"):
             break
 

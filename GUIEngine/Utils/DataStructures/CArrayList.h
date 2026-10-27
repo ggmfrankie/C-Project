@@ -12,7 +12,7 @@
 #include "../Macros/Macros.h"
 
 #define CARRAY_LIST_SHORT_NAMES
-#ifdef CARRAY_LIST_SHORT_NAMES
+#ifdef  CARRAY_LIST_SHORT_NAMES
 
 #define arrNew     CArrayList_new
 #define arrClear   CArrayList_clear
@@ -114,6 +114,7 @@ void _CArrayList_growIfNeededImpl(void **array, size_t typeSize);
 
 //@brief usage for CArrayList_each(itemName, array) {...}
 #define CArrayList_each_impl(_end, item, array) (typeof(*(array))* item = (array), *_end = (array) + CArrayList_len(array); (item) != _end; ++(item))
+
 /**
  * @brief usage for CArrayList_each(item, array) {...}
  * @param item - pointer to the current item in the array
