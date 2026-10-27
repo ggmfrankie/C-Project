@@ -13,6 +13,8 @@ int main() {
     asm("xor %eax, %eax");
 
     Vector2 pos = {10, 10};
+
+    Camera3D camera = {.fovy = 70, .projection = CAMERA_PERSPECTIVE};
     while (!WindowShouldClose()) {
         BeginDrawing();
         ClearBackground(WHITE);
@@ -42,6 +44,10 @@ int main() {
         if (IsKeyDown(KEY_S)) pos.y += 3;
         if (IsKeyDown(KEY_A)) pos.x -= 3;
         if (IsKeyDown(KEY_D)) pos.x += 3;
+
+        BeginMode3D(camera);
+            DrawCube((Vector3){0, 0, 120}, 100, 100, 100, GRAY);
+        EndMode3D();
 
         EndDrawing();
     }
