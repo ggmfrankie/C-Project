@@ -170,9 +170,9 @@ static void Test_sparseSet_edgeCases() {
 static void Test_arrayList() {
     int* array = nullptr;
 
-    arrNew(array, 2);
-    TEST(_CArrayList_getHeader(array)->capacity == 2, "arrNew capacity expected 2, got %zu", _CArrayList_getHeader(array)->capacity);
-    TEST(arrLen(array) == 0, "arrNew size expected 0, got %zu", arrLen(array));
+    arrInit(array, 2);
+    TEST(_CArrayList_getHeader(array)->capacity == 2, "arrInit capacity expected 2, got %zu", _CArrayList_getHeader(array)->capacity);
+    TEST(arrLen(array) == 0, "arrInit size expected 0, got %zu", arrLen(array));
 
     arrPush(array, 0);
     TEST(array[0] == 0, "array[0] expected 0, got %d", array[0]);
@@ -207,7 +207,7 @@ static void Test_arrayList() {
     } Pair;
 
     Pair* pairs = nullptr;
-    arrNew(pairs, 1);
+    arrInit(pairs, 1);
     TEST(_CArrayList_getHeader(pairs)->capacity == 1, "pair array capacity expected 1, got %zu", _CArrayList_getHeader(pairs)->capacity);
 
     arrPush(pairs, ((Pair){.x = 1, .y = 2}));

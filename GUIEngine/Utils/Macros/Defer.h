@@ -3,6 +3,10 @@
 //
 
 #pragma once
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdio.h>
 
 typedef char* Str;
@@ -14,4 +18,6 @@ void defer_CHashTable_free(void* t);
 
 #define defer(func) __attribute__((cleanup(func)))
 
-
+#ifdef __cplusplus
+}
+#endif

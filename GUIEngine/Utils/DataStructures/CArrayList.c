@@ -10,7 +10,19 @@
 #include "../Typedef.h"
 #include "../Macros/Utils.h"
 
-void _CArrayList_new(void** array, size_t typeSize, size_t capacity) {
+void* _CArrayList_new(const void* data, size_t len, size_t typeSize) {
+    if (data == nullptr) return nullptr;
+
+    void* array = {};
+    _CArrayList_init(&array, typeSize, len);
+
+    memcpy(array, data, len * typeSize);
+    _CArrayList_getHeader(array)->size = len;
+
+    return array;
+}
+
+void _CArrayList_init(void** array, size_t typeSize, size_t capacity) {
     if(*array != nullptr) return;
 
     _Array_Header_* header = malloc(sizeof(_Array_Header_) + typeSize * capacity);
@@ -31,17 +43,25 @@ void _CArrayList_resize(void **array, size_t typeSize, size_t newCapacity) {
     *array = (void *) (newHeader + 1);
 }
 
-void _CArrayList_copy(void** to, void** from, size_t typeSize) {
-    if (*from == nullptr) return;
-    if (*to == nullptr) _CArrayList_new(to, typeSize, ArrayInitCapacity);
+void _CArrayList_copy(void** to, const void* from, size_t typeSize) {
+    if (from == nullptr) return;
+
+    const _Array_Header_* fromHeader = _CArrayList_getHeader(from);
+    const size_t requiredCapacity = fromHeader->size;
+
+    if (*to == nullptr) {
+        _CArrayList_init(to, typeSize, requiredCapacity);
+    } else {
+        const _Array_Header_* toHeader = _CArrayList_getHeader(*to);
+        if (toHeader->capacity < requiredCapacity) {
+            _CArrayList_resize(to, typeSize, requiredCapacity);
+        }
+    }
 
     _Array_Header_* toHeader = _CArrayList_getHeader(*to);
-    const _Array_Header_* fromHeader = _CArrayList_getHeader(*from);
-
-    const size_t requiredCapacity = fromHeader->size;
-    if (toHeader->capacity < requiredCapacity) _CArrayList_resize(to, typeSize, requiredCapacity);
 
     memcpy(toHeader, fromHeader, requiredCapacity * typeSize + sizeof(_Array_Header_));
+    toHeader->size = requiredCapacity;
 }
 
 void _CArrayList_erase(void** array, size_t typeSize, size_t index) {
@@ -62,6 +82,7 @@ void _CArrayList_growIfNeededImpl(void **array, size_t typeSize) {
     _CArrayList_resize(array, typeSize, header->capacity * 2);
 }
 
+[[maybe_unused]]
 void _CArrayList_sort(void* array[], size_t typeSize) {
     TODO_("Sorting");
 }

@@ -5,8 +5,8 @@
 #include "Defer.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "Utils/DataStructures/CArrayList.h"
-#include "../DataStructures/Hashing/CHashTable.h"
+#include "../DataStructures/CArrayList.h"
+#include "Utils/DataStructures/Hashing/CHashTable.h"
 
 void defer_closeFile(FILE** f) {
     if (*f) fclose(*f);

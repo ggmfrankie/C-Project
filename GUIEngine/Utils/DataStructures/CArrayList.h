@@ -3,6 +3,11 @@
 //
 
 #pragma once
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <assert.h>
 #include <stdio.h>
 
@@ -15,6 +20,7 @@
 #ifdef  CARRAY_LIST_SHORT_NAMES
 
 #define arrNew     CArrayList_new
+#define arrInit    CArrayList_init
 #define arrClear   CArrayList_clear
 #define arrFree    CArrayList_free
 #define arrCopy    CArrayList_copy
@@ -41,9 +47,11 @@ typedef struct {
     size_t capacity;
 } _Array_Header_;
 
-void _CArrayList_new(void** array, size_t typeSize, size_t capacity);
+void* _CArrayList_new(const void* data, size_t len, size_t typeSize);
+
+void _CArrayList_init(void** array, size_t typeSize, size_t capacity);
 void _CArrayList_resize(void **array, size_t typeSize, size_t newCapacity);
-void _CArrayList_copy(void** to, void** from, size_t typeSize);
+void _CArrayList_copy(void** to, const void* from, size_t typeSize);
 void _CArrayList_erase(void** array, size_t typeSize, size_t index);
 
 void _CArrayList_growIfNeededImpl(void **array, size_t typeSize);
@@ -53,14 +61,16 @@ void _CArrayList_growIfNeededImpl(void **array, size_t typeSize);
 #define _CArrayList_getHeader(array) (&((_Array_Header_*)(array))[-1])
 #define _CArrayList_growIfNeeded(array) _CArrayList_growIfNeededImpl((void**)&(array), sizeof(*(array)))
 
-#define CArrayList_new(array, size) _CArrayList_new((void**)&(array), sizeof(*array), (size))
+#define CArrayList_new(data, len) (typeof(*data)*) _CArrayList_new((void*) data, len, sizeof(*data))
+
+#define CArrayList_init(array, size) _CArrayList_init((void**)&(array), sizeof(*array), (size))
 #define CArrayList_len(array) ((array) ? _CArrayList_getHeader(array)->size : 0)
 #define CArrayList_cap(array) ((array) ? _CArrayList_getHeader(array)->capacity : 0)
 #define CArrayList_isEmpty(array) (CArrayList_len(array) == 0)
 
 #define CArrayList_push(array, item) \
     do {\
-        if((array) == nullptr) CArrayList_new((array), ArrayInitCapacity);\
+        if((array) == nullptr) CArrayList_init((array), ArrayInitCapacity);\
         _CArrayList_growIfNeeded(array);\
         (array)[_CArrayList_getHeader(array)->size++] = (item);\
     } while (0)
@@ -86,7 +96,7 @@ void _CArrayList_growIfNeededImpl(void **array, size_t typeSize);
  * @param from - the source array
  * @warning content inside 'to' is overridden
  */
-#define CArrayList_copy(to, from) _CArrayList_copy((void**)&to, (void**)&from, sizeof(*to))
+#define CArrayList_copy(to, from) _CArrayList_copy((void**)&to, (void*)from, sizeof(*to))
 
 /**
  * @brief clears array (sets its size to 0, capacity remains)
@@ -155,3 +165,8 @@ do {\
         }\
     }\
 } while (0)
+
+
+#ifdef __cplusplus
+}
+#endif

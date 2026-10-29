@@ -5,7 +5,7 @@
 
 #include <stdarg.h>
 
-#include "Utils/Os/Time.h"
+#include "../Os/Time.h"
 
 void _Log_log(const char* level, const char* file, const char* fmt, ...) {
     va_list args;
