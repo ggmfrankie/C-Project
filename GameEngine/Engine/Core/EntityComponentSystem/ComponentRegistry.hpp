@@ -10,6 +10,7 @@
 #include <span>
 #include <variant>
 #include <format>
+#include <sstream>
 
 #include "Entity.hpp"
 #include "DataStorage/HashMap.hpp"
@@ -22,7 +23,6 @@ namespace ggm {
     template<typename... Ts>
         struct TypeList {};
 
-
     template<typename... Components>
     class ComponentRegistry {
         using ComponentVec = std::variant<std::vector<Components>...>;
@@ -31,20 +31,24 @@ namespace ggm {
         using TypeMapping = std::array<ComponentId, sizeof...(Components)>;
 
         struct TypeSignature {
+            static std::tuple<Components...> types;
+
             std::bitset<sizeof...(Components)> bits;
 
             template<typename... RemovedComponents>
             requires (ContainsType<RemovedComponents, Components...> && ...)
-            TypeSignature removeTypes() {
-                ((bits.set(componentId<std::remove_cvref_t<RemovedComponents>>(), false)), ...);
-                return *this;
+            TypeSignature removeTypes() const {
+                std::bitset<sizeof...(Components)> newBits = bits;
+                ((newBits.set(componentId<RemovedComponents>(), false)), ...);
+                return {newBits};
             }
 
             template<typename... AddedComponents>
             requires (ContainsType<AddedComponents, Components...> && ...)
-            TypeSignature addTypes() {
-                ((bits.set(componentId<AddedComponents>(), true)), ...);
-                return *this;
+            TypeSignature addTypes() const {
+                std::bitset<sizeof...(Components)> newBits = bits;
+                ((newBits.set(componentId<AddedComponents>(), true)), ...);
+                return {newBits};
             }
 
             bool operator==(const TypeSignature& other) const {
@@ -55,7 +59,7 @@ namespace ggm {
                 return bits.size();
             }
 
-            TypeSignature operator&(const TypeSignature& other) {
+            TypeSignature operator&(const TypeSignature& other) const {
                 return {other.bits & bits};
             }
 
@@ -65,6 +69,19 @@ namespace ggm {
 
             void set(size_t index, bool value) {
                 bits.set(index, value);
+            }
+
+            std::string getTypeNames() {
+                std::ostringstream out;
+                (
+                    [&] {
+                        constexpr ComponentId id = componentId<Components>();
+                        using T = std::tuple_element_t<id, decltype(types)>;
+                        if (bits[id]) out << typeid(T).name() << ' ';
+                    }(), ...
+                );
+
+                return out.str();
             }
 
             friend std::ostream& operator<<(std::ostream& os, const TypeSignature& ts) {
@@ -180,6 +197,8 @@ namespace ggm {
                 setMappings<std::remove_cvref_t<UsedComponents>...>(out.getMappings(), std::index_sequence_for<UsedComponents...>{});
 
                 out.updateSignature();
+
+                Logger::info({"Created new Archetype with signature {} and types\n [ {}]", out.getSignature().bits, out.getSignature().getTypeNames()});
                 return out;
             }
 
@@ -203,6 +222,8 @@ namespace ggm {
                 // Make this a member
                 setMappings(out.getMappings(), signature);
                 out.updateSignature();
+
+                Logger::info({"Created new Archetype from signature {} and types\n [ {}]", signature.bits, out.getSignature().getTypeNames()});
                 return out;
             }
 
@@ -225,7 +246,7 @@ namespace ggm {
             }
 
             template<typename... UsedComponents>
-            requires (ContainsType<std::remove_cvref_t<UsedComponents>, Components...> && ...)
+            requires (ContainsType<UsedComponents, Components...> && ...)
             void add(Entity entity, UsedComponents&&... args) {
                 mEntityMappings.insert(entity.mId, mEntities.size());
                 mEntities.push_back(entity);
@@ -328,6 +349,7 @@ namespace ggm {
             assert(sourceArchetype.template has<RemovedComponents...>());
 
             ssize_t changedEntityIndex = *it;
+            (void) changedEntityIndex;
 
             struct {
                 TypeSignature present;

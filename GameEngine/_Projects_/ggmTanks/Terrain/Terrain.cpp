@@ -57,7 +57,7 @@ namespace ggmTanks {
         registry.createEntity(mMeshEntity,
             Transformation{{1, 1}, {}},
             reloadMesh(),
-            SpriteLocation{"Black.png"}
+            TextureLocation{"Black.png"}
         );
     }
 

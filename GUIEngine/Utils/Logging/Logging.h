@@ -20,7 +20,7 @@ extern "C" {
 #define LOG_DEBUG 2
 #define LOG_TRACE 3
 
-#define LOG_LEVEL LOG_DEBUG
+#define LOG_LEVEL LOG_NONE
 
 #define LOG_OUTPUT_STREAM stdout
 

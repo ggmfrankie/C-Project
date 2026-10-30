@@ -124,15 +124,11 @@ add_executable(C-Project
         GameEngine/Utils/DataStorage/HashMap.hpp
         GameEngine/Utils/Test.cpp
         GameEngine/Utils/Test.hpp
-        GameEngine/Engine/Core/EntityComponentSystem/Systems/Render/SpriteRenderer.cpp
-        GameEngine/Engine/Core/EntityComponentSystem/Systems/Render/SpriteRenderer.hpp
         GameEngine/Engine/Core/EntityComponentSystem/ComponentRegistry.hpp
         GameEngine/Engine/Core/EntityComponentSystem/Entity.hpp
         GameEngine/Engine/Core/EntityComponentSystem/Entity.cpp
-        GameEngine/Engine/Core/EntityComponentSystem/Systems/Loader/SpriteLoader.cpp
-        GameEngine/Engine/Core/EntityComponentSystem/Systems/Loader/SpriteLoader.hpp
         GameEngine/Engine/Core/EntityComponentSystem/Components/Render/Sprite.hpp
-        GameEngine/Engine/Core/EntityComponentSystem/Components/SpriteLocation.hpp
+        GameEngine/Engine/Core/EntityComponentSystem/Components/TextureLocation.hpp
         GameEngine/Engine/Core/EntityComponentSystem/ECSTest.cpp
         GameEngine/Engine/Core/EntityComponentSystem/ECSTest.hpp
         GameEngine/Engine/Core/EntityComponentSystem/Core/RenderContext.hpp
@@ -156,6 +152,9 @@ add_executable(C-Project
         GameEngine/Engine/Core/EntityComponentSystem/Components/Render/MeshData2D.hpp
         GameEngine/Engine/Core/EntityComponentSystem/Systems/Loader/MeshLoader2D.cpp
         GameEngine/Engine/Core/EntityComponentSystem/Systems/Loader/MeshLoader2D.hpp
+        GameEngine/Engine/Core/EntityComponentSystem/Systems/Loader/TextureLoader.cpp
+        GameEngine/Engine/Core/EntityComponentSystem/Systems/Loader/TextureLoader.hpp
+        GameEngine/Engine/Core/EntityComponentSystem/Components/Render/MeshQuad.hpp
 )
 
 target_compile_definitions(C-Project PUBLIC JPH_ENABLE_ASSERTS)

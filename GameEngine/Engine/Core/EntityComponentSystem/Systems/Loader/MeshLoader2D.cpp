@@ -34,14 +34,65 @@ namespace ggm::MeshLoader2D {
         return out;
     }
 
-    std::vector<std::pair<Entity, Mesh2D>> loadMeshes(std::span<const Entity> entities, std::span<const MeshData2D> meshDatas) {
-        std::vector<std::pair<Entity, Mesh2D>> out;
-        out.reserve(meshDatas.size());
+    Mesh2D loadNormalizedQuad() {
+        static Mesh2D mesh = [] {
+            Mesh2D out {};
 
+            constexpr std::array vertices {
+                Vector2f{0,0},
+                Vector2f{0, 1},
+                Vector2f{1, 1},
+                Vector2f{1, 0}
+            };
+
+            constexpr std::array uvs {
+                Vector2f{0,0},
+                Vector2f{0, 1},
+                Vector2f{1, 1},
+                Vector2f{1, 0}
+            };
+
+            constexpr std::array indices {
+                0, 1, 2, 0, 2, 3
+            };
+
+            glGenVertexArrays(1, &out.VAO);
+            glBindVertexArray(out.VAO);
+            glGenBuffers(1, &out.vertexVBO);
+            glGenBuffers(1, &out.textureVBO);
+
+            glBindBuffer(GL_ARRAY_BUFFER, out.vertexVBO);
+            glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices.size() * 2, vertices.data(), GL_STATIC_DRAW);
+            glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+            glBindBuffer(GL_ARRAY_BUFFER, out.textureVBO);
+            glBufferData(GL_ARRAY_BUFFER, sizeof(float) * uvs.size() * 2, uvs.data(), GL_STATIC_DRAW);
+            glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+            glGenBuffers(1, &out.EBO);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, out.EBO);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * indices.size(), indices.data(), GL_STATIC_DRAW);
+
+            out.indexCount = indices.size();
+
+            glEnableVertexAttribArray(0);
+            glEnableVertexAttribArray(1);
+
+            return out;
+        }();
+
+        return mesh;
+    }
+
+    void loadMeshes(Buffer& buffer, std::span<const Entity> entities, std::span<const MeshData2D> meshDatas) {
         for (const auto& [entity, meshData] : std::views::zip(entities, meshDatas)) {
-            out.emplace_back(entity, loadMesh(meshData));
+            buffer.emplace_back(entity, loadMesh(meshData));
         }
+    }
 
-        return out;
+    void loadMeshes(Buffer& buffer, std::span<const Entity> entities) {
+        for (auto entity : entities) {
+            buffer.emplace_back(entity, loadNormalizedQuad());
+        }
     }
 }

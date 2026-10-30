@@ -5,9 +5,8 @@
 #include "ECSTest.hpp"
 
 #include "ComponentRegistry.hpp"
-#include "Components/SpriteLocation.hpp"
+#include "Components/TextureLocation.hpp"
 #include "Math/Vector.hpp"
-#include "Systems/Loader/SpriteLoader.hpp"
 
 namespace ggm::ECSTest {
     void run() {
@@ -20,7 +19,7 @@ namespace ggm::ECSTest {
             int amount;
         };
 
-        ComponentRegistry<Sprite, Velocity, Health, SpriteLocation> registry{};
+        ComponentRegistry<Velocity, Health, TextureLocation> registry{};
 
         registry.createEntity({}, Health{.amount = 100}, Velocity{});
         registry.createEntity({}, Health{.amount = 100}, Velocity{});

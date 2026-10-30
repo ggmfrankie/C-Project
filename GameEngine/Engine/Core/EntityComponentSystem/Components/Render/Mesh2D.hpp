@@ -3,7 +3,7 @@
 //
 
 #pragma once
-#include "GuiTypes.h"
+#include <atomic>
 #include "glad/gl.h"
 
 namespace ggm {
@@ -15,18 +15,82 @@ namespace ggm {
 
         int indexCount = 0;
 
+        std::atomic_size_t* refCount = new std::atomic_size_t{1};
+
         Mesh2D() = default;
 
-        Mesh2D(const Mesh2D& other) = delete;
-        Mesh2D(Mesh2D&& other) noexcept = default;
-        Mesh2D& operator=(Mesh2D&& other) noexcept = default;
+        Mesh2D(const Mesh2D& other) noexcept :
+            VAO(other.VAO),
+            EBO(other.EBO),
+            vertexVBO(other.vertexVBO),
+            textureVBO(other.textureVBO),
+            indexCount(other.indexCount),
+            refCount(other.refCount)
+        {
+            if (refCount) refCount->fetch_add(1, std::memory_order_relaxed);
+        };
+
+        Mesh2D& operator=(const Mesh2D& other) noexcept {
+            if (&other == this) return *this;
+
+            VAO = other.VAO;
+            EBO = other.EBO;
+            vertexVBO = other.vertexVBO;
+            textureVBO = other.textureVBO;
+            indexCount = other.indexCount;
+            refCount = other.refCount;
+
+            if (refCount) refCount->fetch_add(1, std::memory_order_relaxed);
+
+            return *this;
+        }
+
+        Mesh2D(Mesh2D&& other) noexcept :
+            VAO(other.VAO),
+            EBO(other.EBO),
+            vertexVBO(other.vertexVBO),
+            textureVBO(other.textureVBO),
+            indexCount(other.indexCount),
+            refCount(other.refCount)
+        {
+            other.VAO = 0;
+            other.EBO = 0;
+            other.vertexVBO = 0;
+            other.textureVBO = 0;
+            other.indexCount = 0;
+            other.refCount = nullptr;
+        }
+
+        Mesh2D& operator=(Mesh2D&& other) noexcept {
+            if (&other == this) return *this;
+
+            VAO = other.VAO;
+            EBO = other.EBO;
+            vertexVBO = other.vertexVBO;
+            textureVBO = other.textureVBO;
+            indexCount = other.indexCount;
+            refCount = other.refCount;
+
+            other.VAO = 0;
+            other.EBO = 0;
+            other.vertexVBO = 0;
+            other.textureVBO = 0;
+            other.indexCount = 0;
+            other.refCount = nullptr;
+
+            return *this;
+        }
 
         ~Mesh2D() {
-            // if (VAO) glDeleteVertexArrays(1, &VAO);
-            // if (EBO) glDeleteBuffers(1, &EBO);
-            //
-            // if (vertexVBO) glDeleteBuffers(1, &vertexVBO);
-            // if (textureVBO) glDeleteBuffers(1, &textureVBO);
+            if (refCount && --*refCount == 0) {
+                delete refCount;
+
+                if (VAO) glDeleteVertexArrays(1, &VAO);
+                if (EBO) glDeleteBuffers(1, &EBO);
+
+                if (vertexVBO) glDeleteBuffers(1, &vertexVBO);
+                if (textureVBO) glDeleteBuffers(1, &textureVBO);
+            }
         }
     };
 }

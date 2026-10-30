@@ -3,11 +3,11 @@
 //
 
 #pragma once
-#include "Engine/Core/EntityComponentSystem/ComponentRegistry.hpp"
+#include "../../ComponentRegistry.hpp"
 #include "../../Components/Render/Mesh2D.hpp"
-#include "Engine/Core/EntityComponentSystem/Components/Transformation.hpp"
-#include "Engine/Core/EntityComponentSystem/Core/RenderContext.hpp"
-#include "Engine/Core/EntityComponentSystem/Components/Render/Texture.hpp"
+#include "../../Components/Transformation.hpp"
+#include "../../Core/RenderContext.hpp"
+#include "../../Components/Render/Texture.hpp"
 
 namespace ggm::MeshRenderer2D {
 
