@@ -22,11 +22,11 @@ namespace ggm {
         Mesh2D& operator=(Mesh2D&& other) noexcept = default;
 
         ~Mesh2D() {
-            if (VAO) glDeleteVertexArrays(1, &VAO);
-            if (EBO) glDeleteBuffers(1, &EBO);
-
-            if (vertexVBO) glDeleteBuffers(1, &vertexVBO);
-            if (textureVBO) glDeleteBuffers(1, &textureVBO);
+            // if (VAO) glDeleteVertexArrays(1, &VAO);
+            // if (EBO) glDeleteBuffers(1, &EBO);
+            //
+            // if (vertexVBO) glDeleteBuffers(1, &vertexVBO);
+            // if (textureVBO) glDeleteBuffers(1, &textureVBO);
         }
     };
 }

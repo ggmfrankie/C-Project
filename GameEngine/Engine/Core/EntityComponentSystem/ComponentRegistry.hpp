@@ -36,7 +36,7 @@ namespace ggm {
             template<typename... RemovedComponents>
             requires (ContainsType<RemovedComponents, Components...> && ...)
             TypeSignature removeTypes() {
-                ((bits.set(componentId<RemovedComponents>(), false)), ...);
+                ((bits.set(componentId<std::remove_cvref_t<RemovedComponents>>(), false)), ...);
                 return *this;
             }
 
@@ -101,9 +101,7 @@ namespace ggm {
 
             static void setMappings(TypeMapping& mapping, const TypeSignature& signature) {
                 for (int i = 0, index = 0; i < signature.size(); ++i) {
-                    if (signature[i]) {
-                        mapping[i] = index++;
-                    }
+                    mapping[i] = (signature[i]) ? index++ : EMPTY_MAPPING;
                 }
             }
 
@@ -133,17 +131,14 @@ namespace ggm {
                 std::ranges::fill(mMappings, EMPTY_MAPPING);
             }
 
-            [[nodiscard]] TypeMapping& getMappings() {
-                return mMappings;
-            }
-
             [[nodiscard]] std::vector<ComponentVec>& getComponents() {
                 return mComponents;
             }
 
         public:
-            [[nodiscard]] size_t getEntityCount() {
-                return mEntityMappings.size();
+            [[nodiscard]] size_t getEntityCount() const {
+                assert(mEntities.size() == mEntityMappings.size());
+                return mEntities.size();
             }
 
             [[nodiscard]] TypeSignature getSignature() {
@@ -158,6 +153,10 @@ namespace ggm {
                 return mEntities;
             }
 
+            [[nodiscard]] TypeMapping& getMappings() {
+                return mMappings;
+            }
+
             Archetype(const Archetype&) = delete;
             Archetype& operator=(const Archetype&) = delete;
 
@@ -168,6 +167,7 @@ namespace ggm {
             requires (ContainsType<UsedComponents, Components...> && ...)
             static Archetype New() {
                 Archetype out {};
+
                 auto& components = out.getComponents();
                 components.reserve(sizeof...(UsedComponents));
 
@@ -228,30 +228,36 @@ namespace ggm {
             requires (ContainsType<std::remove_cvref_t<UsedComponents>, Components...> && ...)
             void add(Entity entity, UsedComponents&&... args) {
                 mEntityMappings.insert(entity.mId, mEntities.size());
-                mEntities.push_back(std::move(entity));
+                mEntities.push_back(entity);
 
                 (getComponentVector<std::remove_cvref_t<UsedComponents>>().emplace_back(
                     std::forward<UsedComponents>(args)), ...);
             }
 
-            void remove(const Entity& e) {
-                size_t index = getIndex(e);
+            void remove(Entity e) {
+                const auto it = getIndex(e);
+                assert(it);
+
+                const ssize_t index = *it;
+                const ssize_t lastIndex = mEntities.size()-1;
+
+                if (index != lastIndex) {
+                    mEntities[index] = std::move(mEntities.back());
+
+                    *mEntityMappings[mEntities[index].mId] = index;
+                }
 
                 // Delete all components
                 for (auto& component : mComponents) {
                     std::visit([&]<typename Type>(Type& sourceVector) {
-                        if (const size_t lastIndex = sourceVector.size()-1; index != lastIndex) {
+                        if (index != lastIndex) {
                             sourceVector[index] = std::move(sourceVector.back());
-                            mEntityMappings.find(lastIndex)->value = index;
                         }
                         sourceVector.pop_back();
                     }, component);
                 }
 
-                // Delete the entity itself
-                if (const size_t lastIndex = mEntities.size()-1; index != lastIndex) mEntities[index] = std::move(mEntities.back());
                 mEntities.pop_back();
-
                 mEntityMappings.remove(e.mId);
             }
 
@@ -304,81 +310,65 @@ namespace ggm {
             archetype.remove(entity);
         }
 
+        Archetype& getOrCreateArchetype(TypeSignature signature) {
+            for (auto& archetype : mArchetypes) {
+                if (archetype.hasTypeSignature(signature)) return archetype;
+            }
+
+            mArchetypes.push_back(Archetype::New(signature));
+            return mArchetypes.back();
+        }
+
         template<typename... RemovedComponents, typename... AddedComponents>
         requires (ContainsType<RemovedComponents, Components...> && ...) &&  (ContainsType<AddedComponents, Components...> && ...)
-        void changeComponents(Entity entity, Archetype& sourceArchetype, TypeList<RemovedComponents...> removed, AddedComponents&&... added) {
-            Archetype* destinationArchetype {};
-
+        void changeComponentsV2(Entity entity, Archetype& sourceArchetype, TypeList<RemovedComponents...> removed, AddedComponents&&... added) {
             auto it = sourceArchetype.getIndex(entity);
             assert(it);
-            ssize_t index = *it;
 
-            // Calculate the required new Archetype signature
-            TypeSignature present = sourceArchetype.getSignature();
-            Logger::debug({"Present: {}", present.bits});
-            TypeSignature required = present.template removeTypes<std::remove_cvref_t<RemovedComponents>...>().template addTypes<std::remove_cvref_t<AddedComponents>...>();
-            Logger::debug({"Required: {}", required.bits});
-            TypeSignature canBeTransferred = present & required;
-            Logger::debug({"Can be transferred: {}", canBeTransferred.bits});
+            assert(sourceArchetype.template has<RemovedComponents...>());
 
-            // Search existing Archetypes
-            for (auto& a : mArchetypes) {
-                if (a.hasTypeSignature(required)) {
-                    destinationArchetype = &a;
-                    Logger::debug({"Existing destination Archetype found"});
-                    break;
-                }
-            }
+            ssize_t changedEntityIndex = *it;
 
-            // Create new Archetype if necessary
-            if (destinationArchetype == nullptr) {
-                mArchetypes.push_back(Archetype::New(required));
-                destinationArchetype = &mArchetypes.back();
-                Logger::debug({"New destination Archetype created"});
-            }
+            struct {
+                TypeSignature present;
+                TypeSignature required;
+                TypeSignature transferable;
+            } signatures = {};
 
-            assert(destinationArchetype != nullptr);
+            signatures.present      = sourceArchetype.getSignature();
+            signatures.required     = signatures.present.template removeTypes<RemovedComponents...>().template addTypes<AddedComponents...>();
+            signatures.transferable = signatures.present & signatures.required.template removeTypes<AddedComponents...>();
 
-            for (int i = 0; i < required.size(); ++i) {
-                if (!required[i]) continue;
-                if (canBeTransferred[i]) {
-                    Logger::debug({"Transferring old component"});
-                    std::visit([&]<typename Type>(Type& sourceVector) {
-                        Logger::debug({
-                            "index={}, source size={}",
-                            index,
-                            sourceVector.size()
-                        });
-                        using Vector = std::remove_cvref_t<Type>;
+            Archetype& destinationArchetype = getOrCreateArchetype(signatures.required);
+
+            std::tuple<AddedComponents...> addedComponents {std::forward<AddedComponents>(added)...};
+
+            // Adding of the components to the destinationVector
+            for (int i = 0; i < signatures.required.size(); ++i) {
+                if (!signatures.required[i]) continue;
+
+                if (signatures.transferable[i]) {
+                    // Transfer the component from the sourceVector to the destinationVector
+                    std::visit([&]<typename Vector>(Vector& sourceVector) {
                         using T = Vector::value_type;
 
-                        auto& destinationVector = destinationArchetype->template getComponentVector<T>();
+                        std::vector<T>& destinationVector = destinationArchetype.template getComponentVector<T>();
 
-                        destinationVector.emplace_back(
-                            std::move(sourceVector[index])
+                        destinationVector.push_back(
+                            std::move(sourceVector[changedEntityIndex])
                         );
+
                     }, sourceArchetype.getComponentVector(i));
-
-                    destinationArchetype->getEntities().emplace_back(
-                        std::move(sourceArchetype.getEntities()[index])
-                    );
                 } else {
-                    Logger::debug({"Adding new Component"});
-                    auto addedTuple = std::forward_as_tuple(
-                        std::forward<AddedComponents>(added)...
-                    );
-
                     [&]<std::size_t... Is>(std::index_sequence<Is...>) {
                         (
                         [&]<std::size_t I>() {
-                            using T = std::remove_cvref_t<
-                                std::tuple_element_t<I, decltype(addedTuple)>
-                            >;
+                            using T = std::tuple_element_t<I, decltype(addedComponents)>;
 
                             if (componentId<T>() != i) return false;
 
-                            auto& destinationVector = destinationArchetype->template getComponentVector<T>();
-                            destinationVector.emplace_back(std::get<Is>(std::move(addedTuple)));
+                            auto& destinationVector = destinationArchetype.template getComponentVector<T>();
+                            destinationVector.emplace_back(std::move(std::get<Is>(addedComponents)));
 
                             return true;
                         }.template operator()<Is>() || ...
@@ -387,20 +377,16 @@ namespace ggm {
                 }
             }
 
-            for (int i = 0; i < present.size(); ++i) {
-                if (!present[i]) continue;
-                std::visit([&]<typename Type>(Type& sourceVector) {
-                    if (size_t lastIndex = sourceVector.size()-1; index != lastIndex) {
-                        sourceVector[index] = std::move(sourceVector.back());
-                        sourceArchetype.getEntityMappings().find(lastIndex)->value = index;
-                    }
-                    sourceVector.pop_back();
-                }, sourceArchetype.getComponentVector(i));
+            {
+                auto& destinationMappings = destinationArchetype.getEntityMappings();
+                auto& destinationEntities = destinationArchetype.getEntities();
+
+                destinationMappings.insert(entity.mId, destinationEntities.size());
+                destinationEntities.push_back(entity);
             }
 
-            std::vector<Entity>& sourceEntities = sourceArchetype.getEntities();
-            if (const size_t lastIndex = sourceEntities.size()-1; index != lastIndex) sourceEntities[index] = std::move(sourceEntities.back());
-            sourceEntities.pop_back();
+            // Removing of the components from the sourceVector
+            sourceArchetype.remove(entity);
         }
 
         template<typename... RemovedComponents, typename... AddedComponents>
@@ -409,7 +395,7 @@ namespace ggm {
             // Find the Archetype the entity is inside
             for (auto& a : mArchetypes) {
                 if (a.contains(entity)) {
-                    changeComponents(entity, a, removed, std::forward<AddedComponents>(added)...);
+                    changeComponentsV2(entity, a, removed, std::forward<AddedComponents>(added)...);
                     return;
                 }
             }
@@ -420,19 +406,11 @@ namespace ggm {
         auto& getArchetypes() {
             using ComponentBatch = std::tuple<std::size_t, std::vector<Entity>&, std::vector<UsedComponents>&...>;
 
-            static std::vector<int> indices {};
             static std::vector<ComponentBatch> batches {};
-            if (indices.empty()) {
-                for (size_t i = 0; i < mArchetypes.size(); ++i) {
-                    if (mArchetypes[i].template has<UsedComponents...>()) indices.push_back(i);
-                }
-            }
-
             batches.clear();
 
-            for (int index : indices) {
-                Archetype& archetype = mArchetypes[index];
-
+            for (auto& archetype : mArchetypes) {
+                if (!archetype.template has<UsedComponents...>()) continue;
                 batches.emplace_back(
                     archetype.getEntityCount(),
                     archetype.getEntities(),

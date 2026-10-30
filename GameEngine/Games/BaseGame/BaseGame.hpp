@@ -7,7 +7,6 @@
 #include "../IGame.hpp"
 #include "OtherProjects/Cpp/McpServer/Network/Server.hpp"
 #include "OtherProjects/Cpp/McpServer/Mcp/McpFunctionRegistry.hpp"
-#include "OtherProjects/Cpp/McpServer/Mcp/ReturnTypes.hpp"
 #include "Games/Scene/3D/Scene3D.hpp"
 
 struct GLFWwindow;

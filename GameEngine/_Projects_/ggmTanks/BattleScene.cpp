@@ -24,7 +24,7 @@ namespace ggmTanks {
             PlayerControlled{}
         );
 
-        mTerrain.registerMesh(mComponentRegistry);
+        //mTerrain.registerMesh(mComponentRegistry);
 
         MeshLoader2D::load(mComponentRegistry);
         SpriteLoader::load(mComponentRegistry);

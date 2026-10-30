@@ -174,8 +174,9 @@ namespace ggm {
             }
         }
 
-        size_t size() {
-            return mData.size();
+        template<typename Self>
+        auto size(this Self&& self) {
+            return self.mData.size();
         }
 
         struct Iterator {

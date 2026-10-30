@@ -41,10 +41,6 @@ namespace ggm::Logger {
         if (gLogLevel >= LogLevel::NO_WARNINGS) log("WARNING", message, loc);
     }
 
-    void error(const char* message, const std::source_location& loc) {
-        throw "NYI";
-    }
-
     void error(const Message& message, const std::source_location& loc) {
         log("ERROR", message, loc);
         std::abort();

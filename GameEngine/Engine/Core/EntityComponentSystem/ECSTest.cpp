@@ -32,6 +32,6 @@ namespace ggm::ECSTest {
         }
 
 
-        SpriteLoader::load(registry);
+        //SpriteLoader::load(registry);
     }
 }

@@ -17,12 +17,19 @@ namespace ggm::SpriteLoader {
     void load(ComponentRegistry<Components...>& registry) {
         std::vector<std::pair<Entity, Sprite>> entitiesBuffer {};
         for (auto&[count, entities, spriteLocations] : registry.template getArchetypes<SpriteLocation>()) {
-            for (int i = 0; i < count; ++i) {
-                entitiesBuffer.emplace_back(
-                    entities.at(i),
-                    loadSprite(spriteLocations.at(i))
-                );
+            assert(entities.size() == spriteLocations.size() && entities.size() == count);
+
+            try {
+                for (int i = 0; i < count; ++i) {
+                    entitiesBuffer.emplace_back(
+                        entities.at(i),
+                        loadSprite(spriteLocations.at(i))
+                    );
+                }
+            } catch (std::exception& e) {
+                Logger::error({"Something is not right: {}", e.what()});
             }
+
         }
 
         for (auto&[entity, sprite] : entitiesBuffer) {

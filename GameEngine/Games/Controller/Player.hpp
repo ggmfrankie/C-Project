@@ -4,6 +4,7 @@
 
 #pragma once
 #include "../EngineDefines.hpp"
+#include "Jolt/Jolt.h"
 #include "GameEngine.hpp"
 #include "Jolt/Physics/PhysicsSystem.h"
 #include "Jolt/Physics/Character/Character.h"
@@ -16,7 +17,7 @@ namespace ggm {
 
         JPH::Ref<JPH::Character> mCharacter;
     public:
-        Player(const Vector3f &pos, JPH::PhysicsSystem &system);
+        Player(const Vector3f& pos, JPH::PhysicsSystem& system);
 
         Player(Player &&other) noexcept;
 

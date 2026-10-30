@@ -37,6 +37,5 @@ namespace ggm::Logger {
 
     void warning(const Message& message, const std::source_location& loc = std::source_location::current());
 
-    void error(const char* message, const std::source_location& loc = std::source_location::current());
     void error(const Message& message, const std::source_location& loc = std::source_location::current());
 }

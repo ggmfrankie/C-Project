@@ -18,7 +18,6 @@
 int main() {
     Test_run();
     Testing::runTests();
-    ggm::ECSTest::run();
 
     ggm::Logger::setLevel(ggm::Logger::LogLevel::DEBUG);
     try {

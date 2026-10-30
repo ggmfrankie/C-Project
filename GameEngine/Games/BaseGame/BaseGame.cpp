@@ -14,6 +14,7 @@
 #include "Render/Objects/3D/Physics/PhysicsFactory3D.hpp"
 #include "Render/Transformation/Camera.hpp"
 #include "Math/Vector.hpp"
+#include "OtherProjects/Cpp/McpServer/Mcp/ReturnTypes.hpp"
 #include "_Projects_/Chess/ChessGame.h"
 
 
