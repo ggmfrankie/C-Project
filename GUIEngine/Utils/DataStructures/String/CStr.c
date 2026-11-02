@@ -24,7 +24,7 @@ static struct _StringHeader_* strAllocate(size_t capacity){
     header->_IDENTIFIER_ = IDENTIFIER;
 
     return header;
-} 
+}
 
 #define strGetHead(s) (&((struct _StringHeader_*)(s))[-1])
 

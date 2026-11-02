@@ -25,7 +25,7 @@ int main() {
         ggm::BaseGame game {};
         ggm::Game2D game2 {};
         ggmTanks::TankGame tankGame {};
-        auto& gameEngine = ggm::GameEngine::New(tankGame);
+        auto& gameEngine = ggm::GameEngine::New(game);
         gameEngine.init();
         gameEngine.loop();
         return 0;

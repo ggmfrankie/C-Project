@@ -14,13 +14,11 @@
 #include "_Projects_/ExampleGUI/ExampleGUI.h"
 #if 0
 int main() {
-
-    SumTwo_test();
     //Test_run();
 
     //Engine_loop(createChessGUI);
     //Engine_loop(generateGUI);
-    //Engine_loop(ExampleGui_generate_1);
+    Engine_loop(ExampleGui_generate_1);
     //CHashTable_test();
     //String_test();
 
