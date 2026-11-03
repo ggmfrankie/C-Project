@@ -78,7 +78,8 @@ Im folgenden Versuch werden mehrere Messungen an einem Einweggleichrichter und e
 \end{figure}
 
 Bei diesem Versuch wurde eine einzelne Diode verwendet, um ein Wechselsignal gleichzurichten. Hierzu lässt die Diode die positive Halbwelle durch, blockt aber die negative Halbwelle ab. Das dadurch entstandene Signal besitzt nun Gleich- und Wechselanteile.
-\\\\
+
+\subsubsection{Messwerte bei 10 V Eingangsspannung}
 Folgende Messwerte haben sich für eine Eingangswechselspannung von 10 V ergeben.
 
 \begin{table}[H]
@@ -112,6 +113,30 @@ Zum Vergleich wurden die selben Messwerte anhand der Daten des Osziloskopes nach
 
 Der Strom $i_d$ kann über die Spannung $u_d$ und dem Widerstand im darauffolgenden Zweig bestimmt werden. Da der Widerstand des Kondensators und 10 k$\Omega$ Widerstandes deutlich höher ist der des einstellbaren Widerstandes und $R_v$, ist der Strom relativ akkurat bestimmbar mit \[i_d = \frac{U_rv}{•R_v}\]
 
+\subsubsection{Messwerte bei 100 V Eingangsspannung}
+Folgende Messwerte haben sich für eine Eingangswechselspannung von 100 V ergeben.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|l||l|l|l|l|l|}
+\hline
+ Widerstand &297,7 &238 &179,7 &120,9 &61,3\\ \hline
+ $i_{dav}$ (mA) &112,4 &131,5 &159,3 &200 &277,3\\ \hline
+ $i_{deff}$ (mA) &135,5 &185,8 &191,8 &240,4 &332,5\\ \hline
+ $u_{dav}$ (V) &45,6 &45,4 &45,2 &44,7 &43,6\\ \hline
+ $u_{eff}$ (V) &51,9 &51,8 &52,0 &51,8 &51,5\\ \hline
+ $u_{1}$ (V) &100 &100 &100 &100 &100\\ \hline
+ $p_{1}$ (W) &12,3 &14,3 &17,3 &21,6 &30\\ \hline
+ $p_{2}$ (W) &12,3 &14,3 &17,3 &21,6 &30\\ \hline
+ 
+ $i_{deff berechnet}$ (mA) &176,05 &227,62 &249,3 &312,71 &432,6\\ \hline
+ $d_{deff berechnet}$ (V) &69,1 &68,9 &68,9 &68,4 &67,5\\ \hline
+\end{tabular}
+\caption{Messwerte für $U_1$ = 100 V}
+\end{table}
+
+\subsubsection{Effektivwertberechnung}
+
 Will man den Effektivwert der Mischgröße $u_d$ mit einem Digitalmultimeter bestimmen, muss man beachten, dass entweder Effektivwert des Gleichanteils oder Effektivwert des Wechselanteils gemessen werden kann. Folgende Werte wurden mit einem Fluke Messgerät bestimmt.
 
 \[
@@ -142,13 +167,13 @@ Das Hameg Leistungsmessgerät dagegen berechnet automatisch den korrekten Effekt
 	U_{deff} = 6,4V
 \]
 
-
+\subsubsection{Spannungsverläufe}
 
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=1\linewidth]{41.png}
-\caption{Schaltbild Einweggleichrichter}
+\includegraphics[width=1\linewidth]{41_phased_plot.png}
+\caption{Spannungsverläufe an bestimmten Bauteilen in der Schaltung}
 \end{figure}
 
 Die Diode lässt nur die positive Halbwelle der reinen Wechselspannung $u_1$ durch, der negative Teil fällt an der sperrenden Diode ab. Diese resultierende Welle besitzt deshalb nur noch die positiven Anteile des ursprünglichen Sinus mit der Amplitude $u_1 - 0,7/ V$, da die Durchlassspannung der Diode überwunden werden muss.
@@ -156,8 +181,156 @@ Demnach fällt der gesamte negative Teil and der Diode in $u_f$ ab.
 \[u_1 = u_d + u_f\]
 
 Der Gleichanteil von $u_d$ wird anschließend von dem Kondensator herausgefiltert und verschiebt den Spannungsverlauf um 4 V nach unten ($u_{d \approx}$).
+\\\\
 
-\subsubsection{i}
+Daraus lassen sich folgende Werte berechnen:
 
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|l||l|l|l|}
+\hline
+ & $u_1$ &$u_d$ &$u_d \approx$\\ \hline
+ Effektivwert (V) &9,72 &6,49 &4,63 \\ \hline
+ Mittelwert (V)  &0,36 &4,13 &0 \\ \hline
+\end{tabular}
+\caption{Berechnete Effektiv- und Mittelwerte}
+\end{table}
+
+Die Werte wurden in Python mit den Funktionen mean(U) für den Mittelwert und sqrt(mean($U^2$))) für den Effektivwert ermittelt.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=1\linewidth]{Bild24.png}
+\caption{$U_1$, $U_{dav}$, $U_{deff}$ als Funktion des Laststromes $I_{dav}$}
+\end{figure}
+
+\subsubsection{Welligkeit, Formfaktor, Wirkungsgrad und Leistungsfaktor}
+
+Welligkeit: 
+\[ 
+	\omega = \frac{U_{deff}\approx}{U_{dav}}
+\]
+
+Formfaktor: 
+\[ 
+	F = \frac{U_{deff}}{U_{dav}}
+\]
+
+Wirkungsgrad: 
+\[ 
+	\eta = \frac{P_{2}}{P_{1}}
+\]
+
+Leistungsfaktor: 
+\[ 
+	\lambda = \frac{U_{eff}}{U_{1}}
+\]
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|l|}
+\hline
+  &Berechneter Mittelwert &Theoretischer Wert\\ \hline
+ Welligkeit &1,24 &1,21\\ \hline
+ Formfaktor &1,6 &1,57 \\ \hline
+ Wirkungsgrad  &0,98 &1 \\ \hline
+ Leistungsfaktor  &0,69 &0,707 \\ \hline
+\end{tabular}
+\caption{Berechnete Effektiv- und Mittelwerte}
+\end{table}
+
+Anmerkung: Aufgrund gewisser Ungenauigkeiten der Messwerte kann ein Wirkungsgrad über 1 herauskommen, was ja in der Realität (leider) nicht möglich ist (siehe: Energieerhaltung). Recherchen haben aber auch gezeigt, dass ein Einweggleichrichter eigentlich nur einen maximalen Wirkungsgrad von 40,6 \% besitzen kann...
+
+\subsection{Graetzschaltung}
+Der Nachteil eines Einweggleichrichters ist, dass die gesamte negative Halbwelle and der Diode abfällt. Um diese negative Welle auch nutzen zu können, kann eine sogenannte Graetzschaltung verwendet werden, die anstelle von einer Diode nun vier benutzt.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=1\linewidth]{Bild(5).png}
+\caption{Schaltplan eines Graetzgleichrichters}
+\end{figure}
+
+Zeichnet man nun wie zuvor die Spannungsverläufe an den Bauteilen auf, so ergibt sich folgendes Bild:
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=1\linewidth]{42_phased_plot.png}
+\caption{Spannungsverläufe in der Graetzschaltung}
+\end{figure}
+
+Die Dioden in Vorwärtsrichtung $D_v$ lassen die positive Halbwelle durch, die Dioden in Gegenrichtung $D_g$ sind blockiert. Bei der negativen Halbwelle dagegen machen die Dioden $D_v$ zu, aber durch die offenen $D_g$ Dioden kann die Spannung "herausgezogen" werden. Da es sich hier um eine negative Spannung handelt, ist die resultierende Spannung nach den Dioden wieder positiv.
+
+
+\subsubsection{Messwerte bei 10 V Eingangsspannung}
+Folgende Messwerte haben sich für eine Eingangswechselspannung von 10 V ergeben.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|l||l|l|l|}
+\hline
+ Größe &Arithmetischer Mittelwert &Effektivwert &Signalart\\ \hline
+ $u_1$ (V) &-0,087 &10 &Wechselgröße\\ \hline
+ $u_d$ (V) &6,07 &8,62 &Mischgröße\\ \hline
+ $u_d \approx$  (V) &-0,001 &4,0 &Wechselgröße\\ \hline
+ $i_d$ (mA) &44,9 &50,8 &\\ \hline
+\end{tabular}
+\caption{Messwerte}
+\end{table}
+
+
+Im Vergleich dazu die errechneten Werte:
+
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|l||l|l|l|}
+\hline
+ & $u_1$ &$u_d$ &$u_d \approx$\\ \hline
+ Effektivwert (V) &10,01 &8,62 &4,02 \\ \hline
+ Mittelwert (V)  &-0,03 &7,62 &-0,03 \\ \hline
+\end{tabular}
+\caption{Berechnete Effektiv- und Mittelwerte}
+\end{table}
+
+Offensichtlich stimmen die Messwerte mit der Theorie gut überein.
+
+\subsubsection{Welligkeit, Formfaktor, Wirkungsgrad und Leistungsfaktor}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|l|}
+\hline
+  &Einweggleichrichter &Graetzgleichrichter\\ \hline
+ Welligkeit &1,24 &0,48\\ \hline
+ Formfaktor &1,6 &1,11 \\ \hline
+ Wirkungsgrad  &0,98 &0,99 \\ \hline
+ Leistungsfaktor  &0,69 &0,98 \\ \hline
+\end{tabular}
+\caption{Berechnete Effektiv- und Mittelwerte}
+\end{table}
+
+\subsubsection{Graetzbrückenschaltung mit Glättung}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|l|}
+\hline
+  &Ungeglättet &Geglättet\\ \hline
+ Welligkeit &0,48 &0,17\\ \hline
+ Formfaktor &1,11 &1,01\\ \hline
+ Wirkungsgrad  &0,99 &0,97 \\ \hline
+ Leistungsfaktor  &0,98 &1,11 \\ \hline
+\end{tabular}
+\caption{Berechnete Effektiv- und Mittelwerte}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.66\linewidth]{Bild25.png}
+\caption{Spannnungungen als Funktion des Stroms}
+\end{figure}
+
+Ein Problem mit der reinen Graetzschaltung ist, dass das Ausgangssignal immer noch eine relativ hohe Welligkeit, also einen Wechselanteil, besitzt. Um den Gleichanteil nun zu erhöhen und das Signal zu glätten werden zwei Kondensatoren eingebaut.
 
 \end{document}
