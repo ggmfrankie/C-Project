@@ -8,11 +8,12 @@
 #include "Engine/Core/EntityComponentSystem/Systems/Render/MeshRenderer2D.hpp"
 #include "Engine/Core/EntityComponentSystem/Systems/Loader/MeshLoader2D.hpp"
 #include "Engine/Core/EntityComponentSystem/Systems/Loader/TextureLoader.hpp"
+#include "Engine/Core/EntityComponentSystem/Systems/Physics/Physics2D.hpp"
 
 namespace ggmTanks {
     using namespace ggm;
     BattleScene::BattleScene() :
-        mTerrain(400, 200)
+        mTerrain(1000, 800)
     {}
 
     void BattleScene::init() {
@@ -26,10 +27,11 @@ namespace ggmTanks {
             MeshDataQuad{},
             TextureLocation{"Black.png"},
             Transformation{{100, 200}, {80, 70}},
-            PlayerControlled{}
+            PlayerControlled{},
+            PhysicsObjectCircle{.radius = 200, .mass = 1}
         );
 
-        //mTerrain.registerMesh(mComponentRegistry);
+        mTerrain.registerMesh(mComponentRegistry);
 
         MeshLoader2D::load(mComponentRegistry);
         TextureLoader::load(mComponentRegistry);
@@ -43,6 +45,7 @@ namespace ggmTanks {
 
     void BattleScene::update(float dt) {
         mTerrain.update(mComponentRegistry);
+        Physics2D::update(mComponentRegistry, dt);
         PlayerController::move(mComponentRegistry);
     }
 }

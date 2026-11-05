@@ -8,6 +8,8 @@
 #include "../../Engine/Core/EntityComponentSystem/Components/Render/Sprite.hpp"
 #include "Engine/Core/EntityComponentSystem/Components/TextureLocation.hpp"
 #include "Engine/Core/EntityComponentSystem/Components/Transformation.hpp"
+#include "Engine/Core/EntityComponentSystem/Components/Physics/PhysicsObjectCircle.hpp"
+#include "Engine/Core/EntityComponentSystem/Components/Physics/SimpleCollider.hpp"
 #include "Engine/Core/EntityComponentSystem/Components/Render/Mesh2D.hpp"
 #include "Engine/Core/EntityComponentSystem/Components/Render/MeshData2D.hpp"
 #include "Engine/Core/EntityComponentSystem/Components/Render/MeshDataQuad.hpp"
@@ -23,6 +25,8 @@ namespace ggmTanks {
         ggm::Mesh2D,
         ggm::Texture,
         ggm::MeshData2D,
-        ggm::MeshDataQuad
+        ggm::MeshDataQuad,
+        ggm::SimpleCollider,
+        ggm::PhysicsObjectCircle
     >;
 }

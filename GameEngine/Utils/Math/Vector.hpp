@@ -5,6 +5,7 @@
 
 #include <cmath>
 #include <iostream>
+#include <format>
 
 namespace ggm {
     struct Vector3f {
@@ -163,6 +164,8 @@ namespace ggm {
         float x = 0;
         float y = 0;
 
+        constexpr auto operator<=>(const Vector2f&) const = default;
+
         constexpr Vector2f operator-(const Vector2f& v) const {
             return {x-v.x, y-v.y};
         }
@@ -251,6 +254,13 @@ namespace ggm {
         }
     };
 }
+
+template<>
+struct std::formatter<ggm::Vector2f> : std::formatter<std::string> {
+    auto format(const ggm::Vector2f& v, std::format_context& ctx) const {
+        return std::format_to(ctx.out(), "({}, {})", v.x, v.y);
+    }
+};
 
 template <>
         struct std::hash<ggm::Vector3f> {

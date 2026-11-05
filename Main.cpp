@@ -5,7 +5,6 @@
 #include "Test.hpp"
 #include "Dependencies/JoltPhysics/Jolt/Jolt.h"
 #include "Engine/Core/EntityComponentSystem/ComponentRegistry.hpp"
-#include "Engine/Core/EntityComponentSystem/ECSTest.hpp"
 
 #include "GameEngine/GameEngine.hpp"
 #include "GameEngine/Games/BaseGame/BaseGame.hpp"
@@ -16,8 +15,8 @@
 
 #if 1
 int main() {
-    Test_run();
-    Testing::runTests();
+    //Test_run();
+    //Testing::runTests();
 
     ggm::Logger::setLevel(ggm::Logger::LogLevel::DEBUG);
     try {
@@ -25,7 +24,7 @@ int main() {
         ggm::BaseGame game {};
         ggm::Game2D game2 {};
         ggmTanks::TankGame tankGame {};
-        auto& gameEngine = ggm::GameEngine::New(game);
+        auto& gameEngine = ggm::GameEngine::New(tankGame);
         gameEngine.init();
         gameEngine.loop();
         return 0;

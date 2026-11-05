@@ -13,28 +13,27 @@
 
 namespace ggmTanks {
     using namespace ggm;
+    using std::filesystem::path;
 
     MeshData2D Terrain::reloadMesh() {
         MeshData2D out {};
 
         out.vertices = mHeightmap;
         out.vertices.emplace_back(0, static_cast<float>(mDepth));
-        const int leftCornerIndex = out.vertices.size()-1;
-
-        out.vertices.emplace_back(mHeightmap.back().x, static_cast<float>(mDepth));
-        const int rightCornerIndex = out.vertices.size()-1;
-
 
         const size_t lastInHeightmap = mHeightmap.size();
         for (int i = 1; i < lastInHeightmap; ++i) {
             out.indices.push_back(i);
             out.indices.push_back(i-1);
-            out.indices.push_back(leftCornerIndex);
+            out.vertices.emplace_back(mHeightmap[i-1].x, static_cast<float>(mDepth));
+            out.indices.push_back(out.vertices.size()-1);
         }
 
-        out.indices.push_back(lastInHeightmap);
-        out.indices.push_back(lastInHeightmap-1);
-        out.indices.push_back(rightCornerIndex);
+        const float maxWidth = mHeightmap.back().x;
+
+        for (auto [x, y] : out.vertices) {
+            out.uvs.emplace_back(x/maxWidth, y/mDepth);
+        }
 
         return out;
     }
@@ -48,16 +47,21 @@ namespace ggmTanks {
         mDepth(depth),
         mMeshDirty(true)
     {
+        int height = 0;
         for (int i = 0; i < width; ++i) {
-            mHeightmap.emplace_back(i, rand()%20 - 10);
+            if (i % 5 == 0) height += rand()%10 - 5;
+            mHeightmap.emplace_back(i, height);
         }
     }
 
     void Terrain::registerMesh(Registry& registry) {
+        constexpr Vector2f pos {0, 500};
+
         registry.createEntity(mMeshEntity,
-            Transformation{{1, 1}, {}},
+            Transformation{{1, 1}, pos},
             reloadMesh(),
-            TextureLocation{"Black.png"}
+            TextureLocation{"ERROR.png"},
+            SimpleCollider{mHeightmap, pos}
         );
     }
 

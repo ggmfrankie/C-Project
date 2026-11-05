@@ -7,11 +7,20 @@
 #include <bitset>
 
 namespace ggm {
+    const Entity Entity::Invalid{1};
+
     Entity::Entity()
     {
-        static u64 generator = 0;
+        static i64 generator = 0;
         mId = generator++;
     }
 
+    constexpr Entity::Entity(i64 index)
+    {
+        mId = index;
+    }
+
     Entity::~Entity() {}
+
+
 } // ggm

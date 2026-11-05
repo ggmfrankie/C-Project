@@ -154,7 +154,11 @@ add_executable(C-Project
         GameEngine/Engine/Core/EntityComponentSystem/Systems/Loader/MeshLoader2D.hpp
         GameEngine/Engine/Core/EntityComponentSystem/Systems/Loader/TextureLoader.cpp
         GameEngine/Engine/Core/EntityComponentSystem/Systems/Loader/TextureLoader.hpp
-        GameEngine/Engine/Core/EntityComponentSystem/Components/Render/MeshQuad.hpp
+        GameEngine/Engine/Core/EntityComponentSystem/Components/Render/MeshDataQuad.hpp
+        GameEngine/Engine/Core/EntityComponentSystem/Systems/Physics/Physics2D.cpp
+        GameEngine/Engine/Core/EntityComponentSystem/Systems/Physics/Physics2D.hpp
+        GameEngine/Engine/Core/EntityComponentSystem/Components/Physics/SimpleCollider.hpp
+        GameEngine/Engine/Core/EntityComponentSystem/Components/Physics/PhysicsQuad.hpp
 )
 
 target_compile_definitions(C-Project PUBLIC JPH_ENABLE_ASSERTS)

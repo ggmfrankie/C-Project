@@ -8,7 +8,7 @@
 
 namespace ggm {
     struct Entity {
-        u32 mId = -1;
+        i64 mId = -1;
 
         Entity();
         ~Entity();
@@ -16,6 +16,11 @@ namespace ggm {
         auto operator<=>(const Entity&) const = default;
 
         friend struct std::hash<Entity>;
+
+    private:
+        explicit constexpr Entity(i64 index);
+    public:
+        static const Entity Invalid;
     };
 } // ggm
 
