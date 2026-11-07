@@ -11,9 +11,13 @@
 
 #define GUI_COLOR_BLACK       (Vec3f){0.010f, 0.010f, 0.010f}
 
+#define GUI_COLOR_DARKGRAY(pBrightness)(Vec3f){0.200f+(pBrightness), 0.200f+(pBrightness), 0.200f+(pBrightness)}
+
 #define GUI_COLOR_DARKGRAY1   (Vec3f){0.300f, 0.300f, 0.300f}
-#define GUI_COLOR_DARKGRAY2   (Vec3f){0.391f, 0.391f, 0.391f}
-#define GUI_COLOR_DARKGRAY3   (Vec3f){0.451f, 0.451f, 0.451f}
+#define GUI_COLOR_DARKGRAY2   (Vec3f){0.350f, 0.350f, 0.350f}
+#define GUI_COLOR_DARKGRAY3   (Vec3f){0.391f, 0.391f, 0.391f}
+#define GUI_COLOR_DARKGRAY4   (Vec3f){0.451f, 0.451f, 0.451f}
+#define GUI_COLOR_DARKGRAY5   (Vec3f){0.500f, 0.500f, 0.500f}
 
 #define GUI_COLOR_DARKGREEN   (Vec3f){0.300f, 0.400f, 0.400f}
 #define GUI_COLOR_AZURE       (Vec3f){0.231f, 0.510f, 0.965f}

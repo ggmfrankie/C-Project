@@ -14,6 +14,9 @@ namespace ggm::MeshLoader2D {
     void loadMeshes(Buffer& buffer, std::span<const Entity> entities, std::span<const MeshData2D> meshDatas);
     void loadMeshes(Buffer& buffer, std::span<const Entity> entities);
 
+    Mesh2D loadNormalizedQuad();
+    Mesh2D loadNormalizedCircle();
+
     template<typename... Components>
     requires ContainsType<MeshData2D, Components...> && ContainsType<Mesh2D, Components...>
     void load(ComponentRegistry<Components...>& registry) {

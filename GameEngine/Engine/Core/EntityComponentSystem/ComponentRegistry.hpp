@@ -198,7 +198,7 @@ namespace ggm {
 
                 out.updateSignature();
 
-                Logger::info({"Created new Archetype with signature {} and types\n [ {}]", out.getSignature().bits, out.getSignature().getTypeNames()});
+                Logger::debug({"Created new Archetype with signature {} and types\n [ {}]", out.getSignature().bits, out.getSignature().getTypeNames()});
                 return out;
             }
 
@@ -223,7 +223,7 @@ namespace ggm {
                 setMappings(out.getMappings(), signature);
                 out.updateSignature();
 
-                Logger::info({"Created new Archetype from signature {} and types\n [ {}]", signature.bits, out.getSignature().getTypeNames()});
+                Logger::debug({"Created new Archetype from signature {} and types\n [ {}]", signature.bits, out.getSignature().getTypeNames()});
                 return out;
             }
 

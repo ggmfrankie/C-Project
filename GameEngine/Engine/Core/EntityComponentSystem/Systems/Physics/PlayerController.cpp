@@ -8,14 +8,14 @@
 #include "GLFW/glfw3.h"
 
 namespace ggm::PlayerController {
-    void moveEntities(std::vector<Transformation>& transformations) {
-        for (auto& [dimensions, position] : transformations) {
-            constexpr float STEP = 5.0f;
-            if (InputHandler::isKeyDown(GLFW_KEY_A)) position.x -= STEP;
-            if (InputHandler::isKeyDown(GLFW_KEY_D)) position.x += STEP;
+    void moveEntities(std::span<PhysicsObjectCircle> physicsObjects) {
+        for (auto& object : physicsObjects) {
+            constexpr float STEP = 20.f;
+            if (InputHandler::isKeyDown(GLFW_KEY_A)) object.velocity.x = -STEP;
+            if (InputHandler::isKeyDown(GLFW_KEY_D)) object.velocity.x = STEP;
 
-            if (InputHandler::isKeyDown(GLFW_KEY_W)) position.y -= STEP;
-            if (InputHandler::isKeyDown(GLFW_KEY_S)) position.y += STEP;
+            if (InputHandler::isKeyDown(GLFW_KEY_W)) object.velocity.y = -STEP;
+            if (InputHandler::isKeyDown(GLFW_KEY_S)) object.velocity.y = STEP;
         }
     }
 }

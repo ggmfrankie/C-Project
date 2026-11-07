@@ -84,6 +84,70 @@ namespace ggm::MeshLoader2D {
         return mesh;
     }
 
+    Mesh2D loadNormalizedCircle() {
+        static Mesh2D mesh = [] {
+            Mesh2D out {};
+            constexpr int segments = 64;
+
+            std::vector<Vector2f> vertices;
+            vertices.reserve(segments + 2);
+
+            std::vector<Vector2f> uvs;
+            uvs.reserve(segments + 2);
+
+            std::vector<int> indices;
+            indices.reserve(segments * 3);
+
+            for (int i = 0; i <= segments; ++i) {
+                const float angle = 2.f * std::numbers::pi * i / segments;
+
+                vertices.emplace_back(
+                    std::cosf(angle),
+                    std::sinf(angle)
+                );
+            }
+
+            for (auto& [x, y] : vertices) {
+                uvs.emplace_back(
+                    (x + 1.f) * 0.5f,
+                    (y + 1.f) * 0.5f
+                );
+            }
+
+            for (int i = 1; i < segments; ++i) {
+                indices.push_back(0);
+                indices.push_back(i);
+                indices.push_back(i+1);
+            }
+
+            glGenVertexArrays(1, &out.VAO);
+            glBindVertexArray(out.VAO);
+            glGenBuffers(1, &out.vertexVBO);
+            glGenBuffers(1, &out.textureVBO);
+
+            glBindBuffer(GL_ARRAY_BUFFER, out.vertexVBO);
+            glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices.size() * 2, vertices.data(), GL_STATIC_DRAW);
+            glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+            glBindBuffer(GL_ARRAY_BUFFER, out.textureVBO);
+            glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices.size() * 2, vertices.data(), GL_STATIC_DRAW);
+            glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+            glGenBuffers(1, &out.EBO);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, out.EBO);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * indices.size(), indices.data(), GL_STATIC_DRAW);
+
+            out.indexCount = indices.size();
+
+            glEnableVertexAttribArray(0);
+            glEnableVertexAttribArray(1);
+
+            return out;
+        }();
+
+        return mesh;
+    }
+
     void loadMeshes(Buffer& buffer, std::span<const Entity> entities, std::span<const MeshData2D> meshDatas) {
         for (const auto& [entity, meshData] : std::views::zip(entities, meshDatas)) {
             buffer.emplace_back(entity, loadMesh(meshData));

@@ -6,6 +6,7 @@
 
 #include <ranges>
 
+#include "Engine/Core/EntityComponentSystem/Components/Render/Color.hpp"
 #include "Engine/Debug/ASSERT.hpp"
 #include "Render/Shader/Shader.hpp"
 
@@ -34,6 +35,8 @@ namespace ggm::MeshRenderer2D {
         Shader& shader = getShader();
         shader.bind();
 
+        shader.setUniform("color", Color::WHITE);
+
         shader.setUniform("screenWidth", static_cast<float>(context.width));
         shader.setUniform("screenHeight", static_cast<float>(context.height));
 
@@ -50,7 +53,6 @@ namespace ggm::MeshRenderer2D {
         }
 
         shader.unbind();
-
     }
 }
 

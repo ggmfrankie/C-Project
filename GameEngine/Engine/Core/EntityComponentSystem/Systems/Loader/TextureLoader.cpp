@@ -11,7 +11,6 @@ namespace ggm::TextureLoader {
     namespace fs = std::filesystem;
 
     static Texture loadTexture(const std::filesystem::path& path);
-    static Texture loadDefaultTexture();
 
     const fs::path DEFAULT_PATH {fs::current_path().parent_path()/"Resources"/"Textures"};
 
@@ -75,7 +74,7 @@ namespace ggm::TextureLoader {
         return out;
     }
 
-    static Texture loadDefaultTexture() {
+    Texture loadDefaultTexture() {
         static Texture defaultTexture = loadTexture("White.png");
         return defaultTexture;
     }

@@ -45,7 +45,8 @@ typedef void (*GUI_onKeyPressAction)(int key, int scancode, int action, int mods
     void gui_setCornerRadius(const char* name, int radius);
     void gui_onKeyPressCallback(GUI_onKeyPressAction action);
 
-    bool gui_getActive(const char* name);
+    bool gui_isActive(const char* name);
+    bool gui_wasClicked(const char* name);
 
     void gui_delete(const char* name);
 

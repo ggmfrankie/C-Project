@@ -82,6 +82,8 @@ typedef struct Element {
 
         bool isHovered: 1;
         bool isSelected: 1;
+
+        bool wasClicked: 1;
     } flags;
 
     struct {
@@ -165,7 +167,7 @@ typedef struct ElementSettings {
     Vec3f textColor;
     float transparency;
 
-    char* text;
+    const char* text;
     float textScale;
 
     bool (*onClick)(Element* self);

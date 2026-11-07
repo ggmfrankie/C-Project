@@ -109,7 +109,10 @@ namespace ggm {
             w(w)
         {}
 
-        Vector4f() = default;
+        constexpr Vector4f() = default;
+        constexpr ~Vector4f() = default;
+
+        constexpr Vector4f& operator=(const Vector4f& other) = default;
 
         constexpr Vector4f operator-() const noexcept {
             return {-x, -y, -z, -w};

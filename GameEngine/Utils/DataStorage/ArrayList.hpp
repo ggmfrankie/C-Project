@@ -10,6 +10,7 @@
 #include <memory>
 #include <new>
 #include <cstddef>
+#include <utility>
 
 #include "../ggmdef.hpp"
 
@@ -17,19 +18,20 @@ namespace ggm {
     template <typename T, u64 InlineCapacity = 0>
     class ArrayList {
     public:
-        explicit ArrayList(u64 capacity = InlineCapacity) noexcept {
+        explicit ArrayList(u64 capacity = InlineCapacity) noexcept
+        {
             if constexpr (InlineCapacity == 0) {
                 mData = static_cast<T *>(operator new(capacity * sizeof(T)));
-                this->mCapacity = capacity;
+                mCapacity = capacity;
                 mIsHeap = true;
             } else {
                 if (capacity <= InlineCapacity) {
                     mData = inlinePtr();
-                    this->mCapacity = InlineCapacity;
+                    mCapacity = InlineCapacity;
                     mIsHeap = false;
                 } else {
                     mData = static_cast<T *>(operator new(capacity * sizeof(T)));
-                    this->mCapacity = capacity;
+                    mCapacity = capacity;
                     mIsHeap = true;
                 }
             }
@@ -39,111 +41,94 @@ namespace ggm {
         ArrayList(u64 capacity, const T& value) noexcept :
             ArrayList(capacity)
         {
+            std::uninitialized_fill_n(mData, capacity, value);
             mSize = capacity;
-
-            for (u64 i = 0; i < capacity; ++i) {
-                std::construct_at(mData + i, value);
-            }
         }
 
         ArrayList(ArrayList&& other) noexcept {
             if constexpr (InlineCapacity == 0) {
-                mData = other.mData;
-                mSize = other.mSize;
-                mCapacity = other.mCapacity;
+                mData = std::exchange(other.mData, nullptr);
+                mSize = std::exchange(other.mSize, 0);
+                mCapacity = std::exchange(other.mCapacity, 0);
 
-                other.mData = nullptr;
-                other.mSize = 0;
-                other.mCapacity = 0;
             } else {
                 if (other.mIsHeap) {
                     mData = other.mData;
-                    other.mIsHeap = false;
-                    mIsHeap = true;
                 } else {
                     mData = inlinePtr();
-                    for (u64 i = 0; i < other.mSize; ++i) {
-                        std::construct_at(&mData[i], std::move(other.mData[i]));
-                        std::destroy_at(&other.mData[i]);
-                    }
-                    mIsHeap = false;
+
+                    std::uninitialized_move_n(other.mData, other.mSize, mData);
+                    std::destroy_n(other.mData, other.mSize);
                 }
-                mCapacity = other.mCapacity;
-                mSize = other.mSize;
+
+                mIsHeap = std::exchange(other.mIsHeap, false);
+                mCapacity = std::exchange(other.mCapacity, InlineCapacity);
+                mSize = std::exchange(other.mSize, 0);
 
                 other.mData = other.inlinePtr();
-                other.mCapacity = InlineCapacity;
-                other.mSize = 0;
             }
         }
 
         ArrayList(const ArrayList& other) noexcept {
             if constexpr (InlineCapacity == 0) {
                 mData = static_cast<T*>(operator new(other.mCapacity * sizeof(T)));
-                for (u64 i = 0; i < other.mSize; ++i) {
-                    std::construct_at(&mData[i], other.mData[i]);
-                }
+
+                std::uninitialized_copy_n(other.mData, other.mSize, mData);
+
                 mCapacity = other.mCapacity;
                 mSize = other.mSize;
             } else {
                 if (other.mIsHeap) {
                     mData = static_cast<T*>(operator new(other.mCapacity * sizeof(T)));
-                    mIsHeap = true;
                 } else {
                     mData = inlinePtr();
-                    mIsHeap = false;
-                }
-                for (u64 i = 0; i < other.mSize; ++i) {
-                    std::construct_at(&mData[i], other.mData[i]);
                 }
                 mCapacity = other.mCapacity;
+                mIsHeap = other.mIsHeap;
+
+                std::uninitialized_copy_n(other.mData, other.mSize, mData);
                 mSize = other.mSize;
             }
         }
 
         ~ArrayList() noexcept {
+            std::destroy_n(mData, mSize);
             if constexpr (InlineCapacity == 0) {
                 operator delete(mData);
             } else {
-                for (u64 i = 0; i < mSize; ++i)
-                    std::destroy_at(&mData[i]);
                 if (mIsHeap) operator delete(mData);
             }
         }
 
         ArrayList& operator=(ArrayList&& other) noexcept {
+            if (this == &other) return *this;
+
+            std::destroy_n(mData, mSize);
+
             if constexpr (InlineCapacity == 0) {
                 operator delete(mData);
-                mData = other.mData;
-                mCapacity = other.mCapacity;
-                mSize = other.mSize;
-
-                other.mData = nullptr;
-                other.mCapacity = 0;
-                other.mSize = 0;
-                return *this;
+                mData = std::exchange(other.mData, nullptr);
+                mSize = std::exchange(other.mSize, 0);
+                mCapacity = std::exchange(other.mCapacity, 0);
             } else {
                 if (mIsHeap) operator delete(mData);
-                if (other.mIsHeap) {
+
+                mIsHeap = std::exchange(other.mIsHeap, false);
+
+                if (mIsHeap) {
                     mData = other.mData;
-                    other.mIsHeap = false;
-                    mIsHeap = true;
                 } else {
                     mData = inlinePtr();
-                    for (u64 i = 0; i < other.mSize; ++i) {
-                        std::construct_at(&mData[i], std::move(other.mData[i]));
-                        std::destroy_at(&other.mData[i]);
-                    }
-                    mIsHeap = false;
+                    std::uninitialized_move_n(other.mData, other.mSize, mData);
+                    std::destroy_n(other.mData, other.mSize);
                 }
-                mCapacity = other.mCapacity;
-                mSize = other.mSize;
+
+                mCapacity = std::exchange(other.mCapacity, InlineCapacity);
+                mSize = std::exchange(other.mSize, 0);
 
                 other.mData = other.inlinePtr();
-                other.mCapacity = InlineCapacity;
-                other.mSize = 0;
-                return *this;
             }
+            return *this;
         }
 
         T& add(const T& thing) {
@@ -168,8 +153,9 @@ namespace ggm {
             return *ptr;
         }
 
-        T& front() {
-            return mData[0];
+        template<typename Self>
+        auto& front(this Self&& self) {
+            return self.mData[0];
         }
 
         template<typename Self>
@@ -190,48 +176,38 @@ namespace ggm {
             mSize = capacity;
         }
 
-        T& operator[](u64 index) noexcept {
-            assert(index < mCapacity);
-            return mData[index];
+        template<typename Self>
+        auto& operator[](this Self&& self, u64 index) noexcept {
+            assert(index < self.mCapacity);
+            return self.mData[index];
         }
 
-        const T& operator[](u64 index) const noexcept{
-            assert(index < mCapacity);
-            return mData[index];
-        }
-
-        T& get(u64 index) {
-            if (index >= mSize) throw std::out_of_range("Index out of bounds in ArrayList");
-            return mData[index];
+        template<typename Self>
+        auto& get(this Self&& self, u64 index) {
+            if (index >= self.mSize) throw std::out_of_range("Index out of bounds in ArrayList");
+            return self.mData[index];
         }
 
         void clear() noexcept {
-            for (u64 i = 0; i < mSize; ++i) {
-                std::destroy_at(&mData[i]);
-            }
+            std::destroy_n(mData, mSize);
             mSize = 0;
         }
 
         void fit() {
             if (!mIsHeap || mSize == mCapacity) return;
 
-            T* old = mData;
+            T* oldData = mData;
             mData = static_cast<T*>(operator new(mSize * sizeof(T)));
             mCapacity = mSize;
 
-            for (u64 i = 0; i < mSize; ++i) {
-                std::construct_at(&mData[i], std::move(old[i]));
-                std::destroy_at(&old[i]);
-            }
-            operator delete(old);
+            std::uninitialized_move_n(oldData, mSize, mData);
+            std::destroy_n(oldData, mSize);
+            operator delete(oldData);
         }
 
-        const T* cdata() const noexcept {
-            return mData;
-        }
-
-        T* data() const noexcept {
-            return mData;
+        template<typename Self>
+        auto* data(this Self&& self) noexcept {
+            return self.mData;
         }
 
         [[nodiscard]] bool empty() const noexcept {
@@ -258,18 +234,16 @@ namespace ggm {
             mCapacity = capacity;
             mData = static_cast<T *>(operator new(mCapacity * sizeof(T)));
 
-            for (u64 i = 0; i < mSize; i++) {
-                std::construct_at(&mData[i], std::move(oldData[i]));
-                std::destroy_at(&oldData[i]);
-            }
+            std::uninitialized_move_n(oldData, mSize, mData);
+            std::destroy_n(oldData, mSize);
 
-            if constexpr (InlineCapacity > 0) {
+            if constexpr (InlineCapacity == 0) {
+                operator delete(oldData);
+            } else {
                 if (mIsHeap) {
                     operator delete(oldData);
                 }
                 mIsHeap = true;
-            } else {
-                operator delete(oldData);
             }
         }
 

@@ -12,6 +12,8 @@
 namespace ggm::TextureLoader {
     Texture loadTexture(const TextureLocation& location);
 
+    Texture loadDefaultTexture();
+
     template<typename... Components>
     requires ContainsType<TextureLocation, Components...> && ContainsType<Texture, Components...>
     void load(ComponentRegistry<Components...>& registry) {

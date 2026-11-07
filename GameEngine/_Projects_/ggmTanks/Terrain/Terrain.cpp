@@ -22,12 +22,27 @@ namespace ggmTanks {
         out.vertices.emplace_back(0, static_cast<float>(mDepth));
 
         const size_t lastInHeightmap = mHeightmap.size();
-        for (int i = 1; i < lastInHeightmap; ++i) {
+
+        out.indices.push_back(1);
+        out.indices.push_back(0);
+        out.vertices.emplace_back(mHeightmap[0].x, static_cast<float>(mDepth));
+        out.indices.push_back(out.vertices.size()-1);
+
+        for (int i = 2; i < lastInHeightmap; ++i) {
             out.indices.push_back(i);
             out.indices.push_back(i-1);
             out.vertices.emplace_back(mHeightmap[i-1].x, static_cast<float>(mDepth));
             out.indices.push_back(out.vertices.size()-1);
+
+            out.indices.push_back(i-1);
+            out.indices.push_back(out.vertices.size()-2);
+            out.indices.push_back(out.vertices.size()-1);
         }
+
+        out.indices.push_back(lastInHeightmap-1);
+        out.indices.push_back(out.vertices.size()-1);
+        out.vertices.emplace_back(mHeightmap[lastInHeightmap-1].x, static_cast<float>(mDepth));
+        out.indices.push_back(out.vertices.size()-1);
 
         const float maxWidth = mHeightmap.back().x;
 
@@ -48,7 +63,7 @@ namespace ggmTanks {
         mMeshDirty(true)
     {
         int height = 0;
-        for (int i = 0; i < width; ++i) {
+        for (int i = 0; i < width; i += 20) {
             if (i % 5 == 0) height += rand()%10 - 5;
             mHeightmap.emplace_back(i, height);
         }

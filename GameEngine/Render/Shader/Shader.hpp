@@ -111,10 +111,10 @@ namespace ggm {
                 static bool _ = typeCheck(u.type, Vec3);
                 glUniform3f(u.location, value.x, value.y, value.z);
 
-            } else if constexpr (std::is_same_v<V, Vector4f>) {
+            } else if constexpr (std::is_base_of_v<Vector4f, V>) {
 
                 static bool _ = typeCheck(u.type, Vec4);
-                static_assert(false, "Unsupported uniform type");
+                glUniform4f(u.location, value.x, value.y, value.z, value.w);
 
             } else if constexpr (std::is_same_v<V, Matrix3f>) {
 

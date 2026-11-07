@@ -6,16 +6,17 @@
 #include "Engine/Core/EntityComponentSystem/ComponentRegistry.hpp"
 #include "Engine/Core/EntityComponentSystem/Components/PlayerControlled.hpp"
 #include "Engine/Core/EntityComponentSystem/Components/Transformation.hpp"
+#include "Engine/Core/EntityComponentSystem/Components/Physics/PhysicsObjectCircle.hpp"
 
 namespace ggm::PlayerController {
 
-    void moveEntities(std::vector<Transformation>& transformations);
+    void moveEntities(std::span<PhysicsObjectCircle> physicsObjects);
 
     template<typename... Components>
-    requires ContainsType<Transformation, Components...> && ContainsType<PlayerControlled, Components...>
+    requires ContainsType<PhysicsObjectCircle, Components...> && ContainsType<PlayerControlled, Components...>
     void move(ComponentRegistry<Components...>& registry) {
-        for (auto&[count, entities, transformations, _] : registry.template getArchetypes<Transformation, PlayerControlled>()) {
-            moveEntities(transformations);
+        for (auto&[count, entities, physicsObjects, _] : registry.template getArchetypes<PhysicsObjectCircle, PlayerControlled>()) {
+            moveEntities(physicsObjects);
         }
     }
 }

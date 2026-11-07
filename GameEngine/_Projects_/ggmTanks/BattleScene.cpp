@@ -3,12 +3,14 @@
 //
 #include "BattleScene.hpp"
 
+#include "GuiInterface.h"
 #include "Engine/Core/EntityComponentSystem/Core/RenderContext.hpp"
 #include "Engine/Core/EntityComponentSystem/Systems/Physics/PlayerController.hpp"
 #include "Engine/Core/EntityComponentSystem/Systems/Render/MeshRenderer2D.hpp"
 #include "Engine/Core/EntityComponentSystem/Systems/Loader/MeshLoader2D.hpp"
 #include "Engine/Core/EntityComponentSystem/Systems/Loader/TextureLoader.hpp"
 #include "Engine/Core/EntityComponentSystem/Systems/Physics/Physics2D.hpp"
+#include "Engine/Core/EntityComponentSystem/Systems/Render/DebugRenderer.hpp"
 
 namespace ggmTanks {
     using namespace ggm;
@@ -41,9 +43,12 @@ namespace ggmTanks {
         const RenderContext context {width, height};
 
         MeshRenderer2D::draw(mComponentRegistry, context);
+        DebugRenderer::draw(mComponentRegistry, context);
+        gui_render();
     }
 
     void BattleScene::update(float dt) {
+        gui_update();
         mTerrain.update(mComponentRegistry);
         Physics2D::update(mComponentRegistry, dt);
         PlayerController::move(mComponentRegistry);

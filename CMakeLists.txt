@@ -158,7 +158,11 @@ add_executable(C-Project
         GameEngine/Engine/Core/EntityComponentSystem/Systems/Physics/Physics2D.cpp
         GameEngine/Engine/Core/EntityComponentSystem/Systems/Physics/Physics2D.hpp
         GameEngine/Engine/Core/EntityComponentSystem/Components/Physics/SimpleCollider.hpp
-        GameEngine/Engine/Core/EntityComponentSystem/Components/Physics/PhysicsQuad.hpp
+        GameEngine/_Projects_/ggmTanks/Gui/GameGui.c
+        GameEngine/_Projects_/ggmTanks/Gui/GameGui.h
+        GameEngine/Engine/Core/EntityComponentSystem/Systems/Render/DebugRenderer.cpp
+        GameEngine/Engine/Core/EntityComponentSystem/Systems/Render/DebugRenderer.hpp
+        GameEngine/Engine/Core/EntityComponentSystem/Components/Render/Color.hpp
 )
 
 target_compile_definitions(C-Project PUBLIC JPH_ENABLE_ASSERTS)

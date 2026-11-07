@@ -224,12 +224,20 @@ void gui_onKeyPressCallback(GUI_onKeyPressAction action) {
     )
 }
 
-bool gui_getActive(const char* name) {
+bool gui_isActive(const char* name) {
     bool status = false;
     Thread_Locked(
         status = Element_get(Element_getElement(name))->flags.isActive;
     )
     return status;
+}
+
+bool gui_wasClicked(const char* name) {
+    bool clicked = false;
+    Thread_Locked(
+        clicked = Element_get(Element_getElement(name))->flags.wasClicked;
+    )
+    return clicked;
 }
 
 void gui_delete(const char* name) {
@@ -370,10 +378,12 @@ static void Engine_updateElements(ElementHandle handle, double deltaTime) {
 
     if (self->callbacks.onUpdate) self->callbacks.onUpdate(self);
 
-    self->flags.isHovered = false;
+    self->flags.isHovered  = false;
     self->flags.isSelected = false;
-    for arrEachRev(child, self->aFlowElements) {Engine_updateElements(*child,deltaTime);}
-    for arrEachRev(child, self->aStaticElements) {Engine_updateElements(*child,deltaTime);}
+    self->flags.wasClicked = false;
+
+    for arrEachRev(child, self->aFlowElements)   Engine_updateElements(*child,deltaTime);
+    for arrEachRev(child, self->aStaticElements) Engine_updateElements(*child,deltaTime);
 }
 
 static bool Engine_processInputRoot(GuiState *renderer) {
@@ -406,9 +416,10 @@ static void Engine_processInput(GuiState *renderer, double deltaTime) {
 
 static bool Engine_rectContains(Vec2f pos, Vec2f dims, Vec2f point) {
     if (point.x <= pos.x+dims.x && point.x >= pos.x &&
-        point.y <= pos.y+dims.y && point.y >= pos.y) {
+        point.y <= pos.y+dims.y && point.y >= pos.y)
+    {
         return true;
-        }
+    }
     return false;
 }
 
@@ -439,7 +450,10 @@ static bool Engine_processInputRec(ElementHandle elementHandle, GuiState *render
         if (click(renderer->window, GLFW_MOUSE_BUTTON_LEFT)) {
             mouseCapturedElement = element;
             focusedElement = element;
-            if (element->callbacks.onClick && element->callbacks.onClick(element)) return true;
+            if (element->callbacks.onClick && element->callbacks.onClick(element)) {
+                element->flags.wasClicked = true;
+                return true;
+            }
         }
         return true;
     }
@@ -498,32 +512,10 @@ void gui_resizeCallback(GLFWwindow *window, const int width, const int height) {
 
 void gui_refreshCallback(GLFWwindow* window) {
     gGuiState.meshesDirty = true;
-#if 0
-    measureTime("clear",
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    );
-
-    measureTime("update",
-        gui_update();
-    );
-
-    measureTime("render",
-        gui_render();
-    );
-
-    measureTime("buffer swap",
-        glfwSwapBuffers(gGuiState.window);
-    );
-#else
-
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        gui_update();
-        gui_render();
-        glfwSwapBuffers(gGuiState.window);
-
-
-#endif
-
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    gui_update();
+    gui_render();
+    glfwSwapBuffers(gGuiState.window);
 }
 
 void gui_cursorPositionCallback(GLFWwindow* window, const double xPos, const double yPos) {
