@@ -43,7 +43,14 @@ static ElementHandle ggmTanks_simpleButton(const char* text, const char* name, b
 }
 
 void ggmTanks_createDebugMenu(Element* root) {
-    gui_addTextures("Icons/WhiteX.png", "Pointer Schematic.png", "Icons/RefreshIcon.png", "Icons/DebugIcon.png", "Icons/DebugBug.png");
+    gui_addTextures(
+        "Icons/WhiteX.png",
+        "Pointer Schematic.png",
+        "Icons/RefreshIcon.png",
+        "Icons/DebugIcon.png",
+        "Icons/DebugBug.png"
+    );
+
     Element_addChildren(root,
         Element_new((ElementSettings){
             .cornerRadius = 10,
