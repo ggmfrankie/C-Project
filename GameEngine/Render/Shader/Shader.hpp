@@ -118,7 +118,7 @@ namespace ggm {
 
             const static auto typeCheck = [](UniformType a, UniformType b) {
                 if (a == Unknown || b == Unknown || a == b) return true;
-                throw Exception("[Warning] Uniform type '{}' not matching with Uniform type '{}' in shader program", a, b);
+                throw Exception({"[Warning] Uniform type '{}' not matching with Uniform type '{}' in shader program", a, b});
             };
 
             if constexpr (std::is_same_v<V, float>) {
@@ -174,7 +174,7 @@ namespace ggm {
 
         std::filesystem::path mVertPath{};
         std::filesystem::path mFragPath{};
-        std::unordered_map <std::string, Uniform> mUniformLocationMap{};
+        std::unordered_map<std::string, Uniform> mUniformLocationMap{};
         GLuint mProgramId = 0;
         GLuint mVertexId = 0;
         GLuint mFragmentId = 0;
@@ -186,11 +186,9 @@ namespace ggm {
             GLUniform(std::string_view type, std::string_view name);
         };
 
-        static std::vector<GLUniform>
-            getUniforms(const std::string& shaderFile);
+        static std::vector<GLUniform> getUniforms(const std::string& shaderFile);
 
-        const Uniform&
-            getUniform(const std::string &name) const;
+        const Uniform& getUniform(const std::string &name) const;
 
         void createUniform(const std::string &name, UniformType type);
     };

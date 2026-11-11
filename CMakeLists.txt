@@ -164,6 +164,9 @@ add_executable(C-Project
         GameEngine/Utils/Debug/ASSERT.cpp
         GameEngine/_Projects_/ggmTanks/Gui/GuiCallbacks.cpp
         GameEngine/_Projects_/ggmTanks/Gui/GuiCallbacks.hpp
+        GameEngine/Utils/Debug/Message.hpp
+        GameEngine/_Projects_/ggmTanks/Registry.hpp
+        GameEngine/_Projects_/ggmTanks/BattleScene.hpp
 )
 
 target_compile_definitions(C-Project PUBLIC JPH_ENABLE_ASSERTS)

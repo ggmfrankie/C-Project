@@ -5,18 +5,25 @@
 #pragma once
 #include <exception>
 #include <format>
+#include <source_location>
+#include <filesystem>
+
+#include "Message.hpp"
 
 namespace ggm {
     class Exception : public std::exception {
         std::string mMessage;
     public:
-        template<typename... Args>
-        explicit Exception(std::format_string<Args...> fmt, Args&&... args) :
-            mMessage(std::format(fmt, std::forward<Args>(args)...))
-        {}
 
-        // explicit Exception(const std::string& msg) :
-        //     mMessage(msg)
-        // {}
+        explicit Exception(Message&& message, const std::source_location& loc = std::source_location::current()) :
+        mMessage(
+            std::format(
+                "[EXCEPTION]: {}:{} {}",
+                std::filesystem::path(loc.file_name()).filename().string(),
+                loc.line(),
+                message.data
+            )
+        )
+        {}
     };
 } // ggm

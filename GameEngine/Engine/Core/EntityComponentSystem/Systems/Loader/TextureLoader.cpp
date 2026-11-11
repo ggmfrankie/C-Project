@@ -4,7 +4,7 @@
 
 #include "TextureLoader.hpp"
 
-#include "Debug/ASSERT.hpp"
+#include "Debug/Assert.hpp"
 #include "stb/stb_image.h"
 
 namespace ggm::TextureLoader {
@@ -46,13 +46,10 @@ namespace ggm::TextureLoader {
 
         stbi_set_flip_vertically_on_load(false);
 
-        if (!pixels) {
-            std::ostringstream error;
-            error << "Failed to load texture " << fullPath << "\n";
-            throw std::runtime_error{error.str()};
-        }
+        if (!pixels)
+            throw Exception{{"Failed to load texture '{}'", fullPath}};
 
-        ASSERT::openGlLoaded();
+        Assert::openGlLoaded();
 
         glGenTextures(1, &out.id);
         glBindTexture(GL_TEXTURE_2D, out.id);

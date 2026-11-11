@@ -6,6 +6,8 @@
 #include "Jolt/Core/Factory.h"
 
 #include "GameEngine.hpp"
+
+#include "Debug/Assert.hpp"
 #include "Games/IGame.hpp"
 #include "GLFW/glfw3.h"
 
@@ -42,7 +44,7 @@ namespace ggm {
 
         try {
             mScreen.init();
-        } catch (Screen::GlException e) {
+        } catch (const std::exception& e) {
             std::cerr << e.what();
             return;
         }
@@ -76,7 +78,7 @@ namespace ggm {
     }
 
     GameEngine& GameEngine::Get() {
-        assert(mEngineInstance != nullptr);
+        Assert::run(mEngineInstance != nullptr);
         return *mEngineInstance;
     }
 }

@@ -32,11 +32,6 @@ namespace ggm {
 
         [[nodiscard]] IScene& getScene() const;
 
-        class GlException: public std::runtime_error {
-        public:
-            explicit GlException(const std::string& msg)
-                : std::runtime_error(msg) {}
-        };
     private:
         static void framebufferSizeCallback(GLFWwindow *window, int width, int height) noexcept;
 

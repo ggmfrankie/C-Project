@@ -3,11 +3,11 @@
 //
 
 #pragma once
-#include <format>
+
 #include <source_location>
 
+#include "Message.hpp"
 #include "../EngineDefines.hpp"
-
 
 namespace ggm::Logger {
     enum class LogLevel {
@@ -18,16 +18,7 @@ namespace ggm::Logger {
         TRACE
     };
 
-    struct Message {
-        template<typename... Args>
-        // ReSharper disable once CppNonExplicitConvertingConstructor
-        Message(std::format_string<Args...> fmt, Args&&... args) :
-            data(std::format(fmt, std::forward<Args>(args)...))
-        {}
-        std::string data;
-    };
-
-    void setLevel(LogLevel level = LogLevel::INFO);
+    void setLevel(LogLevel level = LogLevel::DEBUG);
 
     void log(std::string_view level, const Message& message, const std::source_location& sourceLocation);
 

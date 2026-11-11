@@ -34,7 +34,7 @@ namespace ggm {
         const GLint loc = glGetUniformLocation(mProgramId, name.c_str());
 
         if (loc == -1)
-            throw Exception("[Warning] Uniform '{}' was not found in shader program.", name);
+            throw Exception({"Uniform '{}' was not found in shader program.", name});
 
         mUniformLocationMap.try_emplace(name, Uniform{loc, type});
     }
@@ -43,7 +43,7 @@ namespace ggm {
         const auto it = mUniformLocationMap.find(name);
 
         if (it == mUniformLocationMap.end())
-            throw Exception("[Error] Uniform '{}' was not created via Shader::createUniform.", name);
+            throw Exception({"Uniform '{}' was not created via Shader::createUniform.", name});
 
         return it->second;
     }
@@ -108,13 +108,13 @@ namespace ggm {
         glGetShaderiv(mVertexId, GL_COMPILE_STATUS, &success);
         if (!success) {
             glGetShaderInfoLog(mVertexId, 511, nullptr, infoLog);
-            throw Exception("Vertex Shader Compile Error:\n{}", infoLog);
+            throw Exception({"Vertex Shader Compile Error:\n{}", infoLog});
         }
 
         glGetShaderiv(mFragmentId, GL_COMPILE_STATUS, &success);
         if (!success) {
             glGetShaderInfoLog(mFragmentId, 511, nullptr, infoLog);
-            throw Exception("Fragment Shader Compile Error:\n{}", infoLog);
+            throw Exception({"Fragment Shader Compile Error:\n{}", infoLog});
         }
 
         glLinkProgram(mProgramId);
@@ -122,7 +122,7 @@ namespace ggm {
         glGetProgramiv(mProgramId, GL_LINK_STATUS, &success);
         if (!success) {
             glGetProgramInfoLog(mProgramId, 512, nullptr, infoLog);
-            throw Exception("Shader Program Link Error:\n{}", infoLog);
+            throw Exception({"Shader Program Link Error:\n{}", infoLog});
         }
 
         glValidateProgram(mProgramId);

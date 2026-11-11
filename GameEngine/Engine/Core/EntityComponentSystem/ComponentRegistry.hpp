@@ -14,6 +14,7 @@
 
 #include "Entity.hpp"
 #include "DataStorage/HashMap.hpp"
+#include "Debug/Exception.hpp"
 #include "Utils/Debug/Logger.hpp"
 
 namespace ggm {
@@ -307,8 +308,7 @@ namespace ggm {
             for (auto& a : mArchetypes) {
                 if (a.contains(entity)) return a;
             }
-            Logger::error({"Entity not found"});
-            return {};
+            throw Exception({"Entity with id: {} not found", entity.mId});
         }
 
     public:
@@ -411,6 +411,14 @@ namespace ggm {
             sourceArchetype.remove(entity);
         }
 
+        /**
+         *
+         * @tparam RemovedComponents The components types that are being removed
+         * @tparam AddedComponents The component types that are being added
+         * @param entity The entity that should be changed
+         * @param removed A TypeList listing all removed components
+         * @param added All the Components that should be added with their data
+         */
         template<typename... RemovedComponents, typename... AddedComponents>
         requires (ContainsType<RemovedComponents, Components...> && ...) &&  (ContainsType<AddedComponents, Components...> && ...)
         void changeComponents(Entity entity, TypeList<RemovedComponents...> removed, AddedComponents&&... added) {
@@ -423,6 +431,11 @@ namespace ggm {
             }
         }
 
+        /**
+         *
+         * @tparam UsedComponents
+         * @return List of Lists of the requested components from elements containing UsedComponents
+         */
         template<typename... UsedComponents>
         requires (ContainsType<UsedComponents, Components...> && ...)
         auto& getArchetypes() {
@@ -437,6 +450,32 @@ namespace ggm {
                     archetype.getEntityCount(),
                     archetype.getEntities(),
                     archetype.template getComponentVector<UsedComponents>()...
+                );
+            }
+
+            return batches;
+        }
+
+        /**
+         *
+         * @tparam Whitelist The components the entity must have
+         * @tparam Blacklist The components the entity must not have
+         * @return List of Lists of the requested components containing Whitelist but not Blacklist
+         */
+        template<typename... Whitelist, typename... Blacklist>
+        requires (ContainsType<Whitelist, Components...> && ...) && (ContainsType<Blacklist, Components...> && ...)
+        auto& getArchetypes(TypeList<Whitelist...>, TypeList<Blacklist...>) {
+            using ComponentBatch = std::tuple<std::size_t, std::vector<Entity>&, std::vector<Whitelist>&...>;
+
+            static std::vector<ComponentBatch> batches {};
+            batches.clear();
+
+            for (auto& archetype : mArchetypes) {
+                if (!archetype.template has<Whitelist...>() || archetype.template has<Blacklist...>()) continue;
+                batches.emplace_back(
+                    archetype.getEntityCount(),
+                    archetype.getEntities(),
+                    archetype.template getComponentVector<Whitelist>()...
                 );
             }
 

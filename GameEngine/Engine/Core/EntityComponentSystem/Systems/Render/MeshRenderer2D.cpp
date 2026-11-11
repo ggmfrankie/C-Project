@@ -6,7 +6,7 @@
 
 #include <ranges>
 
-#include "Debug/ASSERT.hpp"
+#include "Debug/Assert.hpp"
 #include "Engine/Core/EntityComponentSystem/Components/Render/Color.hpp"
 #include "Render/Shader/Shader.hpp"
 
@@ -17,7 +17,7 @@ namespace ggm::MeshRenderer2D {
                 "2D/SpriteShader.vert",
                 "2D/SpriteShader.frag"
             };
-            ASSERT::openGlLoaded();
+            Assert::openGlLoaded();
 
             out.compileAndLink();
             return out;

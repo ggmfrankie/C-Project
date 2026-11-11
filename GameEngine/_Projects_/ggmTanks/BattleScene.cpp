@@ -50,7 +50,8 @@ namespace ggmTanks {
     void BattleScene::update(float dt) {
         gui_update();
         mTerrain.update(mComponentRegistry);
+
         Physics2D::update(mComponentRegistry, dt);
-        PlayerController::move(mComponentRegistry);
+        PlayerController::move(mComponentRegistry, dt);
     }
 }

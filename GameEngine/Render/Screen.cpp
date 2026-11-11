@@ -11,6 +11,7 @@
 
 #include "../../GUIEngine/GuiInterface.h"
 #include "../Games/Scene/3D/Scene3D.hpp"
+#include "Debug/Assert.hpp"
 #include "Engine/Core/EntityComponentSystem/Systems/IO/InputHandler.hpp"
 #include "GLFW/glfw3.h"
 
@@ -31,7 +32,7 @@ namespace ggm {
 
     void Screen::init() {
         if (!glfwInit()) {
-            throw GlException{"Failed to initialize GLFW"};
+            throw Exception{{"Failed to initialize GLFW"}};
         }
 
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -43,17 +44,14 @@ namespace ggm {
         mWindowHandle = glfwCreateWindow(mWidth, mHeight, mName.c_str(), nullptr, nullptr);
         if (!mWindowHandle) {
             glfwTerminate();
-            throw GlException{"Failed to open GLFW window"};
+            throw Exception{{"Failed to open GLFW window"}};
         }
 
         glfwMakeContextCurrent(mWindowHandle);
-        glfwSetWindowUserPointer(mWindowHandle, this);
 
-        if (!gladLoadGL(glfwGetProcAddress)) {
-            glfwDestroyWindow(mWindowHandle);
-            glfwTerminate();
-            throw GlException{"Failed to load OpenGL"};
-        }
+        Assert::openGlLoaded();
+
+        glfwSetWindowUserPointer(mWindowHandle, this);
 
         glViewport(0, 0, mWidth, mHeight);
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -65,13 +63,13 @@ namespace ggm {
 
         InputHandler::init(mWindowHandle);
 
-        assert(mScene);
+        Assert::run(mScene);
         mScene->init();
     }
 
     void Screen::render() const noexcept {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        assert(mScene != nullptr);
+        Assert::run(mScene != nullptr);
         mScene->render(mWidth, mHeight);
         glfwSwapBuffers(mWindowHandle);
     }
@@ -81,7 +79,7 @@ namespace ggm {
      * @param scene The scene that should be processed
      */
     void Screen::attachScene(IScene *scene) {
-        assert(scene != nullptr);
+        Assert::run(scene != nullptr);
         mScene = scene;
     }
 
@@ -110,7 +108,7 @@ namespace ggm {
     }
 
     void Screen::update(const float dt) const noexcept {
-        assert(mScene != nullptr);
+        Assert::run(mScene != nullptr);
         mScene->update(dt);
     }
 }
