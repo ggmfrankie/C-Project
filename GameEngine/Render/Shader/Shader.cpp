@@ -4,12 +4,14 @@
 
 #include "Shader.hpp"
 
+#include <bitset>
 #include <cassert>
 #include <cstring>
 #include <utility>
-#include <sstream>
+#include <format>
 
 #include "../../Utils/Os/FileIO.hpp"
+#include "Debug/Exception.hpp"
 #include "Utils/Math/Matrix.hpp"
 #include "Utils/Math/Vector.hpp"
 #include "glad/gl.h"
@@ -30,21 +32,19 @@ namespace ggm {
 
     void Shader::createUniform(const string &name, UniformType type) {
         const GLint loc = glGetUniformLocation(mProgramId, name.c_str());
-        if (loc == -1) {
-            std::ostringstream error;
-            error << "[Warning] Uniform '" << name << "' not found in shader program.\n";
-            throw ShaderException(error.str());
-        }
+
+        if (loc == -1)
+            throw Exception("[Warning] Uniform '{}' was not found in shader program.", name);
+
         mUniformLocationMap.try_emplace(name, Uniform{loc, type});
     }
 
     const Shader::Uniform& Shader::getUniform(const std::string& name) const {
         const auto it = mUniformLocationMap.find(name);
-        if (it == mUniformLocationMap.end()) {
-            std::ostringstream error;
-            error << "[Error] Uniform '" << name << "' was not created via Shader::createUniform.\n";
-            throw ShaderException(error.str());
-        }
+
+        if (it == mUniformLocationMap.end())
+            throw Exception("[Error] Uniform '{}' was not created via Shader::createUniform.", name);
+
         return it->second;
     }
 
@@ -78,7 +78,7 @@ namespace ggm {
     std::vector<Shader::GLUniform>
     Shader::getUniforms(const std::string& shaderFile) {
         using sv = const std::string_view;
-        auto out = ggm::LazyStream(ggm::split(shaderFile, '\n'))
+        auto out = LazyStream(split(shaderFile, '\n'))
             .filter([](auto& a){ return a.starts_with("uniform ");})
             .map([](auto a) {
                 a.remove_prefix(strlen("uniform "));
@@ -108,17 +108,13 @@ namespace ggm {
         glGetShaderiv(mVertexId, GL_COMPILE_STATUS, &success);
         if (!success) {
             glGetShaderInfoLog(mVertexId, 511, nullptr, infoLog);
-            std::ostringstream error;
-            error << "Vertex Shader Compile Error:\n" << infoLog << "\n";
-            throw ShaderException(error.str());
+            throw Exception("Vertex Shader Compile Error:\n{}", infoLog);
         }
 
         glGetShaderiv(mFragmentId, GL_COMPILE_STATUS, &success);
         if (!success) {
             glGetShaderInfoLog(mFragmentId, 511, nullptr, infoLog);
-            std::ostringstream error;
-            error << "Fragment Shader Compile Error:\n" << infoLog << "\n";
-            throw ShaderException(error.str());
+            throw Exception("Fragment Shader Compile Error:\n{}", infoLog);
         }
 
         glLinkProgram(mProgramId);
@@ -126,9 +122,7 @@ namespace ggm {
         glGetProgramiv(mProgramId, GL_LINK_STATUS, &success);
         if (!success) {
             glGetProgramInfoLog(mProgramId, 512, nullptr, infoLog);
-            std::ostringstream error;
-            error << "Shader Program Link Error:\n" << infoLog << "\n";
-            throw ShaderException(error.str());
+            throw Exception("Shader Program Link Error:\n{}", infoLog);
         }
 
         glValidateProgram(mProgramId);
@@ -154,7 +148,7 @@ namespace ggm {
     }
 
     std::string Shader::readShaderFile(const path& fileName) {
-        return ggm::FileIO::readFile("../GameEngine/Render/Shader/GlslShader" / fileName);
+        return FileIO::readFile("../GameEngine/Render/Shader/GlslShader" / fileName);
     }
 
     GLuint Shader::createShader(const GLchar *code, const int shaderType) const {
@@ -176,34 +170,6 @@ namespace ggm {
     // ReSharper disable once CppMemberFunctionMayBeStatic
     void Shader::unbind() const { // NOLINT(*-convert-member-functions-to-static)
         glUseProgram(0);
-    }
-
-    Shader::ShaderException::ShaderException(const std::string &msg) :
-        runtime_error(msg)
-    {}
-
-    constexpr std::string_view
-    uniformTypeToString(UniformType type)
-    {
-        using enum UniformType;
-
-        switch (type) {
-            case Int:           return "int";
-            case Float:         return "float";
-            case Bool:          return "bool";
-
-            case Vec2:          return "vec2";
-            case Vec3:          return "vec3";
-            case Vec4:          return "vec4";
-
-            case Mat3:          return "mat3";
-            case Mat4:          return "mat4";
-
-            case Sampler2D:     return "sampler2D";
-            case SamplerCube:   return "samplerCube";
-
-            default:            return "unknown";
-        }
     }
 
     std::ostream& operator<<(std::ostream& lhs, UniformType rhs) {

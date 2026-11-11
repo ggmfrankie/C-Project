@@ -7,10 +7,11 @@
 #include <filesystem>
 #include <string>
 #include <vector>
-#include <sstream>
 #include <unordered_map>
 #include <utility>
+#include <format>
 
+#include "Debug/Exception.hpp"
 #include "Utils/Math/Matrix.hpp"
 #include "glad/gl.h"
 
@@ -34,6 +35,41 @@ namespace ggm {
     };
     std::ostream& operator<<(std::ostream& lhs, UniformType rhs);
 
+    constexpr std::string_view
+    uniformTypeToString(UniformType type)
+    {
+        using enum UniformType;
+
+        switch (type) {
+            case Int:           return "int";
+            case Float:         return "float";
+            case Bool:          return "bool";
+
+            case Vec2:          return "vec2";
+            case Vec3:          return "vec3";
+            case Vec4:          return "vec4";
+
+            case Mat3:          return "mat3";
+            case Mat4:          return "mat4";
+
+            case Sampler2D:     return "sampler2D";
+            case SamplerCube:   return "samplerCube";
+
+            default:            return "unknown";
+        }
+    }
+}
+
+    template<>
+    struct std::formatter<ggm::UniformType> : std::formatter<std::string_view> {
+        auto format(ggm::UniformType rhs, std::format_context& ctx) const {
+            return std::formatter<std::string_view>::format(
+                ggm::uniformTypeToString(rhs), ctx
+            );
+        }
+    };
+
+namespace ggm {
     class Shader {
         [[nodiscard]] GLuint createVertexShader(const std::string &shaderSource) const;
         static std::string readShaderFile(const std::filesystem::path& fileName);
@@ -79,13 +115,12 @@ namespace ggm {
         void setUniform_T(V value) {
             using enum UniformType;
             const static Uniform u = getUniform(Name.value);
+
             const static auto typeCheck = [](UniformType a, UniformType b) {
                 if (a == Unknown || b == Unknown || a == b) return true;
-                std::ostringstream error;
-                error << "[Warning] Uniform type '" << a << "' not matching with Uniform type '" << b << "' in shader program.\n";
-                throw ShaderException(error.str());
+                throw Exception("[Warning] Uniform type '{}' not matching with Uniform type '{}' in shader program", a, b);
             };
-            {
+
             if constexpr (std::is_same_v<V, float>) {
 
                 static bool _ = typeCheck(u.type, Float);
@@ -129,12 +164,7 @@ namespace ggm {
             } else {
                 static_assert(false, "Unsupported uniform type");
             }
-            }
         }
-
-        struct ShaderException final : std::runtime_error{
-            explicit ShaderException(const std::string &msg);
-        };
 
     private:
         struct Uniform {
@@ -164,5 +194,4 @@ namespace ggm {
 
         void createUniform(const std::string &name, UniformType type);
     };
-
 }

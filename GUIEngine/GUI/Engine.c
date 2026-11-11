@@ -249,9 +249,9 @@ void gui_delete(const char* name) {
 }
 
 void Engine_loop(void (*generateGUI)(Element* guiRoot)) {
-    enum { width  = 512 };
-    enum { height = 512 };
-    gui_init(Render_initWindow(width, height, "Chess"), width, height, generateGUI);
+    constexpr int WIDTH  = 512;
+    constexpr int HEIGHT = 512;
+    gui_init(Render_initWindow(WIDTH, HEIGHT, "Chess"), WIDTH, HEIGHT, generateGUI);
 
     // StandaloneTexture* graphTexture = Texture_new(WIDTH, HEIGHT);
     // gGuiState.computeShader = ComputeShader_new(nullptr, 1024);
@@ -450,8 +450,8 @@ static bool Engine_processInputRec(ElementHandle elementHandle, GuiState *render
         if (click(renderer->window, GLFW_MOUSE_BUTTON_LEFT)) {
             mouseCapturedElement = element;
             focusedElement = element;
+            element->flags.wasClicked = true;
             if (element->callbacks.onClick && element->callbacks.onClick(element)) {
-                element->flags.wasClicked = true;
                 return true;
             }
         }
@@ -549,6 +549,7 @@ Font *Engine_getDefaultFont() {
     return font;
 }
 
+[[maybe_unused]]
 static double graphingFunction(const double x) {
     //const Spannung value = berechneSpannungsteiler(10, 40, berechneErsatzwiderstand(30, 10 * x));
     //printf("%6.4f %6.4f\n", x*10, value);

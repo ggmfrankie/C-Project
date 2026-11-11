@@ -26,20 +26,19 @@ static ElementStringReference* gmElements;
 
 bool Element_isNullHandle(ElementHandle handle) {
     const auto null = ELEMENT_HANDLE_NULL;
-
     return handle.ID == null.ID;
 }
 
 void Element_init() {
+    constexpr int INIT_CAPACITY = 512;
     Log_info("Initializing element storage");
-    Log_debug("SparseSet capacity: 512");
-    gElements = SparseSet_new(Element, 512);
+    Log_debug("SparseSet capacity: %i", INIT_CAPACITY);
+    gElements = SparseSet_new(Element, INIT_CAPACITY);
 }
 
 static ElementHandle Element_allocateNewV2(const Vec2f pos, const int width, const int height) {
     const ElementHandle handle = {
         .ID = SparseSet_add(&gElements, (Element){
-                    .name = nullptr,
                     .dims = {
                         .width = width,
                         .height = height,
@@ -72,7 +71,7 @@ ElementHandle Element_addChildElements(Element *parent, ...) {
 
 ElementHandle Element_addChildElements_vaList(ElementHandle parentHandle, va_list args) {
     assert(parentHandle.ID != -1);
-    while (1) {
+    while (true) {
         const ElementHandle childHandle = va_arg(args, ElementHandle);
         if (childHandle.ID == -1) break;
 

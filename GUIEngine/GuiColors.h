@@ -4,6 +4,8 @@
 
 #pragma once
 
+#define GUI_COLOR_GRAYSCALE(pBrightness)(Vec3f){(pBrightness), (pBrightness), (pBrightness)}
+
 #define GUI_COLOR_WHITE       (Vec3f){1.000f, 1.000f, 1.000f}
 #define GUI_COLOR_LIGHTGRAY1  (Vec3f){0.670f, 0.670f, 0.670f}
 #define GUI_COLOR_LIGHTGRAY2  (Vec3f){0.780f, 0.780f, 0.780f}

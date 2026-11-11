@@ -6,8 +6,8 @@
 
 #include <ranges>
 
+#include "Debug/ASSERT.hpp"
 #include "Engine/Core/EntityComponentSystem/Components/Render/Color.hpp"
-#include "Engine/Debug/ASSERT.hpp"
 #include "Render/Shader/Shader.hpp"
 
 namespace ggm::MeshRenderer2D {

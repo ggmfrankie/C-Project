@@ -5,7 +5,7 @@
 #include "Math.hpp"
 
 #include "ggmdef.hpp"
-#include "Engine/Debug/Logger.hpp"
+#include "Utils/Debug/Logger.hpp"
 #include "Math/Vector.hpp"
 
 namespace ggm::Math {

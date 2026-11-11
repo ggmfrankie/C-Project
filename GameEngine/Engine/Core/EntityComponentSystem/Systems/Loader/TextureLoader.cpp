@@ -4,7 +4,7 @@
 
 #include "TextureLoader.hpp"
 
-#include "Engine/Debug/ASSERT.hpp"
+#include "Debug/ASSERT.hpp"
 #include "stb/stb_image.h"
 
 namespace ggm::TextureLoader {

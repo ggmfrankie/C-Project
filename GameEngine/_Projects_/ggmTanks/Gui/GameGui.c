@@ -5,30 +5,20 @@
 #include "GameGui.h"
 
 #include "GuiColors.h"
-#include "glad/gl.h"
+#include "GLFW/glfw3.h"
 
 #include "GUI/GuiElement/GuiElement.h"
-#include "GUI/GuiElement/ElementTypes/ScrollArea.h"
-
-static bool ggmTanks_onClickToggleDebugView(Element*) {
-    static bool debug = false;
-    if ((debug = !debug)) {
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    } else {
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    }
-    return true;
-}
+#include "GuiCallbacks.hpp"
 
 static ElementHandle ggmTanks_simpleButton(const char* text, const char* name, bool (*onClick)(Element* element)) {
     return Element_new((ElementSettings){
-        .color = GUI_COLOR_DARKGRAY(0.090),
+        .color = GUI_COLOR_GRAYSCALE(0.090),
         .padding = {5, 5, 5, 5},
         .childGap = 5,
         .cornerRadius = 7
     },
         Element_new((ElementSettings){
-            .color = GUI_COLOR_DARKGRAY(0.130),
+            .color = GUI_COLOR_GRAYSCALE(0.130),
             .cornerRadius = 5,
             .padding = {5,5,5,7},
             .text = text,
@@ -44,7 +34,7 @@ void ggmTanks_createDebugMenu(Element* root) {
     Element_addChildren(root,
         Element_new((ElementSettings){
             .cornerRadius = 10,
-            .color = GUI_COLOR_DARKGRAY(0.030),
+            .color = GUI_COLOR_GRAYSCALE(0.030),
             .childGap = 10,
             .padding = {10, 10, 10, 10},
             .draggable = true,
@@ -57,7 +47,9 @@ void ggmTanks_createDebugMenu(Element* root) {
                 .notSelectable = true
             }),
 
-            ggmTanks_simpleButton("Toggle debug view", nullptr, ggmTanks_onClickToggleDebugView)
+            ggmTanks_simpleButton("Toggle debug view", nullptr, ggmTanks_onClick_toggleDebugView),
+            ggmTanks_simpleButton("Reload Terrain", "terrain_reload", nullptr),
+            ggmTanks_simpleButton("Close Window", nullptr, ggmTanks_onClick_closeWindow)
         )
     );
 }

@@ -65,8 +65,6 @@ add_executable(C-Project
         GameEngine/Games/Controller/Player.cpp
         GameEngine/Games/Controller/Player.hpp
         GameEngine/Utils/DataStorage/SparseSet.hpp
-        GameEngine/Engine/Debug/Logger.cpp
-        GameEngine/Engine/Debug/Logger.hpp
         GameEngine/Utils/Os/Time.cpp
         GameEngine/Utils/Os/Time.hpp
         GameEngine/Engine/Core/PhysixBox2D/PointMass.hpp
@@ -147,8 +145,6 @@ add_executable(C-Project
         GameEngine/Engine/Core/EntityComponentSystem/Systems/Render/MeshRenderer2D.cpp
         GameEngine/Engine/Core/EntityComponentSystem/Systems/Render/MeshRenderer2D.hpp
         GameEngine/Engine/Core/EntityComponentSystem/Components/Render/Texture.hpp
-        GameEngine/Engine/Debug/ASSERT.cpp
-        GameEngine/Engine/Debug/ASSERT.hpp
         GameEngine/Engine/Core/EntityComponentSystem/Components/Render/MeshData2D.hpp
         GameEngine/Engine/Core/EntityComponentSystem/Systems/Loader/MeshLoader2D.cpp
         GameEngine/Engine/Core/EntityComponentSystem/Systems/Loader/MeshLoader2D.hpp
@@ -163,6 +159,11 @@ add_executable(C-Project
         GameEngine/Engine/Core/EntityComponentSystem/Systems/Render/DebugRenderer.cpp
         GameEngine/Engine/Core/EntityComponentSystem/Systems/Render/DebugRenderer.hpp
         GameEngine/Engine/Core/EntityComponentSystem/Components/Render/Color.hpp
+        GameEngine/Utils/Debug/Exception.hpp
+        GameEngine/Utils/Debug/Logger.cpp
+        GameEngine/Utils/Debug/ASSERT.cpp
+        GameEngine/_Projects_/ggmTanks/Gui/GuiCallbacks.cpp
+        GameEngine/_Projects_/ggmTanks/Gui/GuiCallbacks.hpp
 )
 
 target_compile_definitions(C-Project PUBLIC JPH_ENABLE_ASSERTS)

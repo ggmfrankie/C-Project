@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <assert.h>
 
+#include "GuiInterface.h"
 #include "Engine/Core/EntityComponentSystem/Components/Render/MeshData2D.hpp"
 #include "Engine/Core/EntityComponentSystem/Systems/Loader/MeshLoader2D.hpp"
 #include "GUIEngine/Utils/Math/Math.hpp"
@@ -14,6 +15,8 @@
 namespace ggmTanks {
     using namespace ggm;
     using std::filesystem::path;
+
+    std::vector<Vector2f> generateRandomHeightmap(int width);
 
     MeshData2D Terrain::reloadMesh() {
         MeshData2D out {};
@@ -59,14 +62,21 @@ namespace ggmTanks {
     {}
 
     Terrain::Terrain(int width, int depth) :
+        mHeightmap(generateRandomHeightmap(width)),
         mDepth(depth),
         mMeshDirty(true)
-    {
+    {}
+
+    std::vector<Vector2f> generateRandomHeightmap(int width) {
+        std::vector<Vector2f> out;
+
         int height = 0;
-        for (int i = 0; i < width; i += 20) {
-            if (i % 5 == 0) height += rand()%10 - 5;
-            mHeightmap.emplace_back(i, height);
+        for (int i = 0; i < width; i += 10) {
+            const int offset = ((rand()%20 -10)?:1);
+            height += rand() % offset - offset/2+1;
+            out.emplace_back(i, height);
         }
+        return out;
     }
 
     void Terrain::registerMesh(Registry& registry) {
@@ -81,8 +91,9 @@ namespace ggmTanks {
     }
 
     void Terrain::update(Registry& registry) {
-        if (mMeshDirty) {
-            registry.changeComponents(mMeshEntity, TypeList<Mesh2D>{}, reloadMesh());
+        if (mMeshDirty || gui_wasClicked("terrain_reload")) {
+            mHeightmap = generateRandomHeightmap(1000);
+            registry.changeComponents(mMeshEntity, TypeList<Mesh2D, SimpleCollider>{}, reloadMesh(), SimpleCollider{mHeightmap, {0,500}});
             MeshLoader2D::load(registry);
             mMeshDirty = false;
         }

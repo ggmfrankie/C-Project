@@ -6,12 +6,12 @@
 
 #include <ranges>
 
+#include "Debug/ASSERT.hpp"
 #include "Engine/Core/EntityComponentSystem/Components/Render/Color.hpp"
 #include "Engine/Core/EntityComponentSystem/Components/Render/Mesh2D.hpp"
 #include "Engine/Core/EntityComponentSystem/Components/Render/Texture.hpp"
 #include "Engine/Core/EntityComponentSystem/Systems/Loader/MeshLoader2D.hpp"
 #include "Engine/Core/EntityComponentSystem/Systems/Loader/TextureLoader.hpp"
-#include "Engine/Debug/ASSERT.hpp"
 #include "Render/Shader/Shader.hpp"
 
 namespace ggm::DebugRenderer {

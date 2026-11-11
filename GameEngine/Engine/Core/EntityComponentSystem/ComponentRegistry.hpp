@@ -14,7 +14,7 @@
 
 #include "Entity.hpp"
 #include "DataStorage/HashMap.hpp"
-#include "Engine/Debug/Logger.hpp"
+#include "Utils/Debug/Logger.hpp"
 
 namespace ggm {
     template<typename T, typename... Ts>
