@@ -161,12 +161,12 @@ add_executable(C-Project
         GameEngine/Engine/Core/EntityComponentSystem/Components/Render/Color.hpp
         GameEngine/Utils/Debug/Exception.hpp
         GameEngine/Utils/Debug/Logger.cpp
-        GameEngine/Utils/Debug/ASSERT.cpp
         GameEngine/_Projects_/ggmTanks/Gui/GuiCallbacks.cpp
         GameEngine/_Projects_/ggmTanks/Gui/GuiCallbacks.hpp
         GameEngine/Utils/Debug/Message.hpp
         GameEngine/_Projects_/ggmTanks/Registry.hpp
         GameEngine/_Projects_/ggmTanks/BattleScene.hpp
+        GameEngine/Utils/Debug/Assert.cpp
 )
 
 target_compile_definitions(C-Project PUBLIC JPH_ENABLE_ASSERTS)
@@ -178,6 +178,7 @@ endif (WIN32)
 if (UNIX)
     set(GLFW_LIB "${CMAKE_SOURCE_DIR}/Dependencies/lib-mingw-w64/Linux/libglfw3.a")
 endif (UNIX)
+
 add_library(glfw STATIC IMPORTED)
 set_target_properties(glfw PROPERTIES
         IMPORTED_LOCATION "${GLFW_LIB}"

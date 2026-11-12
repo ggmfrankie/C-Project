@@ -25,7 +25,7 @@
 
 \section{Versuchsziel}
 
-Im folgenden Versuch werden mehrere Messungen an einem Einweggleichrichter und einem Gleichrichter in Graetzschaltung duchgeführt. Dabei sollen an bestimmten Messpunkten Gleich- und Wechselanteile der Schaltungen gemessen werden und dadurch die Funktionsweise und Limitation eines Gleichrichters dargestellt werden 
+Im folgenden Versuch werden mehrere Messungen an einem Einweggleichrichter und einem Gleichrichter in Graetzschaltung duchgeführt. Dabei sollen an bestimmten Messpunkten Gleich- und Wechselanteile der Schaltungen gemessen und dadurch die Funktionsweise und Limitation eines Gleichrichters dargestellt werden 
 
 \section{Versuchsaufbau}
 \begin{figure}[H]
@@ -39,7 +39,7 @@ Im folgenden Versuch werden mehrere Messungen an einem Einweggleichrichter und e
     \item Hameg Leistungsmessgerät
     \item Einweggleichrichter aus vier Dioden
     \item Einstellbarer Widerstand
-    \item 100 $\Omega$
+    \item 100 $\Omega$ Widerstand
     \item Kondensatorparallelschaltung
     \item Strommessgerät
     \item Spannungsmessgerät
@@ -60,7 +60,7 @@ Im folgenden Versuch werden mehrere Messungen an einem Einweggleichrichter und e
     \item Hameg Leistungsmessgerät
     \item Graetzschaltung aus vier Dioden
     \item Einstellbarer Widerstand
-    \item 100 $\Omega$
+    \item 100 $\Omega$ Widerstand
     \item Kondensatorparallelschaltung
     \item Strommessgerät
     \item Spannungsmessgerät
@@ -112,6 +112,8 @@ Zum Vergleich wurden die selben Messwerte anhand der Daten des Osziloskopes nach
 \end{table}
 
 Der Strom $i_d$ kann über die Spannung $u_d$ und dem Widerstand im darauffolgenden Zweig bestimmt werden. Da der Widerstand des Kondensators und 10 k$\Omega$ Widerstandes deutlich höher ist der des einstellbaren Widerstandes und $R_v$, ist der Strom relativ akkurat bestimmbar mit \[i_d = \frac{U_rv}{•R_v}\]
+
+\newpage
 
 \subsubsection{Messwerte bei 100 V Eingangsspannung}
 Folgende Messwerte haben sich für eine Eingangswechselspannung von 100 V ergeben.
@@ -331,6 +333,7 @@ Offensichtlich stimmen die Messwerte mit der Theorie gut überein.
 \caption{Spannnungungen als Funktion des Stroms}
 \end{figure}
 
-Ein Problem mit der reinen Graetzschaltung ist, dass das Ausgangssignal immer noch eine relativ hohe Welligkeit, also einen Wechselanteil, besitzt. Um den Gleichanteil nun zu erhöhen und das Signal zu glätten werden zwei Kondensatoren eingebaut.
+Ein Problem mit der reinen Graetzschaltung ist, dass das Ausgangssignal immer noch eine relativ hohe Welligkeit, also einen Wechselanteil, besitzt. Um den Gleichanteil nun zu erhöhen und das Signal zu glätten werden zwei Kondensatoren eingebaut. Die Kondensatoren speichern Energie, wenn das Signal im Maximum ist und geben diese durch Entladen während des Signalminimums ab. Allerdings entladen sich die Kondensatoren bei höherem Laststrom schneller, dadurch nimmt die Welligkeit des Ausgangssignals zu und der Gleichanteil gegengleich ab.\\
+Bei geringen Lastströmen dagegen entladen sich die Kondensatoren nicht komplett, die Welligkeit ist also gering. Allerdings entstehen dadurch kurze Stromspitzen, wenn sich ein Kondensator auflädt. Das Signal des Stromes enthält also impulsartige Spitzen, wodurch der Leistungsfaktor sinkt, da der Effektivwert des Stromes im Verhältnis zur übertragenen Wirkleistung steigt.
 
 \end{document}

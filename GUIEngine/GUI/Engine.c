@@ -113,7 +113,7 @@ void gui_init(GLFWwindow* window, const int width, const int height, void (*gene
     pthread_cond_broadcast(&guiInitCond);
     Log_info("Creating worker thread");
     pthread_create(&workerThreadID, nullptr, workerThreadInit, nullptr);
-    Log_info("GUI initialization finished after %.2llf ms", (glfwGetTime() - startTime)*1000);
+    Log_info("GUI initialization finished after %.2lf ms", (glfwGetTime() - startTime)*1000);
 }
 
 void gui_update() {
