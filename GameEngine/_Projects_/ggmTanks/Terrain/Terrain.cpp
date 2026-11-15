@@ -11,6 +11,7 @@
 #include "Engine/Core/EntityComponentSystem/Components/Render/MeshData2D.hpp"
 #include "Engine/Core/EntityComponentSystem/Systems/Loader/MeshLoader2D.hpp"
 #include "GUIEngine/Utils/Math/Math.hpp"
+#include "_Projects_/ggmTanks/Components/Impact.hpp"
 
 namespace ggmTanks {
     using namespace ggm;
@@ -56,14 +57,10 @@ namespace ggmTanks {
         return out;
     }
 
-    Terrain::Terrain(std::vector<Vector2f>&& heightmap) :
-        mHeightmap(std::move(heightmap)),
-        mMeshDirty(true)
-    {}
-
     Terrain::Terrain(int width, int depth) :
         mHeightmap(generateRandomHeightmap(width)),
         mDepth(depth),
+        mWidth(width),
         mMeshDirty(true)
     {}
 
@@ -73,7 +70,7 @@ namespace ggmTanks {
         int height = 0;
         for (int i = 0; i < width; i += 10) {
             const int offset = ((rand()%20 -10)?:1);
-            height += rand() % offset - offset/2+1;
+            height += offset;
             out.emplace_back(i, height);
         }
         return out;
@@ -90,10 +87,41 @@ namespace ggmTanks {
         );
     }
 
+    void Terrain::handleImpacts(Registry& registry) {
+        using vec2 = Vector2f;
+        auto handleImpact = [this](const Impact& impact) {
+            for (vec2& point : mHeightmap) {
+                vec2 delta = point - impact.pos;
+
+                const float offset = impact.radius - delta.length();
+                if (offset > 0.0f) continue;
+
+                vec2 deltaNorm = delta.normalize();
+
+                point += deltaNorm * offset;
+            }
+        };
+
+        for (auto& [count, entities, impacts] : registry.getArchetypes<Impact>()) {
+            for (auto& impact : impacts) {
+                handleImpact(impact);
+            }
+        }
+    }
+
     void Terrain::update(Registry& registry) {
+        handleImpacts(registry);
+
         if (mMeshDirty || gui_wasClicked("terrain_reload")) {
-            mHeightmap = generateRandomHeightmap(1000);
-            registry.changeComponents(mMeshEntity, TypeList<Mesh2D, SimpleCollider>{}, reloadMesh(), SimpleCollider{mHeightmap, {0,500}});
+            mHeightmap = generateRandomHeightmap(mWidth);
+
+            registry.changeComponents(
+                mMeshEntity,
+                TypeList<Mesh2D, SimpleCollider>{},
+                reloadMesh(),
+                SimpleCollider{mHeightmap, {0,500}}
+            );
+            
             MeshLoader2D::load(registry);
             mMeshDirty = false;
         }

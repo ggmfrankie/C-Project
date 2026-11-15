@@ -5,7 +5,7 @@
 #pragma once
 #include <bitset>
 #include <deque>
-#include <iostream>
+#include <ranges>
 #include <optional>
 #include <span>
 #include <variant>
@@ -14,6 +14,7 @@
 
 #include "Entity.hpp"
 #include "DataStorage/HashMap.hpp"
+#include "Debug/Assert.hpp"
 #include "Debug/Exception.hpp"
 #include "Utils/Debug/Logger.hpp"
 
@@ -141,7 +142,7 @@ namespace ggm {
             std::vector<ComponentVec> mComponents;
             std::vector<Entity> mEntities;
 
-            HashMap<decltype(Entity::mId), size_t> mEntityMappings;
+            HashMap<decltype(std::declval<Entity>().id()), size_t> mEntityMappings;
 
             static constexpr i16 EMPTY_MAPPING = -1;
 
@@ -163,7 +164,7 @@ namespace ggm {
                 return mSignature;
             }
 
-            [[nodiscard]] HashMap<decltype(Entity::mId), size_t>& getEntityMappings() {
+            [[nodiscard]] auto& getEntityMappings() {
                 return mEntityMappings;
             }
 
@@ -249,7 +250,7 @@ namespace ggm {
             template<typename... UsedComponents>
             requires (ContainsType<UsedComponents, Components...> && ...)
             void add(Entity entity, UsedComponents&&... args) {
-                mEntityMappings.insert(entity.mId, mEntities.size());
+                mEntityMappings.insert(entity.id(), mEntities.size());
                 mEntities.push_back(entity);
 
                 (getComponentVector<std::remove_cvref_t<UsedComponents>>().emplace_back(
@@ -266,7 +267,7 @@ namespace ggm {
                 if (index != lastIndex) {
                     mEntities[index] = std::move(mEntities.back());
 
-                    *mEntityMappings[mEntities[index].mId] = index;
+                    *mEntityMappings[mEntities[index].id()] = index;
                 }
 
                 // Delete all components
@@ -280,15 +281,15 @@ namespace ggm {
                 }
 
                 mEntities.pop_back();
-                mEntityMappings.remove(e.mId);
+                mEntityMappings.remove(e.id());
             }
 
             bool contains(const Entity& entity) {
-                return mEntityMappings.contains(entity.mId);
+                return mEntityMappings.contains(entity.id());
             }
 
             std::optional<size_t> getIndex(const Entity& entity) {
-                if (size_t* index = mEntityMappings[entity.mId]) {
+                if (size_t* index = mEntityMappings[entity.id()]) {
                     return *index;
                 }
                 return std::nullopt;
@@ -308,7 +309,7 @@ namespace ggm {
             for (auto& a : mArchetypes) {
                 if (a.contains(entity)) return a;
             }
-            throw Exception({"Entity with id: {} not found", entity.mId});
+            throw Exception({"Entity with id: {} not found", entity.id()});
         }
 
     public:
@@ -332,21 +333,24 @@ namespace ggm {
         }
 
         Archetype& getOrCreateArchetype(TypeSignature signature) {
-            for (auto& archetype : mArchetypes) {
-                if (archetype.hasTypeSignature(signature)) return archetype;
-            }
+            auto it = std::ranges::find_if(mArchetypes, [signature](Archetype& archetype) {
+                return archetype.hasTypeSignature(signature);
+            });
 
-            mArchetypes.push_back(Archetype::New(signature));
-            return mArchetypes.back();
+            if (it != mArchetypes.end())
+                return *it;
+            else {
+                mArchetypes.push_back(Archetype::New(signature));
+                return mArchetypes.back();
+            }
         }
 
         template<typename... RemovedComponents, typename... AddedComponents>
         requires (ContainsType<RemovedComponents, Components...> && ...) &&  (ContainsType<AddedComponents, Components...> && ...)
         void changeComponentsV2(Entity entity, Archetype& sourceArchetype, TypeList<RemovedComponents...> removed, AddedComponents&&... added) {
             auto it = sourceArchetype.getIndex(entity);
-            assert(it);
-
-            assert(sourceArchetype.template has<RemovedComponents...>());
+            Assert::run(it.has_value());
+            Assert::run(sourceArchetype.template has<RemovedComponents...>(), {"Source Archetype {} with Entity {} does not have the components requested to be removed", sourceArchetype.getSignature().bits, entity.id()});
 
             ssize_t changedEntityIndex = *it;
             (void) changedEntityIndex;
@@ -403,7 +407,7 @@ namespace ggm {
                 auto& destinationMappings = destinationArchetype.getEntityMappings();
                 auto& destinationEntities = destinationArchetype.getEntities();
 
-                destinationMappings.insert(entity.mId, destinationEntities.size());
+                destinationMappings.insert(entity.id(), destinationEntities.size());
                 destinationEntities.push_back(entity);
             }
 
@@ -412,7 +416,6 @@ namespace ggm {
         }
 
         /**
-         *
          * @tparam RemovedComponents The components types that are being removed
          * @tparam AddedComponents The component types that are being added
          * @param entity The entity that should be changed

@@ -167,6 +167,7 @@ add_executable(C-Project
         GameEngine/_Projects_/ggmTanks/Registry.hpp
         GameEngine/_Projects_/ggmTanks/BattleScene.hpp
         GameEngine/Utils/Debug/Assert.cpp
+        GameEngine/_Projects_/ggmTanks/Components/Impact.hpp
 )
 
 target_compile_definitions(C-Project PUBLIC JPH_ENABLE_ASSERTS)
@@ -210,6 +211,7 @@ target_link_libraries(C-Project PRIVATE
         Jolt
         winpthread
         McpServerLib
+        stdc++exp
 )
 endif (WIN32)
 

@@ -12,6 +12,7 @@
 #include <format>
 
 #include "Debug/Exception.hpp"
+#include "Debug/Logger.hpp"
 #include "Utils/Math/Matrix.hpp"
 #include "glad/gl.h"
 
@@ -84,7 +85,7 @@ namespace ggm {
         virtual ~Shader();
         virtual void compileAndLink();
 
-        template <size_t N>
+        template<size_t N>
         struct ConstStr {
             char value[N]{};
 
@@ -93,7 +94,7 @@ namespace ggm {
             }
         };
 
-        template <size_t N>
+        template<size_t N>
         static consteval uint32_t fnv1a(const char (&s)[N]) {
             uint32_t hash = 2166136261u;
             for (size_t i = 0; i < N - 1; ++i) {
@@ -118,7 +119,7 @@ namespace ggm {
 
             const static auto typeCheck = [](UniformType a, UniformType b) {
                 if (a == Unknown || b == Unknown || a == b) return true;
-                throw Exception({"[Warning] Uniform type '{}' not matching with Uniform type '{}' in shader program", a, b});
+                Logger::error({"[Warning] Uniform type '{}' not matching with Uniform type '{}' in shader program", a, b});
             };
 
             if constexpr (std::is_same_v<V, float>) {

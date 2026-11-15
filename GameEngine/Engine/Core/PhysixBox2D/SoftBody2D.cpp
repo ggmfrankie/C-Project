@@ -54,7 +54,7 @@ namespace PhysixBox {
 
             vec2 dir = delta.normalize();
 
-            const float vRel = vec2::dot(v1 - v0, dir);
+            const float vRel = Math::dot(v1 - v0, dir);
             const float damping = std::exp(-spring.damping * dt);
             const float newVRel = vRel * damping;
             const float vRelDelta = newVRel -vRel;

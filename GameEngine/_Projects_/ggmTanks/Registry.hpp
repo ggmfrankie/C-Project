@@ -6,6 +6,7 @@
 #include "Engine/Core/EntityComponentSystem/ComponentRegistry.hpp"
 #include "Engine/Core/EntityComponentSystem/Components/PlayerControlled.hpp"
 #include "../../Engine/Core/EntityComponentSystem/Components/Render/Sprite.hpp"
+#include "Components/Impact.hpp"
 #include "Engine/Core/EntityComponentSystem/Components/TextureLocation.hpp"
 #include "Engine/Core/EntityComponentSystem/Components/Transformation.hpp"
 #include "Engine/Core/EntityComponentSystem/Components/Physics/PhysicsObjectCircle.hpp"
@@ -27,6 +28,7 @@ namespace ggmTanks {
         ggm::MeshData2D,
         ggm::MeshDataQuad,
         ggm::SimpleCollider,
-        ggm::PhysicsObjectCircle
+        ggm::PhysicsObjectCircle,
+        Impact
     >;
 }

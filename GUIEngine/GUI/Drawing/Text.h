@@ -13,7 +13,7 @@
 #include "../Dependencies/include/stb/stb_truetype.h"
 #include "Utils/Math/Vector.h"
 #include "Texture/Texture.h"
-#include "../../Utils/DataStructures/String/CStr.h"
+#include "Utils/DataStructures/String/CStr.h"
 
 typedef struct Font {
     StandaloneTexture fontAtlas;
@@ -40,17 +40,18 @@ typedef struct Character {
 } Character;
 
 typedef struct TextElement {
-    Vec2f pos;
-    float width;
-    bool hasText;
-    bool forceResize;
-    Str sText;
-
-    Vec4f textColor;
-    float scale;
-
     Character* aCharQuads;
     Font* font;
+    Str sText;
+
+    Vec2f pos;
+    Vec4f textColor;
+
+    float width;
+    float scale;
+
+    bool hasText;
+    bool forceResize;
 } TextElement;
 
 Font  Text_loadFontAtlas(const char* file);

@@ -9,9 +9,26 @@
 
 
 namespace ggm::Math {
-    std::pair<float, Vector2f> distanceToSegment(const Vector2f& p, const Vector2f& a1, const Vector2f& a2);
-    Vector2f collisionLineWithCircle(Vector2f pos, float radius, const std::span<const Vector2f>& lineSegments, Vector2f linePos = {});
-    float closestDistanceToPolygon(const std::span<const Vector2f>& polygon, const Vector2f& point);
+    auto distanceToSegment(
+        const Vector2f& p,
+        const Vector2f& a1,
+        const Vector2f& a2
+    ) -> std::pair<float, Vector2f>;
 
-    bool isInsidePolygon(const std::span<const Vector2f>& polygon, const Vector2f& point);
+    auto collisionLineWithCircle(
+        Vector2f pos,
+        float radius,
+        const std::span<const Vector2f>& lineSegments,
+        Vector2f linePos = {}
+    ) -> Vector2f;
+
+    auto closestDistanceToPolygon(
+        const std::span<const Vector2f>& polygon,
+        const Vector2f& point
+    ) -> float;
+
+    auto isInsidePolygon(
+        const std::span<const Vector2f>& polygon,
+        const Vector2f& point
+    ) -> bool;
 }

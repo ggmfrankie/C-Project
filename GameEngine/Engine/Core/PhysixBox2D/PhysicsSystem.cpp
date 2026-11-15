@@ -120,7 +120,7 @@ bool PhysicsSystem::isInside(SoftBody2D &a, const Vector2f &point) {
     if (point.y < p0.y && point.y < p1.y)
       continue;
 
-    const float cross = vec2::cross(point - p0, p1 - p0);
+    const float cross = Math::cross(point - p0, p1 - p0);
 
     // deduplicate
     constexpr float EPS = 1e-6f;
@@ -154,7 +154,7 @@ PhysicsSystem::Collision PhysicsSystem::getCollision(SoftBody2D &body, const Vec
     vec2 ab = b - a;
     vec2 ap = p - a;
 
-    const float scalar = vec2::dot(ab, ap);
+    const float scalar = Math::dot(ab, ap);
 
     const float abLenSq = ab.lengthSquared();
     const float d = scalar / abLenSq;
@@ -168,7 +168,7 @@ PhysicsSystem::Collision PhysicsSystem::getCollision(SoftBody2D &body, const Vec
     else
       pointOnLine = a + ab * d;
 
-    if (const float distSq = vec2::distanceSquared(pointOnLine, p);
+    if (const float distSq = Math::distanceSquared(pointOnLine, p);
         distSq < minDistSq) {
       minDistSq = distSq;
 

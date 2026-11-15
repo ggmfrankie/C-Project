@@ -5,22 +5,22 @@
 #include "Entity.hpp"
 
 #include <bitset>
+#include <iostream>
 
 namespace ggm {
-    const Entity Entity::Invalid{1};
+    const Entity Entity::Invalid{-1};
 
-    Entity::Entity()
-    {
-        static i64 generator = 0;
-        mId = generator++;
+    i64 Entity::id() const {
+        return mId;
     }
 
-    constexpr Entity::Entity(i64 index)
-    {
-        mId = index;
-    }
+    Entity::Entity():
+        mId([] {static i64 generator = 0; return generator++;}())
+    {}
+
+    constexpr Entity::Entity(i64 index):
+        mId(index)
+    {}
 
     Entity::~Entity() {}
-
-
 } // ggm

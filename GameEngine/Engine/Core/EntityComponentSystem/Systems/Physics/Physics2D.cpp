@@ -37,7 +37,7 @@ namespace ggm::Physics2D {
 
                     Vector2f normal = correction.normalize();
 
-                    const float normalVelocity = physicsObject.velocity.dot(normal);
+                    const float normalVelocity = Math::dot(physicsObject.velocity, normal);
 
                     if (normalVelocity < 0.0f) {
                         constexpr float friction = 0.9f;

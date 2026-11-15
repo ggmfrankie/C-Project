@@ -19,6 +19,7 @@ namespace ggmTanks {
         std::vector<ggm::Vector2f> mHeightmap;
 
         ggm::u32 mDepth  = 0;
+        ggm::u32 mWidth = 0;
 
         ggm::Entity mMeshEntity {};
         bool mMeshDirty;
@@ -26,10 +27,12 @@ namespace ggmTanks {
         ggm::MeshData2D reloadMesh();
 
     public:
-        explicit Terrain(std::vector<ggm::Vector2f>&& heightmap);
         Terrain(int width, int depth);
 
         void registerMesh(Registry& registry);
+
+        void handleImpacts(Registry& registry);
+
         void update(Registry& registry);
     };
 } // ggmTanks

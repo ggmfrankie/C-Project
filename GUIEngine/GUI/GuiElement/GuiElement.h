@@ -148,7 +148,6 @@ typedef struct Element {
     LayoutDirection layoutDirection;
 } Element;
 
-
 typedef struct ElementSettings {
     const char* name;
     Vec2f pos;
@@ -170,6 +169,11 @@ typedef struct ElementSettings {
     const char* text;
     float textScale;
 
+    struct {
+        void* ptr;
+        void (*destructor)(void* data);
+    } elementData;
+
     bool (*onClick)(Element* self);
     bool (*onHover)(Element* self);
     void (*whileSelected)(Element* self, double deltaTime);
@@ -188,11 +192,6 @@ typedef struct ElementSettings {
     bool noLayoutContributionHorizontal;
     bool noLayoutContributionVertical;
     bool useClipping;
-
-    struct {
-        void* ptr;
-        void (*destructor)(void* data);
-    } elementData;
 
 } ElementSettings;
 

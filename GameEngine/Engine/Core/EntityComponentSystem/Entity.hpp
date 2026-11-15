@@ -8,19 +8,19 @@
 
 namespace ggm {
     struct Entity {
-        i64 mId = -1;
-
         Entity();
         ~Entity();
 
         auto operator<=>(const Entity&) const = default;
-
         friend struct std::hash<Entity>;
 
-    private:
-        explicit constexpr Entity(i64 index);
-    public:
         static const Entity Invalid;
+
+        i64 id() const;
+
+    private:
+        i64 mId = -1;
+        explicit constexpr Entity(i64 index);
     };
 } // ggm
 
