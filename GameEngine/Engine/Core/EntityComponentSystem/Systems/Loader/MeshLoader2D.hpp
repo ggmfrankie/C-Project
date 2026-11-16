@@ -26,20 +26,20 @@ namespace ggm::MeshLoader2D {
         entitiesBuffer.clear();
         spriteBuffer.clear();
 
-        for (auto&[count, entities, meshDatas] : registry.template getArchetypes<MeshData2D>()) {
+        for (auto&[count, entities, meshDatas] : registry.getArchetypes(All<MeshData2D>{})) {
             loadMeshes(entitiesBuffer, entities, meshDatas);
         }
 
-        for (auto&[count, entities, _] : registry.template getArchetypes<MeshDataQuad>()) {
+        for (auto&[count, entities, _] : registry.getArchetypes(All<MeshDataQuad>{})) {
             loadMeshes(spriteBuffer, entities);
         }
 
         for (auto&[entity, mesh2D] : entitiesBuffer) {
-            registry.changeComponents(entity, TypeList<MeshData2D>{}, std::move(mesh2D));
+            registry.changeComponents(entity, Not<MeshData2D>{}, std::move(mesh2D));
         }
 
         for (auto&[entity, mesh2D] : spriteBuffer) {
-            registry.changeComponents(entity, TypeList<MeshDataQuad>{}, std::move(mesh2D));
+            registry.changeComponents(entity, Not<MeshDataQuad>{}, std::move(mesh2D));
         }
     }
 }

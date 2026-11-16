@@ -19,7 +19,7 @@ namespace ggm::TextureLoader {
     void load(ComponentRegistry<Components...>& registry) {
         std::vector<std::pair<Entity, Texture>> entitiesBuffer {};
 
-        for (auto& [count, entities, textureLocations] : registry.template getArchetypes<TextureLocation>()) {
+        for (auto& [count, entities, textureLocations] : registry.getArchetypes(All<TextureLocation>{})) {
 
             for (auto [entity, textureLocation] : std::views::zip(entities, textureLocations)) {
                 entitiesBuffer.emplace_back(
@@ -30,7 +30,7 @@ namespace ggm::TextureLoader {
         }
 
         for (auto&[entity, texture] : entitiesBuffer) {
-            registry.changeComponents(entity, TypeList<TextureLocation>{}, std::move(texture));
+            registry.changeComponents(entity, Not<TextureLocation>{}, std::move(texture));
         }
     }
 }

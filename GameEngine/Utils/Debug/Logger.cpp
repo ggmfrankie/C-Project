@@ -26,19 +26,23 @@ namespace ggm::Logger {
     }
 
     void info(const Message& message, const std::source_location& loc) {
-        if (gLogLevel >= LogLevel::INFO) log("INFO", message, loc);
+        if (gLogLevel >= LogLevel::INFO)
+            log("INFO", message, loc);
     }
 
     void debug(const Message& message, const std::source_location& loc) {
-        if (gLogLevel >= LogLevel::DEBUG) log("DEBUG", message, loc);
+        if (gLogLevel >= LogLevel::DEBUG)
+            log("DEBUG", message, loc);
     }
 
     void trace(const Message& message, const std::source_location& loc) {
-        if (gLogLevel >= LogLevel::TRACE) log("TRACE", message, loc);
+        if (gLogLevel >= LogLevel::TRACE)
+            log("TRACE", message, loc);
     }
 
     void warning(const Message& message, const std::source_location& loc) {
-        if (gLogLevel >= LogLevel::NO_WARNINGS) log("WARNING", message, loc);
+        if (gLogLevel >= LogLevel::NO_WARNINGS)
+            log("WARNING", message, loc);
     }
 
     void error(const Message& message, const std::source_location& loc) {

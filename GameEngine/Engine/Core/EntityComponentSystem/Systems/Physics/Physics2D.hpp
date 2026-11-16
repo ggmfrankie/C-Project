@@ -22,9 +22,9 @@ namespace ggm::Physics2D {
     requires ContainsType<Transformation, Components...> && ContainsType<PhysicsObjectCircle, Components...> && ContainsType<SimpleCollider, Components...>
     void update(ComponentRegistry<Components...>& registry, float deltaTime) {
 
-        auto& collidersList = registry.template getArchetypes<SimpleCollider>();
+        auto& collidersList = registry.getArchetypes(All<SimpleCollider>{});
 
-        for (auto&[count, entities, transformations, physicsObjects] : registry.template getArchetypes<Transformation, PhysicsObjectCircle>()) {
+        for (auto&[count, entities, transformations, physicsObjects] : registry.getArchetypes(All<Transformation, PhysicsObjectCircle>{})) {
             for (auto&[_, __, colliders] : collidersList) {
                 updateWithGravity(deltaTime, transformations, physicsObjects, colliders);
             }

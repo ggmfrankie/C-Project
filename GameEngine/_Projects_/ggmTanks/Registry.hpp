@@ -11,6 +11,7 @@
 #include "Engine/Core/EntityComponentSystem/Components/Transformation.hpp"
 #include "Engine/Core/EntityComponentSystem/Components/Physics/PhysicsObjectCircle.hpp"
 #include "Engine/Core/EntityComponentSystem/Components/Physics/SimpleCollider.hpp"
+#include "Engine/Core/EntityComponentSystem/Components/Render/Color.hpp"
 #include "Engine/Core/EntityComponentSystem/Components/Render/Mesh2D.hpp"
 #include "Engine/Core/EntityComponentSystem/Components/Render/MeshData2D.hpp"
 #include "Engine/Core/EntityComponentSystem/Components/Render/MeshDataQuad.hpp"
@@ -29,6 +30,7 @@ namespace ggmTanks {
         ggm::MeshDataQuad,
         ggm::SimpleCollider,
         ggm::PhysicsObjectCircle,
+        ggm::Color,
         Impact
     >;
 }

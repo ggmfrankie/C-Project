@@ -26,7 +26,7 @@ namespace ggm::ECSTest {
         registry.createEntity({}, Health{.amount = 100}, Velocity{});
         //registry.createEntity({}, SpriteLocation{"ERROR.png"});
 
-        for (auto&[count, entities, velocities, healths] : registry.getArchetypes<Velocity, Health>()) {
+        for (auto&[count, entities, velocities, healths] : registry.getArchetypes(All<Velocity, Health>{})) {
             puts("hello");
         }
 

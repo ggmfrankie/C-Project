@@ -102,7 +102,7 @@ namespace ggmTanks {
             }
         };
 
-        for (auto& [count, entities, impacts] : registry.getArchetypes<Impact>()) {
+        for (auto& [count, entities, impacts] : registry.getArchetypes(All<Impact>{})) {
             for (auto& impact : impacts) {
                 handleImpact(impact);
             }
@@ -117,7 +117,7 @@ namespace ggmTanks {
 
             registry.changeComponents(
                 mMeshEntity,
-                TypeList<Mesh2D, SimpleCollider>{},
+                Not<Mesh2D, SimpleCollider>{},
                 reloadMesh(),
                 SimpleCollider{mHeightmap, {0,500}}
             );

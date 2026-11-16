@@ -17,7 +17,7 @@ namespace ggm::DebugRenderer {
     template<typename... Components>
     requires ContainsType<PhysicsObjectCircle, Components...>
     void draw(ComponentRegistry<Components...>& registry, const RenderContext& context) {
-        for (auto&[count, entities, physicsObjects] : registry.template getArchetypes<PhysicsObjectCircle>()) {
+        for (auto&[count, entities, physicsObjects] : registry.getArchetypes(All<PhysicsObjectCircle>{})) {
             drawPhysicsObjects(context, physicsObjects);
         }
     }
