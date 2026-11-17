@@ -169,6 +169,8 @@ add_executable(C-Project
         GameEngine/Utils/Debug/Assert.cpp
         GameEngine/_Projects_/ggmTanks/Components/Impact.hpp
         GameEngine/Utils/Meta/TypeSet.hpp
+        GameEngine/Utils/DataStorage/String.cpp
+        GameEngine/Utils/DataStorage/String.hpp
 )
 
 target_compile_definitions(C-Project PUBLIC JPH_ENABLE_ASSERTS)
