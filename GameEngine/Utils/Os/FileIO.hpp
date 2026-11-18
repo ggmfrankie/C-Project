@@ -9,6 +9,8 @@
 
 
 namespace ggm::FileIO {
+    using Path = std::filesystem::path;
+
     std::string readFile(const std::string& filePath);
-    std::string readFile(const std::filesystem::path& filePath);
+    std::string readFile(const Path& filePath);
 }

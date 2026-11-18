@@ -9,5 +9,4 @@
 namespace ggm {
     std::vector<std::string_view> split(std::string_view s, char delim);
     double getDouble(const char *start, size_t length);
-
 }

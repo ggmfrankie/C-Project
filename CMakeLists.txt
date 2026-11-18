@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 4.0)
 project(C-Project LANGUAGES C CXX)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -g -pthread")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -g -pthread")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -g -pthread -static -march=native")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -g -pthread -static -march=native")
 
 set(CMAKE_C_STANDARD 23)
 set(CMAKE_C_STANDARD_REQUIRED ON)
@@ -118,7 +118,6 @@ add_executable(C-Project
         OtherProjects/C/Extern/CVector.h
         GameEngine/_Projects_/ggmTanks/TankGame.cpp
         GameEngine/_Projects_/ggmTanks/TankGame.hpp
-        GameEngine/Utils/DataStorage/HashMap.cpp
         GameEngine/Utils/DataStorage/HashMap.hpp
         GameEngine/Utils/Test.cpp
         GameEngine/Utils/Test.hpp
@@ -171,6 +170,11 @@ add_executable(C-Project
         GameEngine/Utils/Meta/TypeSet.hpp
         GameEngine/Utils/DataStorage/String.cpp
         GameEngine/Utils/DataStorage/String.hpp
+        GameEngine/Utils/DataStorage/StringView.cpp
+        GameEngine/Utils/DataStorage/StringView.hpp
+        GameEngine/Engine/Core/EntityComponentSystem/Components/Render/Mesh2D.hpp
+        GameEngine/Engine/Core/EntityComponentSystem/Components/Physics/PhysicsObjectCircle.hpp
+        GameEngine/Engine/Core/EntityComponentSystem/Components/PlayerControlled.hpp
 )
 
 target_compile_definitions(C-Project PUBLIC JPH_ENABLE_ASSERTS)
@@ -214,7 +218,6 @@ target_link_libraries(C-Project PRIVATE
         Jolt
         winpthread
         McpServerLib
-        stdc++exp
 )
 endif (WIN32)
 

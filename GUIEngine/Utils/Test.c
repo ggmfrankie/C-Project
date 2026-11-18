@@ -691,7 +691,7 @@ static void Test_sparseSet(){
 void Test_json() {
     int a = 342;
 
-    defer(CJson_free) auto json = CJson_object(
+    defer(CJson_free) CJson json = CJson_object(
         CJson_member("test", 12012),
         CJson_member("test2", "12012"),
         CJson_member("boolean sderearaerarar", true),

@@ -35,6 +35,7 @@ namespace ggm {
 
         size_t size() const;
         size_t capacity() const;
+        const char* data() const;
         const char* cStr() const;
 
         String substr(size_t from) const;

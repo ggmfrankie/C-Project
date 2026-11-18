@@ -4,6 +4,7 @@
 
 #include "MeshLoader2D.hpp"
 #include <ranges>
+#include <numbers>
 
 namespace ggm::MeshLoader2D {
     static Mesh2D loadMesh(const MeshData2D& data) {

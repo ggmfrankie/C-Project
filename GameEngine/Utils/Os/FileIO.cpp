@@ -24,7 +24,7 @@ namespace ggm::FileIO {
         };
     }
 
-    std::string readFile(const std::filesystem::path& filePath) {
+    std::string readFile(const Path& filePath) {
         std::ifstream file(filePath, std::ios::binary);
         if (!file) {
             std::ostringstream error;
@@ -36,6 +36,5 @@ namespace ggm::FileIO {
             std::istreambuf_iterator(file),
             std::istreambuf_iterator<char>()
         };
-
     }
 }

@@ -7,6 +7,7 @@
 #include <concepts>
 #include <functional>
 #include <optional>
+#include <algorithm>
 
 namespace ggm {
     template<typename Key, typename Hash>
@@ -174,13 +175,12 @@ namespace ggm {
             }
         }
 
-        template<typename Self>
-        auto size(this Self&& self) {
-            return self.mData.size();
+        size_t size() const {
+            return mData.size();
         }
 
         struct Iterator {
-            // will fix
+            // will fix (or not)
             using iterator_category = std::random_access_iterator_tag;
             using difference_type   = std::ptrdiff_t;
 

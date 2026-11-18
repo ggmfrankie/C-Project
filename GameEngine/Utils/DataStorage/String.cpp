@@ -14,7 +14,6 @@ namespace ggm {
 
             s2.contains("asda");
 
-            stst.
         }
     }
 
@@ -32,6 +31,10 @@ namespace ggm {
 
     size_t String::capacity() const {
         return mData.capacity();
+    }
+
+    const char* String::data() const {
+        return mData.data();
     }
 
     const char* String::cStr() const {

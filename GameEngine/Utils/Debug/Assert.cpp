@@ -9,7 +9,6 @@
 
 #include "glad/gl.h"
 #include "GLFW/glfw3.h"
-#include <stacktrace>
 
 namespace ggm::Assert {
     [[noreturn]] inline void fail(const std::source_location& loc, std::string_view msg) {

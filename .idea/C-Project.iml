@@ -78,6 +78,17 @@
       <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Java/Chess/out" />
       <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Java/Parser/out" />
       <excludeFolder url="file://$MODULE_DIR$/OtherProjects/Java/RenderEngine/out" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/C/AuD/Aufgabe 2/cmake-build-debug-mysys/.cmake" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/C/AuD/Aufgabe 2/cmake-build-debug-mysys/CMakeFiles" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/C/AuD/Aufgabe 2/cmake-build-debug-mysys/Testing" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/C/AuD/Aufgabe 2/cmake-build-release-mysys/.cmake" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/C/AuD/Aufgabe 2/cmake-build-release-mysys/CMakeFiles" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/C/Raylib/cmake-build-debug-mysys/.cmake" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/C/Raylib/cmake-build-debug-mysys/CMakeFiles" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/C/Raylib/cmake-build-debug-mysys/Dependencies" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/C/Raylib/cmake-build-release-mysys/.cmake" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/C/Raylib/cmake-build-release-mysys/CMakeFiles" />
+      <excludeFolder url="file://$MODULE_DIR$/OtherProjects/C/Raylib/cmake-build-release-mysys/Dependencies" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.14 (C-Project)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />

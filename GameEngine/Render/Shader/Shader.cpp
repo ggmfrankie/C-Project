@@ -140,7 +140,7 @@ namespace ggm {
     }
 
     GLuint Shader::createVertexShader(const std::string &shaderSource) const {
-        return  createShader(shaderSource.c_str(), GL_VERTEX_SHADER);
+        return createShader(shaderSource.c_str(), GL_VERTEX_SHADER);
     }
 
     GLuint Shader::createFragmentShader(const std::string &shaderSource) const {
