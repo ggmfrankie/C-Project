@@ -25,20 +25,6 @@
 
 Im folgenden Versuch sollen verschiedene reale Wechselstromwiderstände gemessen werden. Jeder Widerstand wurde mit drei verschiedenen Methoden bemessen: Drei-Spannungs-Messer-, Drei-Strom-Messer-Methode und mit einem LCR Messgerät.
 
-\section{Versuchsaufbau}
-
-\begin{table}[H]
-\centering
-\begin{tabular}{|l||l|l|}
-\hline
-Fluke Digitalmultimeter & & \\ \hline
-Fluke Digitalmultimeter & & \\ \hline
-Hameg Leistungsmessgerät & & \\ \hline
-\end{tabular}
-\caption{Messwerte}
-\end{table}
-
-
 \section{Versuche}
 \subsection{UIP-Messung}
 \begin{figure}[H]
@@ -72,7 +58,266 @@ Allerding kommt es bei gleichzeitiger Strom und Spannungsmessung immer zu kleine
 Je nach dem welcher Wert korrekt gemessen wird ist der Aufbau entweder Strom- oder Spannungsrichtig.
 Bei der UIP Messung ist die stromrichtige Schaltung sinnvoller. Bei einer spannungsrichtigen Schaltung liegt der Spannungspfad direkt am Prüfling wodurch das Amperemeter den Strom durch den Prüfling und den Eigenstrom des Spannungspfades misst. Dies wäre sinnvoll, wenn der Prüfling sehr niederohming ist. Bei der stromrichtigen Schaltung widerum liegt der Strompfad in Reihe mit dem Prüfling, weswegen das Voltmeter über beide hinweg misst. Der Spannungsabfall wird hier am Amperemeter mitgemessen. Da der Innenwiderstand des HAMEG HM815-2 sehr klein ist und die Impedanzen im Vergleich äußerst hochohmig sind, fällt am Strompfad kaum Spannung ab. Somit ist der systematische Messfehler hier deutlich geringer.
 
-\subsection{•}
+\subsection{Drei-Spannungsmesser-Methode (3U-Messung)}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\linewidth]{3spannung.png}
+\caption{Schaltbild Leistungsmessung mit drei Spannungsmessgeräten}
+\end{figure}
+
+\begin{enumerate}
+	\item Fluke Digitalmultimeter als Spannungsmesser
+	\item Reiner ohmscher Widerstand
+	\item Untersuchter Kondensator
+	\item Untersuchte Spule
+\end{enumerate}
+
+Eine weitere Methode ist die Berechnung der Impedanz über drei Spannungsmessungen, bei der ein weiterer rein ohmscher Widerstand in Reihe geschaltet wird. Man macht sich die Zeigerrechnung der Wechselstromlehre zur Nutze um die Impedanzen zu berechnen. Hierfür werden drei Spannungsmessgeräte verwendet, welche die Beträge der Gesamtspannung $U_1$, der Spannung $U_R$ an dem bekannten ohmschen Widerstand und die Spannung $U_Z$ am untersuchten Widerstand messen.
+\\\\ Mit diesen kann man mithilfe des Cosinussatzes den Winkel der gesuchten Impedanz berechnen kann. Da die Voltmeter sehr hohe Eingangswiderstände haben, kann man den Strom ohne Verzweigungen betrachten womit dann auch der Betrag der Impedanz berechnbar wird.
+\\
+Hier gilt folgende Formel:
+\[
+	c^2 = a^2 + b^2 - 2 \cdot a \cdot b \cdot \cos(\gamma)
+\]
+
+Mit hilfe des Zeigerdiagramms lässt sich Z folgendermaßen berechnen:
+\[
+	Z = \frac{U_z}{I_z} \quad mit \quad I_z = \frac{U_r}{R}
+\]
+\[
+	\cos(\phi) = \frac{{U_1}^2 - {U_R}^2 - {U_Z}^2}						{ 2 \cdot U_R \cdot U_z} \quad mit \cos(\phi) = - \cos(\gamma)
+\]
+
+\subsection{Drei-Strommesser-Methode (3I-Messung)}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\linewidth]{3strom.png}
+\caption{Schaltbild Leistungsmessung mit drei Strommessgeräten}
+\end{figure}
+
+\begin{enumerate}
+	\item Fluke Digitalmultimeter als Strommesser
+	\item Reiner ohmscher Widerstand
+	\item Untersuchter Kondensator
+	\item Untersuchte Spule
+\end{enumerate}
+
+Gegengleich wie zur 3U-Messung kann die Unbekannte Impedanz auch mit drei Strommessgeräten bestimmt werden. Hierzu wird ein rein ohmscher Widerstand parallel zu untersuchten Impedanz geschaltet.
+Ähnlich gilt:
+\[
+	Z = \frac{U_R}{I_Z} \quad mit \quad U_R = \frac{R}{I_R}
+\]
+\[
+	\cos(\phi) = \frac{{I_1}^2 - {I_R}^2 - {I_Z}^2}						{ 2 \cdot I_R \cdot I_Z}
+\]
+
+\subsection{Messung mit einem LCR Messgerät}
+Zum Abschluss und Abgleich sollen nun die komplexen Impedanzen mit einem dafür gebauten Messgerät von HAMEG. Dieses berechnet und misst alle relevanten Bauteilkennwerte automatisch.
+
+\subsection{Tabellarische Aufführung aller Messdaten und der daraus berechneten Werte}
+
+\subsubsection{Kondensator (50 Hz)}
+\begin{table}[H]
+\centering
+\caption{6.1 Impedanzen und Admittanzen -- Kondensator (50\,Hz)}
+\label{tab:kond50}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{|l|l|r|r|r|r|r|r|r|r|r|}
+\hline
+Methode & Messpunkt & $R_s$ [$\Omega$] & $X$ [$\Omega$] & $|Z|$ [$\Omega$] & $\varphi$ [$^\circ$] & $G$ [mS] & $B$ [mS] & $|Y|$ [mS] & $Q$ & $C$ [\textmu F] \\
+\hline
+UIP     & 100\,V  & 0,72  & $-134,14$ & 134,14 & $-89,69$ & 0,040  & 7,455 & 7,455 & 187 & 23,73 \\ \hline
+UIP     & 200\,V  & 0,84  & $-133,53$ & 133,53 & $-89,64$ & 0,047  & 7,489 & 7,489 & 158 & 23,84 \\ \hline
+3U      & 100\,V  & 0,75  & $-139,60$ & 139,60 & $-89,69$ & 0,039  & 7,163 & 7,163 & 185 & 22,80 \\ \hline
+3U      & 200\,V  & 0,67  & $-140,03$ & 140,03 & $-89,73$ & 0,034  & 7,141 & 7,142 & 210 & 22,73 \\ \hline
+3I      & 0,4\,A  & $-0,85$ & $-134,90$ & 134,90 & $-90,36$ & $-0,047$ & 7,413 & 7,413 & -- & 23,60 \\ \hline
+3I      & 0,8\,A  & $-0,51$ & $-133,72$ & 133,72 & $-90,22$ & $-0,029$ & 7,478 & 7,478 & -- & 23,80 \\ \hline
+LCR     & 50\,Hz  & 0,98  & $-140,60$ & 140,60 & $-89,6$  & 0,047  & 7,112 & 7,112 & 152 & 22,6 \\
+\hline
+\end{tabular}}
+\end{table}
+
+Vorallem die Werte aus der 3U und LCR-Messung stimmen gut überein. UIP und 3I ähneln sich auch, liegen aber etwas niedriger als die Werte aus 3U/LCR. Auch liefert die 3I-Methode einen negativen Realanteil, was physikalisch unmöglich ist. Die Erklärung dafür folgt weiter unten.
+
+\subsubsection{Spule (50 Hz)}
+\begin{table}[H]
+\centering
+\caption{6.1 Impedanzen und Admittanzen -- Drossel/Spule (50\,Hz)}
+\label{tab:spule50}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{|l|l|r|r|r|r|r|r|r|r|r|}
+\hline
+Methode & Messpunkt & $R_s$ [$\Omega$] & $X$ [$\Omega$] & $|Z|$ [$\Omega$] & $\varphi$ [$^\circ$] & $G$ [mS] & $B$ [mS] & $|Y|$ [mS] & $Q$ & $L$ [H] \\
+\hline
+UIP     & 100\,V  & 31,81 & 240,63 & 242,72 & 82,47 & 0,540 & $-4,085$ & 4,120 & 7,56 & 0,766 \\ \hline
+UIP     & 200\,V  & 31,05 & 231,85 & 233,92 & 82,37 & 0,568 & $-4,237$ & 4,275 & 7,47 & 0,738 \\ \hline
+3U      & 100\,V  & 35,43 & 240,56 & 243,16 & 81,62 & 0,599 & $-4,069$ & 4,113 & 6,79 & 0,766 \\ \hline
+3U      & 200\,V  & 32,79 & 240,58 & 242,80 & 82,24 & 0,556 & $-4,081$ & 4,119 & 7,34 & 0,766 \\ \hline
+3I      & 0,4\,A  & 34,00 & 240,40 & 242,79 & 81,95 & 0,577 & $-4,078$ & 4,119 & 7,07 & 0,765 \\ \hline
+3I      & 0,8\,A  & 32,88 & 241,83 & 244,06 & 82,26 & 0,552 & $-4,060$ & 4,097 & 7,35 & 0,770 \\ \hline
+LCR     & 50\,Hz  & 27,5  & 155,42 & 157,83 & 80,0  & 1,104 & $-6,239$ & 6,336 & 5,73 & 0,495 \\
+\hline
+\end{tabular}}
+\end{table}
+
+Aus UIP/3U/3I lassen sich konsistent sehr nahe Werte berechnen für die Induktivität und den Realteil wohingegen das LCR-Meter deutlich niedrigere Werte misst. Das lässt sich damit erklären, dass das LCR-Meter mit sehr niedrigen Spannungen misst, womit die Anfangspermeabilität des Eisenkerns deutlich kleiner ist als bei 100 V bis 200 V. Somit hängt das Ergebnis vom Messpegel ab.
+
+\subsubsection{LCR Kondensator, alle Frequenzen}
+\begin{table}[H]
+\centering
+\caption{LCR-Messung bei allen Frequenzen -- Kondensator}
+\label{tab:lcr_kond}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{|l|r|r|r|r|r|r|r|r|r|}
+\hline
+$f$ & $C_p$ & $R_p$ & $Q$ & $\theta$ [$^\circ$] & $|Z|$ [$\Omega$] & $R_s$ [$\Omega$] & $X$ [$\Omega$] & $G$ & $B$ \\
+\hline
+50\,Hz  & 22,6\,\textmu F   & 21,47\,k$\Omega$ & 152,1  & $-89,6$ & 140,6  & 0,98    & $-140,60$ & 0,047\,mS & 7,11\,mS \\ \hline
+1\,kHz  & 22,2\,\textmu F   & $-1,55$\,k$\Omega$ & $-216$ & $-90,3$ & 7,2    & $-0,04$ & $-7,20$   & $-0,73$\,mS & 0,139\,S \\ \hline
+10\,kHz & 22,35\,\textmu F  & 10,5\,$\Omega$   & 14,1   & $-86,1$ & 0,71   & 0,048   & $-0,708$  & 0,096\,S  & 1,405\,S \\ \hline
+50\,kHz & 28,78\,\textmu F  & 0,196\,$\Omega$  & 1,77   & $-60,8$ & 0,0958 & 0,047   & $-0,084$  & 5,09\,S   & 9,11\,S \\ \hline
+100\,kHz & $-14,88$\,\textmu F & 0,10\,$\Omega$ & 0,96   & $+43,79$ & 0,0739 & 0,053  & $+0,051$  & 9,78\,S   & $-9,37$\,S \\
+\hline
+\end{tabular}}
+\end{table}
+
+Da der Verlustwinkel bei 1 kHz unter der Auflösung des Gerätes liegt, ist das dortige $R_p$ ein Messartefakt.
+
+\subsubsection{LCR Spule, alle Frequenzen}
+\begin{table}[H]
+\centering
+\caption{LCR-Messung bei allen Frequenzen -- Spule}
+\label{tab:lcr_spule}
+\begin{tabular}{|l|r|r|r|r|r|r|r|r|}
+\hline
+$f$ & $L_s$ & $R_s$ & $Q$ & $\theta$ [$^\circ$] & $|Z|$ & $X$ [$\Omega$] & $G$ [mS] & $B$ [mS] \\
+\hline
+50\,Hz   & 494,7\,mH  & 27,5\,$\Omega$   & 5,73 & 80,0    & 158,1\,$\Omega$   & $+155,4$  & 1,104 & $-6,239$ \\ \hline
+1\,kHz   & 392,56\,mH & 453,5\,$\Omega$  & 5,44 & 79,58   & 2,5\,k$\Omega$    & $+2467$   & 0,072 & $-0,392$ \\ \hline
+10\,kHz  & 277,7\,mH  & 20,1\,k$\Omega$  & 0,87 & 40,96   & 26,6\,k$\Omega$   & $+17\,450$ & 0,028 & $-0,025$ \\ \hline
+50\,kHz  & $-25,3$\,mH & 1,39\,k$\Omega$ & 5,7  & $-80,1$ & 8,06\,k$\Omega$   & $-7950$   & 0,021 & $+0,122$ \\ \hline
+100\,kHz & $-5,65$\,mH & 536,5\,$\Omega$ & 6,61 & $-81,4$ & 3,59\,k$\Omega$   & $-3550$   & 0,042 & $+0,275$ \\
+\hline
+\end{tabular}
+\end{table}
+
+Zwischen 10 und 50 kHz wird die Spule kapazitiv, da sie hier mit ihrer Eigenresonanz schwingt
+
+\subsubsection{Messwerte in der komplexen Ebene}
+\begin{table}[htbp]
+\centering
+\caption{6.3 Mittelwerte in der komplexen $Z$-Ebene}
+\label{tab:zebene}
+\begin{tabular}{|l|c|c|}
+\hline
+Methode & Kondensator $Z$ [$\Omega$] & Spule $Z$ [$\Omega$] \\
+\hline
+UIP        & $0,78 - \mathrm{j}133,83$  & $31,43 + \mathrm{j}236,24$ \\ \hline
+3U         & $0,71 - \mathrm{j}139,81$  & $34,11 + \mathrm{j}240,57$ \\ \hline
+3I         & $-0,68 - \mathrm{j}134,31$ & $33,44 + \mathrm{j}241,11$ \\ \hline
+LCR (50\,Hz) & $0,98 - \mathrm{j}140,60$ & $27,50 + \mathrm{j}155,42$ \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.30\linewidth]{UIP.png}
+\caption{Zeiger bei UIP Messung}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.30\linewidth]{3U.png}
+\caption{Zeiger bei 3U Messung}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.30\linewidth]{3I.png}
+\caption{Zeiger bei 3I Messung}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.30\linewidth]{LCR.png}
+\caption{Zeiger bei LCR Messung}
+\end{figure}
+
+\newpage
+
+
+\subsection{Wahl des Ersatzschaltbildes}
+
+Ein komplexer Widerstand kann auf mehrere Weisen dargestellt werden. Hier gibt es verschiedene Ersatzschaltbilder:
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\linewidth]{Ersatzschaltbilder.png}
+\caption{Mögliche Ersatzschaltbilder}
+\end{figure}
+
+Grundsätzlich kann man eine Impedanz als eine Parallelschaltung oder eine Reihenschaltung eines ohmschen Widerstandes und eines Blindwiderstandes dargestellt werden.
+Da sich L der Spule wie eine Impedanz verrechnet, bietet sich die Reihenschaltung an. Parallel verrechnet sich C wie eine Admitanz, wofür sich eine Parallelschaltung anbietet.
+\\
+Bei niedrigen Frequenzen ist der Widerstand einer Spule gering, weshalb es nützlich sein kann, Real- und Imaginärteil in seperate Bauteile aufzuteilen. Dadurch können Berechnungen eventuell vereinfacht werden, indem der Blindwiderstand der Spule vernachlässigt wird. 
+
+\subsection{Simulation der Schaltung}
+Mit Hilfe von LTSpice können komplexe elektrische Schaltungen akkurat simuliert werden. So sollen auch die Bauteile anhand der Messdaten simuliert werden.
+
+\subsubsection{Kondensator}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.750\linewidth]{kon.png}
+\caption{Ersatzschaltung des Kondensators}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.60\linewidth]{kondia.png}
+\caption{Spannungsverläufe Kondensator}
+\end{figure}
+
+\subsubsection{Spule}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.750\linewidth]{spule.png}
+\caption{Ersatzschaltung der Spule}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\caption{6.2 Ersatzschaltbild der Drossel -- berechnete Größen}
+\label{tab:esb_drossel}
+\begin{tabular}{|l|c|c|c|}
+\hline
+Größe & 3U (200\,V, 50\,Hz) & 3I (0,8\,A, 50\,Hz) & LCR (1\,kHz) \\
+\hline
+$Z_s = R_s + \mathrm{j}X$ & $32,79 + \mathrm{j}240,58\,\Omega$ & $32,88 + \mathrm{j}241,83\,\Omega$ & $453,5 + \mathrm{j}2466,5\,\Omega$ \\ \hline
+$R_\mathrm{Cu}$ & 18,3\,$\Omega$ & 18,3\,$\Omega$ & 18,3\,$\Omega$ \\ \hline
+$R_\mathrm{Fe}$ & 4,01\,k$\Omega$ & 4,03\,k$\Omega$ & 14,4\,k$\Omega$ \\ \hline
+$L_\mathrm{h}$ & 0,769\,H & 0,773\,H & 0,405\,H \\ \hline
+$C_\mathrm{w}$ & 0,45\,nF & 0,45\,nF & 0,45\,nF \\ \hline
+Strom durch die Drossel & 0,5745\,A & 0,503\,A & -- \\ \hline
+Kupferverluste $P_\mathrm{Cu} = I^2 R_\mathrm{Cu}$ & 6,04\,W & 4,63\,W & -- \\ \hline
+Eisenverluste $P_\mathrm{Fe} = U_\mathrm{h}^2/R_\mathrm{Fe}$ & 4,78\,W & 3,69\,W & -- \\ \hline
+Gesamtverluste $P$ & 10,82\,W & 8,32\,W & -- \\ \hline
+$\cos\varphi$ der Drossel & 0,135 & 0,135 & 0,18 \\ \hline
+Scheinleistung der Drossel & 80,1\,VA ($U_Z \cdot I$) & 61,7\,VA ($U \cdot I_Z$) & -- \\ \hline
+Scheinleistung der Quelle & 115,2\,VA ($U_1 \cdot I$, inkl.\ $R = 220\,\Omega$) & 98,2\,VA ($U \cdot I_1$, inkl.\ $R = 160\,\Omega$) & -- \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.60\linewidth]{spuledia.png}
+\caption{Spannungsverläufe Spule}
+\end{figure}
 
 
 
