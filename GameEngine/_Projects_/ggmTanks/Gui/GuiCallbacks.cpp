@@ -9,7 +9,6 @@
 
 #include "GLFW/glfw3.h"
 
-
 extern "C" bool ggmTanks_onClick_closeWindow(Element*) {
     glfwSetWindowShouldClose(ggm::GameEngine::Get().getScreen().getWindowHandle(), true);
     return true;

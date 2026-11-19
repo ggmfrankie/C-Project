@@ -26,11 +26,11 @@ namespace ggm::MeshLoader2D {
         entitiesBuffer.clear();
         spriteBuffer.clear();
 
-        for (auto&[count, entities, meshDatas] : registry.getArchetypes(All<MeshData2D>{})) {
+        for (auto&[count, entities, meshDatas] : registry.getEntities(All<MeshData2D>{})) {
             loadMeshes(entitiesBuffer, entities, meshDatas);
         }
 
-        for (auto&[count, entities, _] : registry.getArchetypes(All<MeshDataQuad>{})) {
+        for (auto&[count, entities, _] : registry.getEntities(All<MeshDataQuad>{})) {
             loadMeshes(spriteBuffer, entities);
         }
 

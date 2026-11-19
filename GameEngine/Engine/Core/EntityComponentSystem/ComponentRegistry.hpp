@@ -306,6 +306,16 @@ namespace ggm {
                 mEntityMappings.remove(e.id());
             }
 
+            void clear() {
+                for (ComponentVec& components : mComponents) {
+                    std::visit([&]<typename Type>(Type& sourceVector) {
+                        sourceVector.clear();
+                    }, components);
+                }
+                mEntities.clear();
+                mEntityMappings.clear();
+            }
+
             bool contains(const Entity& entity) {
                 return mEntityMappings.contains(entity.id());
             }
@@ -369,7 +379,7 @@ namespace ggm {
 
         template<typename... RemovedComponents, typename... AddedComponents>
             requires (ContainsType<RemovedComponents, Components...> && ...) &&  (ContainsType<AddedComponents, Components...> && ...)
-        void changeComponentsV2(Entity entity, Archetype& sourceArchetype, Not<RemovedComponents...> removed, AddedComponents&&... added) {
+        void changeComponents(Entity entity, Archetype& sourceArchetype, Not<RemovedComponents...> removed, AddedComponents&&... added) {
             auto it = sourceArchetype.getIndex(entity);
             Assert::run(it.has_value());
             Assert::run(sourceArchetype.has(All<RemovedComponents...>{}), {"Source Archetype {} with Entity {} does not have the components requested to be removed", sourceArchetype.getSignature().bits, entity.id()});
@@ -450,7 +460,7 @@ namespace ggm {
             // Find the Archetype the entity is inside
             for (auto& a : mArchetypes) {
                 if (a.contains(entity)) {
-                    changeComponentsV2(entity, a, removed, std::forward<AddedComponents>(added)...);
+                    changeComponents(entity, a, removed, std::forward<AddedComponents>(added)...);
                     return;
                 }
             }
@@ -464,7 +474,7 @@ namespace ggm {
          */
         template<typename... Whitelist, typename... Blacklist>
             requires (ContainsType<Whitelist, Components...> && ...) && (ContainsType<Blacklist, Components...> && ...)
-        auto& getArchetypes(All<Whitelist...>, Not<Blacklist...> = {}) {
+        auto& getEntities(All<Whitelist...>, Not<Blacklist...> = {}) {
             using ComponentBatch = std::tuple<std::size_t, std::vector<Entity>&, std::vector<Whitelist>&...>;
 
             static std::vector<ComponentBatch> batches {};
@@ -482,6 +492,33 @@ namespace ggm {
                     archetype.getEntities(),
                     archetype.template getComponentVector<Whitelist>()...
                 );
+            }
+
+            return batches;
+        }
+
+        template<typename... Whitelist, typename... Blacklist>
+            requires (ContainsType<Whitelist, Components...> && ...) && (ContainsType<Blacklist, Components...> && ...)
+        auto& popEntities(All<Whitelist...>, Not<Blacklist...> = {}) {
+            using ComponentBatch = std::tuple<std::size_t, std::vector<Entity>, std::vector<Whitelist>...>;
+
+            static std::vector<ComponentBatch> batches {};
+            batches.clear();
+
+            for (auto& archetype : mArchetypes) {
+                if (!archetype.has(All<Whitelist...>{})) continue;
+
+                if constexpr (sizeof...(Blacklist) > 0) {
+                    if (archetype.has(Any<Blacklist...>{})) continue;
+                }
+
+                batches.emplace_back(
+                    archetype.getEntityCount(),
+                    std::move(archetype.getEntities()),
+                    std::move(archetype.template getComponentVector<Whitelist>())...
+                );
+
+                archetype.clear();
             }
 
             return batches;

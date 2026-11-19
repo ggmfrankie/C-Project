@@ -34,5 +34,7 @@ namespace ggmTanks {
         void handleImpacts(Registry& registry);
 
         void update(Registry& registry);
+
+        static void spawnImpact(Registry& registry, ggm::Vector2f pos);
     };
 } // ggmTanks

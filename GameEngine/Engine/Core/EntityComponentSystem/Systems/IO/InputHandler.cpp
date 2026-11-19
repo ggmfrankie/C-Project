@@ -5,6 +5,7 @@
 #include "InputHandler.hpp"
 
 #include <array>
+#include <sys/stat.h>
 
 #include "GuiInterface.h"
 #include "GLFW/glfw3.h"
@@ -14,6 +15,8 @@ namespace ggm::InputHandler {
     static std::array<bool, KEY_COUNT> keysPressed;
     static std::array<bool, KEY_COUNT> keysDown;
     static std::array<bool, KEY_COUNT> keysReleased;
+
+    static std::array<bool, MOUSE_BUTTON_COUNT> mouseKeysPressed;
     
     static bool cursorInWindow = true;
 
@@ -26,6 +29,7 @@ namespace ggm::InputHandler {
         glfwSetCharCallback(window, charCallback);
         glfwSetCursorPosCallback(window, cursorPositionCallback);
         glfwSetCursorEnterCallback(window, cursorEnterCallback);
+        glfwSetMouseButtonCallback(window, mouseButtonCallback);
     }
 
     void keyCallback(GLFWwindow* window, int key, int code, int action, int mode) {
@@ -63,6 +67,21 @@ namespace ggm::InputHandler {
         cursorInWindow = enter;
     }
 
+    void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
+        switch (action) {
+            case GLFW_PRESS:
+                mouseKeysPressed[button] = true;
+                break;
+            case GLFW_RELEASE:
+                mouseKeysPressed[button] = false;
+                break;
+            case GLFW_REPEAT:
+                mouseKeysPressed[button] = false;
+                break;
+            default: ;
+        }
+    }
+
     bool isKeyPressed(int key) {
         return keysPressed[key];
     }
@@ -75,7 +94,16 @@ namespace ggm::InputHandler {
         return keysReleased[key];
     }
 
+    bool isMouseKeyPressed(int mouseKey) {
+        return mouseKeysPressed[mouseKey];
+    }
+
+    Vector2f getCursorPos() {
+        return cursorPos;
+    }
+
     Vector2f getCursorDisplacement() {
+        // TODO: fix
         return cursorPos - lastCursorPos;
     }
 

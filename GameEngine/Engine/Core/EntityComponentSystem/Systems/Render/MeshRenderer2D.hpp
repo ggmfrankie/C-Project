@@ -39,15 +39,15 @@ namespace ggm::MeshRenderer2D {
 
         drawBegin(context);
 
-        for (auto&[count, entities, meshes, textures, colors, transformations] : registry.getArchetypes(All<Mesh2D, Texture, Color, Transformation>{})) {
+        for (auto&[count, entities, meshes, textures, colors, transformations] : registry.getEntities(All<Mesh2D, Texture, Color, Transformation>{})) {
             drawMeshes(meshes, textures, colors, transformations);
         }
 
-        for (auto&[count, entities, meshes, textures, transformations] : registry.getArchetypes(All<Mesh2D, Texture, Transformation>{}, Not<Color>{})) {
+        for (auto&[count, entities, meshes, textures, transformations] : registry.getEntities(All<Mesh2D, Texture, Transformation>{}, Not<Color>{})) {
             drawMeshes(meshes, textures, transformations);
         }
 
-        for (auto&[count, entities, meshes, colors, transformations] : registry.getArchetypes(All<Mesh2D, Color, Transformation>{}, Not<Texture>{})) {
+        for (auto&[count, entities, meshes, colors, transformations] : registry.getEntities(All<Mesh2D, Color, Transformation>{}, Not<Texture>{})) {
             drawMeshes(meshes, colors, transformations);
         }
     }

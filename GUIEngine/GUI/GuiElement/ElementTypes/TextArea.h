@@ -5,6 +5,4 @@
 #pragma once
 #include "GUI/GuiElement/GuiElement.h"
 
-ElementHandle TextArea_new(const ElementSettings* settings) {
-    return (ElementHandle){};
-}
+ElementHandle TextArea_new(const ElementSettings* settings);

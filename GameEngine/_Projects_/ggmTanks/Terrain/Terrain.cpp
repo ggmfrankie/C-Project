@@ -9,7 +9,9 @@
 
 #include "GuiInterface.h"
 #include "Engine/Core/EntityComponentSystem/Components/Render/MeshData2D.hpp"
+#include "Engine/Core/EntityComponentSystem/Systems/IO/InputHandler.hpp"
 #include "Engine/Core/EntityComponentSystem/Systems/Loader/MeshLoader2D.hpp"
+#include "GLFW/glfw3.h"
 #include "GUIEngine/Utils/Math/Math.hpp"
 #include "_Projects_/ggmTanks/Components/Impact.hpp"
 
@@ -102,19 +104,28 @@ namespace ggmTanks {
             }
         };
 
-        for (auto& [count, entities, impacts] : registry.getArchetypes(All<Impact>{})) {
+        for (auto& [count, entities, impacts] : registry.popEntities(All<Impact>{})) {
             for (auto& impact : impacts) {
+                Logger::debug({"Handling Impact at pos {} with radius {}", impact.pos, impact.radius});
                 handleImpact(impact);
             }
         }
     }
 
     void Terrain::update(Registry& registry) {
+        if (InputHandler::isMouseKeyPressed(GLFW_MOUSE_BUTTON_LEFT)) {
+            spawnImpact(registry, InputHandler::getCursorPos());
+            mMeshDirty = true;
+        }
+
         handleImpacts(registry);
 
-        if (mMeshDirty || gui_wasClicked("terrain_reload")) {
+        if (gui_wasClicked("terrain_reload")) {
             mHeightmap = generateRandomHeightmap(mWidth);
+            mMeshDirty = true;
+        }
 
+        if (mMeshDirty) {
             registry.changeComponents(
                 mMeshEntity,
                 Not<Mesh2D, SimpleCollider>{},
@@ -125,5 +136,9 @@ namespace ggmTanks {
             MeshLoader2D::load(registry);
             mMeshDirty = false;
         }
+    }
+
+    void Terrain::spawnImpact(Registry& registry, Vector2f pos) {
+        registry.createEntity({}, Impact{.pos = pos, .radius = 10});
     }
 } // ggmTanks

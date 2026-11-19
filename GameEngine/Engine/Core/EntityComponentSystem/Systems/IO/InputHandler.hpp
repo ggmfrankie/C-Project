@@ -7,11 +7,21 @@
 #include "Engine/Core/EntityComponentSystem/ComponentRegistry.hpp"
 #include "Engine/Core/EntityComponentSystem/Components/KeyPressEvent.hpp"
 #include "Engine/Core/EntityComponentSystem/Components/KeyReleaseEvent.hpp"
+#include "GLFW/glfw3.h"
 #include "Math/Vector.hpp"
 
 
 namespace ggm::InputHandler {
     static constexpr int KEY_COUNT = 348;
+    static constexpr int MOUSE_BUTTON_COUNT = 8;
+
+    enum class Key {
+        A = GLFW_KEY_A,
+        B = GLFW_KEY_B,
+        C = GLFW_KEY_C,
+        D = GLFW_KEY_D
+        //TODO: finish
+    };
 
     void init(GLFWwindow* window);
 
@@ -19,11 +29,14 @@ namespace ggm::InputHandler {
     void charCallback(GLFWwindow *window, unsigned int codepoint);
     void cursorPositionCallback(GLFWwindow *window, double x, double y);
     void cursorEnterCallback(GLFWwindow *window, int enter);
+    void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 
     bool isKeyPressed(int key);
     bool isKeyDown(int key);
     bool isKeyReleased(int key);
+    bool isMouseKeyPressed(int mouseKey);
 
+    Vector2f getCursorPos();
     Vector2f getCursorDisplacement();
 
     std::array<bool, KEY_COUNT>& getKeysPressed();

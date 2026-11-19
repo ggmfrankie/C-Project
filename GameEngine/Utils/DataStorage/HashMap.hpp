@@ -175,6 +175,11 @@ namespace ggm {
             }
         }
 
+        void clear() {
+            mData.clear();
+            mHashTable.clear();
+        }
+
         size_t size() const {
             return mData.size();
         }
