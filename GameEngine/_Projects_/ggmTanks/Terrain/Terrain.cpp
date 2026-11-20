@@ -11,13 +11,10 @@
 #include "Engine/Core/EntityComponentSystem/Components/Render/MeshData2D.hpp"
 #include "Engine/Core/EntityComponentSystem/Systems/IO/InputHandler.hpp"
 #include "Engine/Core/EntityComponentSystem/Systems/Loader/MeshLoader2D.hpp"
-#include "GLFW/glfw3.h"
-#include "GUIEngine/Utils/Math/Math.hpp"
 #include "_Projects_/ggmTanks/Components/Impact.hpp"
 
 namespace ggmTanks {
     using namespace ggm;
-    using std::filesystem::path;
 
     std::vector<Vector2f> generateRandomHeightmap(int width);
 
@@ -25,19 +22,19 @@ namespace ggmTanks {
         MeshData2D out {};
 
         out.vertices = mHeightmap;
-        out.vertices.emplace_back(0, static_cast<float>(mDepth));
+        out.vertices.emplace_back(0, mDepth);
 
         const size_t lastInHeightmap = mHeightmap.size();
 
         out.indices.push_back(1);
         out.indices.push_back(0);
-        out.vertices.emplace_back(mHeightmap[0].x, static_cast<float>(mDepth));
+        out.vertices.emplace_back(mHeightmap[0].x, mDepth);
         out.indices.push_back(out.vertices.size()-1);
 
         for (int i = 2; i < lastInHeightmap; ++i) {
             out.indices.push_back(i);
             out.indices.push_back(i-1);
-            out.vertices.emplace_back(mHeightmap[i-1].x, static_cast<float>(mDepth));
+            out.vertices.emplace_back(mHeightmap[i-1].x, mDepth);
             out.indices.push_back(out.vertices.size()-1);
 
             out.indices.push_back(i-1);
@@ -47,7 +44,7 @@ namespace ggmTanks {
 
         out.indices.push_back(lastInHeightmap-1);
         out.indices.push_back(out.vertices.size()-1);
-        out.vertices.emplace_back(mHeightmap[lastInHeightmap-1].x, static_cast<float>(mDepth));
+        out.vertices.emplace_back(mHeightmap[lastInHeightmap-1].x, mDepth);
         out.indices.push_back(out.vertices.size()-1);
 
         const float maxWidth = mHeightmap.back().x;
@@ -63,13 +60,14 @@ namespace ggmTanks {
         mHeightmap(generateRandomHeightmap(width)),
         mDepth(depth),
         mWidth(width),
+        mPos(0, 500),
         mMeshDirty(true)
     {}
 
     std::vector<Vector2f> generateRandomHeightmap(int width) {
         std::vector<Vector2f> out;
-
         int height = 0;
+
         for (int i = 0; i < width; i += 10) {
             const int offset = ((rand()%20 -10)?:1);
             height += offset;
@@ -79,28 +77,33 @@ namespace ggmTanks {
     }
 
     void Terrain::registerMesh(Registry& registry) {
-        constexpr Vector2f pos {0, 500};
-
         registry.createEntity(mMeshEntity,
-            Transformation{{1, 1}, pos},
+            Transformation{{1, 1}, mPos},
             reloadMesh(),
             TextureLocation{"ERROR.png"},
-            SimpleCollider{mHeightmap, pos}
+            Color::BLUE,
+            SimpleCollider{mHeightmap, mPos}
         );
     }
 
     void Terrain::handleImpacts(Registry& registry) {
-        using vec2 = Vector2f;
         auto handleImpact = [this](const Impact& impact) {
-            for (vec2& point : mHeightmap) {
-                vec2 delta = point - impact.pos;
+            for (auto& [x, y] : mHeightmap) {
+                const float worldX = x + mPos.x;
+                const float worldY = y + mPos.y;
 
-                const float offset = impact.radius - delta.length();
-                if (offset > 0.0f) continue;
+                const float dx = worldX - impact.pos.x;
 
-                vec2 deltaNorm = delta.normalize();
+                if (std::abs(dx) >= impact.radius) continue;
 
-                point += deltaNorm * offset;
+                // Pythagoras
+                const float dy = std::sqrtf(
+                    impact.radius * impact.radius - dx * dx
+                );
+
+                float craterBottom = impact.pos.y + dy;
+
+                y = std::max(worldY, craterBottom) - mPos.y;
             }
         };
 
@@ -109,13 +112,13 @@ namespace ggmTanks {
                 Logger::debug({"Handling Impact at pos {} with radius {}", impact.pos, impact.radius});
                 handleImpact(impact);
             }
+            mMeshDirty = true;
         }
     }
 
     void Terrain::update(Registry& registry) {
-        if (InputHandler::isMouseKeyPressed(GLFW_MOUSE_BUTTON_LEFT)) {
+        if (InputHandler::isMouseButtonPressed(MouseButton::LEFT)) {
             spawnImpact(registry, InputHandler::getCursorPos());
-            mMeshDirty = true;
         }
 
         handleImpacts(registry);
@@ -130,7 +133,7 @@ namespace ggmTanks {
                 mMeshEntity,
                 Not<Mesh2D, SimpleCollider>{},
                 reloadMesh(),
-                SimpleCollider{mHeightmap, {0,500}}
+                SimpleCollider{mHeightmap, mPos}
             );
             
             MeshLoader2D::load(registry);
@@ -139,6 +142,6 @@ namespace ggmTanks {
     }
 
     void Terrain::spawnImpact(Registry& registry, Vector2f pos) {
-        registry.createEntity({}, Impact{.pos = pos, .radius = 10});
+        registry.createEntity({}, Impact{.pos = pos, .radius = static_cast<float>(rand()%100 +50)});
     }
 } // ggmTanks

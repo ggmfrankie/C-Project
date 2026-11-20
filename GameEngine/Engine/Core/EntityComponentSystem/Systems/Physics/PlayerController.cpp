@@ -13,11 +13,11 @@ namespace ggm::PlayerController {
             constexpr float STEP = 20000.f;
 
             const float step = STEP * deltaTime;
-            if (InputHandler::isKeyDown(GLFW_KEY_A)) object.velocity.x = -step;
-            if (InputHandler::isKeyDown(GLFW_KEY_D)) object.velocity.x = step;
+            if (InputHandler::isKeyDown(Key::A)) object.velocity.x = -step;
+            if (InputHandler::isKeyDown(Key::D)) object.velocity.x = step;
 
-            if (InputHandler::isKeyDown(GLFW_KEY_W)) object.velocity.y = -step;
-            if (InputHandler::isKeyDown(GLFW_KEY_S)) object.velocity.y = step;
+            if (InputHandler::isKeyDown(Key::W)) object.velocity.y = -step;
+            if (InputHandler::isKeyDown(Key::S)) object.velocity.y = step;
         }
     }
 }

@@ -5,8 +5,10 @@
 #pragma once
 #include <filesystem>
 
+#include "Os/FileIO.hpp"
+
 namespace ggm {
     struct TextureLocation {
-        std::filesystem::path path {};
+        FileIO::Path path {};
     };
 }

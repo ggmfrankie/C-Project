@@ -124,7 +124,6 @@ add_executable(C-Project
         GameEngine/Engine/Core/EntityComponentSystem/ComponentRegistry.hpp
         GameEngine/Engine/Core/EntityComponentSystem/Entity.hpp
         GameEngine/Engine/Core/EntityComponentSystem/Entity.cpp
-        GameEngine/Engine/Core/EntityComponentSystem/Components/Render/Sprite.hpp
         GameEngine/Engine/Core/EntityComponentSystem/Components/TextureLocation.hpp
         GameEngine/Engine/Core/EntityComponentSystem/ECSTest.cpp
         GameEngine/Engine/Core/EntityComponentSystem/ECSTest.hpp

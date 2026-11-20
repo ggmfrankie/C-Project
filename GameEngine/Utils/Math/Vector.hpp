@@ -134,7 +134,7 @@ namespace ggm {
         }
 
         [[nodiscard]] constexpr float dot(const Vector4f& o) const {
-            return o.x * o.x + o.y * o.y + o.z * o.z + o.w * w;
+            return o.x * x + o.y * y + o.z * z + o.w * w;
         }
 
         [[nodiscard]] constexpr Vector4f normalize() const {

@@ -45,6 +45,9 @@ namespace ggm {
         template<typename Searched>
         static constexpr bool contains = (std::same_as<Searched, Ts> || ...);
 
+        template<u64 index>
+        using at = GetTypeAt<index, Ts...>;
+
         template<typename Inserted>
         using insert = TypeSet<Ts..., Inserted>;
     };
@@ -61,4 +64,7 @@ namespace ggm {
         template<typename Inserted>
         using insert = TypeSet<Inserted>;
     };
+
+    template<typename... Ts>
+    using CleanTypeSet = TypeSet<std::remove_cvref_t<Ts>...>;
 }

@@ -10,8 +10,22 @@
 namespace ggm::Logger {
     static auto gLogLevel = LogLevel::INFO;
 
+    Suppress::Suppress(LogLevel level) :
+        prev(gLogLevel)
+    {
+        gLogLevel = level;
+    }
+
+    Suppress::~Suppress() {
+        gLogLevel = prev;
+    }
+
     void setLevel(LogLevel level) {
         gLogLevel = level;
+    }
+
+    LogLevel getLevel() {
+        return gLogLevel;
     }
 
     void log(std::string_view level, const Message& message, const std::source_location& sourceLocation) {

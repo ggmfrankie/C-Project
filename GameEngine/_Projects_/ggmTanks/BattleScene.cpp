@@ -28,9 +28,9 @@ namespace ggmTanks {
         mComponentRegistry.createEntity({},
             MeshDataQuad{},
             TextureLocation{"Black.png"},
-            Transformation{{100, 200}, {80, 70}},
+            Transformation{{10, 20}, {80, 70}},
             PlayerControlled{},
-            PhysicsObjectCircle{.radius = 200, .mass = 1}
+            PhysicsObjectCircle{.radius = 40, .mass = 1}
         );
 
         mTerrain.registerMesh(mComponentRegistry);

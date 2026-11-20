@@ -70,6 +70,8 @@ namespace ggm {
     void Screen::render() const noexcept {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         Assert::run(mScene != nullptr);
+
+        InputHandler::startFrame();
         mScene->render(mWidth, mHeight);
         glfwSwapBuffers(mWindowHandle);
     }

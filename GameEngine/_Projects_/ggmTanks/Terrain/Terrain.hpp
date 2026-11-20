@@ -18,8 +18,10 @@ namespace ggmTanks {
 
         std::vector<ggm::Vector2f> mHeightmap;
 
-        ggm::u32 mDepth  = 0;
-        ggm::u32 mWidth = 0;
+        float mDepth = 0;
+        float mWidth = 0;
+
+        ggm::Vector2f mPos {};
 
         ggm::Entity mMeshEntity {};
         bool mMeshDirty;

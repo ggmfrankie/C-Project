@@ -21,7 +21,7 @@
 
 namespace ggm {
     template<typename T, typename... Ts>
-        concept ContainsType = (std::is_same_v<T, Ts> || ...);
+        concept ContainsType = (std::is_same_v<std::remove_cvref_t<T>, Ts> || ...);
 
     template<typename...>
         struct All {};
@@ -35,18 +35,20 @@ namespace ggm {
     template<typename... Components>
         requires allUnique<Components...>
     class ComponentRegistry {
+        using ComponentTypeList = CleanTypeSet<Components...>;
+
         using ComponentVec = std::variant<std::vector<Components>...>;
         using ComponentId = i16;
 
-        using TypeMapping = std::array<ComponentId, sizeof...(Components)>;
+        using TypeMapping = std::array<ComponentId, ComponentTypeList::size>;
 
         struct TypeSignature {
-            std::bitset<sizeof...(Components)> bits;
+            std::bitset<ComponentTypeList::size> bits;
 
             template<typename... RemovedComponents>
             requires (ContainsType<RemovedComponents, Components...> && ...)
             TypeSignature removeTypes() const {
-                std::bitset<sizeof...(Components)> newBits = bits;
+                std::bitset<ComponentTypeList::size> newBits = bits;
                 ((newBits.set(componentId<RemovedComponents>(), false)), ...);
                 return {newBits};
             }
@@ -54,7 +56,7 @@ namespace ggm {
             template<typename... AddedComponents>
             requires (ContainsType<AddedComponents, Components...> && ...)
             TypeSignature addTypes() const {
-                std::bitset<sizeof...(Components)> newBits = bits;
+                std::bitset<ComponentTypeList::size> newBits = bits;
                 ((newBits.set(componentId<AddedComponents>(), true)), ...);
                 return {newBits};
             }
@@ -84,7 +86,7 @@ namespace ggm {
                 (
                     [&] {
                         constexpr ComponentId id = componentId<Components>();
-                        using T = GetTypeAt<id, Components...>;
+                        using T = ComponentTypeList::template at<id>;
                         if (bits[id]) out << typeid(T).name() << ' ';
                     }(), ...
                 );

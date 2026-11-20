@@ -5,7 +5,6 @@
 #pragma once
 #include "Engine/Core/EntityComponentSystem/ComponentRegistry.hpp"
 #include "Engine/Core/EntityComponentSystem/Components/PlayerControlled.hpp"
-#include "../../Engine/Core/EntityComponentSystem/Components/Render/Sprite.hpp"
 #include "Components/Impact.hpp"
 #include "Engine/Core/EntityComponentSystem/Components/TextureLocation.hpp"
 #include "Engine/Core/EntityComponentSystem/Components/Transformation.hpp"
@@ -20,7 +19,6 @@
 
 namespace ggmTanks {
     using Registry = ggm::ComponentRegistry<
-        ggm::Sprite,
         ggm::TextureLocation,
         ggm::Transformation,
         ggm::PlayerControlled,

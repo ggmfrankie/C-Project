@@ -18,7 +18,14 @@ namespace ggm::Logger {
         TRACE
     };
 
+    struct Suppress {
+        LogLevel prev;
+        explicit Suppress(LogLevel level = LogLevel::NONE);
+        ~Suppress();
+    };
+
     void setLevel(LogLevel level = LogLevel::DEBUG);
+    LogLevel getLevel();
 
     void log(std::string_view level, const Message& message, const std::source_location& sourceLocation);
 

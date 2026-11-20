@@ -16,6 +16,9 @@ namespace ggm::InputHandler {
     static std::array<bool, KEY_COUNT> keysDown;
     static std::array<bool, KEY_COUNT> keysReleased;
 
+    static int keyModifiers;
+
+    static std::array<bool, MOUSE_BUTTON_COUNT> mouseKeysDown;
     static std::array<bool, MOUSE_BUTTON_COUNT> mouseKeysPressed;
     
     static bool cursorInWindow = true;
@@ -32,8 +35,14 @@ namespace ggm::InputHandler {
         glfwSetMouseButtonCallback(window, mouseButtonCallback);
     }
 
+    void startFrame() {
+        mouseKeysPressed.fill(false);
+    }
+
     void keyCallback(GLFWwindow* window, int key, int code, int action, int mode) {
         if (key < 0 || key >= KEY_COUNT) return;
+
+        keyModifiers = action;
 
         if (action == GLFW_PRESS) {
             keysPressed[key]  = true;
@@ -68,34 +77,42 @@ namespace ggm::InputHandler {
     }
 
     void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
+        Logger::Suppress _ {};
+
+        keyModifiers = mods;
+
         switch (action) {
-            case GLFW_PRESS:
-                mouseKeysPressed[button] = true;
-                break;
-            case GLFW_RELEASE:
+            case GLFW_PRESS: {
+                Logger::debug({"Mouse button pressed"});
+                if (!mouseKeysDown[button]) {
+                    mouseKeysPressed[button] = true;
+                    mouseKeysDown[button] = true;
+                }
+
+            } break;
+            case GLFW_RELEASE: {
+                Logger::debug({"Mouse button released"});
                 mouseKeysPressed[button] = false;
-                break;
-            case GLFW_REPEAT:
-                mouseKeysPressed[button] = false;
-                break;
+                mouseKeysDown[button] = false;
+            } break;
             default: ;
         }
     }
 
-    bool isKeyPressed(int key) {
-        return keysPressed[key];
+    bool isKeyPressed(Key key, Modifier modifier) {
+        return keysPressed[static_cast<int>(key)];
     }
 
-    bool isKeyDown(int key) {
-        return keysDown[key];
+    bool isKeyDown(Key key, Modifier modifier) {
+        return keysDown[static_cast<int>(key)] && keyModifiers & static_cast<int>(modifier);
     }
 
-    bool isKeyReleased(int key) {
-        return keysReleased[key];
+    bool isKeyReleased(Key key, Modifier modifier) {
+        return keysReleased[static_cast<int>(key)];
     }
 
-    bool isMouseKeyPressed(int mouseKey) {
-        return mouseKeysPressed[mouseKey];
+    bool isMouseButtonPressed(MouseButton mouseButton, Modifier modifier) {
+        return mouseKeysPressed[static_cast<int>(mouseButton)];
     }
 
     Vector2f getCursorPos() {

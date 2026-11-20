@@ -135,16 +135,16 @@ namespace ggm {
     void BaseGame::onUpdate(double deltaTime) {
         Vector3f cameraMovement{};
 
-        if (InputHandler::isKeyDown(GLFW_KEY_W)) cameraMovement.z = 1;
-        else if (InputHandler::isKeyDown(GLFW_KEY_S)) cameraMovement.z = -1;
+        if (InputHandler::isKeyDown(Key::W)) cameraMovement.z = 1;
+        else if (InputHandler::isKeyDown(Key::S)) cameraMovement.z = -1;
 
-        if (InputHandler::isKeyDown(GLFW_KEY_A)) cameraMovement.x = -1;
-        else if (InputHandler::isKeyDown(GLFW_KEY_D)) cameraMovement.x = 1;
+        if (InputHandler::isKeyDown(Key::A)) cameraMovement.x = -1;
+        else if (InputHandler::isKeyDown(Key::D)) cameraMovement.x = 1;
 
-        if (InputHandler::isKeyDown(GLFW_KEY_LEFT_CONTROL)) cameraMovement.y = -1;
-        else if (InputHandler::isKeyDown(GLFW_KEY_SPACE)) cameraMovement.y = 1;
+        if (InputHandler::isKeyDown(Key::LEFT_CONTROL)) cameraMovement.y = -1;
+        else if (InputHandler::isKeyDown(Key::SPACE)) cameraMovement.y = 1;
 
-        if (InputHandler::isKeyPressed(GLFW_KEY_ESCAPE)) {
+        if (InputHandler::isKeyPressed(Key::ESCAPE)) {
             gui_toggleVisible("Home Screen");
             toggle(guiMode);
             toggleCursorMode(mScreen->getWindowHandle(), guiMode);

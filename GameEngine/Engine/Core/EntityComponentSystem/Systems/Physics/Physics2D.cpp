@@ -40,8 +40,8 @@ namespace ggm::Physics2D {
                     const float normalVelocity = Math::dot(physicsObject.velocity, normal);
 
                     if (normalVelocity < 0.0f) {
-                        constexpr float friction = 0.9f;
-                        constexpr float restitution = 0.6f;
+                        constexpr float friction = 0.96f;
+                        constexpr float restitution = 0.3f;
 
                         Vector2f normalComponent = normal * normalVelocity;
                         Vector2f tangentComponent = physicsObject.velocity - normalComponent;
