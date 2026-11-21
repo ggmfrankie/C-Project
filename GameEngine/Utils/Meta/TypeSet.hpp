@@ -7,15 +7,15 @@
 
 namespace ggm {
     template<typename... Ts>
-    struct AllUnique;
+    struct AllUniqueImpl;
 
     template<typename T, typename... Ts>
-    struct AllUnique<T, Ts...> {
-        static constexpr bool value = (!std::same_as<T, Ts> && ...) && AllUnique<Ts...>::value;
+    struct AllUniqueImpl<T, Ts...> {
+        static constexpr bool value = (!std::same_as<T, Ts> && ...) && AllUniqueImpl<Ts...>::value;
     };
 
     template<>
-    struct AllUnique<> {
+    struct AllUniqueImpl<> {
         static constexpr bool value = true;
     };
 
@@ -33,19 +33,39 @@ namespace ggm {
     using GetTypeAt = GetTypeAtImpl<index, Ts...>::type;
 
     template<typename... Ts>
-    constexpr bool allUnique = AllUnique<Ts...>::value;
+    constexpr bool AllUnique = [] consteval {
+        static_assert(AllUniqueImpl<Ts...>::value, "Type occurs more than once in type pack");
+        return true;
+    }();
 
     template<typename... Ts>
-        requires allUnique<Ts...>
+        requires AllUnique<Ts...>
     struct TypeSet {
+
+        template<typename T>
+        static consteval u64 componentId() {
+            constexpr bool matches[] = {
+                std::is_same_v<T, Ts>...
+            };
+
+            for (u64 i = 0; i < sizeof...(Ts); ++i) {
+                if (matches[i]) return i;
+            }
+
+            throw "Component not found";
+        }
+
         static constexpr std::size_t size = sizeof...(Ts);
 
         static constexpr bool empty = false;
 
         template<typename Searched>
-        static constexpr bool contains = (std::same_as<Searched, Ts> || ...);
+        static constexpr bool contains = (std::same_as<std::remove_cvref_t<Searched>, Ts> || ...);
 
-        template<u64 index>
+        template<typename Searched>
+        static constexpr u64 index = componentId<std::remove_cvref_t<Searched>>();
+
+        template<std::size_t index>
         using at = GetTypeAt<index, Ts...>;
 
         template<typename Inserted>

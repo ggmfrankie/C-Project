@@ -129,6 +129,7 @@ namespace ggmTanks {
         }
 
         if (mMeshDirty) {
+            Logger::debug({"Reloading mesh"});
             registry.changeComponents(
                 mMeshEntity,
                 Not<Mesh2D, SimpleCollider>{},

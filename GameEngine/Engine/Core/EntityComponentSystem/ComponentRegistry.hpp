@@ -33,31 +33,51 @@ namespace ggm {
         struct Not {};
 
     template<typename... Components>
-        requires allUnique<Components...>
+        requires AllUnique<Components...>
     class ComponentRegistry {
         using ComponentTypeList = CleanTypeSet<Components...>;
 
-        using ComponentVec = std::variant<std::vector<Components>...>;
+        using ComponentVec = std::variant<std::vector<std::remove_cvref_t<Components>>...>;
         using ComponentId = i16;
 
         using TypeMapping = std::array<ComponentId, ComponentTypeList::size>;
+
+        template<typename... UsedComponents>
+        static consteval auto componentIds() {
+            return std::array<ComponentId, sizeof...(UsedComponents)>{
+                static_cast<ComponentId>(
+                    ComponentTypeList::template index<UsedComponents>
+                )...
+            };
+        }
+
+        template<typename Searched>
+        static constexpr i16 ComponentIndex = ComponentTypeList::template index<Searched>;
+
+        template<u64 index>
+        using ComponentType = ComponentTypeList::template at<index>;
 
         struct TypeSignature {
             std::bitset<ComponentTypeList::size> bits;
 
             template<typename... RemovedComponents>
-            requires (ContainsType<RemovedComponents, Components...> && ...)
-            TypeSignature removeTypes() const {
+                requires (ContainsType<RemovedComponents, Components...> && ...)
+            TypeSignature removeTypes(All<RemovedComponents...>) const {
                 std::bitset<ComponentTypeList::size> newBits = bits;
-                ((newBits.set(componentId<RemovedComponents>(), false)), ...);
+                ((
+                    newBits.set(
+                        ComponentIndex<RemovedComponents>,
+                        false
+                    )
+                ), ...);
                 return {newBits};
             }
 
             template<typename... AddedComponents>
-            requires (ContainsType<AddedComponents, Components...> && ...)
-            TypeSignature addTypes() const {
+                requires (ContainsType<AddedComponents, Components...> && ...)
+            TypeSignature addTypes(All<AddedComponents...>) const {
                 std::bitset<ComponentTypeList::size> newBits = bits;
-                ((newBits.set(componentId<AddedComponents>(), true)), ...);
+                ((newBits.set(ComponentIndex<AddedComponents>, true)), ...);
                 return {newBits};
             }
 
@@ -83,10 +103,11 @@ namespace ggm {
 
             std::string getTypeNames() {
                 std::ostringstream out;
+                out << ' ';
                 (
                     [&] {
-                        constexpr ComponentId id = componentId<Components>();
-                        using T = ComponentTypeList::template at<id>;
+                        constexpr ComponentId id = ComponentIndex<Components>;
+                        using T = ComponentType<id>;
                         if (bits[id]) out << typeid(T).name() << ' ';
                     }(), ...
                 );
@@ -100,24 +121,11 @@ namespace ggm {
             }
         };
 
-        template<typename T>
-        static consteval ComponentId componentId() {
-            constexpr bool matches[] = {
-                std::is_same_v<T, Components>...
-            };
-
-            for (ComponentId i = 0; i < sizeof(matches); ++i) {
-                if (matches[i]) return i;
-            }
-
-            throw "Component not found";
-        }
-
     public:
         class Archetype  {
             template<typename T>
             static void setMapping(TypeMapping& mapping, ComponentId index) {
-                mapping[componentId<T>()] = index;
+                mapping[ComponentIndex<T>] = index;
             }
 
             template<typename... UsedComponents, std::size_t... Ids>
@@ -240,13 +248,13 @@ namespace ggm {
                 setMappings(out.getMappings(), signature);
                 out.updateSignature();
 
-                Logger::debug({"Created new Archetype from signature {} and types\n [ {}]", signature.bits, out.getSignature().getTypeNames()});
+                Logger::debug({"Created new Archetype from signature {} and types\n [{}]", signature.bits, out.getSignature().getTypeNames()});
                 return out;
             }
 
             template<typename UsedComponent>
             std::vector<UsedComponent>& getComponentVector() {
-                return std::get<std::vector<std::remove_cvref_t<UsedComponent>>>(mComponents[mMappings[componentId<std::remove_cvref_t<UsedComponent>>()]]);
+                return std::get<std::vector<std::remove_cvref_t<UsedComponent>>>(mComponents[mMappings[ComponentIndex<UsedComponent>]]);
             }
 
             ComponentVec& getComponentVector(ComponentId id) {
@@ -256,18 +264,14 @@ namespace ggm {
             template<typename... UsedComponents>
                 requires (ContainsType<UsedComponents, Components...> && ...)
             bool has(All<UsedComponents...>) const {
-                constexpr std::array ids {
-                    componentId<UsedComponents>()...
-                };
+                constexpr auto ids = componentIds<UsedComponents...>();
                 return hasAll(std::span<const ComponentId>{ids});
             }
 
             template<typename... UsedComponents>
                 requires (ContainsType<UsedComponents, Components...> && ...)
             bool has(Any<UsedComponents...>) const {
-                constexpr std::array ids {
-                    componentId<UsedComponents>()...
-                };
+                constexpr auto ids = componentIds<UsedComponents...>();
                 return hasAny(std::span<const ComponentId>{ids});
             }
 
@@ -318,8 +322,12 @@ namespace ggm {
                 mEntityMappings.clear();
             }
 
-            bool contains(const Entity& entity) {
+            bool contains(const Entity& entity) const {
                 return mEntityMappings.contains(entity.id());
+            }
+
+            bool isEmpty() const {
+                return  mEntities.empty();
             }
 
             std::optional<size_t> getIndex(const Entity& entity) {
@@ -396,8 +404,8 @@ namespace ggm {
             } signatures = {};
 
             signatures.present      = sourceArchetype.getSignature();
-            signatures.required     = signatures.present.template removeTypes<RemovedComponents...>().template addTypes<AddedComponents...>();
-            signatures.transferable = signatures.present & signatures.required.template removeTypes<AddedComponents...>();
+            signatures.required     = signatures.present.removeTypes(All<RemovedComponents...>{}).addTypes(All<AddedComponents...>{});
+            signatures.transferable = signatures.present & signatures.required.removeTypes(All<AddedComponents...>{});
 
             Archetype& destinationArchetype = getOrCreateArchetype(signatures.required);
 
@@ -425,7 +433,7 @@ namespace ggm {
                         [&]<std::size_t I>() {
                             using T = GetTypeAt<I, AddedComponents...>;
 
-                            if (componentId<T>() != i) return false;
+                            if (ComponentIndex<T> != i) return false;
 
                             auto& destinationVector = destinationArchetype.template getComponentVector<T>();
                             destinationVector.emplace_back(std::move(std::get<Is>(addedComponents)));
@@ -501,11 +509,11 @@ namespace ggm {
 
         template<typename... Whitelist, typename... Blacklist>
             requires (ContainsType<Whitelist, Components...> && ...) && (ContainsType<Blacklist, Components...> && ...)
-        auto& popEntities(All<Whitelist...>, Not<Blacklist...> = {}) {
+        auto popEntities(All<Whitelist...>, Not<Blacklist...> = {}) {
             using ComponentBatch = std::tuple<std::size_t, std::vector<Entity>, std::vector<Whitelist>...>;
 
-            static std::vector<ComponentBatch> batches {};
-            batches.clear();
+            std::vector<ComponentBatch> batches {};
+            batches.reserve(16);
 
             for (auto& archetype : mArchetypes) {
                 if (!archetype.has(All<Whitelist...>{})) continue;
@@ -513,6 +521,8 @@ namespace ggm {
                 if constexpr (sizeof...(Blacklist) > 0) {
                     if (archetype.has(Any<Blacklist...>{})) continue;
                 }
+
+                if (archetype.isEmpty()) continue;
 
                 batches.emplace_back(
                     archetype.getEntityCount(),

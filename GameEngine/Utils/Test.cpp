@@ -28,6 +28,8 @@ namespace Testing {
         for (auto it = map.begin(); it != map.end(); ++it) {
         }
 
+        using Vec3 = float[3];
+
         map.remove("kek");
     }
 

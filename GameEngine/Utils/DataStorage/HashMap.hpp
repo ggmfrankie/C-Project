@@ -9,6 +9,8 @@
 #include <optional>
 #include <algorithm>
 
+#include "Debug/Exception.hpp"
+
 namespace ggm {
     template<typename Key, typename Hash>
     concept HashType = requires(Hash hash, const Key& key) {
@@ -33,16 +35,17 @@ namespace ggm {
         static constexpr i64 EMPTY_SLOT = -1;
         static constexpr int HASH_TABLE_FACTOR = 4;
 
-        auto getHashTableSlot(const Key& key) {
-            const size_t index = mHash(key) % mHashTable.capacity();
+        template<typename Self>
+        auto getHashTableSlot(this Self&& self, const Key& key) {
+            const size_t index = self.mHash(key) % self.mHashTable.capacity();
 
-            const auto begin = mHashTable.begin();
-            auto end = begin + mHashTable.capacity();
+            const auto begin = self.mHashTable.begin();
+            auto end = begin + self.mHashTable.capacity();
 
             auto it = begin + index;
 
             while (*it != EMPTY_SLOT) {
-                if (mData[*it].key == key) return it;
+                if (self.mData[*it].key == key) return it;
                 ++it;
                 if (it == end) it = begin;
             }
@@ -72,7 +75,7 @@ namespace ggm {
                     hashIndex != mHashTable.end()) {
                     *hashIndex = i;
                 } else {
-                    throw std::runtime_error("Rehashing failed");
+                    throw Exception({"Rehashing failed"});
                 }
             }
         }
@@ -92,13 +95,15 @@ namespace ggm {
             // Check if hashtable needs resize
             if (static_cast<float>(mData.size()) / mHashTable.capacity() > 0.75) resizeHashTable(mHashTable.capacity() * 2);
 
+            auto slot = getEmptyHashTableSlot(key);
+
             u64 index = mData.size();
             mData.push(key, value);
 
-            *getEmptyHashTableSlot(key) = index;
+            *slot = index;
         }
 
-        bool contains(const Key& key) {
+        bool contains(const Key& key) const {
             return getHashTableSlot(key) != mHashTable.end();
         }
 
@@ -169,7 +174,7 @@ namespace ggm {
 
             mData.remove(pos);
 
-            if (mData.end() - pos > 1) {
+            if (index < mData.size()) {
                 const Key& lastKey = mData[index].key;
                 *getHashTableSlot(lastKey) = index;
             }
@@ -177,7 +182,7 @@ namespace ggm {
 
         void clear() {
             mData.clear();
-            mHashTable.clear();
+            std::ranges::fill(mHashTable, EMPTY_SLOT);
         }
 
         size_t size() const {
