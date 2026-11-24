@@ -84,6 +84,7 @@ typedef struct Element {
         bool isSelected: 1;
 
         bool wasClicked: 1;
+        bool wasContentChanged: 1;
     } flags;
 
     struct {
@@ -216,8 +217,11 @@ void Element_setText(ElementHandle selfHandle, const char* text);
 void Element_setTextF(ElementHandle selfHandle, const char* fmt, ...);
 void Element_setText_va(Element* element, const char* fmt, va_list args);
 void Element_setActive(ElementHandle selfHandle, bool b);
-void Element_toggleVisible(ElementHandle selfHandle);
 void Element_setColor(ElementHandle selfHandle, Vec3f color);
+
+void Element_getText(ElementHandle selfHandle, char buff[], size_t maxSize);
+
+void Element_toggleVisible(ElementHandle selfHandle);
 
 void Element_printDebug(const Element* element);
 

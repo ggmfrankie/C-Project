@@ -84,6 +84,8 @@ void TextField_insertCharAtCursor(Element* self, char c) {
     strAppendAt(&tfd->sText, c, tfd->cursor.pos.index);
     Element_setText_ptr(self, tfd->sText);
     TextField_moveCursorBy(self, +1);
+
+    self->flags.wasContentChanged = true;
 }
 
 static void TextField_setClosestCursorPos(const Element* self, float pos) {
@@ -141,7 +143,8 @@ ElementHandle TextField_new(const ElementSettings elementSettings, bool (*onEnte
             .text = "",
             .task = elementSettings.task,
             .drawCustom = TextField_drawCursor,
-            .whileSelected = TextField_updateBlinkTimer
+            .whileSelected = TextField_updateBlinkTimer,
+            .grow = elementSettings.grow
         }
     );
     Element* textField = Element_get(textFieldHandle);

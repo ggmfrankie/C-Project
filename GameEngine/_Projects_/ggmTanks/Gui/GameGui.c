@@ -9,6 +9,7 @@
 
 #include "GUI/GuiElement/GuiElement.h"
 #include "GuiCallbacks.hpp"
+#include "GUI/GuiElement/ElementTypes/TextField.h"
 
 static ElementHandle ggmTanks_simpleButton(const char* text, const char* name, bool (*onClick)(Element* element), const char* icon) {
     return Element_new((ElementSettings){
@@ -70,7 +71,15 @@ void ggmTanks_createDebugMenu(Element* root) {
 
             ggmTanks_simpleButton("Toggle debug view", nullptr, ggmTanks_onClick_toggleDebugView, "Icons/DebugIcon.png"),
             ggmTanks_simpleButton("Reload Terrain", "terrain_reload", nullptr, "Icons/RefreshIcon.png"),
-            ggmTanks_simpleButton("Close Window", nullptr, ggmTanks_onClick_closeWindow, "Icons/WhiteX.png")
+            ggmTanks_simpleButton("Close Window", nullptr, ggmTanks_onClick_closeWindow, "Icons/WhiteX.png"),
+            TextField_new((ElementSettings){
+                .color = GUI_COLOR_GRAYSCALE(0.190),
+                .grow = true,
+                .minHeight = 20,
+                .padding = {5, 5, 5, 5},
+                .cornerRadius = 7,
+                .textColor = GUI_COLOR_LIGHTGRAY1,
+            }, nullptr)
         )
     );
 }

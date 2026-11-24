@@ -191,6 +191,16 @@ void Element_setColor(ElementHandle selfHandle, const Vec3f color) {
     Element_get(selfHandle)->visuals.color = color;
 }
 
+void Element_getText(ElementHandle selfHandle, char buff[], size_t maxSize) {
+    const Element* self = Element_get(selfHandle);
+
+    if (!self->textElement.hasText) {
+        Log_warning("Element does not have text");
+        return;
+    }
+    snprintf(buff, maxSize, "%s", self->textElement.sText);
+}
+
 ElementHandle Element_getElement(const char *name) {
     assert(name != nullptr);
     const auto found = CHashTable_get(gmElements, name);

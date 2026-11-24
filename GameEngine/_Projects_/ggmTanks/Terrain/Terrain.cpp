@@ -117,6 +117,7 @@ namespace ggmTanks {
     }
 
     void Terrain::update(Registry& registry) {
+        Logger::Suppress _ {};
         if (InputHandler::isMouseButtonPressed(MouseButton::LEFT)) {
             spawnImpact(registry, InputHandler::getCursorPos());
         }

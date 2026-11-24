@@ -190,6 +190,12 @@ void gui_setTextF(const char* name, const char* fmt, ...) {
     va_end(args);
 }
 
+void gui_getText(const char* name, char buff[], size_t maxSize) {
+    Thread_Locked(
+        Element_getText(Element_getElement(name), buff, maxSize);
+    )
+}
+
 void gui_setColor(const char* name, const float r, const float g, const float b) {
     assert(name != nullptr);
     Thread_Locked(
@@ -238,6 +244,16 @@ bool gui_wasClicked(const char* name) {
         clicked = Element_get(Element_getElement(name))->flags.wasClicked;
     )
     return clicked;
+}
+
+bool gui_wasContentChanged(const char* name) {
+    bool updated = false;
+    Thread_Locked(
+        Element* curr = Element_get(Element_getElement(name));
+        updated = curr->flags.wasContentChanged;
+        curr->flags.wasContentChanged = false;
+    )
+    return updated;
 }
 
 void gui_delete(const char* name) {

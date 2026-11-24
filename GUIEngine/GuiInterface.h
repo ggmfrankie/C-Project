@@ -8,6 +8,7 @@ extern "C" {
 #endif
 #include "GuiDefines.h"
 #include "GuiTypes.h"
+#include <stdint.h>
 
 typedef struct {
     GLFWkeyfun keyCallback;
@@ -40,6 +41,8 @@ typedef void (*GUI_onKeyPressAction)(int key, int scancode, int action, int mods
     void gui_setText(const char* name, const char* text);
     void gui_setTextF(const char* name, const char* fmt, ...);
 
+    void gui_getText(const char* name, char buff[], size_t maxSize);
+
     void gui_setColor(const char* name, float r, float g, float b);
     void gui_resetColor(const char* name);
     void gui_setCornerRadius(const char* name, int radius);
@@ -47,6 +50,7 @@ typedef void (*GUI_onKeyPressAction)(int key, int scancode, int action, int mods
 
     bool gui_isActive(const char* name);
     bool gui_wasClicked(const char* name);
+    bool gui_wasContentChanged(const char* name);
 
     void gui_delete(const char* name);
 

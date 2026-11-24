@@ -21,6 +21,10 @@ typedef struct {
     bool (*onEnterCallback)(Element* element);
 } TextFieldData;
 
+typedef struct {
+    // TODO
+} TextFieldSettings;
+
 ElementHandle TextField_new(ElementSettings elementSettings,
                             bool (*onEnterCallback)(Element *element));
 bool TextField_runTask(Element *element);
