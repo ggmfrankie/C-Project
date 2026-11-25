@@ -25,8 +25,8 @@ typedef struct {
     // TODO
 } TextFieldSettings;
 
-ElementHandle TextField_new(ElementSettings elementSettings,
-                            bool (*onEnterCallback)(Element *element));
+ElementHandle TextField_new(ElementSettings elementSettings, bool (*onEnterCallback)(Element *element));
+
 bool TextField_runTask(Element *element);
 
 void TextField_popChar(Element* self);
