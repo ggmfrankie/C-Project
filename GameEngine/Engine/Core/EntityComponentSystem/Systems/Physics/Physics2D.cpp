@@ -12,7 +12,7 @@ namespace ggm::Physics2D {
     static constexpr float GRAVITY = 9.81;
 
     void updateWithGravity(float deltaTime, std::span<Transformation> transformations, std::span<PhysicsObjectCircle> physicsObjects, std::span<const SimpleCollider> colliders) {
-        for (auto[transformation, physicsObject] : std::ranges::views::zip(transformations, physicsObjects)) {
+        for (auto[transformation, physicsObject] : std::views::zip(transformations, physicsObjects)) {
             // Sync extern position changes to the physics object
             physicsObject.position = transformation.position;
 

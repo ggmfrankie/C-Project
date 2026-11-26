@@ -12,7 +12,10 @@ namespace ggm {
             String s2 = stst;
             s.append("it is working");
 
-            s2.contains("asda");
+            const String sds = "asda";
+            auto& c = sds[4];
+
+            auto b = s2.contains("asda");
 
         }
     }

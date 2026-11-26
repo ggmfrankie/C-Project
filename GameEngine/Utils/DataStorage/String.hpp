@@ -15,7 +15,7 @@ namespace ggm {
         String(String&& other) noexcept;
 
         template<typename S>
-            requires requires (S& s) {std::string(s);}
+            requires requires (const S& s) {std::string(s);}
         String(const S& other) :
             mData(other)
         {}

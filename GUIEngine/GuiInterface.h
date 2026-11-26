@@ -9,6 +9,7 @@ extern "C" {
 #include "GuiDefines.h"
 #include "GuiTypes.h"
 #include <stdint.h>
+#include <stddef.h>
 
 typedef struct {
     GLFWkeyfun keyCallback;
