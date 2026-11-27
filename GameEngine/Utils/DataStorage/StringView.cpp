@@ -18,51 +18,55 @@ namespace ggm {
         }
     }
 
-    StringView::StringView(const std::string& other) :
+    constexpr StringView::StringView(const std::string& other) :
         mData(other.data()),
         mSize(other.size())
     {}
 
-    StringView::StringView(const String& other) :
+    constexpr StringView::StringView(const String& other) :
         mData(other.data()),
         mSize(other.size())
     {}
 
-    StringView::StringView(const char* cStr) :
+    constexpr StringView::StringView(const char* cStr) :
         mData(cStr),
         mSize(strlen(cStr))
     {}
 
-    void StringView::removePrefix(u64 length) {
-        Assert::run(mSize >= length);
+    constexpr void StringView::removePrefix(u64 length) {
+        Assert::check(mSize >= length);
         mData += length;
     }
 
-    void StringView::removePrefix(const char* prefix) {
+    constexpr void StringView::removePrefix(const char* prefix) {
         const u64 len = strlen(prefix);
         const char* it = mData + len;
 
-        Assert::run((it - begin()) >= len);
+        Assert::check((it - begin()) >= len);
 
         if (memcmp(mData, prefix, len) > 0) return;
         mData += len;
     }
 
-    void StringView::removePostfix(u64 length) {
-        Assert::run(mSize >= length);
+    constexpr void StringView::removePostfix(u64 length) {
+        Assert::check(mSize >= length);
         mSize -= length;
     }
 
-    void StringView::removePostfix(const char* postfix) {
+    constexpr void StringView::removePostfix(const char* postfix) {
         const u64 len = strlen(postfix);
         const char* it = mData + mSize-1 - len;
 
-        Assert::run((end() - it) > len);
+        Assert::check((end() - it) > len);
 
         if (memcmp(it, postfix, len) > 0) return;
         mSize -= len;
     }
 
-    StringView::Iterator StringView::begin() const {return mData;}
-    StringView::Iterator StringView::end() const {return mData + mSize;}
+    constexpr StringView::Iterator StringView::begin() const {return mData;}
+    constexpr StringView::Iterator StringView::end() const {return mData + mSize;}
 } // ggm
+
+constexpr ggm::StringView operator""_SV(const char* literal) {
+    return {literal};
+}

@@ -391,8 +391,8 @@ namespace ggm {
             requires (ContainsType<RemovedComponents, Components...> && ...) &&  (ContainsType<AddedComponents, Components...> && ...)
         void changeComponents(Entity entity, Archetype& sourceArchetype, Not<RemovedComponents...> removed, AddedComponents&&... added) {
             auto it = sourceArchetype.getIndex(entity);
-            Assert::run(it.has_value());
-            Assert::run(sourceArchetype.has(All<RemovedComponents...>{}), {"Source Archetype {} with Entity {} does not have the components requested to be removed", sourceArchetype.getSignature().bits, entity.id()});
+            Assert::check(it.has_value());
+            Assert::check(sourceArchetype.has(All<RemovedComponents...>{}), {"Source Archetype {} with Entity {} does not have the components requested to be removed", sourceArchetype.getSignature().bits, entity.id()});
 
             ssize_t changedEntityIndex = *it;
             (void) changedEntityIndex;
@@ -534,6 +534,22 @@ namespace ggm {
             }
 
             return batches;
+        }
+
+        template<typename... Whitelist, typename... Blacklist>
+            requires (ContainsType<Whitelist, Components...> && ...) && (ContainsType<Blacklist, Components...> && ...)
+        auto deleteEntities(All<Whitelist...>, Not<Blacklist...> = {}) {
+            for (auto& archetype : mArchetypes) {
+                if (!archetype.has(All<Whitelist...>{})) continue;
+
+                if constexpr (sizeof...(Blacklist) > 0) {
+                    if (archetype.has(Any<Blacklist...>{})) continue;
+                }
+
+                if (archetype.isEmpty()) continue;
+
+                archetype.clear();
+            }
         }
     };
 } // ggm

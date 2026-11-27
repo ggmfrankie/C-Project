@@ -78,7 +78,7 @@ namespace ggm {
     }
 
     GameEngine& GameEngine::Get() {
-        Assert::run(mEngineInstance != nullptr);
+        Assert::check(mEngineInstance != nullptr);
         return *mEngineInstance;
     }
 }

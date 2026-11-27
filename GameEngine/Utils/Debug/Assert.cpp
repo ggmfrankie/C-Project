@@ -22,6 +22,6 @@ namespace ggm::Assert {
     }
 
     void openGlLoaded(const std::source_location& loc) {
-        run(gladLoadGL(glfwGetProcAddress) != 0, {"OpenGL was not initialized"}, loc);
+        check(gladLoadGL(glfwGetProcAddress) != 0, {"OpenGL was not initialized"}, loc);
     }
 }

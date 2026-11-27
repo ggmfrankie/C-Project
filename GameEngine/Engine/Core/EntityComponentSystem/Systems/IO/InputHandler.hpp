@@ -114,16 +114,21 @@ namespace ggm {
         Vector2f getCursorPos();
         Vector2f getCursorDisplacement();
 
-        std::array<bool, KEY_COUNT>& getKeysPressed();
+        std::span<const bool, KEY_COUNT> getKeysPressed();
 
         template<typename... Components>
-        requires ContainsType<KeyPressEvent, Components...> && ContainsType<KeyReleaseEvent, Components...>
-        [[maybe_unused]]
+            requires ContainsType<KeyPressEvent, Components...> && ContainsType<KeyReleaseEvent, Components...>
         void update(ComponentRegistry<Components...>& registry) {
+            registry.deleteEntities(All<KeyPressEvent>{});
+
             const auto& pressedKeys = getKeysPressed();
 
             for (int i = 0; i < pressedKeys.size(); ++i) {
-                if (pressedKeys[i]) registry.createEntity({}, KeyPressEvent{.keycode = i});
+                if (!pressedKeys[i]) continue;
+
+                KeyPressEvent event {.keycode = i};
+                Logger::debug({"KeyPressEvent: [{}]", event.keycode});
+                registry.createEntity({}, event);
             }
         }
     }

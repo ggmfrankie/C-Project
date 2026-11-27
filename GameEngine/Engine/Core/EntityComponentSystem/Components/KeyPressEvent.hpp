@@ -6,5 +6,9 @@
 namespace ggm {
     struct KeyPressEvent {
         int keycode;
+
+        friend std::ostream& operator<<(std::ostream& os, const KeyPressEvent& event) {
+            return os << event.keycode;
+        }
     };
 }

@@ -174,6 +174,8 @@ add_executable(C-Project
         GameEngine/Engine/Core/EntityComponentSystem/Components/Render/Mesh2D.hpp
         GameEngine/Engine/Core/EntityComponentSystem/Components/Physics/PhysicsObjectCircle.hpp
         GameEngine/Engine/Core/EntityComponentSystem/Components/PlayerControlled.hpp
+        GameEngine/Engine/Core/EntityComponentSystem/EventHandler.cpp
+        GameEngine/Engine/Core/EntityComponentSystem/EventHandler.hpp
 )
 
 target_compile_definitions(C-Project PUBLIC JPH_ENABLE_ASSERTS)

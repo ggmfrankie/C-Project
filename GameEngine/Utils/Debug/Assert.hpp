@@ -22,7 +22,7 @@ namespace ggm::Assert {
 
     template<std::convertible_to<bool> Expression>
     requires (!std::predicate<Expression>)
-    void run(Expression expression, Message&& message = {}, const std::source_location& loc = std::source_location::current()) {
+    void check(Expression expression, Message&& message = {}, const std::source_location& loc = std::source_location::current()) {
         if (expression) return;
         fail(loc, std::move(message.data));
     }

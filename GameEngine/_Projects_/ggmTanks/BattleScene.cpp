@@ -5,6 +5,7 @@
 
 #include "GuiInterface.h"
 #include "Engine/Core/EntityComponentSystem/Core/RenderContext.hpp"
+#include "Engine/Core/EntityComponentSystem/Systems/IO/InputHandler.hpp"
 #include "Engine/Core/EntityComponentSystem/Systems/Physics/PlayerController.hpp"
 #include "Engine/Core/EntityComponentSystem/Systems/Render/MeshRenderer2D.hpp"
 #include "Engine/Core/EntityComponentSystem/Systems/Loader/MeshLoader2D.hpp"
@@ -48,6 +49,8 @@ namespace ggmTanks {
     }
 
     void BattleScene::update(float dt) {
+        InputHandler::update(mComponentRegistry);
+
         gui_update();
         mTerrain.update(mComponentRegistry);
 

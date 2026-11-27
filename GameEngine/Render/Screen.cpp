@@ -63,13 +63,13 @@ namespace ggm {
 
         InputHandler::init(mWindowHandle);
 
-        Assert::run(mScene);
+        Assert::check(mScene);
         mScene->init();
     }
 
     void Screen::render() const noexcept {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        Assert::run(mScene != nullptr);
+        Assert::check(mScene != nullptr);
 
         InputHandler::startFrame();
         mScene->render(mWidth, mHeight);
@@ -81,7 +81,7 @@ namespace ggm {
      * @param scene The scene that should be processed
      */
     void Screen::attachScene(IScene *scene) {
-        Assert::run(scene != nullptr);
+        Assert::check(scene != nullptr);
         mScene = scene;
     }
 
@@ -110,7 +110,7 @@ namespace ggm {
     }
 
     void Screen::update(const float dt) const noexcept {
-        Assert::run(mScene != nullptr);
+        Assert::check(mScene != nullptr);
         mScene->update(dt);
     }
 }

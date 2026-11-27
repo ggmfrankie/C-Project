@@ -16,32 +16,32 @@ namespace ggm {
         u64 mSize;
 
     public:
-        StringView() = delete;
-        StringView(const std::string& other);
-        StringView(const String& other);
-        StringView(const char* cStr);
+        constexpr StringView() = delete;
+        constexpr StringView(const std::string& other);
+        constexpr StringView(const String& other);
+        constexpr StringView(const char* cStr);
 
-        void removePrefix(u64 length);
-        void removePrefix(const char* prefix);
+        constexpr void removePrefix(u64 length);
+        constexpr void removePrefix(const char* prefix);
 
         template<u64 N>
-        void removePrefix(const char (&prefix)[N+1]) {
+        constexpr void removePrefix(const char (&prefix)[N+1]) {
             const char* it = mData + N;
 
-            Assert::run((it - begin()) >= N);
+            Assert::check((it - begin()) >= N);
 
             if (memcmp(mData, prefix, N) > 0) return;
             mData += N;
         }
 
-        void removePostfix(u64 length);
-        void removePostfix(const char* postfix);
+        constexpr void removePostfix(u64 length);
+        constexpr void removePostfix(const char* postfix);
 
         template<u64 N>
-        void removePostfix(const char (&prefix)[N+1]) {
+        constexpr void removePostfix(const char (&prefix)[N+1]) {
             const char* it = mData + mSize-1 - N;
 
-            Assert::run((end() - it) > N);
+            Assert::check((end() - it) > N);
 
             if (memcmp(it, prefix, N) > 0) return;
             mSize -= N;
@@ -49,7 +49,9 @@ namespace ggm {
 
         using Iterator = const char*;
 
-        Iterator begin() const;
-        Iterator end() const;
+        constexpr Iterator begin() const;
+        constexpr Iterator end() const;
     };
 } // ggm
+
+constexpr ggm::StringView operator""_SV(const char* literal);

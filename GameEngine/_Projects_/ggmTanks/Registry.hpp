@@ -6,6 +6,8 @@
 #include "Engine/Core/EntityComponentSystem/ComponentRegistry.hpp"
 #include "Engine/Core/EntityComponentSystem/Components/PlayerControlled.hpp"
 #include "Components/Impact.hpp"
+#include "Engine/Core/EntityComponentSystem/Components/KeyPressEvent.hpp"
+#include "Engine/Core/EntityComponentSystem/Components/KeyReleaseEvent.hpp"
 #include "Engine/Core/EntityComponentSystem/Components/TextureLocation.hpp"
 #include "Engine/Core/EntityComponentSystem/Components/Transformation.hpp"
 #include "Engine/Core/EntityComponentSystem/Components/Physics/PhysicsObjectCircle.hpp"
@@ -29,6 +31,8 @@ namespace ggmTanks {
         ggm::SimpleCollider,
         ggm::PhysicsObjectCircle,
         ggm::Color,
+        ggm::KeyPressEvent,
+        ggm::KeyReleaseEvent,
         Impact
     >;
 }
