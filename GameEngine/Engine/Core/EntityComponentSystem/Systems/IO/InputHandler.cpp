@@ -21,104 +21,12 @@ namespace ggm::InputHandler {
 
     static std::array<bool, MOUSE_BUTTON_COUNT> mouseKeysDown;
     static std::array<bool, MOUSE_BUTTON_COUNT> mouseKeysPressed;
-    
+
     static bool cursorInWindow = true;
 
     static Vector2f lastCursorPos;
     static Vector2f cursorPos;
     static u32 lastChar;
-
-    StringView toString(Key e) {
-        switch (e) {
-            case Key::$0: return "0";
-            case Key::$1: return "1";
-            case Key::$2: return "2";
-            case Key::$3: return "3";
-            case Key::$4: return "4";
-            case Key::$5: return "5";
-            case Key::$6: return "6";
-            case Key::$7: return "7";
-            case Key::$8: return "8";
-            case Key::$9: return "9";
-
-            case Key::SPACE: return "Space";
-            case Key::APOSTROPHE: return "^";
-            case Key::COMMA: return ",";
-            case Key::MINUS: return "-";
-            case Key::PERIOD: return ".";
-            case Key::SLASH: return "/";
-            case Key::SEMICOLON: return ";";
-            case Key::EQUAL:
-                break;
-            case Key::A:
-                break;
-            case Key::B:
-                break;
-            case Key::C:
-                break;
-            case Key::D:
-                break;
-            case Key::E:
-                break;
-            case Key::F:
-                break;
-            case Key::G:
-                break;
-            case Key::H:
-                break;
-            case Key::I:
-                break;
-            case Key::J:
-                break;
-            case Key::K:
-                break;
-            case Key::L:
-                break;
-            case Key::M:
-                break;
-            case Key::N:
-                break;
-            case Key::O:
-                break;
-            case Key::P:
-                break;
-            case Key::Q:
-                break;
-            case Key::R:
-                break;
-            case Key::S:
-                break;
-            case Key::T:
-                break;
-            case Key::U:
-                break;
-            case Key::V:
-                break;
-            case Key::W:
-                break;
-            case Key::X:
-                break;
-            case Key::Y:
-                break;
-            case Key::Z:
-                break;
-            case Key::ESCAPE:
-                break;
-            case Key::TAB:
-                break;
-            case Key::LEFT_CONTROL:
-                break;
-            case Key::LEFT:
-                break;
-            case Key::RIGHT:
-                break;
-            case Key::UP:
-                break;
-            case Key::DOWN:
-                break;
-        }
-        return "Unknown";
-    }
 
     void init(GLFWwindow* window) {
         glfwSetKeyCallback(window, keyCallback);

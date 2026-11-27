@@ -5,7 +5,6 @@
 #include "Terrain.hpp"
 
 #include <algorithm>
-#include <assert.h>
 
 #include "GuiInterface.h"
 #include "Engine/Core/EntityComponentSystem/Components/Render/MeshData2D.hpp"

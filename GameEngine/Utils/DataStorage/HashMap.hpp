@@ -36,7 +36,7 @@ namespace ggm {
         static constexpr int HASH_TABLE_FACTOR = 4;
 
         template<typename Self>
-        auto getHashTableSlot(this Self&& self, const Key& key) {
+        constexpr auto getHashTableSlot(this Self&& self, const Key& key) {
             const size_t index = self.mHash(key) % self.mHashTable.capacity();
 
             const auto begin = self.mHashTable.begin();
@@ -52,7 +52,7 @@ namespace ggm {
             return end;
         }
 
-        auto getEmptyHashTableSlot(const Key& key) {
+        constexpr auto getEmptyHashTableSlot(const Key& key) {
             const size_t index = mHash(key) % mHashTable.capacity();
 
             const auto begin = mHashTable.begin();
@@ -66,7 +66,7 @@ namespace ggm {
             return it;
         }
 
-        void rehash() {
+        constexpr void rehash() {
             std::ranges::fill(mHashTable, EMPTY_SLOT);
             for (u64 i = 0; i < mData.size(); ++i) {
                 auto&[key, value] = mData[i];
@@ -80,18 +80,18 @@ namespace ggm {
             }
         }
 
-        void resizeHashTable(const u64 newCapacity) {
+        constexpr void resizeHashTable(const u64 newCapacity) {
             mHashTable.growTo(newCapacity, -1);
             rehash();
         }
 
     public:
-        explicit HashMap(const u64 capacity = 16) noexcept :
+        constexpr explicit HashMap(const u64 capacity = 16) noexcept :
             mHashTable(capacity * HASH_TABLE_FACTOR, EMPTY_SLOT),
             mData(capacity)
         {}
 
-        void insert(const Key& key, const Value& value) {
+        constexpr void insert(const Key& key, const Value& value) {
             // Check if hashtable needs resize
             if (static_cast<float>(mData.size()) / mHashTable.capacity() > 0.75) resizeHashTable(mHashTable.capacity() * 2);
 
@@ -103,26 +103,26 @@ namespace ggm {
             *slot = index;
         }
 
-        bool contains(const Key& key) const {
+        constexpr bool contains(const Key& key) const {
             return getHashTableSlot(key) != mHashTable.end();
         }
 
-        Value* get(const Key& key) {
+        constexpr Value* get(const Key& key) {
             const auto hashTableSlot = getHashTableSlot(key);
             return (hashTableSlot != mHashTable.end())
                 ? &mData[*hashTableSlot].value
                 : nullptr;
         }
 
-        Value* operator[](const Key& key) {
+        constexpr Value* operator[](const Key& key) {
             return get(key);
         }
 
-        auto find(const Value& value) {
+        constexpr auto find(const Value& value) {
             return std::ranges::find(mData, value, &Object::value);
         }
 
-        void remove(const Key& key) {
+        constexpr void remove(const Key& key) {
             auto slot = getHashTableSlot(key);
 
             const auto start = mHashTable.begin();
@@ -180,12 +180,12 @@ namespace ggm {
             }
         }
 
-        void clear() {
+        constexpr void clear() {
             mData.clear();
             std::ranges::fill(mHashTable, EMPTY_SLOT);
         }
 
-        size_t size() const {
+        constexpr size_t size() const {
             return mData.size();
         }
 
@@ -198,50 +198,50 @@ namespace ggm {
             using pointer    = Object*;
             using reference  = Object&;
 
-            Iterator(const pointer data) : data(data) {}
+            constexpr Iterator(const pointer data) : data(data) {}
 
-            reference operator*() {
+            constexpr reference operator*() {
                 return *data;
             }
 
-            pointer operator->() {
+            constexpr pointer operator->() {
                 return data;
             }
 
-            reference operator[](size_t index) {
+            constexpr reference operator[](size_t index) {
                 return data[index];
             }
 
-            Iterator& operator++() {
+            constexpr Iterator& operator++() {
                 ++data;
                 return *this;
             }
 
-            Iterator operator++(int) {
+            constexpr Iterator operator++(int) {
                 Iterator temp = *this;
                 ++data;
                 return temp;
             }
 
-            Iterator& operator--() {
+            constexpr Iterator& operator--() {
                 --data;
                 return *this;
             }
 
-            Iterator operator--(int) {
+            constexpr Iterator operator--(int) {
                 Iterator temp = *this;
                 --data;
                 return temp;
             }
 
-            auto operator<=>(const Iterator&) const = default;
+            constexpr auto operator<=>(const Iterator&) const = default;
 
         private:
              Object* data;
         };
 
-        Iterator begin() noexcept {return {mData.begin()};}
-        Iterator end() noexcept {return {mData.end()};}
+        constexpr Iterator begin() noexcept {return {mData.begin()};}
+        constexpr Iterator end() noexcept {return {mData.end()};}
     };
 
 } // ggm

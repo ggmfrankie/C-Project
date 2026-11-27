@@ -10,6 +10,7 @@
 #include "GameEngine/Games/BaseGame/BaseGame.hpp"
 #include "GameEngine/Games/Game2D/Game2D.hpp"
 #include "GameEngine/Test/Test.hpp"
+#include "Meta/Enums.hpp"
 #include "Utils/Test.h"
 #include "_Projects_/ggmTanks/TankGame.hpp"
 
@@ -17,6 +18,18 @@
 int main() {
     //Test_run();
     //Testing::runTests();
+
+    enum class Vallah { ONE };
+
+    constexpr auto value = ggm::Enums::getExpression<static_cast<Vallah>(1)>();
+
+    constexpr auto value1 = ggm::Enums::getExpression<static_cast<Vallah>(0)>();
+
+    std::cout << value1 << '\n' << value << '\n';
+
+    std::cout << ggm::Enums::name(Vallah::ONE) << '\n';
+
+    return 0;
 
     ggm::Logger::setLevel(ggm::Logger::LogLevel::DEBUG);
     try {

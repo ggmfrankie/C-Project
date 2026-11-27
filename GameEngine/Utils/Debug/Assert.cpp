@@ -11,7 +11,7 @@
 #include "GLFW/glfw3.h"
 
 namespace ggm::Assert {
-    [[noreturn]] inline void fail(const std::source_location& loc, std::string_view msg) {
+    [[noreturn]] void fail(const std::source_location& loc, std::string_view msg) {
         std::cerr << std::format(
                 "[ASSERT FAILED]: {}:{} {}\n",
                 std::filesystem::path(loc.file_name()).filename().string(),

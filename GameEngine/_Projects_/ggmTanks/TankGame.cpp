@@ -5,7 +5,6 @@
 #include "TankGame.hpp"
 
 #include "GuiInterface.h"
-#include "GLFW/glfw3.h"
 #include "Gui/GameGui.h"
 #include "Render/Screen.hpp"
 

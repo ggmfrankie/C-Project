@@ -169,13 +169,15 @@ add_executable(C-Project
         GameEngine/Utils/Meta/TypeSet.hpp
         GameEngine/Utils/DataStorage/String.cpp
         GameEngine/Utils/DataStorage/String.hpp
-        GameEngine/Utils/DataStorage/StringView.cpp
         GameEngine/Utils/DataStorage/StringView.hpp
         GameEngine/Engine/Core/EntityComponentSystem/Components/Render/Mesh2D.hpp
         GameEngine/Engine/Core/EntityComponentSystem/Components/Physics/PhysicsObjectCircle.hpp
         GameEngine/Engine/Core/EntityComponentSystem/Components/PlayerControlled.hpp
         GameEngine/Engine/Core/EntityComponentSystem/EventHandler.cpp
         GameEngine/Engine/Core/EntityComponentSystem/EventHandler.hpp
+        GameEngine/Engine/Core/EntityComponentSystem/Systems/IO/Keys.cpp
+        GameEngine/Engine/Core/EntityComponentSystem/Systems/IO/Keys.hpp
+        GUIEngine/Utils/Misc/Enums.hpp
 )
 
 target_compile_definitions(C-Project PUBLIC JPH_ENABLE_ASSERTS)

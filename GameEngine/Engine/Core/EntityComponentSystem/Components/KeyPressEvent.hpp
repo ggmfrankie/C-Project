@@ -3,12 +3,14 @@
 //
 
 #pragma once
+#include "Engine/Core/EntityComponentSystem/Systems/IO/Keys.hpp"
+
 namespace ggm {
     struct KeyPressEvent {
-        int keycode;
+        Key key;
 
         friend std::ostream& operator<<(std::ostream& os, const KeyPressEvent& event) {
-            return os << event.keycode;
+            return os << toString(event.key);
         }
     };
 }

@@ -18,7 +18,7 @@ namespace ggm {
     template <typename T, u64 InlineCapacity = 0>
     class ArrayList {
     public:
-        explicit ArrayList(u64 capacity = InlineCapacity) noexcept
+        constexpr explicit ArrayList(u64 capacity = InlineCapacity) noexcept
         {
             if constexpr (InlineCapacity == 0) {
                 mData = static_cast<T *>(operator new(capacity * sizeof(T)));
@@ -38,14 +38,14 @@ namespace ggm {
             mSize = 0;
         }
 
-        ArrayList(u64 capacity, const T& value) noexcept :
+        constexpr ArrayList(u64 capacity, const T& value) noexcept :
             ArrayList(capacity)
         {
             std::uninitialized_fill_n(mData, capacity, value);
             mSize = capacity;
         }
 
-        ArrayList(ArrayList&& other) noexcept {
+        constexpr ArrayList(ArrayList&& other) noexcept {
             if constexpr (InlineCapacity == 0) {
                 mData = std::exchange(other.mData, nullptr);
                 mSize = std::exchange(other.mSize, 0);
@@ -69,7 +69,7 @@ namespace ggm {
             }
         }
 
-        ArrayList(const ArrayList& other) noexcept {
+        constexpr ArrayList(const ArrayList& other) noexcept {
             if constexpr (InlineCapacity == 0) {
                 mData = static_cast<T*>(operator new(other.mCapacity * sizeof(T)));
 
@@ -91,7 +91,7 @@ namespace ggm {
             }
         }
 
-        ~ArrayList() noexcept {
+        constexpr ~ArrayList() noexcept {
             std::destroy_n(mData, mSize);
             if constexpr (InlineCapacity == 0) {
                 operator delete(mData);
@@ -100,7 +100,7 @@ namespace ggm {
             }
         }
 
-        ArrayList& operator=(ArrayList&& other) noexcept {
+        constexpr ArrayList& operator=(ArrayList&& other) noexcept {
             if (this == &other) return *this;
 
             std::destroy_n(mData, mSize);
@@ -131,14 +131,14 @@ namespace ggm {
             return *this;
         }
 
-        T& add(const T& thing) {
+        constexpr T& add(const T& thing) {
             if (mCapacity <= mSize) grow(mCapacity*2+1);
             T* ptr = std::construct_at(&mData[mSize], thing);
             ++mSize;
             return *ptr;
         }
 
-        T& add(T&& thing) {
+        constexpr T& add(T&& thing) {
             if (mCapacity <= mSize) grow(mCapacity*2+1);
             T* ptr = std::construct_at(&mData[mSize], std::move(thing));
             ++mSize;
@@ -146,7 +146,7 @@ namespace ggm {
         }
 
         template<typename... Args>
-        T& push(Args&&... args) {
+        constexpr T& push(Args&&... args) {
             if (mSize == mCapacity) grow(mCapacity*2+1);
             T* ptr = std::construct_at(&mData[mSize], std::forward<Args>(args)...);
             ++mSize;
@@ -154,21 +154,21 @@ namespace ggm {
         }
 
         template<typename Self>
-        auto& front(this Self&& self) {
+        constexpr auto& front(this Self&& self) {
             return self.mData[0];
         }
 
         template<typename Self>
-        auto& back(this Self&& self) {
+        constexpr auto& back(this Self&& self) {
             return self.mData[self.mSize - 1];
         }
 
-        void growTo(u64 capacity) {
+        constexpr void growTo(u64 capacity) {
             if (capacity <= mCapacity) return;
             grow(capacity);
         }
 
-        void growTo(u64 capacity, const T& value) {
+        constexpr void growTo(u64 capacity, const T& value) {
             growTo(capacity);
             for (u64 i = mSize; i < capacity; ++i) {
                 std::construct_at(mData + i, value);
@@ -177,23 +177,23 @@ namespace ggm {
         }
 
         template<typename Self>
-        auto& operator[](this Self&& self, u64 index) noexcept {
+        constexpr auto& operator[](this Self&& self, u64 index) noexcept {
             assert(index < self.mCapacity);
             return self.mData[index];
         }
 
         template<typename Self>
-        auto& get(this Self&& self, u64 index) {
+        constexpr auto& get(this Self&& self, u64 index) {
             if (index >= self.mSize) throw std::out_of_range("Index out of bounds in ArrayList");
             return self.mData[index];
         }
 
-        void clear() noexcept {
+        constexpr void clear() noexcept {
             std::destroy_n(mData, mSize);
             mSize = 0;
         }
 
-        void fit() {
+        constexpr void fit() {
             if (!mIsHeap || mSize == mCapacity) return;
 
             T* oldData = mData;
@@ -206,19 +206,19 @@ namespace ggm {
         }
 
         template<typename Self>
-        auto* data(this Self&& self) noexcept {
+        constexpr auto* data(this Self&& self) noexcept {
             return self.mData;
         }
 
-        [[nodiscard]] bool empty() const noexcept {
+        [[nodiscard]] constexpr bool empty() const noexcept {
             return mSize == 0;
         }
 
-        [[nodiscard]] u64 size() const noexcept {
+        [[nodiscard]] constexpr u64 size() const noexcept {
             return mSize;
         }
 
-        [[nodiscard]] u64 capacity() const noexcept {
+        [[nodiscard]] constexpr u64 capacity() const noexcept {
             return mCapacity;
         }
 
@@ -229,7 +229,7 @@ namespace ggm {
         u64 mCapacity = 0;
         alignas(T) std::byte _inlineRaw_[sizeof(T) * InlineCapacity]{};
 
-        void grow(u64 capacity) noexcept {
+        constexpr void grow(u64 capacity) noexcept {
             T* oldData = mData;
             mCapacity = capacity;
             mData = static_cast<T *>(operator new(mCapacity * sizeof(T)));
@@ -247,7 +247,7 @@ namespace ggm {
             }
         }
 
-        T* inlinePtr() noexcept {
+        constexpr T* inlinePtr() noexcept {
             static_assert(InlineCapacity > 0);
             return std::launder(reinterpret_cast<T*>(_inlineRaw_));
         }
@@ -256,28 +256,28 @@ namespace ggm {
         using Iterator = T*;
         using CIterator = const T*;
 
-        Iterator begin() noexcept {return mData;}
-        Iterator end() noexcept {return mData + mSize;}
+        constexpr Iterator begin() noexcept {return mData;}
+        constexpr Iterator end() noexcept {return mData + mSize;}
 
-        CIterator begin() const noexcept {return mData;}
-        CIterator end() const noexcept {return mData + mSize;}
+        constexpr CIterator begin() const noexcept {return mData;}
+        constexpr CIterator end() const noexcept {return mData + mSize;}
 
-        CIterator cbegin() noexcept {return mData;}
-        CIterator cend() noexcept {return mData + mSize;}
+        constexpr CIterator cbegin() noexcept {return mData;}
+        constexpr CIterator cend() noexcept {return mData + mSize;}
 
         using RIterator = std::reverse_iterator<Iterator>;
         using CRIterator = std::reverse_iterator<CIterator>;
 
-        RIterator rbegin() noexcept { return RIterator(end()); }
-        RIterator rend()   noexcept { return RIterator(begin()); }
+        constexpr RIterator rbegin() noexcept { return RIterator(end()); }
+        constexpr RIterator rend()   noexcept { return RIterator(begin()); }
 
-        CRIterator rbegin() const noexcept { return CRIterator(end()); }
-        CRIterator rend()   const noexcept { return CRIterator(begin()); }
+        constexpr CRIterator rbegin() const noexcept { return CRIterator(end()); }
+        constexpr CRIterator rend()   const noexcept { return CRIterator(begin()); }
 
-        CRIterator crbegin() const noexcept { return CRIterator(end()); }
-        CRIterator crend()   const noexcept { return CRIterator(begin()); }
+        constexpr CRIterator crbegin() const noexcept { return CRIterator(end()); }
+        constexpr CRIterator crend()   const noexcept { return CRIterator(begin()); }
 
-        Iterator remove(Iterator first, Iterator last) {
+        constexpr Iterator remove(Iterator first, Iterator last) {
             if (first == last) return first;
             auto newEnd = end() - (last - first);
 
@@ -291,7 +291,7 @@ namespace ggm {
             return first;
         }
 
-        Iterator remove(Iterator pos) {
+        constexpr Iterator remove(Iterator pos) {
             auto last = end()-1;
 
             if (pos == last) {
@@ -306,7 +306,7 @@ namespace ggm {
             return pos;
         }
 
-        Iterator erase(Iterator first, Iterator last) {
+        constexpr Iterator erase(Iterator first, Iterator last) {
             if (first == last) return first;
 
             std::move(last, end(), first);
@@ -320,7 +320,7 @@ namespace ggm {
             return first;
         }
 
-        Iterator erase(Iterator pos) {
+        constexpr Iterator erase(Iterator pos) {
             auto last = end()-1;
 
             if (pos == last) {
