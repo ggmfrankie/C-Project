@@ -3,7 +3,6 @@
 //
 
 #pragma once
-#include "DataStorage/StringView.hpp"
 #include <glad/gl.h>
 #include "GLFW/glfw3.h"
 
@@ -67,7 +66,7 @@ namespace ggm {
         RIGHT = GLFW_KEY_RIGHT,
         UP = GLFW_KEY_UP,
         DOWN = GLFW_KEY_DOWN,
-        //TODO: finish
+        // TODO: finish
     };
 
     enum class MouseButton {
@@ -78,8 +77,7 @@ namespace ggm {
 
     enum class Modifier {
         NONE = 0,
-        ANY = GLFW_MOD_SHIFT | GLFW_MOD_CONTROL | GLFW_MOD_ALT | GLFW_MOD_SUPER | GLFW_MOD_CAPS_LOCK |
-              GLFW_MOD_NUM_LOCK,
+        ANY = GLFW_MOD_SHIFT | GLFW_MOD_CONTROL | GLFW_MOD_ALT | GLFW_MOD_SUPER | GLFW_MOD_CAPS_LOCK | GLFW_MOD_NUM_LOCK,
 
         SHIFT = GLFW_MOD_SHIFT,
         CONTROL = GLFW_MOD_CONTROL,
@@ -88,6 +86,4 @@ namespace ggm {
         CAPSLOCK = GLFW_MOD_CAPS_LOCK,
         NUMLOCK = GLFW_MOD_NUM_LOCK
     };
-
-    StringView toString(Key e);
 }

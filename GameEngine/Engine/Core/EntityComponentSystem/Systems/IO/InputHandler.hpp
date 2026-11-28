@@ -10,6 +10,7 @@
 #include "Engine/Core/EntityComponentSystem/Components/KeyPressEvent.hpp"
 #include "Engine/Core/EntityComponentSystem/Components/KeyReleaseEvent.hpp"
 #include "Math/Vector.hpp"
+#include "Meta/Enums.hpp"
 
 
 namespace ggm::InputHandler {
@@ -44,9 +45,8 @@ namespace ggm::InputHandler {
 
         for (int i = 0; i < pressedKeys.size(); ++i) {
             if (!pressedKeys[i]) continue;
-
             KeyPressEvent event {.key = static_cast<Key>(i)};
-            Logger::debug({"KeyPressEvent: [{}]", toString(event.key)});
+            Logger::debug({"KeyPressEvent: [{}]", Enums::name(event.key)});
             registry.createEntity({}, event);
         }
     }

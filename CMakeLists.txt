@@ -175,9 +175,8 @@ add_executable(C-Project
         GameEngine/Engine/Core/EntityComponentSystem/Components/PlayerControlled.hpp
         GameEngine/Engine/Core/EntityComponentSystem/EventHandler.cpp
         GameEngine/Engine/Core/EntityComponentSystem/EventHandler.hpp
-        GameEngine/Engine/Core/EntityComponentSystem/Systems/IO/Keys.cpp
         GameEngine/Engine/Core/EntityComponentSystem/Systems/IO/Keys.hpp
-        GUIEngine/Utils/Misc/Enums.hpp
+        GameEngine/Utils/Meta/Enums.hpp
 )
 
 target_compile_definitions(C-Project PUBLIC JPH_ENABLE_ASSERTS)
